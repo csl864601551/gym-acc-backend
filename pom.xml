@@ -197,7 +197,7 @@
             <!-- 系统模块-->
             <dependency>
                 <groupId>com.ztl.gym</groupId>
-                <artifactId>acc-system</artifactId>
+                <artifactId>acc-module</artifactId>
                 <version>${acc.version}</version>
             </dependency>
 
@@ -214,7 +214,7 @@
     <modules>
         <module>acc-admin</module>
         <module>acc-framework</module>
-        <module>acc-system</module>
+        <module>acc-module</module>
         <module>acc-quartz</module>
         <module>acc-generator</module>
         <module>acc-common</module>

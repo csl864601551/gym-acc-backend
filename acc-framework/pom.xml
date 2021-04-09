@@ -56,7 +56,7 @@
         <!-- 系统模块-->
         <dependency>
             <groupId>com.ztl.gym</groupId>
-            <artifactId>acc-system</artifactId>
+            <artifactId>acc-module</artifactId>
         </dependency>
 
     </dependencies>
