@@ -15,5 +15,10 @@ public enum DataSourceType
     /**
      * 从库
      */
-    SLAVE
+    SLAVE,
+
+    /**
+     * 分库分表
+     */
+    SHARDING
 }
