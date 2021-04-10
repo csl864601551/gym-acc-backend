@@ -34,6 +34,13 @@ public class SysOrderServiceImpl implements ISysOrderService
         return myShardingMapper.selectSysOrderById(orderId);
     }
 
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public SysOrder selectSysOrder(long id)
+    {
+        return myShardingMapper.selectSysOrder(id);
+    }
+
     /**
      * 查询订单列表
      *
