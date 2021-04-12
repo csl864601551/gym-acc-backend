@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.storage.mapper.StorageInMapper">
+    
+    <resultMap type="StorageIn" id="StorageInResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="status"    column="status"    />
+        <result property="inNo"    column="in_no"    />
+        <result property="productId"    column="product_id"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="inNum"    column="in_num"    />
+        <result property="actInNum"    column="act_in_num"    />
+        <result property="storageFrom"    column="storage_from"    />
+        <result property="storageTo"    column="storage_to"    />
+        <result property="fromStorageId"    column="from_storage_id"    />
+        <result property="toStorageId"    column="to_storage_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createUserName"    column="create_user_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="inTime"    column="in_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateUserName"    column="update_user_name"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStorageInVo">
+        select id, company_id, tenant_id, status, in_no, product_id, batch_no, in_num, act_in_num, storage_from, storage_to,
+        from_storage_id, to_storage_id, remark, create_user, create_time, in_time, update_user, update_time
+        from t_storage_in where status=0
+    </sql>
+
+    <select id="selectStorageInList" parameterType="StorageIn" resultMap="StorageInResult">
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+                    si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
+        FROM
+        t_storage_in AS si
+        LEFT JOIN sys_user suc ON suc.user_id = si.create_user
+        LEFT JOIN sys_user suu ON suu.user_id = si.update_user
+
+        <where>  si.status =0
+            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="inNo != null  and inNo != ''"> and in_no = #{inNo}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''"> and batch_no = #{batchNo}</if>
+            <if test="inNum != null "> and in_num = #{inNum}</if>
+            <if test="actInNum != null "> and act_in_num = #{actInNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''"> and storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''"> and storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null "> and from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null "> and to_storage_id = #{toStorageId}</if>
+            <if test="inTime != null "> and in_time = #{inTime}</if>
+        </where>
+        <!--            ${@com.ztl.gym.common.utils.sql.SqlUtil@curcompany('and si.')}-->
+        <!-- 数据范围过滤 ${curcompany}-->
+
+    </select>
+    
+    <select id="selectStorageInById" parameterType="Long" resultMap="StorageInResult">
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
+        ,p.product_name
+        FROM
+        t_storage_in AS si
+        LEFT JOIN sys_user suc ON suc.user_id = si.create_user
+        LEFT JOIN sys_user suu ON suu.user_id = si.update_user
+        left join t_product p on p.id=si.product_id
+        where si.id = #{id}
+    </select>
+        
+    <insert id="insertStorageIn" parameterType="StorageIn" useGeneratedKeys="true" keyProperty="id">
+        insert into t_storage_in
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="status != null">status,</if>
+            <if test="inNo != null">in_no,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="inNum != null">in_num,</if>
+            <if test="actInNum != null">act_in_num,</if>
+            <if test="storageFrom != null">storage_from,</if>
+            <if test="storageTo != null">storage_to,</if>
+            <if test="fromStorageId != null">from_storage_id,</if>
+            <if test="toStorageId != null">to_storage_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="inTime != null">in_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="inNo != null">#{inNo},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="inNum != null">#{inNum},</if>
+            <if test="actInNum != null">#{actInNum},</if>
+            <if test="storageFrom != null">#{storageFrom},</if>
+            <if test="storageTo != null">#{storageTo},</if>
+            <if test="fromStorageId != null">#{fromStorageId},</if>
+            <if test="toStorageId != null">#{toStorageId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="inTime != null">#{inTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStorageIn" parameterType="StorageIn">
+        update t_storage_in
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="inNo != null">in_no = #{inNo},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
+            <if test="inNum != null">in_num = #{inNum},</if>
+            <if test="actInNum != null">act_in_num = #{actInNum},</if>
+            <if test="storageFrom != null">storage_from = #{storageFrom},</if>
+            <if test="storageTo != null">storage_to = #{storageTo},</if>
+            <if test="fromStorageId != null">from_storage_id = #{fromStorageId},</if>
+            <if test="toStorageId != null">to_storage_id = #{toStorageId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="inTime != null">in_time = #{inTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStorageInById" parameterType="Long">
+        update t_storage_in set status=1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStorageInByIds" parameterType="String">
+        update t_storage_in set status=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

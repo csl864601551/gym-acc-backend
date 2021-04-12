@@ -22,6 +22,11 @@
             <groupId>com.ztl.gym</groupId>
             <artifactId>acc-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-support</artifactId>
+            <version>2.3.3</version>
+        </dependency>
 
     </dependencies>
 
