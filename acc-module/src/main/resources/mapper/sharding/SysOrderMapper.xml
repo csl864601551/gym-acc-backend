@@ -24,6 +24,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where order_id = #{orderId}
     </select>
 
+    <select id="selectSysOrder" parameterType="Long" resultMap="SysOrderResult">
+        <include refid="selectSysOrderVo"/>
+        where order_id = #{id}
+    </select>
+
     <insert id="insertSysOrder" parameterType="SysOrder">
         insert into sys_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
