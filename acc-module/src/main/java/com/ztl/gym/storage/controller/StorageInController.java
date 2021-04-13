@@ -1,6 +1,8 @@
 package com.ztl.gym.storage.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,9 +76,9 @@ public class StorageInController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:in:add')")
     @Log(title = "入库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody StorageIn storageIn)
+    public AjaxResult add(@RequestBody Map<String, Object> map)
     {
-        return toAjax(storageInService.insertStorageIn(storageIn));
+        return toAjax(storageInService.insertStorageIn(map));
     }
 
     /**
@@ -99,5 +101,14 @@ public class StorageInController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(storageInService.deleteStorageInByIds(ids));
+    }
+
+    /**
+     * 根据码号查询相关产品和码信息
+     */
+    @GetMapping(value = "/getCodeDetail/{id}")
+    public AjaxResult getCodeInfo(@PathVariable("id") Long id)
+    {
+        return AjaxResult.success(storageInService.getCodeInfo(id));
     }
 }

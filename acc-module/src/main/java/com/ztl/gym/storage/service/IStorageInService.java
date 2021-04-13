@@ -1,6 +1,8 @@
 package com.ztl.gym.storage.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ztl.gym.storage.domain.StorageIn;
 
 /**
@@ -17,7 +19,7 @@ public interface IStorageInService
      * @param id 入库ID
      * @return 入库
      */
-    public StorageIn selectStorageInById(Long id);
+    public Map<String, Object> selectStorageInById(Long id);
 
     /**
      * 查询入库列表
@@ -33,7 +35,7 @@ public interface IStorageInService
      * @param storageIn 入库
      * @return 结果
      */
-    public int insertStorageIn(StorageIn storageIn);
+    public int insertStorageIn(Map<String, Object> storageIn);
 
     /**
      * 修改入库
@@ -58,4 +60,6 @@ public interface IStorageInService
      * @return 结果
      */
     public int deleteStorageInById(Long id);
+
+    Map<String,Object> getCodeInfo(Long id);
 }

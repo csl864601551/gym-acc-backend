@@ -26,6 +26,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="HashMap" id="map">
+    </resultMap>
+
     <sql id="selectStorageOutVo">
         select id, company_id, tenant_id, status, out_no, product_id, batch_no, out_num, act_out_num, storage_from, storage_to, from_storage_id, to_storage_id, remark, create_user, create_time, out_time, update_user, update_time from t_storage_out
     </sql>
@@ -54,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertStorageOut" parameterType="StorageOut" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertStorageOut" parameterType="map" useGeneratedKeys="true" keyProperty="id">
         insert into t_storage_out
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>

@@ -22,11 +22,11 @@ public class StorageTransfer extends BaseEntity
 
     /** 企业ID */
     @Excel(name = "企业ID")
-    private Long companyId;
+    private Long company_id;
 
     /** 经销商id */
     @Excel(name = "经销商id")
-    private Long tenantId;
+    private Long tenant_id;
 
     /** 状态 */
     @Excel(name = "状态")
@@ -34,218 +34,204 @@ public class StorageTransfer extends BaseEntity
 
     /** 调拨单号 */
     @Excel(name = "调拨单号")
-    private String transferNo;
+    private String transfer_no;
 
     /** 产品id */
     @Excel(name = "产品id")
-    private Long productId;
+    private Long product_id;
 
     /** 产品批次 */
     @Excel(name = "产品批次")
-    private String batchNo;
+    private String batch_no;
 
     /** 调拨数量 */
     @Excel(name = "调拨数量")
-    private Long transferNum;
+    private Long transfer_num;
 
     /** 实际调拨数量 */
     @Excel(name = "实际调拨数量")
-    private Long actTransferNum;
+    private Long act_transfer_num;
 
     /** 调出单位 */
     @Excel(name = "调出单位")
-    private String storageFrom;
+    private String storage_from;
 
     /** 调入单位 */
     @Excel(name = "调入单位")
-    private String storageTo;
+    private String storage_to;
 
     /** 出货仓库 */
     @Excel(name = "出货仓库")
-    private Long fromStorageId;
+    private Long from_storage_id;
 
     /** 收货仓库 */
     @Excel(name = "收货仓库")
-    private Long toStorageId;
+    private Long to_storage_id;
 
     /** 创建人 */
     @Excel(name = "创建人")
-    private Long createUser;
+    private Long create_user;
 
     /** 修改人 */
     @Excel(name = "修改人")
-    private Long updateUser;
+    private Long update_user;
     
     /** 出库时间 */
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
-    private Date outTime;
+    private Date out_time;
 
-    public void setId(Long id)
-    {
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId()
-    {
-        return id;
-    }
-    public void setCompanyId(Long companyId)
-    {
-        this.companyId = companyId;
+    public Long getCompany_id() {
+        return company_id;
     }
 
-    public Long getCompanyId()
-    {
-        return companyId;
-    }
-    public void setTenantId(Long tenantId)
-    {
-        this.tenantId = tenantId;
+    public void setCompany_id(Long company_id) {
+        this.company_id = company_id;
     }
 
-    public Long getTenantId()
-    {
-        return tenantId;
+    public Long getTenant_id() {
+        return tenant_id;
     }
-    public void setStatus(Long status)
-    {
+
+    public void setTenant_id(Long tenant_id) {
+        this.tenant_id = tenant_id;
+    }
+
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
         this.status = status;
     }
 
-    public Long getStatus()
-    {
-        return status;
-    }
-    public void setTransferNo(String transferNo)
-    {
-        this.transferNo = transferNo;
+    public String getTransfer_no() {
+        return transfer_no;
     }
 
-    public String getTransferNo()
-    {
-        return transferNo;
-    }
-    public void setProductId(Long productId)
-    {
-        this.productId = productId;
+    public void setTransfer_no(String transfer_no) {
+        this.transfer_no = transfer_no;
     }
 
-    public Long getProductId()
-    {
-        return productId;
-    }
-    public void setBatchNo(String batchNo)
-    {
-        this.batchNo = batchNo;
+    public Long getProduct_id() {
+        return product_id;
     }
 
-    public String getBatchNo()
-    {
-        return batchNo;
-    }
-    public void setTransferNum(Long transferNum)
-    {
-        this.transferNum = transferNum;
+    public void setProduct_id(Long product_id) {
+        this.product_id = product_id;
     }
 
-    public Long getTransferNum()
-    {
-        return transferNum;
-    }
-    public void setActTransferNum(Long actTransferNum)
-    {
-        this.actTransferNum = actTransferNum;
+    public String getBatch_no() {
+        return batch_no;
     }
 
-    public Long getActTransferNum()
-    {
-        return actTransferNum;
-    }
-    public void setStorageFrom(String storageFrom)
-    {
-        this.storageFrom = storageFrom;
+    public void setBatch_no(String batch_no) {
+        this.batch_no = batch_no;
     }
 
-    public String getStorageFrom()
-    {
-        return storageFrom;
-    }
-    public void setStorageTo(String storageTo)
-    {
-        this.storageTo = storageTo;
+    public Long getTransfer_num() {
+        return transfer_num;
     }
 
-    public String getStorageTo()
-    {
-        return storageTo;
-    }
-    public void setFromStorageId(Long fromStorageId)
-    {
-        this.fromStorageId = fromStorageId;
+    public void setTransfer_num(Long transfer_num) {
+        this.transfer_num = transfer_num;
     }
 
-    public Long getFromStorageId()
-    {
-        return fromStorageId;
-    }
-    public void setToStorageId(Long toStorageId)
-    {
-        this.toStorageId = toStorageId;
+    public Long getAct_transfer_num() {
+        return act_transfer_num;
     }
 
-    public Long getToStorageId()
-    {
-        return toStorageId;
-    }
-    public void setOutTime(Date outTime)
-    {
-        this.outTime = outTime;
+    public void setAct_transfer_num(Long act_transfer_num) {
+        this.act_transfer_num = act_transfer_num;
     }
 
-    public Date getOutTime()
-    {
-        return outTime;
+    public String getStorage_from() {
+        return storage_from;
     }
 
-    public Long getCreateUser() {
-        return createUser;
+    public void setStorage_from(String storage_from) {
+        this.storage_from = storage_from;
     }
 
-    public void setCreateUser(Long createUser) {
-        this.createUser = createUser;
+    public String getStorage_to() {
+        return storage_to;
     }
 
-    public Long getUpdateUser() {
-        return updateUser;
+    public void setStorage_to(String storage_to) {
+        this.storage_to = storage_to;
     }
 
-    public void setUpdateUser(Long updateUser) {
-        this.updateUser = updateUser;
+    public Long getFrom_storage_id() {
+        return from_storage_id;
+    }
+
+    public void setFrom_storage_id(Long from_storage_id) {
+        this.from_storage_id = from_storage_id;
+    }
+
+    public Long getTo_storage_id() {
+        return to_storage_id;
+    }
+
+    public void setTo_storage_id(Long to_storage_id) {
+        this.to_storage_id = to_storage_id;
+    }
+
+    public Long getCreate_user() {
+        return create_user;
+    }
+
+    public void setCreate_user(Long create_user) {
+        this.create_user = create_user;
+    }
+
+    public Long getUpdate_user() {
+        return update_user;
+    }
+
+    public void setUpdate_user(Long update_user) {
+        this.update_user = update_user;
+    }
+
+    public Date getOut_time() {
+        return out_time;
+    }
+
+    public void setOut_time(Date out_time) {
+        this.out_time = out_time;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("companyId", getCompanyId())
-            .append("tenantId", getTenantId())
-            .append("status", getStatus())
-            .append("transferNo", getTransferNo())
-            .append("productId", getProductId())
-            .append("batchNo", getBatchNo())
-            .append("transferNum", getTransferNum())
-            .append("actTransferNum", getActTransferNum())
-            .append("storageFrom", getStorageFrom())
-            .append("storageTo", getStorageTo())
-            .append("fromStorageId", getFromStorageId())
-            .append("toStorageId", getToStorageId())
-            .append("remark", getRemark())
-            .append("createUser", getCreateUser())
-            .append("createTime", getCreateTime())
-            .append("outTime", getOutTime())
-            .append("updateUser", getUpdateUser())
-            .append("updateTime", getUpdateTime())
-            .toString();
+        return "StorageTransfer{" +
+                "id=" + id +
+                ", company_id=" + company_id +
+                ", tenant_id=" + tenant_id +
+                ", status=" + status +
+                ", transfer_no='" + transfer_no + '\'' +
+                ", product_id=" + product_id +
+                ", batch_no='" + batch_no + '\'' +
+                ", transfer_num=" + transfer_num +
+                ", act_transfer_num=" + act_transfer_num +
+                ", storage_from='" + storage_from + '\'' +
+                ", storage_to='" + storage_to + '\'' +
+                ", from_storage_id=" + from_storage_id +
+                ", to_storage_id=" + to_storage_id +
+                ", create_user=" + create_user +
+                ", update_user=" + update_user +
+                ", out_time=" + out_time +
+                '}';
     }
 }

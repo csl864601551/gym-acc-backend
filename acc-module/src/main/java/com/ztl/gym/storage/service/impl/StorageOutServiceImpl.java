@@ -1,12 +1,16 @@
 package com.ztl.gym.storage.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.storage.mapper.StorageInMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.StorageOutMapper;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.service.IStorageOutService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 出库Service业务层处理
@@ -20,6 +24,8 @@ public class StorageOutServiceImpl implements IStorageOutService
     @Autowired
     private StorageOutMapper storageOutMapper;
 
+    @Autowired
+    private StorageInMapper storageInMapper;
     /**
      * 查询出库
      *
@@ -47,14 +53,22 @@ public class StorageOutServiceImpl implements IStorageOutService
     /**
      * 新增出库
      *
-     * @param storageOut 出库
+     * @param map 出库
      * @return 结果
      */
     @Override
-    public int insertStorageOut(StorageOut storageOut)
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
+    public int insertStorageOut(Map<String, Object> map)
     {
-        storageOut.setCreateTime(DateUtils.getNowDate());
-        return storageOutMapper.insertStorageOut(storageOut);
+        map.put("create_time",(DateUtils.getNowDate()));
+        storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
+        storageInMapper.insertStorageMoveRecord(map);//新增t_storage_move_record产品流转记录表
+        storageInMapper.insertStorageMove(map);//新增t_storage_move产品流转明细表
+        storageInMapper.insertStorageCode(map);//新增t_storage_code物流码明细表
+        storageInMapper.insertPcodeMove(map);//新增t_pcode_move箱码流转记录表
+        storageInMapper.insertCodeMove(map);//新增t_code_move单码流转记录表
+        storageInMapper.updateProductStock(map);//更新t_product_stock库存统计表
+        return 0;
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.ztl.gym.storage.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ztl.gym.storage.domain.StorageOut;
 
 /**
@@ -33,7 +35,7 @@ public interface StorageOutMapper
      * @param storageOut 出库
      * @return 结果
      */
-    public int insertStorageOut(StorageOut storageOut);
+    public int insertStorageOut(Map<String, Object> storageOut);
 
     /**
      * 修改出库

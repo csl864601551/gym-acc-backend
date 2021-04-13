@@ -1,6 +1,8 @@
 package com.ztl.gym.storage.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,7 +76,7 @@ public class StorageOutController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:out:add')")
     @Log(title = "出库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody StorageOut storageOut)
+    public AjaxResult add(@RequestBody Map<String, Object> storageOut)
     {
         return toAjax(storageOutService.insertStorageOut(storageOut));
     }

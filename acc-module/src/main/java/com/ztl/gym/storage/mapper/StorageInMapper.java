@@ -1,6 +1,8 @@
 package com.ztl.gym.storage.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ztl.gym.storage.domain.StorageIn;
 
 /**
@@ -17,7 +19,7 @@ public interface StorageInMapper
      * @param id 入库ID
      * @return 入库
      */
-    public StorageIn selectStorageInById(Long id);
+    public Map<String, Object> selectStorageInById(Long id);
 
     /**
      * 查询入库列表
@@ -33,7 +35,7 @@ public interface StorageInMapper
      * @param storageIn 入库
      * @return 结果
      */
-    public int insertStorageIn(StorageIn storageIn);
+    public int insertStorageIn(Map<String, Object> storageIn);
 
     /**
      * 修改入库
@@ -58,4 +60,22 @@ public interface StorageInMapper
      * @return 结果
      */
     public int deleteStorageInByIds(Long[] ids);
+
+    void insertStorageMoveRecord(Map<String, Object> storageIn);
+
+    void insertStorageMove(Map<String, Object> storageIn);
+
+    void insertStorageCode(Map<String, Object> storageIn);
+
+    void insertPcodeMove(Map<String, Object> storageIn);
+
+    void insertCodeMove(Map<String, Object> storageIn);
+
+    void updateProductStock(Map<String, Object> storageIn);
+
+    List<Map<String, Object>> selectStorageCodeById(Long id);
+
+    Map<String, Object> getCodeInfo(Long id);
+
+    List<Map<String, Object>> getCodeDetail(Long id);
 }
