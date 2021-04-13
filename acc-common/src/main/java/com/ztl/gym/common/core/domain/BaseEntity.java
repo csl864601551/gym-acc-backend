@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ztl.gym.common.annotation.Excel;
 
 /**
  * Entity基类
@@ -31,6 +32,12 @@ public class BaseEntity implements Serializable
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+    /** 创建人 */
+    private Long create_user;
+
+    /** 修改人 */
+    private Long update_user;
 
     /** 备注 */
     private String remark;
@@ -86,6 +93,22 @@ public class BaseEntity implements Serializable
     public void setUpdateTime(Date updateTime)
     {
         this.updateTime = updateTime;
+    }
+
+    public Long getCreate_user() {
+        return create_user;
+    }
+
+    public void setCreate_user(Long create_user) {
+        this.create_user = create_user;
+    }
+
+    public Long getUpdate_user() {
+        return update_user;
+    }
+
+    public void setUpdate_user(Long update_user) {
+        this.update_user = update_user;
     }
 
     public String getRemark()
