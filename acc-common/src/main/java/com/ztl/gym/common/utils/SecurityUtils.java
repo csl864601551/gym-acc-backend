@@ -55,10 +55,18 @@ public class SecurityUtils {
         try {
             LoginUser loginUser = (LoginUser) getAuthentication().getPrincipal();
             SysDept sysDept = loginUser.getUser().getDept();
-            String[] ancestors = sysDept.getAncestors().split(",");
-            return Long.parseLong(ancestors[2]);
+            if (sysDept.getAncestors().contains(",")) {
+                String[] ancestors = sysDept.getAncestors().split(",");
+                if (ancestors.length <= 2) {
+                    return sysDept.getDeptId();
+                } else {
+                    return Long.parseLong(ancestors[2]);
+                }
+            } else {
+                throw new CustomException("平台是最顶级部门", HttpStatus.UNAUTHORIZED);
+            }
         } catch (Exception e) {
-            throw new CustomException("获取用户部门信息异常", HttpStatus.UNAUTHORIZED);
+            throw new CustomException("获取用户除平台外顶级部门信息异常", HttpStatus.UNAUTHORIZED);
         }
     }
 
