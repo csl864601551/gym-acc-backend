@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.product.mapper.TProductCategoryMapper">
+    
+    <resultMap type="TProductCategory" id="TProductCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="categoryNo"    column="category_no"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="categoryLevel"    column="category_level"    />
+        <result property="pId"    column="p_id"    />
+        <result property="unit"    column="unit"    />
+        <result property="icon"    column="icon"    />
+        <result property="keyword"    column="keyword"    />
+        <result property="categoryIntroduce"    column="category_introduce"    />
+        <result property="sort"    column="sort"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTProductCategoryVo">
+        select id, company_id, category_no, category_name, category_level, p_id, unit, icon, keyword, category_introduce, sort, create_user, create_time, update_user, update_time from t_product_category
+    </sql>
+
+    <select id="selectTProductCategoryList" parameterType="TProductCategory" resultMap="TProductCategoryResult">
+        <include refid="selectTProductCategoryVo"/>
+        <where>  
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="categoryNo != null  and categoryNo != ''"> and category_no = #{categoryNo}</if>
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="categoryLevel != null  and categoryLevel != ''"> and category_level = #{categoryLevel}</if>
+            <if test="pId != null "> and p_id = #{pId}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="icon != null  and icon != ''"> and icon = #{icon}</if>
+            <if test="keyword != null  and keyword != ''"> and keyword = #{keyword}</if>
+            <if test="categoryIntroduce != null  and categoryIntroduce != ''"> and category_introduce = #{categoryIntroduce}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectTProductCategoryById" parameterType="Long" resultMap="TProductCategoryResult">
+        <include refid="selectTProductCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTProductCategory" parameterType="TProductCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into t_product_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="categoryNo != null">category_no,</if>
+            <if test="categoryName != null">category_name,</if>
+            <if test="categoryLevel != null">category_level,</if>
+            <if test="pId != null">p_id,</if>
+            <if test="unit != null">unit,</if>
+            <if test="icon != null">icon,</if>
+            <if test="keyword != null">keyword,</if>
+            <if test="categoryIntroduce != null">category_introduce,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="categoryNo != null">#{categoryNo},</if>
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="categoryLevel != null">#{categoryLevel},</if>
+            <if test="pId != null">#{pId},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="icon != null">#{icon},</if>
+            <if test="keyword != null">#{keyword},</if>
+            <if test="categoryIntroduce != null">#{categoryIntroduce},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTProductCategory" parameterType="TProductCategory">
+        update t_product_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="categoryNo != null">category_no = #{categoryNo},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="categoryLevel != null">category_level = #{categoryLevel},</if>
+            <if test="pId != null">p_id = #{pId},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="keyword != null">keyword = #{keyword},</if>
+            <if test="categoryIntroduce != null">category_introduce = #{categoryIntroduce},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTProductCategoryById" parameterType="Long">
+        delete from t_product_category where id = #{id}
+    </delete>
+
+    <delete id="deleteTProductCategoryByIds" parameterType="String">
+        delete from t_product_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
