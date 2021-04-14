@@ -73,6 +73,7 @@ public class StorageIn extends BaseEntity
     /** 创建人 */
     private Long create_user;
 
+
     /** 创建人 */
     @Excel(name = "创建人")
     @TableField(exist = false)
