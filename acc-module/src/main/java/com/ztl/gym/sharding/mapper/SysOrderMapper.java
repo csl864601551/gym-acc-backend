@@ -19,6 +19,7 @@ public interface SysOrderMapper
      * @return 订单信息
      */
     public SysOrder selectSysOrderById(Long orderId);
+    public SysOrder selectSysOrder(long id);
 
     /**
      * 查询订单列表

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.CodeMapper">
+
+    <resultMap type="Code" id="CodeResult">
+        <result property="codeIndex"    column="code_index"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="status"    column="status"    />
+        <result property="code"    column="code"    />
+        <result property="codeAcc"    column="code_acc"    />
+        <result property="codeType"    column="code_type"    />
+        <result property="pCode"    column="p_code"    />
+        <result property="codeAttrId"    column="code_attr_id"    />
+    </resultMap>
+
+    <sql id="selectCodeVo">
+        select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id from t_code
+    </sql>
+
+    <select id="selectCodeList" parameterType="Code" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="codeAcc != null  and codeAcc != ''"> and code_acc = #{codeAcc}</if>
+            <if test="codeType != null  and codeType != ''"> and code_type = #{codeType}</if>
+            <if test="pCode != null  and pCode != ''"> and p_code = #{pCode}</if>
+            <if test="codeAttrId != null "> and code_attr_id = #{codeAttrId}</if>
+        </where>
+    </select>
+
+    <select id="selectCodeById" parameterType="Long" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where code_index = #{codeIndex}
+    </select>
+
+    <insert id="insertCode" parameterType="Code" useGeneratedKeys="true" keyProperty="codeIndex">
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="codeIndex">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="codeIndex != null">code_index,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="status != null">status,</if>
+            <if test="code != null">code,</if>
+            <if test="codeAcc != null">code_acc,</if>
+            <if test="codeType != null">code_type,</if>
+            <if test="pCode != null">p_code,</if>
+            <if test="codeAttrId != null">code_attr_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="codeIndex != null">#{codeIndex},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="code != null">#{code},</if>
+            <if test="codeAcc != null">#{codeAcc},</if>
+            <if test="codeType != null">#{codeType},</if>
+            <if test="pCode != null">#{pCode},</if>
+            <if test="codeAttrId != null">#{codeAttrId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCode" parameterType="Code">
+        update t_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="codeAcc != null">code_acc = #{codeAcc},</if>
+            <if test="codeType != null">code_type = #{codeType},</if>
+            <if test="pCode != null">p_code = #{pCode},</if>
+            <if test="codeAttrId != null">code_attr_id = #{codeAttrId},</if>
+        </trim>
+        where code_index = #{codeIndex}
+    </update>
+
+    <delete id="deleteCodeById" parameterType="Long">
+        delete from t_code where code_index = #{codeIndex}
+    </delete>
+
+    <delete id="deleteCodeByIds" parameterType="String">
+        delete from t_code where code_index in
+        <foreach item="codeIndex" collection="array" open="(" separator="," close=")">
+            #{codeIndex}
+        </foreach>
+    </delete>
+</mapper>

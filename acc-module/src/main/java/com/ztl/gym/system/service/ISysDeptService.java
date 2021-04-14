@@ -89,7 +89,7 @@ public interface ISysDeptService
      * @param dept 部门信息
      * @return 结果
      */
-    public int insertDept(SysDept dept);
+    public long insertDept(SysDept dept);
 
     /**
      * 修改保存部门信息

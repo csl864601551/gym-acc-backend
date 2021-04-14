@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.storage.mapper.StorageInMapper">
+    
+    <resultMap type="StorageIn" id="StorageInResult">
+        <result property="id"    column="id"    />
+        <result property="company_id"    column="company_id"    />
+        <result property="tenant_id"    column="tenant_id"    />
+        <result property="status"    column="status"    />
+        <result property="in_no"    column="in_no"    />
+        <result property="product_id"    column="product_id"    />
+        <result property="batch_no"    column="batch_no"    />
+        <result property="in_num"    column="in_num"    />
+        <result property="act_in_num"    column="act_in_num"    />
+        <result property="storage_from"    column="storage_from"    />
+        <result property="storage_to"    column="storage_to"    />
+        <result property="from_storage_id"    column="from_storage_id"    />
+        <result property="to_storage_id"    column="to_storage_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="create_user"    column="create_user"    />
+        <result property="create_user_name"    column="create_user_name"    />
+        <result property="create_time"    column="create_time"    />
+        <result property="in_time"    column="in_time"    />
+        <result property="update_user"    column="update_user"    />
+        <result property="update_user_name"    column="update_user_name"    />
+        <result property="update_time"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="HashMap" id="map">
+    </resultMap>
+
+    <sql id="selectStorageInVo">
+        select id, company_id, tenant_id, status, in_no, product_id, batch_no, in_num, act_in_num, storage_from, storage_to,
+        from_storage_id, to_storage_id, remark, create_user, create_time, in_time, update_user, update_time
+        from t_storage_in where status=0
+    </sql>
+
+    <select id="selectStorageInList" parameterType="StorageIn" resultMap="StorageInResult">
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+                    si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
+        FROM
+        t_storage_in AS si
+        LEFT JOIN sys_user suc ON suc.user_id = si.create_user
+        LEFT JOIN sys_user suu ON suu.user_id = si.update_user
+
+        <where>  si.status =0
+            <if test="tenant_id != null "> and tenant_id = #{tenant_id}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="in_no != null  and in_no != ''"> and in_no = #{in_no}</if>
+            <if test="product_id != null "> and product_id = #{product_id}</if>
+            <if test="batch_no != null  and batch_no != ''"> and batch_no = #{batch_no}</if>
+            <if test="in_num != null "> and in_num = #{in_num}</if>
+            <if test="act_in_num != null "> and act_in_num = #{act_in_num}</if>
+            <if test="storage_from != null  and storage_from != ''"> and storage_from = #{storage_from}</if>
+            <if test="storage_to != null  and storage_to != ''"> and storage_to = #{storage_to}</if>
+            <if test="from_storage_id != null "> and from_storage_id = #{from_storage_id}</if>
+            <if test="to_storage_id != null "> and to_storage_id = #{to_storage_id}</if>
+            <if test="in_time != null "> and in_time = #{in_time}</if>
+        </where>
+        <!--            ${@com.ztl.gym.common.utils.sql.SqlUtil@curcompany('and si.')}-->
+        <!-- 数据范围过滤 ${curcompany}-->
+
+    </select>
+
+    <select id="selectStorageInById" parameterType="Long" resultMap="map">
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
+        ,p.product_name
+        FROM
+        t_storage_in AS si
+        LEFT JOIN sys_user suc ON suc.user_id = si.create_user
+        LEFT JOIN sys_user suu ON suu.user_id = si.update_user
+        left join t_product p on p.id=si.product_id
+        where si.id = #{id}
+    </select>
+    <select id="selectStorageCodeById" resultMap="map">
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
+        ,p.product_name
+        FROM
+        t_storage_in AS si
+        LEFT JOIN sys_user suc ON suc.user_id = si.create_user
+        LEFT JOIN sys_user suu ON suu.user_id = si.update_user
+        left join t_product p on p.id=si.product_id
+        where si.id = #{id}
+    </select>
+    <select id="getCodeInfo" resultMap="map">
+
+    </select>
+    <select id="getCodeDetail" resultMap="map">
+
+    </select>
+
+    <insert id="insertStorageIn" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+        insert into t_storage_in
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="company_id != null">company_id,</if>
+            <if test="tenant_id != null">tenant_id,</if>
+            <if test="status != null">status,</if>
+            <if test="in_no != null">in_no,</if>
+            <if test="product_id != null">product_id,</if>
+            <if test="batch_no != null">batch_no,</if>
+            <if test="in_num != null">in_num,</if>
+            <if test="act_in_num != null">act_in_num,</if>
+            <if test="storage_from != null">storage_from,</if>
+            <if test="storage_to != null">storage_to,</if>
+            <if test="from_storage_id != null">from_storage_id,</if>
+            <if test="to_storage_id != null">to_storage_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="create_user != null">create_user,</if>
+            <if test="create_time != null">create_time,</if>
+            <if test="in_time != null">in_time,</if>
+            <if test="update_user != null">update_user,</if>
+            <if test="update_time != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="company_id != null">#{company_id},</if>
+            <if test="tenant_id != null">#{tenant_id},</if>
+            <if test="status != null">#{status},</if>
+            <if test="in_no != null">#{in_no},</if>
+            <if test="product_id != null">#{product_id},</if>
+            <if test="batch_no != null">#{batch_no},</if>
+            <if test="in_num != null">#{in_num},</if>
+            <if test="act_in_num != null">#{act_in_num},</if>
+            <if test="storage_from != null">#{storage_from},</if>
+            <if test="storage_to != null">#{storage_to},</if>
+            <if test="from_storage_id != null">#{from_storage_id},</if>
+            <if test="to_storage_id != null">#{to_storage_id},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="create_time != null">#{create_time},</if>
+            <if test="in_time != null">#{in_time},</if>
+            <if test="update_user != null">#{update_user},</if>
+            <if test="update_time != null">#{update_time},</if>
+         </trim>
+    </insert>
+    <insert id="insertStorageMoveRecord">
+        INSERT INTO `gym-acc`.`t_storage_move_record`(`company_id`, `tenant_id`, `number`, `status`, `product_id`, `batch_no`, `remark`, `create_user`, `create_time`, `update_user`, `update_time`)
+        VALUES ( #{company_id}, #{tenant_id}, #{number}, #{status}, #{product_id}, #{batch_no}, #{remark}, #{create_user}, #{create_time}, #{update_user}, #{update_time});
+    </insert>
+    <insert id="insertStorageMove">
+        INSERT INTO `gym-acc`.`t_storage_move`( `company_id`, `tenant_id`, `product_id`, `batch_no`, `product_num`, `move_type`, `out_id`, `in_id`, `remark`, `create_user`, `create_time`, `update_user`, `update_time`)
+        VALUES ( #{company_id}, #{tenant_id}, #{product_id}, #{batch_no}, #{product_num}, #{move_type}, #{out_id}, #{in_id}, #{remark}, #{create_user}, #{create_time}, #{update_user}, #{update_time});
+    </insert>
+    <insert id="insertStorageCode">
+        INSERT INTO `gym-acc`.`t_storage_code`( `company_id`, `p_code`, `code`, `move_type`, `move_id`, `create_user`, `create_time`)
+        VALUES ( #{company_id}, #{p_code}, #{code}, #{move_type}, #{move_id}, #{create_user}, #{create_time});
+    </insert>
+    <insert id="insertPcodeMove">
+        INSERT INTO `gym-acc`.`t_pcode_move`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
+        VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
+    </insert>
+    <insert id="insertCodeMove">
+        INSERT INTO `gym-acc`.`t_code_move`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
+        VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
+    </insert>
+
+    <update id="updateStorageIn" parameterType="StorageIn">
+        update t_storage_in
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="company_id != null">company_id = #{company_id},</if>
+            <if test="tenant_id != null">tenant_id = #{tenant_id},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="in_no != null">in_no = #{in_no},</if>
+            <if test="product_id != null">product_id = #{product_id},</if>
+            <if test="batch_no != null">batch_no = #{batch_no},</if>
+            <if test="in_num != null">in_num = #{in_num},</if>
+            <if test="act_in_num != null">act_in_num = #{act_in_num},</if>
+            <if test="storage_from != null">storage_from = #{storage_from},</if>
+            <if test="storage_to != null">storage_to = #{storage_to},</if>
+            <if test="from_storage_id != null">from_storage_id = #{from_storage_id},</if>
+            <if test="to_storage_id != null">to_storage_id = #{to_storage_id},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="create_time != null">create_time = #{create_time},</if>
+            <if test="in_time != null">in_time = #{in_time},</if>
+            <if test="update_user != null">update_user = #{update_user},</if>
+            <if test="update_time != null">update_time = #{update_time},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateProductStock">
+        UPDATE t_product_stock SET
+        <if test="in_num != null">in_num = #{in_num},</if>
+        <if test="out_num != null">out_num = #{out_num},</if>
+        <if test="back_num != null">back_num = #{back_num},</if>
+        <if test="sale_num != null">sale_num = #{sale_num},</if>
+        <if test="remain_num != null">remain_num = #{remain_num},</if>
+        update_time = #{update_time}
+        WHERE company_id = #{update_time} and  product_id = #{product_id};
+
+    </update>
+
+    <delete id="deleteStorageInById" parameterType="Long">
+        update t_storage_in set status=1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStorageInByIds" parameterType="String">
+        update t_storage_in set status=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
