@@ -1,12 +1,17 @@
 package com.ztl.gym.code.service.impl;
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeRecord;
+import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +41,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
     @Autowired
     private CodeRecordMapper codeRecordMapper;
+
+    @Autowired
+    private CodeMapper codeMapper;
 
     @Autowired
     private CommonService commonService;
@@ -122,17 +130,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int createCodeRecord(long companyId, long num, String remark) {
-        CodeRecord codeRecord = new CodeRecord();
-        codeRecord.setCompanyId(companyId);
-        codeRecord.setCount(num);
-        codeRecord.setType(AccConstants.GEN_CODE_TYPE_SINGLE);
-        codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
-        codeRecord.setCreateUser(1L);
-        codeRecord.setCreateTime(new Date());
-        codeRecord.setUpdateUser(2L);
-        codeRecord.setUpdateTime(new Date());
-//        codeRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId()); TODO LJ
-//        codeRecord.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             long codeRecordId = codeRecord.getId();
@@ -145,23 +143,96 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             codeRecordMapper.updateCodeIndex(params);
 
             //异步生码
-            String message = "code-" + codeRecordId + "-" + companyId + "-" + num;
+            String message = codeRecordId + "-" + companyId + "-" + num;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
     }
 
-    // redis生码监听
+    /**
+     * 生码-套标
+     *
+     * @param companyId 企业id
+     * @param num       每箱码数
+     * @param remark    备注详情
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @DataSource(DataSourceType.SHARDING)
+    public int createPCodeRecord(long companyId, long num, String remark) {
+        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX, num, remark);
+        int res = codeRecordMapper.insertCodeRecord(codeRecord);
+        if (res > 0) {
+            long codeRecordId = codeRecord.getId();
+            //更新生码记录流水号
+            long codeNo = commonService.selectCurrentVal(companyId);
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", codeRecord.getId());
+            params.put("indexStart", codeNo + 1);
+            params.put("indexEnd", codeNo + 1 + num);
+            codeRecordMapper.updateCodeIndex(params);
+
+            //箱码
+            Code code = new Code();
+            code.setCodeIndex(codeNo + 1);
+            code.setCompanyId(companyId);
+            code.setCodeType(AccConstants.CODE_TYPE_BOX);
+            //生码规则 企业id+日期+流水
+            String pCode = "P" + companyId + DateUtils.dateTimeNow() + code.getCodeIndex();
+            code.setCode(pCode);
+            codeMapper.insertCode(code);
+
+            //异步生码
+            String message = codeRecordId + "-" + companyId + "-" + num + "-" + pCode;
+            stringRedisTemplate.convertAndSend("code.gen", message);
+        }
+        return res;
+    }
+
+    /**
+     * redis生码监听
+     *
+     * @param codeGenMessage
+     */
     public void onPublishCode(String codeGenMessage) {
         System.out.println(codeGenMessage);
         log.info("onPublishCode {}", codeGenMessage);
         String[] codeGenMsgs = codeGenMessage.split("-");
         //生码记录id
-        long codeRecordId = Long.parseLong(codeGenMsgs[1]);
+        long codeRecordId = Long.parseLong(codeGenMsgs[0]);
         //企业id
-        long companyId = Long.parseLong(codeGenMsgs[2]);
+        long companyId = Long.parseLong(codeGenMsgs[1]);
         //生码总数
-        long codeTotalNum = Long.parseLong(codeGenMsgs[3]);
-        codeService.createCode(companyId, codeRecordId, codeTotalNum);
+        long codeTotalNum = Long.parseLong(codeGenMsgs[2]);
+
+        String pCode = null;
+        if (codeGenMsgs.length == 4) {
+            pCode = codeGenMsgs[3];
+        }
+        codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode);
+    }
+
+    /**
+     * 构建生码记录
+     *
+     * @param companyId
+     * @param type
+     * @param num
+     * @param remark
+     * @return
+     */
+    public static CodeRecord buildCodeRecord(long companyId, int type, long num, String remark) {
+        CodeRecord codeRecord = new CodeRecord();
+        codeRecord.setCompanyId(companyId);
+        codeRecord.setCount(num);
+        codeRecord.setType(type);
+        codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
+        codeRecord.setRemark(remark);
+//        codeRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId()); TODO
+//        codeRecord.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        codeRecord.setCreateTime(new Date());
+        codeRecord.setUpdateTime(new Date());
+        return codeRecord;
     }
 }

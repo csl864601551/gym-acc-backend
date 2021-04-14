@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @author ruoyi
  * @date 2021-04-14
  */
-//@Repository
+@Repository
 public interface CodeMapper
 {
     /**

@@ -2,6 +2,7 @@ package com.ztl.gym.code.mapper;
 
 
 import com.ztl.gym.code.domain.CodeRecord;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author ruoyi
  * @date 2021-04-13
  */
+@Repository
 public interface CodeRecordMapper {
     /**
      * 查询生码记录

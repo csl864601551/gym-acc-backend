@@ -66,8 +66,9 @@ public interface ICodeService {
      * @param companyId    企业id
      * @param codeRecordId 生码记录id
      * @param codeTotalNum 生码总数
+     * @param pCode        箱码
      * @return
      */
-    int createCode(long companyId, long codeRecordId, long codeTotalNum);
+    int createCode(long companyId, long codeRecordId, long codeTotalNum, String pCode);
 
 }
