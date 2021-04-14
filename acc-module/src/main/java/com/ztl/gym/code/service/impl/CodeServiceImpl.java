@@ -9,6 +9,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,20 +108,26 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public int createCode(long companyId, long codeRecordId, long codeTotalNum) {
+    public int createCode(long companyId, long codeRecordId, long codeTotalNum, String pCode) {
         int correct = 0;
         //企业自增数
         long codeVal = commonService.selectCurrentVal(companyId);
         long codeIndex = codeVal;
+        if (StringUtils.isNotBlank(pCode)) {
+            codeIndex += 1;
+        }
         for (int i = 1; i <= codeTotalNum; i++) {
             //流水号
             codeIndex += 1;
             Code code = new Code();
             code.setCodeIndex(codeIndex);
+            if (StringUtils.isNotBlank(pCode)) {
+                code.setpCode(pCode);
+            }
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
             //生码规则 企业id+日期+流水
-            String codeStr = companyId + DateUtils.dateTimeNow() + codeIndex;
+            String codeStr = "S" + companyId + DateUtils.dateTimeNow() + codeIndex;
             code.setCode(codeStr);
             int res = codeMapper.insertCode(code);
             if (res > 0) {

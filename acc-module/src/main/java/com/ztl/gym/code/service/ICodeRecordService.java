@@ -70,4 +70,14 @@ public interface ICodeRecordService {
      * @return
      */
     int createCodeRecord(long companyId, long num, String remark);
+
+    /**
+     * 生码-套标
+     *
+     * @param companyId 企业id
+     * @param num       每箱码数
+     * @param remark    备注详情
+     * @return
+     */
+    int createPCodeRecord(long companyId, long num, String remark);
 }

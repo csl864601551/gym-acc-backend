@@ -18,11 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class CodeRecordController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(CodeRecordController.class);
 
-//    @Autowired
+    //    @Autowired
 //    private ICodeService codeService;
     @Autowired
     private ICodeRecordService codeRecordService;
 
+    /**
+     * 普通生码
+     *
+     * @param num
+     * @param remark
+     * @return
+     */
     //    @PreAuthorize("@ss.hasPermi('code:gen:add')")
     @Log(title = "生码管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -30,5 +37,20 @@ public class CodeRecordController extends BaseController {
 //        return toAjax(codeService.createCode(SecurityUtils.getLoginUserDept().getDeptId(), (long) code.getParams().get("num"), (String) code.getParams().get("remark")));
         return toAjax(codeRecordService.createCodeRecord(100, num, remark));
     }
+
+    /**
+     * 套标生码
+     *
+     * @param num
+     * @param remark
+     * @return
+     */
+    //    @PreAuthorize("@ss.hasPermi('code:gen:add')")
+    @Log(title = "生码管理", businessType = BusinessType.INSERT)
+    @PostMapping("/addP")
+    public AjaxResult addP(long num, String remark) {
+        return toAjax(codeRecordService.createPCodeRecord(100, num, remark));
+    }
+
 
 }
