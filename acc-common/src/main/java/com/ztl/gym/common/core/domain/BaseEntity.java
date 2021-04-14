@@ -34,10 +34,10 @@ public class BaseEntity implements Serializable
     private Date updateTime;
 
     /** 创建人 */
-    private Long create_user;
+    private Long createUser;
 
     /** 修改人 */
-    private Long update_user;
+    private Long updateUser;
 
     /** 备注 */
     private String remark;
@@ -95,20 +95,20 @@ public class BaseEntity implements Serializable
         this.updateTime = updateTime;
     }
 
-    public Long getCreate_user() {
-        return create_user;
+    public Long getCreateUser() {
+        return createUser;
     }
 
-    public void setCreate_user(Long create_user) {
-        this.create_user = create_user;
+    public void setCreateUser(Long createUser) {
+        this.createUser = createUser;
     }
 
-    public Long getUpdate_user() {
-        return update_user;
+    public Long getUpdateUser() {
+        return updateUser;
     }
 
-    public void setUpdate_user(Long update_user) {
-        this.update_user = update_user;
+    public void setUpdateUser(Long updateUser) {
+        this.updateUser = updateUser;
     }
 
     public String getRemark()

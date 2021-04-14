@@ -39,10 +39,20 @@ public class ShardingDataSourceConfig {
         TableRuleConfiguration codeTableRuleConfig = new TableRuleConfiguration("t_code", "master.t_code_$->{0..1000}");
         codeTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeShardingAlgorithm()));
 
+        //code 表规则配置
+        TableRuleConfiguration codeMoveTableRuleConfig = new TableRuleConfiguration("t_code_move", "master.t_code_move_$->{0..1000}");
+        codeTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeShardingAlgorithm()));
+
+        //code 表规则配置
+        TableRuleConfiguration storageCodeTableRuleConfig = new TableRuleConfiguration("t_storage_code", "master.t_storage_code_$->{0..1000}");
+        codeTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeShardingAlgorithm()));
+
         // 配置分片规则
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
         shardingRuleConfig.getTableRuleConfigs().add(orderTableRuleConfig);
         shardingRuleConfig.getTableRuleConfigs().add(codeTableRuleConfig);
+        shardingRuleConfig.getTableRuleConfigs().add(codeMoveTableRuleConfig);
+        shardingRuleConfig.getTableRuleConfigs().add(storageCodeTableRuleConfig);
         // 获取数据源对象
         DataSource dataSource = ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfig, getProperties());
         return dataSource;

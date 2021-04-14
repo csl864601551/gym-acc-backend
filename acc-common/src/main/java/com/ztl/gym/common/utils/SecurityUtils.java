@@ -63,7 +63,7 @@ public class SecurityUtils {
                     return Long.parseLong(ancestors[2]);
                 }
             } else {
-                throw new CustomException("平台是最顶级部门", HttpStatus.UNAUTHORIZED);
+                throw new CustomException("平台是最顶级部门，不属于企业", HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
             throw new CustomException("获取用户除平台外顶级部门信息异常", HttpStatus.UNAUTHORIZED);

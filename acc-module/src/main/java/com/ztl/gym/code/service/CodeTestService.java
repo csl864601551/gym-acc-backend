@@ -4,7 +4,7 @@ import com.ztl.gym.code.domain.Code;
 
 import java.util.List;
 
-public interface CodeService {
+public interface CodeTestService {
     /**
      * 查询码
      *
@@ -12,6 +12,7 @@ public interface CodeService {
      * @return 订单信息
      */
     public Code selectCodeById(long deptId, Long index);
+
     public Code selectCode(long deptId, String code);
 
     /**
@@ -29,4 +30,12 @@ public interface CodeService {
      * @return 结果
      */
     public int insertCode(Code code);
+
+    /**
+     * 查看该企业是否存在t_code表
+     *
+     * @return
+     */
+    boolean checkCompanyTableExist(long companyId, String companyPrefix);
+
 }

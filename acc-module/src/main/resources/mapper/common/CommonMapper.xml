@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.common.mapper.CommonMapper">
+
+    <select id="selectCurrentVal" parameterType="Map" resultType="long">
+        SELECT CURRVAL(#{companyId})
+    </select>
+
+    <select id="selectNextVal" parameterType="Map" resultType="long">
+        SELECT NEXTVAL(#{companyId})
+    </select>
+
+    <select id="selectIsExist" parameterType="Map" resultType="int">
+        SELECT count(*) from t_code_sequence where company_id = #{companyId }
+    </select>
+
+    <insert id="insertCompany" parameterType="Map">
+        INSERT INTO t_code_sequence(company_id, current_value, increment) VALUES (#{companyId}, 1, 1);
+    </insert>
+
+    <update id="updateVal" parameterType="Map">
+        UPDATE t_code_sequence SET current_value = #{val} WHERE company_id = #{companyId}
+    </update>
+</mapper>

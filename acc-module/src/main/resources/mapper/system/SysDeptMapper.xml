@@ -83,6 +83,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
     <insert id="insertDept" parameterType="SysDept">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="deptId">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
  		insert into sys_dept(
  			<if test="deptId != null and deptId != 0">dept_id,</if>
  			<if test="parentId != null and parentId != 0">parent_id,</if>

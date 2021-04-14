@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.CodeTestMapper">
+
+    <resultMap type="Code" id="CodeResult">
+        <result property="codeIndex"    column="code_index"    />
+        <result property="companyId"     column="company_id"     />
+        <result property="status"     column="status"      />
+        <result property="codeType"    column="code_type"    />
+        <result property="code"    column="code"    />
+        <result property="pCode"    column="p_code"    />
+        <result property="codeAcc"    column="code_acc"    />
+        <result property="codeAttrId"    column="code_attr_id"    />
+    </resultMap>
+
+    <sql id="selectCodeVo">
+        select code_index, company_id, status, code_type, code, p_code, code_acc, code_attr_id from t_code
+    </sql>
+
+    <select id="selectCode" parameterType="Map" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where code = #{code}  and company_id = #{companyId}
+    </select>
+
+    <select id="selectCodeById" parameterType="Map" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where code_index = #{index} and company_id = #{companyId}
+    </select>
+
+    <select id="selectCodeListByCompanyId" parameterType="Long" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where company_id = #{value}
+    </select>
+
+    <insert id="insertCode" parameterType="Code">
+        insert into t_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code_index != null">codeIndex,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="status != null">status,</if>
+            <if test="codeType != null">code_type,</if>
+            <if test="code != null">code,</if>
+            <if test="pCode != null">p_code,</if>
+            <if test="codeAcc != null">code_acc,</if>
+            <if test="codeAttrId != null">code_attr_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code_index != null">#{codeIndex},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="codeType != null">#{codeType},</if>
+            <if test="code != null">#{code},</if>
+            <if test="pCode != null">#{pCode},</if>
+            <if test="codeAcc != null">#{codeAcc},</if>
+            <if test="codeAttrId != null">#{codeAttrId},</if>
+         </trim>
+    </insert>
+
+
+    <select id="checkTableByCompany" parameterType="String" resultType="int">
+        select COUNT(*) from INFORMATION_SCHEMA.TABLES where table_name = #{value}
+    </select>
+</mapper>

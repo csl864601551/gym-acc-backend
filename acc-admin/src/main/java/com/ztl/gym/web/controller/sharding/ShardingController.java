@@ -2,7 +2,7 @@ package com.ztl.gym.web.controller.sharding;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.service.CodeService;
+import com.ztl.gym.code.service.CodeTestService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -32,7 +32,7 @@ public class ShardingController extends BaseController {
     @Autowired
     private ISysOrderService sysOrderService;
     @Autowired
-    private CodeService codeService;
+    private CodeTestService codeService;
 
     @GetMapping("/add/{userId}")
     public AjaxResult add(@PathVariable("userId") Long userId) {

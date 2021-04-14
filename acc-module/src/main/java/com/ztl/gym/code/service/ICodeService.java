@@ -1,18 +1,17 @@
-package com.ztl.gym.code.mapper;
+package com.ztl.gym.code.service;
+
+
+import com.ztl.gym.code.domain.Code;
 
 import java.util.List;
-import com.ztl.gym.code.domain.Code;
-import org.springframework.stereotype.Repository;
 
 /**
- * 码 Mapper接口
+ * 码 Service接口
  *
  * @author ruoyi
- * @date 2021-04-14
+ * @date 2021-04-13
  */
-//@Repository
-public interface CodeMapper
-{
+public interface ICodeService {
     /**
      * 查询码
      *
@@ -46,7 +45,15 @@ public interface CodeMapper
     public int updateCode(Code code);
 
     /**
-     * 删除码
+     * 批量删除码
+     *
+     * @param codeIndexs 需要删除的码 ID
+     * @return 结果
+     */
+    public int deleteCodeByIds(Long[] codeIndexs);
+
+    /**
+     * 删除码 信息
      *
      * @param codeIndex 码 ID
      * @return 结果
@@ -54,10 +61,13 @@ public interface CodeMapper
     public int deleteCodeById(Long codeIndex);
 
     /**
-     * 批量删除码
+     * 生码-普通单码
      *
-     * @param codeIndexs 需要删除的数据ID
-     * @return 结果
+     * @param companyId    企业id
+     * @param codeRecordId 生码记录id
+     * @param codeTotalNum 生码总数
+     * @return
      */
-    public int deleteCodeByIds(Long[] codeIndexs);
+    int createCode(long companyId, long codeRecordId, long codeTotalNum);
+
 }

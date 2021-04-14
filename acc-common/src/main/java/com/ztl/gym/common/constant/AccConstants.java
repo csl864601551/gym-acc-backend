@@ -45,11 +45,30 @@ public class AccConstants {
     /**
      * 单码
      */
-    public final static int CODE_TYPE_SINGLE = 1;
+    public final static String CODE_TYPE_SINGLE = "single";
     /**
      * 箱码
      */
-    public final static int CODE_TYPE_BOX = 2;
+    public final static String CODE_TYPE_BOX = "box";
+
+    /*---------------------------- 生码记录常量 ----------------------------*/
+    /**
+     * 生码记录状态-生码中
+     */
+    public final static int CODE_RECORD_STATUS_WAIT = 0;
+    /**
+     * 生码记录状态-生码完成
+     */
+    public final static int CODE_RECORD_STATUS_FINISH = 1;
+
+    /**
+     * 生码类型-普通生码
+     */
+    public final static int GEN_CODE_TYPE_SINGLE = 1;
+    /**
+     * 生码类型-套标生码
+     */
+    public final static int GEN_CODE_TYPE_BOX = 2;
 
     /*---------------------------- 仓库 ----------------------------*/
     /**
