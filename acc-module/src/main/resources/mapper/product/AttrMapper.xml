@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.product.mapper.AttrMapper">
+    
+    <resultMap type="Attr" id="AttrResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="attrNo"    column="attr_no"    />
+        <result property="status"    column="status"    />
+        <result property="attrNameCn"    column="attr_name_cn"    />
+        <result property="attrNameEn"    column="attr_name_en"    />
+        <result property="attrValue"    column="attr_value"    />
+        <result property="inputType"    column="input_type"    />
+        <result property="sort"    column="sort"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="choose_name"    column="choose_name"    />
+        <result property="input_name"    column="input_name"    />
+
+    </resultMap>
+
+    <sql id="selectAttrVo">
+        select id, company_id, attr_no, status, attr_name_cn, attr_name_en, attr_value, input_type, sort, create_user, create_time, update_user, update_time
+        ,case input_type when 1 then '不可选' else '单选属性' end as choose_name
+        ,case input_type when 1 then '文本输入' else '从列表中选择' end as input_name
+        from t_attr
+    </sql>
+
+    <select id="selectAttrList" parameterType="Attr" resultMap="AttrResult">
+        <include refid="selectAttrVo"/>
+        <where>
+            status=0
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test='attrNo != null and attrNo != ""'>
+                <bind name="attrNoLike" value="'%'+attrNo+'%'"/>
+                and attr_no like #{attrNoLike}
+            </if>
+            <if test='attrNameCn != null and attrNameCn != ""'>
+                <bind name="attrNameCnLike" value="'%'+attrNameCn+'%'"/>
+                and attr_name_cn like #{attrNameCnLike}
+            </if>
+
+            <if test="attrNameEn != null  and attrNameEn != ''"> and attr_name_en = #{attrNameEn}</if>
+            <if test="attrValue != null  and attrValue != ''"> and attr_value = #{attrValue}</if>
+            <if test="inputType != null "> and input_type = #{inputType}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+        order by sort
+    </select>
+    
+    <select id="selectAttrById" parameterType="Long" resultMap="AttrResult">
+        <include refid="selectAttrVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAttr" parameterType="Attr" useGeneratedKeys="true" keyProperty="id">
+        insert into t_attr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="attrNo != null">attr_no,</if>
+            <if test="status != null">status,</if>
+            <if test="attrNameCn != null">attr_name_cn,</if>
+            <if test="attrNameEn != null">attr_name_en,</if>
+            <if test="attrValue != null">attr_value,</if>
+            <if test="inputType != null">input_type,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="attrNo != null">#{attrNo},</if>
+            <if test="status != null">#{status},</if>
+            <if test="attrNameCn != null">#{attrNameCn},</if>
+            <if test="attrNameEn != null">#{attrNameEn},</if>
+            <if test="attrValue != null">#{attrValue},</if>
+            <if test="inputType != null">#{inputType},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttr" parameterType="Attr">
+        update t_attr
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="attrNo != null">attr_no = #{attrNo},</if>
+            <if test="attrNameCn != null">attr_name_cn = #{attrNameCn},</if>
+            <if test="attrNameEn != null">attr_name_en = #{attrNameEn},</if>
+            <if test="attrValue != null">attr_value = #{attrValue},</if>
+            <if test="inputType != null">input_type = #{inputType},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttrById" parameterType="Long">
+        update t_attr set status=1 where id = #{id}
+    </delete>
+
+    <delete id="deleteAttrByIds" parameterType="String">
+        update t_attr set status=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
