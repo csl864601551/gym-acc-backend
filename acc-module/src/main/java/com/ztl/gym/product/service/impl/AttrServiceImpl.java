@@ -46,6 +46,10 @@ public class AttrServiceImpl implements IAttrService
     @Override
     public List<Attr> selectAttrList(Attr attr)
     {
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(company_id!=100){
+            attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         return attrMapper.selectAttrList(attr);
     }
 
@@ -58,7 +62,10 @@ public class AttrServiceImpl implements IAttrService
     @Override
     public int insertAttr(Attr attr)
     {
-        attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(company_id!=100){
+            attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         attr.setCreateTime(DateUtils.getNowDate());
         attr.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return attrMapper.insertAttr(attr);
