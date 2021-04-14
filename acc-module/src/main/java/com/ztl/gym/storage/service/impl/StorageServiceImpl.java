@@ -51,7 +51,8 @@ public class StorageServiceImpl implements IStorageService
         LoginUser user = SecurityUtils.getLoginUser();
         SysDept dept = user.getUser().getDept();
         Long deptId = dept.getDeptId();
-        if (deptId != 100L ) {
+        //判断是否为平台
+        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
             String ancestors = dept.getAncestors();
             int count = (ancestors.length()-ancestors.replace(",","").length())/",".length();
             if (count == 1) {
@@ -84,6 +85,9 @@ public class StorageServiceImpl implements IStorageService
     @Override
     public int insertStorage(Storage storage)
     {
+        if (null == storage.getStorageNo()) {
+            throw new BaseException("仓库编号不能为空！");
+        }
         Storage queryStorage = new Storage();
         queryStorage.setStorageNo(storage.getStorageNo());
         queryStorage.setStatus(AccConstants.STORAGE_DELETE_NO);
@@ -92,16 +96,22 @@ public class StorageServiceImpl implements IStorageService
             throw new BaseException("仓库编号已重复，请重新命名");
         }
 
-        storage.setCreateTime(DateUtils.getNowDate());
-        Long companyId = SecurityUtils.getLoginUserTopCompanyId();
-        storage.setCompanyId(companyId);
-        Long tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!tenantId.equals(companyId)) {
-            storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
-            storage.setTenantId(tenantId);
-        } else {
-            storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
+        LoginUser user = SecurityUtils.getLoginUser();
+        SysDept dept = user.getUser().getDept();
+        Long deptId = dept.getDeptId();
+        //判断是否为平台
+        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            Long companyId = SecurityUtils.getLoginUserTopCompanyId();
+            storage.setCompanyId(companyId);
+            Long tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (!tenantId.equals(companyId)) {
+                storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
+                storage.setTenantId(tenantId);
+            } else {
+                storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
+            }
         }
+        storage.setCreateTime(DateUtils.getNowDate());
         storage.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return storageMapper.insertStorage(storage);
     }

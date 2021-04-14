@@ -68,4 +68,10 @@ public class AccConstants {
      * 仓库状态-已删除
      */
     public final static Long STORAGE_DELETE_YSE = 1L;
+
+    /*---------------------------- 平台ID ----------------------------*/
+    /**
+     * 平台ID
+     */
+    public final static Long ADMIN_DEPT_ID = 100L;
 }
