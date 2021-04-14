@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.ztl.gym.common.annotation.Curcompany;
-import com.ztl.gym.common.annotation.DataScope;
+//import com.ztl.gym.common.annotation.Curcompany;
+//import com.ztl.gym.common.annotation.DataScope;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;

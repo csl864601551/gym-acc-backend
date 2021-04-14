@@ -51,4 +51,21 @@ public class AccConstants {
      */
     public final static int CODE_TYPE_BOX = 2;
 
+    /*---------------------------- 仓库 ----------------------------*/
+    /**
+     * 仓库级别-企业
+     */
+    public final static Long STORAGE_LEVEL_COMPANY = 10L;
+    /**
+     * 仓库级别-经销商
+     */
+    public final static Long STORAGE_LEVEL_TENANT = 20L;
+    /**
+     * 仓库状态-正常
+     */
+    public final static Long STORAGE_DELETE_NO = 0L;
+    /**
+     * 仓库状态-已删除
+     */
+    public final static Long STORAGE_DELETE_YSE = 1L;
 }

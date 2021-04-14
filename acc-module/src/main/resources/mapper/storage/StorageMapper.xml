@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.storage.mapper.StorageMapper">
+    
+    <resultMap type="Storage" id="StorageResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="level"    column="level"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="storageNo"    column="storage_no"    />
+        <result property="status"    column="status"    />
+        <result property="storageName"    column="storage_name"    />
+        <result property="director"    column="director"    />
+        <result property="address"    column="address"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectStorageVo">
+        select id, company_id, level, tenant_id, storage_no, status, storage_name, director, address, remark, create_user, create_time, update_user, update_time from t_storage
+    </sql>
+
+    <sql id="selectStorageJoinVo">
+        select
+        t1.id,
+        t1.company_id,
+        t1.level,
+        t1.tenant_id,
+        t1.storage_no,
+        t1.status,
+        t1.storage_name,
+        t1.director,
+        t1.address,
+        t1.remark,
+        t1.create_user,
+        t1.create_time,
+        t1.update_user,
+        t1.update_time
+    </sql>
+
+    <select id="selectStorageList" parameterType="Storage" resultMap="StorageResult">
+        <include refid="selectStorageJoinVo"/>,
+        cu.nick_name as createUserName,
+        uu.nick_name as updateUserName
+        from t_storage t1
+        left join sys_user cu on cu.user_id = t1.create_user
+        left join sys_user uu on uu.user_id = t1.update_user
+        <where>
+            <if test="companyId != null "> and t1.company_id = #{companyId}</if>
+            <if test="level != null "> and t1.level = #{level}</if>
+            <if test="tenantId != null "> and t1.tenant_id = #{tenantId}</if>
+            <if test="storageNo != null  and storageNo != ''"> and t1.storage_no like concat('%', #{storageNo}, '%')</if>
+            <if test="status != null "> and t1.status = #{status}</if>
+            <if test="storageName != null  and storageName != ''"> and t1.storage_name like concat('%', #{storageName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectStorageById" parameterType="Long" resultMap="StorageResult">
+        <include refid="selectStorageVo"/>
+        where id = #{id} and status = 0
+    </select>
+        
+    <insert id="insertStorage" parameterType="Storage" useGeneratedKeys="true" keyProperty="id">
+        insert into t_storage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="level != null">level,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="storageNo != null">storage_no,</if>
+            <if test="status != null">status,</if>
+            <if test="storageName != null">storage_name,</if>
+            <if test="director != null">director,</if>
+            <if test="address != null">address,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="level != null">#{level},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="storageNo != null">#{storageNo},</if>
+            <if test="status != null">#{status},</if>
+            <if test="storageName != null">#{storageName},</if>
+            <if test="director != null">#{director},</if>
+            <if test="address != null">#{address},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStorage" parameterType="Storage">
+        update t_storage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="storageNo != null">storage_no = #{storageNo},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="storageName != null">storage_name = #{storageName},</if>
+            <if test="director != null">director = #{director},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStorageById" parameterType="Long">
+        update t_storage set status = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStorageByIds" parameterType="String">
+        update t_storage set status = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="countStorage" parameterType="Storage" resultType="Integer">
+        select count(1) from t_storage
+        <where>
+            <if test="id != null "> and id != #{id}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="level != null "> and level = #{level}</if>
+            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
+            <if test="storageNo != null  and storageNo != ''"> and storage_no = #{storageNo}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="storageName != null  and storageName != ''"> and storage_name like concat('%', #{storageName}, '%')</if>
+            <if test="director != null  and director != ''"> and director = #{director}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+</mapper>
