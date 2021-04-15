@@ -19,36 +19,46 @@ public class CodeRecord extends BaseEntity
     private Long id;
 
     /** 企业ID */
-    @Excel(name = "企业ID")
+    @Excel(name = "企业ID", sort = 1)
     private Long companyId;
 
     /** 状态 */
-    @Excel(name = "状态")
     private Integer status;
 
     /** 生码类型 */
-    @Excel(name = "生码类型")
     private Integer type;
 
     /** 码数量 */
-    @Excel(name = "码数量")
+    @Excel(name = "码数量", sort = 6)
     private Long count;
 
     /** 起始流水号 */
-    @Excel(name = "起始流水号")
+    @Excel(name = "起始流水号", sort = 2)
     private Long indexStart;
 
     /** 终止流水号 */
-    @Excel(name = "终止流水号")
+    @Excel(name = "终止流水号", sort = 3)
     private Long indexEnd;
 
     /** 关联产品id */
-    @Excel(name = "关联产品id")
     private Long productId;
 
     /** 关联批次id */
-    @Excel(name = "关联批次id")
     private Long batchId;
+
+    /** 创建人名称 */
+    @Excel(name = "创建人名称", sort = 9)
+    private String creatorName;
+
+    /*---------------------- 冗余字段 ----------------------*/
+    @Excel(name = "状态", sort = 4)
+    private String statusName;
+    @Excel(name = "生码类型", sort = 5)
+    private String typeName;
+    @Excel(name = "关联产品", sort = 7)
+    private String productName;
+    @Excel(name = "关联批次", sort = 8)
+    private String batchNo;
 
     public void setId(Long id)
     {
@@ -130,6 +140,46 @@ public class CodeRecord extends BaseEntity
     public Long getBatchId()
     {
         return batchId;
+    }
+
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
     @Override

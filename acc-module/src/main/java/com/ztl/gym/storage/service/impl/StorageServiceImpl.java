@@ -1,19 +1,18 @@
 package com.ztl.gym.storage.service.impl;
 
-import java.util.List;
-import java.util.Queue;
-
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.Storage;
+import com.ztl.gym.storage.mapper.StorageMapper;
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.storage.mapper.StorageMapper;
-import com.ztl.gym.storage.domain.Storage;
-import com.ztl.gym.storage.service.IStorageService;
+
+import java.util.List;
 
 /**
  * 仓库Service业务层处理
@@ -60,6 +59,11 @@ public class StorageServiceImpl implements IStorageService
             } else {
                 storage.setTenantId(deptId);
             }
+
+            //FIXME
+//            Map<String, Object> params = new HashMap<>();
+//            params.put("deptId", SecurityUtils.getLoginUserTopCompanyId());
+//            storage.setParams(params);
         }
         storage.setStatus(AccConstants.STORAGE_DELETE_NO);
         return storageMapper.selectStorageList(storage);
