@@ -56,21 +56,21 @@
         <include refid="selectProductBatchExtarVo"/>
         <where>
             pb.status=0
-            <if test="company_id != null ">and pb.company_id = #{company_id}</if>
-            <if test='batch_no != null and batch_no != ""'>
-                <bind name="batch_noLike" value="'%'+batch_no+'%'"/>
+            <if test="companyId != null ">and pb.company_id = #{companyId}</if>
+            <if test='batchNo != null and batchNo != ""'>
+                <bind name="batch_noLike" value="'%'+batchNo+'%'"/>
                 and pb.batch_no like #{batch_noLike}
             </if>
-            <if test='batch_title != null and batch_title != ""'>
-                <bind name="batch_titleLike" value="'%'+batch_title+'%'"/>
+            <if test='batchTitle != null and batchTitle != ""'>
+                <bind name="batch_titleLike" value="'%'+batchTitle+'%'"/>
                 and pb.batch_title like #{batch_titleLike}
             </if>
 
-            <if test='product_no != null and product_no != ""'>
-                <bind name="product_noLike" value="'%'+product_no+'%'"/>
+            <if test='productNo != null and productNo != ""'>
+                <bind name="product_noLike" value="'%'+productNo+'%'"/>
                 and p.product_no like #{product_noLike}
             </if>
-            <if test="storage_id != null ">and p.storage_id = #{storage_id}</if>
+            <if test="storageId != null ">and p.storage_id = #{storageId}</if>
         </where>
     </select>
 
@@ -82,27 +82,27 @@
     <insert id="insertProductBatch" parameterType="ProductBatch">
         insert into t_product_batch
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="company_id != null">company_id,</if>
-            <if test="batch_no != null">batch_no,</if>
-            <if test="batch_title != null">batch_title,</if>
-            <if test="batch_date != null">batch_date,</if>
-            <if test="product_id != null">product_id,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="batchTitle != null">batch_title,</if>
+            <if test="batchDate != null">batch_date,</if>
+            <if test="productId != null">product_id,</if>
             <if test="remark != null">remark,</if>
-            <if test="create_user != null">create_user,</if>
+            <if test="createUser != null">create_user,</if>
             <if test="createTime != null">create_time,</if>
-            <if test="update_user != null">update_user,</if>
+            <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="company_id != null">#{company_id},</if>
-            <if test="batch_no != null">#{batch_no},</if>
-            <if test="batch_title != null">#{batch_title},</if>
-            <if test="batch_date != null">#{batch_date},</if>
-            <if test="product_id != null">#{product_id},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="batchTitle != null">#{batchTitle},</if>
+            <if test="batchDate != null">#{batchDate},</if>
+            <if test="productId != null">#{productId},</if>
             <if test="remark != null">#{remark},</if>
-            <if test="create_user != null">#{create_user},</if>
+            <if test="createUser != null">#{createUser},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="update_user != null">#{update_user},</if>
+            <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
@@ -110,16 +110,16 @@
     <update id="updateProductBatch" parameterType="ProductBatch">
         update t_product_batch
         <trim prefix="SET" suffixOverrides=",">
-            <if test="company_id != null">company_id = #{company_id},</if>
-            <if test="batch_no != null">batch_no = #{batch_no},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="batchNo != null">batch_no = #{batchNo},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="batch_title != null">batch_title = #{batch_title},</if>
-            <if test="batch_date != null">batch_date = #{batch_date},</if>
-            <if test="product_id != null">product_id = #{product_id},</if>
+            <if test="batchTitle != null">batch_title = #{batchTitle},</if>
+            <if test="batchDate != null">batch_date = #{batchDate},</if>
+            <if test="productId != null">product_id = #{productId},</if>
             <if test="remark != null">remark = #{remark},</if>
-            <if test="create_user != null">create_user = #{create_user},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="update_user != null">update_user = #{update_user},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}
