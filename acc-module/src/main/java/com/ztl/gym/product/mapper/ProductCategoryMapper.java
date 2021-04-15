@@ -1,6 +1,7 @@
 package com.ztl.gym.product.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ztl.gym.product.domain.ProductCategory;
 
@@ -18,7 +19,7 @@ public interface ProductCategoryMapper
      * @param id 产品分类ID
      * @return 产品分类
      */
-    public ProductCategory selectTProductCategoryById(Long id);
+    public ProductCategory selectProductCategoryById(Long id);
 
     /**
      * 查询产品分类列表
@@ -26,7 +27,7 @@ public interface ProductCategoryMapper
      * @param productCategory 产品分类
      * @return 产品分类集合
      */
-    public List<ProductCategory> selectTProductCategoryList(ProductCategory productCategory);
+    public List<ProductCategory> selectProductCategoryList(ProductCategory productCategory);
 
     /**
      * 新增产品分类
@@ -34,7 +35,7 @@ public interface ProductCategoryMapper
      * @param productCategory 产品分类
      * @return 结果
      */
-    public int insertTProductCategory(ProductCategory productCategory);
+    public int insertProductCategory(ProductCategory productCategory);
 
     /**
      * 修改产品分类
@@ -42,7 +43,7 @@ public interface ProductCategoryMapper
      * @param productCategory 产品分类
      * @return 结果
      */
-    public int updateTProductCategory(ProductCategory productCategory);
+    public int updateProductCategory(ProductCategory productCategory);
 
     /**
      * 删除产品分类
@@ -50,7 +51,7 @@ public interface ProductCategoryMapper
      * @param id 产品分类ID
      * @return 结果
      */
-    public int deleteTProductCategoryById(Long id);
+    public int deleteProductCategoryById(Long id);
 
     /**
      * 批量删除产品分类
@@ -58,5 +59,7 @@ public interface ProductCategoryMapper
      * @param ids 需要删除的数据ID
      * @return 结果
      */
-    public int deleteTProductCategoryByIds(Long[] ids);
+    public int deleteProductCategoryByIds(Long[] ids);
+
+    List<Map<String, Object>> getCategoryDic(Long id);
 }
