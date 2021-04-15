@@ -108,7 +108,7 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public int createCode(long companyId, long codeRecordId, long codeTotalNum, String pCode) {
+    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, String pCode, Long codeAttrId) {
         int correct = 0;
         //企业自增数
         long codeVal = commonService.selectCurrentVal(companyId);
@@ -129,6 +129,9 @@ public class CodeServiceImpl implements ICodeService {
             //生码规则 企业id+日期+流水
             String codeStr = "S" + companyId + DateUtils.dateTimeNow() + codeIndex;
             code.setCode(codeStr);
+            if (codeAttrId != null && codeAttrId > 0) {
+                code.setCodeAttrId(codeAttrId);
+            }
             int res = codeMapper.insertCode(code);
             if (res > 0) {
                 correct++;

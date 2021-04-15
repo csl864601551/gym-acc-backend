@@ -1,9 +1,11 @@
 package com.ztl.gym.code.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
+import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -38,6 +40,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
     @Autowired
     private ICodeService codeService;
+
+    @Autowired
+    private ICodeAttrService codeAttrService;
 
     @Autowired
     private CodeRecordMapper codeRecordMapper;
@@ -142,13 +147,16 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             params.put("indexEnd", codeNo + num);
             codeRecordMapper.updateCodeIndex(params);
 
+            //生码属性
+            long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
 
             //异步生码
-            String message = codeRecordId + "-" + companyId + "-" + num;
+            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
     }
+
 
     /**
      * 生码-套标
@@ -174,6 +182,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             params.put("indexEnd", codeNo + 1 + num);
             codeRecordMapper.updateCodeIndex(params);
 
+            //生码属性
+            long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
+
             //箱码
             Code code = new Code();
             code.setCodeIndex(codeNo + 1);
@@ -182,10 +193,11 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             //生码规则 企业id+日期+流水
             String pCode = "P" + companyId + DateUtils.dateTimeNow() + code.getCodeIndex();
             code.setCode(pCode);
+            code.setCodeAttrId(codeAttrId);
             codeMapper.insertCode(code);
 
             //异步生码
-            String message = codeRecordId + "-" + companyId + "-" + num + "-" + pCode;
+            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + pCode;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
@@ -200,18 +212,20 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         System.out.println(codeGenMessage);
         log.info("onPublishCode {}", codeGenMessage);
         String[] codeGenMsgs = codeGenMessage.split("-");
+        //生码属性id
+        long codeAttrId = Long.parseLong(codeGenMsgs[0]);
         //生码记录id
-        long codeRecordId = Long.parseLong(codeGenMsgs[0]);
+        long codeRecordId = Long.parseLong(codeGenMsgs[1]);
         //企业id
-        long companyId = Long.parseLong(codeGenMsgs[1]);
+        long companyId = Long.parseLong(codeGenMsgs[2]);
         //生码总数
-        long codeTotalNum = Long.parseLong(codeGenMsgs[2]);
+        long codeTotalNum = Long.parseLong(codeGenMsgs[3]);
         //箱码
         String pCode = null;
-        if (codeGenMsgs.length == 4) {
-            pCode = codeGenMsgs[3];
+        if (codeGenMsgs.length == 5) {
+            pCode = codeGenMsgs[4];
         }
-        codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode);
+        codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
     }
 
     /**
@@ -235,5 +249,25 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         codeRecord.setCreateTime(new Date());
         codeRecord.setUpdateTime(new Date());
         return codeRecord;
+    }
+
+    /**
+     * 保存生码属性
+     *
+     * @param companyId
+     * @param codeRecordId
+     * @param codeNo
+     * @param num
+     */
+    private long saveCodeAttr(long companyId, long codeRecordId, long codeNo, long num) {
+        CodeAttr codeAttr = new CodeAttr();
+        codeAttr.setCompanyId(companyId);
+        codeAttr.setReocedId(codeRecordId);
+        codeAttr.setIndexStart(codeNo + 1);
+        codeAttr.setIndexEnd(codeNo + num);
+        codeAttr.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        codeAttr.setCreateTime(new Date());
+        codeAttrService.insertCodeAttr(codeAttr);
+        return codeAttr.getId();
     }
 }
