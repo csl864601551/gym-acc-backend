@@ -45,6 +45,10 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
     @Override
     public List<ProductCategory> selectProductCategoryList(ProductCategory productCategory)
     {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            productCategory.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         return productCategoryMapper.selectProductCategoryList(productCategory);
     }
 
@@ -105,6 +109,11 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
 
     @Override
     public List<Map<String, Object>> getCategoryDic(Long id) {
-        return productCategoryMapper.getCategoryDic(id);
+        Long temp= SecurityUtils.getLoginUserCompany().getDeptId();
+        Long companyId=null;
+        if(!temp.equals(AccConstants.ADMIN_DEPT_ID)){
+            companyId=SecurityUtils.getLoginUserTopCompanyId();
+        }
+        return productCategoryMapper.getCategoryDic(id,companyId);
     }
 }

@@ -66,6 +66,10 @@ public class ProductCategory extends BaseEntity
     @Excel(name = "更新人")
     private Long updateUser;
 
+
+    /** 状态 */
+    private Long status;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -182,6 +186,14 @@ public class ProductCategory extends BaseEntity
     public Long getUpdateUser()
     {
         return updateUser;
+    }
+
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
+        this.status = status;
     }
 
     @Override

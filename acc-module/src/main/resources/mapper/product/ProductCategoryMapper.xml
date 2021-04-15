@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectProductCategoryList" parameterType="ProductCategory" resultMap="ProductCategoryResult">
         <include refid="selectProductCategoryVo"/>
-        <where>  
+        <where>  status=0
             <if test="companyId != null "> and company_id = #{companyId}</if>
             <if test="categoryNo != null  and categoryNo != ''"> and category_no = #{categoryNo}</if>
             <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
@@ -48,8 +48,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectProductCategoryVo"/>
         where id = #{id}
     </select>
-    <select id="getCategoryDic" resultType="java.util.Map">
+    <select id="getCategoryDic" resultType="java.util.Map" parameterType="Long" >
         select id as value,category_name as label from t_product_category where p_id=#{p_id}
+        <if test="companyId != null "> and company_id = #{companyId}</if>
     </select>
 
     <insert id="insertProductCategory" parameterType="ProductCategory" useGeneratedKeys="true" keyProperty="id">
@@ -110,11 +111,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteProductCategoryById" parameterType="Long">
-        delete from t_product_category where id = #{id}
+        update t_product_category set status=1 where id = #{id}
     </delete>
 
     <delete id="deleteProductCategoryByIds" parameterType="String">
-        delete from t_product_category where id in 
+        update t_product_category set status=1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

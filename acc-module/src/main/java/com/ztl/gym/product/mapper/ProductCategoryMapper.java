@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.product.domain.ProductCategory;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 产品分类Mapper接口
@@ -61,5 +62,5 @@ public interface ProductCategoryMapper
      */
     public int deleteProductCategoryByIds(Long[] ids);
 
-    List<Map<String, Object>> getCategoryDic(Long id);
+    List<Map<String, Object>> getCategoryDic(@Param("p_id")Long id, @Param("companyId")Long companyId);
 }
