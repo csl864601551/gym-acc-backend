@@ -205,7 +205,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         long companyId = Long.parseLong(codeGenMsgs[1]);
         //生码总数
         long codeTotalNum = Long.parseLong(codeGenMsgs[2]);
-
+        //箱码
         String pCode = null;
         if (codeGenMsgs.length == 4) {
             pCode = codeGenMsgs[3];
@@ -229,8 +229,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         codeRecord.setType(type);
         codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
         codeRecord.setRemark(remark);
-//        codeRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId()); TODO
-//        codeRecord.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        codeRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        codeRecord.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         codeRecord.setCreateTime(new Date());
         codeRecord.setUpdateTime(new Date());
         return codeRecord;

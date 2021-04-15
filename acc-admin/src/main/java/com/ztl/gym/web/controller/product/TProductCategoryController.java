@@ -30,7 +30,7 @@ public class TProductCategoryController extends BaseController
 
     @GetMapping("/getCategory")
     public List<TProductCategory> getCategory(@RequestParam("type") String type, @RequestParam("id") String id)
-    {remove
+    {
         List<TProductCategory> categoryList = null;
         TProductCategory tProductCategory = new TProductCategory();
         if(type.equals("1")) {

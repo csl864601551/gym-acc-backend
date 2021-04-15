@@ -1,13 +1,13 @@
 package com.ztl.gym.product.service.impl;
 
-import java.util.List;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.product.domain.TProduct;
-import com.ztl.gym.product.domain.TProductCategory;
-import com.ztl.gym.product.mapper.TProductMapper;
-import com.ztl.gym.product.service.ITProductService;
+import com.ztl.gym.product.mapper.ProductMapper;
+import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 产品Service业务层处理
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
  * @date 2021-04-10
  */
 @Service
-public class TProductServiceImpl implements ITProductService
+public class ProductServiceImpl implements IProductService
 {
     @Autowired
-    private TProductMapper tProductMapper;
+    private ProductMapper productMapper;
 
     /**
      * 查询产品
@@ -30,7 +30,7 @@ public class TProductServiceImpl implements ITProductService
     @Override
     public TProduct selectTProductById(Long id)
     {
-        return tProductMapper.selectTProductById(id);
+        return productMapper.selectTProductById(id);
     }
 
     /**
@@ -42,7 +42,7 @@ public class TProductServiceImpl implements ITProductService
     @Override
     public List<TProduct> selectTProductList(TProduct tProduct)
     {
-        return tProductMapper.selectTProductList(tProduct);
+        return productMapper.selectTProductList(tProduct);
     }
 
     /**
@@ -55,7 +55,7 @@ public class TProductServiceImpl implements ITProductService
     public int insertTProduct(TProduct tProduct)
     {
         tProduct.setCreateTime(DateUtils.getNowDate());
-        return tProductMapper.insertTProduct(tProduct);
+        return productMapper.insertTProduct(tProduct);
     }
 
     /**
@@ -68,7 +68,7 @@ public class TProductServiceImpl implements ITProductService
     public int updateTProduct(TProduct tProduct)
     {
         tProduct.setUpdateTime(DateUtils.getNowDate());
-        return tProductMapper.updateTProduct(tProduct);
+        return productMapper.updateTProduct(tProduct);
     }
 
     /**
@@ -80,7 +80,7 @@ public class TProductServiceImpl implements ITProductService
     @Override
     public int deleteTProductByIds(Long[] ids)
     {
-        return tProductMapper.deleteTProductByIds(ids);
+        return productMapper.deleteTProductByIds(ids);
     }
 
     /**
@@ -92,6 +92,6 @@ public class TProductServiceImpl implements ITProductService
     @Override
     public int deleteTProductById(Long id)
     {
-        return tProductMapper.deleteTProductById(id);
+        return productMapper.deleteTProductById(id);
     }
 }

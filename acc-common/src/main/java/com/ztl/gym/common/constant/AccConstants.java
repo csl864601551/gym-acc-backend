@@ -57,9 +57,13 @@ public class AccConstants {
      */
     public final static int CODE_RECORD_STATUS_WAIT = 0;
     /**
-     * 生码记录状态-生码完成
+     * 生码记录状态-生码完成，待赋值
      */
     public final static int CODE_RECORD_STATUS_FINISH = 1;
+    /**
+     * 生码记录状态-已赋值
+     */
+    public final static int CODE_RECORD_STATUS_EVA = 2;
 
     /**
      * 生码类型-普通生码
