@@ -57,6 +57,7 @@ public class CodeServiceImpl implements ICodeService {
      * @return 码
      */
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public List<Code> selectCodeList(Code code) {
         return codeMapper.selectCodeList(code);
     }

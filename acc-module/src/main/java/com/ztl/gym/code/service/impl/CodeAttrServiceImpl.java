@@ -33,6 +33,17 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     }
 
     /**
+     * 根据生码记录id查询码
+     *
+     * @param recordId
+     * @return
+     */
+    @Override
+    public CodeAttr selectCodeAttrByRecordId(Long recordId) {
+        return codeAttrMapper.selectCodeAttrByRecordId(recordId);
+    }
+
+    /**
      * 查询码属性列表
      *
      * @param codeAttr 码属性

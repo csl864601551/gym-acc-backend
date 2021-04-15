@@ -22,6 +22,7 @@
         <result property="creatorName" column="nick_name"/>
         <result property="productName" column="product_name"/>
         <result property="batchNo" column="batch_no"/>
+        <result property="barCode" column="bar_code"/>
     </resultMap>
 
     <sql id="selectCodeRecordVo">
@@ -46,7 +47,7 @@
         u.nick_name,
         p.product_name,
         b.batch_no,
-        b.bar_code
+        p.bar_code
         from t_code_record r
         left join sys_user u on r.create_user = u.user_id
         left join t_product p on r.product_id = p.id
@@ -76,7 +77,7 @@
 
     <select id="selectCodeRecordById" parameterType="Long" resultMap="CodeRecordResult">
         <include refid="selectCodeRecordExtraVo"/>
-        where id = #{id}
+        where r.id = #{id}
     </select>
 
     <insert id="insertCodeRecord" parameterType="CodeRecord" useGeneratedKeys="true" keyProperty="id">

@@ -1,27 +1,35 @@
 package com.ztl.gym.code.service;
 
 import java.util.List;
+
 import com.ztl.gym.code.domain.CodeAttr;
 
 /**
  * 码属性Service接口
- * 
+ *
  * @author ruoyi
  * @date 2021-04-15
  */
-public interface ICodeAttrService 
-{
+public interface ICodeAttrService {
     /**
      * 查询码属性
-     * 
+     *
      * @param id 码属性ID
      * @return 码属性
      */
     public CodeAttr selectCodeAttrById(Long id);
 
     /**
+     * 根据生码记录id查询码
+     *
+     * @param recordId
+     * @return
+     */
+    public CodeAttr selectCodeAttrByRecordId(Long recordId);
+
+    /**
      * 查询码属性列表
-     * 
+     *
      * @param codeAttr 码属性
      * @return 码属性集合
      */
@@ -29,7 +37,7 @@ public interface ICodeAttrService
 
     /**
      * 新增码属性
-     * 
+     *
      * @param codeAttr 码属性
      * @return 结果
      */
@@ -37,7 +45,7 @@ public interface ICodeAttrService
 
     /**
      * 修改码属性
-     * 
+     *
      * @param codeAttr 码属性
      * @return 结果
      */
@@ -45,7 +53,7 @@ public interface ICodeAttrService
 
     /**
      * 批量删除码属性
-     * 
+     *
      * @param ids 需要删除的码属性ID
      * @return 结果
      */
@@ -53,7 +61,7 @@ public interface ICodeAttrService
 
     /**
      * 删除码属性信息
-     * 
+     *
      * @param id 码属性ID
      * @return 结果
      */

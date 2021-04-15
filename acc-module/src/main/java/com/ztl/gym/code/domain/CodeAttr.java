@@ -26,7 +26,7 @@ public class CodeAttr extends BaseEntity
 
     /** 生码记录id */
     @Excel(name = "生码记录id")
-    private Long reocedId;
+    private Long recordId;
 
     /** 起始流水号 */
     @Excel(name = "起始流水号")
@@ -103,15 +103,15 @@ public class CodeAttr extends BaseEntity
     {
         return companyId;
     }
-    public void setReocedId(Long reocedId)
-    {
-        this.reocedId = reocedId;
+
+    public Long getRecordId() {
+        return recordId;
     }
 
-    public Long getReocedId()
-    {
-        return reocedId;
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
     }
+
     public void setIndexStart(Long indexStart)
     {
         this.indexStart = indexStart;
@@ -244,7 +244,7 @@ public class CodeAttr extends BaseEntity
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId())
                 .append("companyId", getCompanyId())
-                .append("reocedId", getReocedId())
+                .append("recordId", getRecordId())
                 .append("indexStart", getIndexStart())
                 .append("indexEnd", getIndexEnd())
                 .append("productId", getProductId())

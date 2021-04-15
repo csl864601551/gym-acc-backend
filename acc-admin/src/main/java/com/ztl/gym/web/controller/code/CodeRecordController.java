@@ -1,8 +1,10 @@
 package com.ztl.gym.web.controller.code;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
+import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.Log;
@@ -26,6 +28,9 @@ public class CodeRecordController extends BaseController {
     private ICodeRecordService codeRecordService;
     @Autowired
     private ICodeService codeService;
+    @Autowired
+    private ICodeAttrService codeAttrService;
+
     /**
      * 查询生码记录列表
      */
@@ -96,9 +101,12 @@ public class CodeRecordController extends BaseController {
         vo.setBarCode(codeRecord.getBarCode());
         vo.setCodeIndexs(codeRecord.getIndexStart() + "~" + codeRecord.getIndexEnd());
 
+        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(id);
         Code code = new Code();
-//        code.set
-//        codeService.selectCodeList()
+        code.setCodeAttrId(codeAttr.getId());
+        code.setCompanyId(codeRecord.getCompanyId());
+        List<Code> codes = codeService.selectCodeList(code);
+        vo.setCodes(codes);
         return AjaxResult.success(vo);
     }
 

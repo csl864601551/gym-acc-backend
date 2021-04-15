@@ -1,6 +1,7 @@
 package com.ztl.gym.code.mapper;
 
 import java.util.List;
+
 import com.ztl.gym.code.domain.CodeAttr;
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Repository;
  * @date 2021-04-15
  */
 @Repository
-public interface CodeAttrMapper
-{
+public interface CodeAttrMapper {
     /**
      * 查询码属性
      *
@@ -20,6 +20,14 @@ public interface CodeAttrMapper
      * @return 码属性
      */
     public CodeAttr selectCodeAttrById(Long id);
+
+    /**
+     * 根据生码记录id查询码
+     *
+     * @param recordId
+     * @return
+     */
+    CodeAttr selectCodeAttrByRecordId(Long recordId);
 
     /**
      * 查询码属性列表
@@ -60,4 +68,5 @@ public interface CodeAttrMapper
      * @return 结果
      */
     public int deleteCodeAttrByIds(Long[] ids);
+
 }
