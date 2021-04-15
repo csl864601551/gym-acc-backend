@@ -13,6 +13,7 @@ import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,25 +90,39 @@ public class CodeRecordController extends BaseController {
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         CodeRecord codeRecord = codeRecordService.selectCodeRecordById(id);
         CodeRecordDetailVo vo = new CodeRecordDetailVo();
+        vo.setRecordId(id);
         if (codeRecord.getType() == AccConstants.GEN_CODE_TYPE_SINGLE) {
             vo.setType("普通");
             vo.setSizeNum("单码：" + codeRecord.getCount());
         } else {
             vo.setType("套标");
-            vo.setSizeNum("箱码：1 " + "单码：" + codeRecord.getCount());
+            vo.setSizeNum("1" + "拖" + codeRecord.getCount());
         }
         vo.setProductName(codeRecord.getProductName());
         vo.setBatchNo(codeRecord.getBatchNo());
         vo.setBarCode(codeRecord.getBarCode());
+        vo.setCreateTime(DateUtils.dateTime(codeRecord.getCreateTime()));
         vo.setCodeIndexs(codeRecord.getIndexStart() + "~" + codeRecord.getIndexEnd());
 
-        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(id);
+        return AjaxResult.success(vo);
+    }
+
+    /**
+     * 根据生码记录id查询码明细
+     *
+     * @param codeRecord
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('code:record:listSon')")
+    @GetMapping("/listSon")
+    public TableDataInfo listSon(CodeRecord codeRecord) {
+        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(codeRecord.getId());
+        startPage();
         Code code = new Code();
         code.setCodeAttrId(codeAttr.getId());
-        code.setCompanyId(codeRecord.getCompanyId());
-        List<Code> codes = codeService.selectCodeList(code);
-        vo.setCodes(codes);
-        return AjaxResult.success(vo);
+        code.setCompanyId(codeAttr.getCompanyId());
+        List<Code> list = codeService.selectCodeList(code);;
+        return getDataTable(list);
     }
 
 //    /**

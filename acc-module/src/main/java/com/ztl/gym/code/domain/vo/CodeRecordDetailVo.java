@@ -9,6 +9,10 @@ import java.util.List;
  */
 public class CodeRecordDetailVo {
     /**
+     * 生码记录id
+     */
+    private long recordId;
+    /**
      * 生码类型
      */
     private String type;
@@ -33,9 +37,21 @@ public class CodeRecordDetailVo {
      */
     private String sizeNum;
     /**
+     * 生码时间
+     */
+    private String createTime;
+    /**
      * 生码集合
      */
     private List<Code> codes;
+
+    public long getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(long recordId) {
+        this.recordId = recordId;
+    }
 
     public String getType() {
         return type;
@@ -91,5 +107,13 @@ public class CodeRecordDetailVo {
 
     public void setCodes(List<Code> codes) {
         this.codes = codes;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }
