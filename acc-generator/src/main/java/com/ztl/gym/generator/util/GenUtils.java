@@ -40,8 +40,7 @@ public class GenUtils
         column.setTableId(table.getTableId());
         column.setCreateBy(table.getCreateBy());
         // 设置java字段名
-        //column.setJavaField(StringUtils.toCamelCase(columnName));
-        column.setJavaField(columnName);//不使用驼峰式命名
+        column.setJavaField(StringUtils.toCamelCase(columnName));
         // 设置默认类型
         column.setJavaType(GenConstants.TYPE_STRING);
 
