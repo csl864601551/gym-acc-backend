@@ -62,10 +62,10 @@ public class ProductBatchServiceImpl implements IProductBatchService
     {
         Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
         if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
-            productBatch.setCompany_id(SecurityUtils.getLoginUserTopCompanyId());
+            productBatch.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
         productBatch.setCreateTime(DateUtils.getNowDate());
-        productBatch.setCreate_user(SecurityUtils.getLoginUser().getUser().getUserId());
+        productBatch.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return productBatchMapper.insertProductBatch(productBatch);
     }
 
