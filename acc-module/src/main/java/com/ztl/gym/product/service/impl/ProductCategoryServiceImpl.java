@@ -31,9 +31,9 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
      * @return 产品分类
      */
     @Override
-    public ProductCategory selectTProductCategoryById(Long id)
+    public ProductCategory selectProductCategoryById(Long id)
     {
-        return productCategoryMapper.selectTProductCategoryById(id);
+        return productCategoryMapper.selectProductCategoryById(id);
     }
 
     /**
@@ -43,9 +43,9 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
      * @return 产品分类
      */
     @Override
-    public List<ProductCategory> selectTProductCategoryList(ProductCategory productCategory)
+    public List<ProductCategory> selectProductCategoryList(ProductCategory productCategory)
     {
-        return productCategoryMapper.selectTProductCategoryList(productCategory);
+        return productCategoryMapper.selectProductCategoryList(productCategory);
     }
 
     /**
@@ -55,7 +55,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
      * @return 结果
      */
     @Override
-    public int insertTProductCategory(ProductCategory productCategory)
+    public int insertProductCategory(ProductCategory productCategory)
     {
         Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
         if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
@@ -63,7 +63,7 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
         }
         productCategory.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         productCategory.setCreateTime(DateUtils.getNowDate());
-        return productCategoryMapper.insertTProductCategory(productCategory);
+        return productCategoryMapper.insertProductCategory(productCategory);
     }
 
     /**
@@ -73,10 +73,10 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
      * @return 结果
      */
     @Override
-    public int updateTProductCategory(ProductCategory productCategory)
+    public int updateProductCategory(ProductCategory productCategory)
     {
         productCategory.setUpdateTime(DateUtils.getNowDate());
-        return productCategoryMapper.updateTProductCategory(productCategory);
+        return productCategoryMapper.updateProductCategory(productCategory);
     }
 
     /**
@@ -86,9 +86,9 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
      * @return 结果
      */
     @Override
-    public int deleteTProductCategoryByIds(Long[] ids)
+    public int deleteProductCategoryByIds(Long[] ids)
     {
-        return productCategoryMapper.deleteTProductCategoryByIds(ids);
+        return productCategoryMapper.deleteProductCategoryByIds(ids);
     }
 
     /**
@@ -98,13 +98,13 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
      * @return 结果
      */
     @Override
-    public int deleteTProductCategoryById(Long id)
+    public int deleteProductCategoryById(Long id)
     {
-        return productCategoryMapper.deleteTProductCategoryById(id);
+        return productCategoryMapper.deleteProductCategoryById(id);
     }
 
     @Override
-    public List<Map<String, Object>> getCategoryDic() {
-        return null;
+    public List<Map<String, Object>> getCategoryDic(Long id) {
+        return productCategoryMapper.getCategoryDic(id);
     }
 }

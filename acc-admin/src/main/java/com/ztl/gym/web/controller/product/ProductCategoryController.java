@@ -27,7 +27,7 @@ import java.util.Map;
 public class ProductCategoryController extends BaseController
 {
     @Autowired
-    private IProductCategoryService tProductCategoryService;
+    private IProductCategoryService roductCategoryService;
 
     @GetMapping("/getCategory")
     public List<ProductCategory> getCategory(@RequestParam("type") String type, @RequestParam("id") String id)
@@ -41,13 +41,13 @@ public class ProductCategoryController extends BaseController
             //二级类型
             productCategory.setpId(Convert.toLong(id));
         }
-        categoryList = tProductCategoryService.selectTProductCategoryList(productCategory);
+        categoryList = roductCategoryService.selectProductCategoryList(productCategory);
         return categoryList;
     }
     @GetMapping("/getCategoryDic")
-    public List<Map<String,Object>> getCategoryDic()
+    public List<Map<String,Object>> getCategoryDic(@RequestParam("p_id") Long p_id)
     {
-        List<Map<String,Object>> categoryDic = tProductCategoryService.getCategoryDic();
+        List<Map<String,Object>> categoryDic = roductCategoryService.getCategoryDic(p_id);
         return categoryDic;
     }
 
@@ -59,7 +59,7 @@ public class ProductCategoryController extends BaseController
     public TableDataInfo list(ProductCategory productCategory)
     {
         startPage();
-        List<ProductCategory> list = tProductCategoryService.selectTProductCategoryList(productCategory);
+        List<ProductCategory> list = roductCategoryService.selectProductCategoryList(productCategory);
         return getDataTable(list);
     }
 
@@ -71,7 +71,7 @@ public class ProductCategoryController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(ProductCategory productCategory)
     {
-        List<ProductCategory> list = tProductCategoryService.selectTProductCategoryList(productCategory);
+        List<ProductCategory> list = roductCategoryService.selectProductCategoryList(productCategory);
         ExcelUtil<ProductCategory> util = new ExcelUtil<ProductCategory>(ProductCategory.class);
         return util.exportExcel(list, "category");
     }
@@ -83,7 +83,7 @@ public class ProductCategoryController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(tProductCategoryService.selectTProductCategoryById(id));
+        return AjaxResult.success(roductCategoryService.selectProductCategoryById(id));
     }
 
     /**
@@ -94,7 +94,7 @@ public class ProductCategoryController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody ProductCategory productCategory)
     {
-        return toAjax(tProductCategoryService.insertTProductCategory(productCategory));
+        return toAjax(roductCategoryService.insertProductCategory(productCategory));
     }
 
     /**
@@ -105,7 +105,7 @@ public class ProductCategoryController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody ProductCategory productCategory)
     {
-        return toAjax(tProductCategoryService.updateTProductCategory(productCategory));
+        return toAjax(roductCategoryService.updateProductCategory(productCategory));
     }
 
     /**
@@ -116,6 +116,6 @@ public class ProductCategoryController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(tProductCategoryService.deleteTProductCategoryByIds(ids));
+        return toAjax(roductCategoryService.deleteProductCategoryByIds(ids));
     }
 }
