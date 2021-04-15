@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, company_id, category_no, category_name, category_level, p_id, unit, icon, keyword, category_introduce, sort, create_user, create_time, update_user, update_time from t_product_category
     </sql>
 
-    <select id="selectTProductCategoryList" parameterType="TProductCategory" resultMap="TProductCategoryResult">
+    <select id="selectTProductCategoryList" parameterType="ProductCategory" resultMap="TProductCategoryResult">
         <include refid="selectTProductCategoryVo"/>
         <where>
             <if test="companyId != null "> and company_id = #{companyId}</if>
@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <insert id="insertTProductCategory" parameterType="TProductCategory" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertTProductCategory" parameterType="ProductCategory" useGeneratedKeys="true" keyProperty="id">
         insert into t_product_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
@@ -85,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTProductCategory" parameterType="TProductCategory">
+    <update id="updateTProductCategory" parameterType="ProductCategory">
         update t_product_category
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>

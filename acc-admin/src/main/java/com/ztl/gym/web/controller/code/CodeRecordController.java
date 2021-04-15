@@ -1,8 +1,10 @@
 package com.ztl.gym.web.controller.code;
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
 import com.ztl.gym.code.service.ICodeRecordService;
+import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
@@ -11,8 +13,6 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.product.domain.Product;
-import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +25,7 @@ public class CodeRecordController extends BaseController {
     @Autowired
     private ICodeRecordService codeRecordService;
     @Autowired
-    private IProductService productService;
-
+    private ICodeService codeService;
     /**
      * 查询生码记录列表
      */
@@ -72,12 +71,6 @@ public class CodeRecordController extends BaseController {
                 typeName = "套标生码";
             }
             record.setTypeName(typeName);
-
-            //TODO 冗余产品名称和批次号
-            if (record.getProductId() != null && record.getProductId() > 0) {
-                Product product = productService.selectTProductById(record.getProductId());
-                record.setProductName(product.getProductName());
-            }
         }
         ExcelUtil<CodeRecord> util = new ExcelUtil<CodeRecord>(CodeRecord.class);
         return util.exportExcel(list, "record");
@@ -92,10 +85,20 @@ public class CodeRecordController extends BaseController {
         CodeRecord codeRecord = codeRecordService.selectCodeRecordById(id);
         CodeRecordDetailVo vo = new CodeRecordDetailVo();
         if (codeRecord.getType() == AccConstants.GEN_CODE_TYPE_SINGLE) {
-            vo.setType("普通生码");
+            vo.setType("普通");
+            vo.setSizeNum("单码：" + codeRecord.getCount());
         } else {
-            vo.setType("套标生码");
+            vo.setType("套标");
+            vo.setSizeNum("箱码：1 " + "单码：" + codeRecord.getCount());
         }
+        vo.setProductName(codeRecord.getProductName());
+        vo.setBatchNo(codeRecord.getBatchNo());
+        vo.setBarCode(codeRecord.getBarCode());
+        vo.setCodeIndexs(codeRecord.getIndexStart() + "~" + codeRecord.getIndexEnd());
+
+        Code code = new Code();
+//        code.set
+//        codeService.selectCodeList()
         return AjaxResult.success(vo);
     }
 

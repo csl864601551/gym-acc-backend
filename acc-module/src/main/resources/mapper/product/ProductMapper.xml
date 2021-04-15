@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.product.mapper.ProductMapper">
 
-    <resultMap type="TProduct" id="TProductResult">
+    <resultMap type="Product" id="TProductResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
         <result property="productNo"    column="product_no"    />
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, company_id, product_no, status, product_name, bar_code, category_one, category_two, sale_price, market_price, product_introduce, product_detail_pc, product_detail_mobile, storage_id, stock, stock_limit, unit, sort, sales_num, create_user, create_time, update_user, update_time from t_product
     </sql>
 
-    <select id="selectTProductList" parameterType="TProduct" resultMap="TProductResult">
+    <select id="selectTProductList" parameterType="Product" resultMap="TProductResult">
         <include refid="selectTProductVo"/>
         <where>
             <if test="companyId != null "> and company_id = #{companyId}</if>
@@ -65,7 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <insert id="insertTProduct" parameterType="TProduct" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertTProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="id">
         insert into t_product
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
@@ -117,7 +117,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateTProduct" parameterType="TProduct">
+    <update id="updateTProduct" parameterType="Product">
         update t_product
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>

@@ -142,6 +142,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             params.put("indexEnd", codeNo + num);
             codeRecordMapper.updateCodeIndex(params);
 
+
             //异步生码
             String message = codeRecordId + "-" + companyId + "-" + num;
             stringRedisTemplate.convertAndSend("code.gen", message);

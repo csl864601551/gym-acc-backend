@@ -57,6 +57,7 @@ public class CodeRecord extends BaseEntity
     private String typeName;
     @Excel(name = "关联产品", sort = 7)
     private String productName;
+    private String barCode;
     @Excel(name = "关联批次", sort = 8)
     private String batchNo;
 
@@ -180,6 +181,14 @@ public class CodeRecord extends BaseEntity
 
     public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
     }
 
     @Override
