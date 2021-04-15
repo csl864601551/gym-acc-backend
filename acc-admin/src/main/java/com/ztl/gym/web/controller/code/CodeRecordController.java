@@ -11,7 +11,8 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.product.service.ITProductService;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class CodeRecordController extends BaseController {
     @Autowired
     private ICodeRecordService codeRecordService;
     @Autowired
-    private ITProductService productService;
+    private IProductService productService;
 
     /**
      * 查询生码记录列表
@@ -74,7 +75,8 @@ public class CodeRecordController extends BaseController {
 
             //TODO 冗余产品名称和批次号
             if (record.getProductId() != null && record.getProductId() > 0) {
-                productService.selectTProductById(record.getProductId());
+                Product product = productService.selectTProductById(record.getProductId());
+                record.setProductName(product.getProductName());
             }
         }
         ExcelUtil<CodeRecord> util = new ExcelUtil<CodeRecord>(CodeRecord.class);

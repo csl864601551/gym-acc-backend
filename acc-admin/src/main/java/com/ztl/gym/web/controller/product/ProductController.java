@@ -1,26 +1,18 @@
 package com.ztl.gym.web.controller.product;
 
-import java.util.List;
-
-import com.ztl.gym.product.domain.TProduct;
-import com.ztl.gym.product.domain.TProductCategory;
-import com.ztl.gym.product.service.ITProductService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.service.IProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 产品Controller
@@ -30,20 +22,20 @@ import com.ztl.gym.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/product/show")
-public class TProductController extends BaseController
+public class ProductController extends BaseController
 {
     @Autowired
-    private ITProductService tProductService;
+    private IProductService tProductService;
 
     /**
      * 查询产品列表
      */
     @PreAuthorize("@ss.hasPermi('product:show:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TProduct tProduct)
+    public TableDataInfo list(Product product)
     {
         startPage();
-        List<TProduct> list = tProductService.selectTProductList(tProduct);
+        List<Product> list = tProductService.selectTProductList(product);
         return getDataTable(list);
     }
 
@@ -53,10 +45,10 @@ public class TProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:show:export')")
     @Log(title = "产品", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(TProduct tProduct)
+    public AjaxResult export(Product product)
     {
-        List<TProduct> list = tProductService.selectTProductList(tProduct);
-        ExcelUtil<TProduct> util = new ExcelUtil<TProduct>(TProduct.class);
+        List<Product> list = tProductService.selectTProductList(product);
+        ExcelUtil<Product> util = new ExcelUtil<Product>(Product.class);
         return util.exportExcel(list, "product");
     }
 
@@ -76,9 +68,9 @@ public class TProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:show:add')")
     @Log(title = "产品", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TProduct tProduct)
+    public AjaxResult add(@RequestBody Product product)
     {
-        return toAjax(tProductService.insertTProduct(tProduct));
+        return toAjax(tProductService.insertTProduct(product));
     }
 
     /**
@@ -87,9 +79,9 @@ public class TProductController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:show:edit')")
     @Log(title = "产品", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TProduct tProduct)
+    public AjaxResult edit(@RequestBody Product product)
     {
-        return toAjax(tProductService.updateTProduct(tProduct));
+        return toAjax(tProductService.updateTProduct(product));
     }
 
     /**

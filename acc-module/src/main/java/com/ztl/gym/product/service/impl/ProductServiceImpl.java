@@ -1,7 +1,7 @@
 package com.ztl.gym.product.service.impl;
 
 import com.ztl.gym.common.utils.DateUtils;
-import com.ztl.gym.product.domain.TProduct;
+import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.mapper.ProductMapper;
 import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class ProductServiceImpl implements IProductService
      * @return 产品
      */
     @Override
-    public TProduct selectTProductById(Long id)
+    public Product selectTProductById(Long id)
     {
         return productMapper.selectTProductById(id);
     }
@@ -36,39 +36,39 @@ public class ProductServiceImpl implements IProductService
     /**
      * 查询产品列表
      *
-     * @param tProduct 产品
+     * @param product 产品
      * @return 产品
      */
     @Override
-    public List<TProduct> selectTProductList(TProduct tProduct)
+    public List<Product> selectTProductList(Product product)
     {
-        return productMapper.selectTProductList(tProduct);
+        return productMapper.selectTProductList(product);
     }
 
     /**
      * 新增产品
      *
-     * @param tProduct 产品
+     * @param product 产品
      * @return 结果
      */
     @Override
-    public int insertTProduct(TProduct tProduct)
+    public int insertTProduct(Product product)
     {
-        tProduct.setCreateTime(DateUtils.getNowDate());
-        return productMapper.insertTProduct(tProduct);
+        product.setCreateTime(DateUtils.getNowDate());
+        return productMapper.insertTProduct(product);
     }
 
     /**
      * 修改产品
      *
-     * @param tProduct 产品selectTProductList
+     * @param product 产品selectTProductList
      * @return 结果
      */
     @Override
-    public int updateTProduct(TProduct tProduct)
+    public int updateTProduct(Product product)
     {
-        tProduct.setUpdateTime(DateUtils.getNowDate());
-        return productMapper.updateTProduct(tProduct);
+        product.setUpdateTime(DateUtils.getNowDate());
+        return productMapper.updateTProduct(product);
     }
 
     /**
