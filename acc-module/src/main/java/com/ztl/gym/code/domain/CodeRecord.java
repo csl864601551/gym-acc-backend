@@ -46,11 +46,10 @@ public class CodeRecord extends BaseEntity
     /** 关联批次id */
     private Long batchId;
 
+    /*---------------------- 冗余字段 ----------------------*/
     /** 创建人名称 */
     @Excel(name = "创建人名称", sort = 9)
     private String creatorName;
-
-    /*---------------------- 冗余字段 ----------------------*/
     @Excel(name = "状态", sort = 4)
     private String statusName;
     @Excel(name = "生码类型", sort = 5)

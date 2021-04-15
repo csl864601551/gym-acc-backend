@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.product.mapper.ProductBatchMapper">
-    
     <resultMap type="ProductBatch" id="ProductBatchResult">
-        <result property="id"    column="id"    />
-        <result property="company_id"    column="company_id"    />
-        <result property="batch_no"    column="batch_no"    />
-        <result property="status"    column="status"    />
-        <result property="batch_title"    column="batch_title"    />
-        <result property="batch_date"    column="batch_date"    />
-        <result property="product_id"    column="product_id"    />
-        <result property="remark"    column="remark"    />
-        <result property="create_user"    column="create_user"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="update_user"    column="update_user"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="status" column="status"/>
+        <result property="batchTitle" column="batch_title"/>
+        <result property="batchDate" column="batch_date"/>
+        <result property="productId" column="product_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="creatorName" column="create_user_name"/>
+        <result property="productName" column="product_name"/>
+        <result property="productNo" column="product_no"/>
+        <result property="barCode" column="bar_code"/>
+        <result property="storageName" column="storage_name"/>
     </resultMap>
-    <resultMap type="HashMap" id="map">
-    </resultMap>
+
     <sql id="selectProductBatchVo">
         select id, company_id, batch_no, status, batch_title, batch_date, product_id, remark, create_user, create_time, update_user, update_time from t_product_batch
     </sql>
 
-    <select id="selectProductBatchList" parameterType="Map" resultMap="map">
-        select pb.id,pb.company_id,pb.batch_no,pb.status,pb.batch_title,DATE_FORMAT(pb.batch_date,'%Y-%m-%d') as batch_date,pb.product_id,
-        pb.remark,pb.create_user,pb.create_time,pb.update_user,pb.update_time,
+    <sql id="selectProductBatchExtarVo">
+        select
+        pb.id,
+        pb.company_id,
+        pb.batch_no,
+        pb.status,
+        pb.batch_title,
+        DATE_FORMAT(pb.batch_date,'%Y-%m-%d') as batch_date,
+        pb.product_id,
+        pb.remark,
+        pb.create_user,
+        pb.create_time,
+        pb.update_user,
+        pb.update_time,
         suc.nick_name as create_user_name,
-        p.product_name,p.product_no,p.bar_code,
+        p.product_name,
+        p.product_no,
+        p.bar_code,
         s.storage_name
         from t_product_batch pb
         left join t_product p on p.id=pb.product_id
-        LEFT JOIN sys_user suc ON suc.user_id = pb.create_user
+        left join sys_user suc ON suc.user_id = pb.create_user
         left join t_storage s on s.id=p.storage_id
+    </sql>
+
+    <select id="selectProductBatchList" parameterType="Map" resultMap="ProductBatchResult">
+        <include refid="selectProductBatchExtarVo"/>
         <where>
             pb.status=0
-            <if test="company_id != null "> and pb.company_id = #{company_id}</if>
+            <if test="company_id != null ">and pb.company_id = #{company_id}</if>
             <if test='batch_no != null and batch_no != ""'>
                 <bind name="batch_noLike" value="'%'+batch_no+'%'"/>
                 and pb.batch_no like #{batch_noLike}
@@ -50,15 +70,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 <bind name="product_noLike" value="'%'+product_no+'%'"/>
                 and p.product_no like #{product_noLike}
             </if>
-            <if test="storage_id != null "> and p.storage_id = #{storage_id}</if>
+            <if test="storage_id != null ">and p.storage_id = #{storage_id}</if>
         </where>
     </select>
-    
+
     <select id="selectProductBatchById" parameterType="Long" resultMap="ProductBatchResult">
         <include refid="selectProductBatchVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertProductBatch" parameterType="ProductBatch">
         insert into t_product_batch
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -72,7 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="update_user != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="company_id != null">#{company_id},</if>
             <if test="batch_no != null">#{batch_no},</if>
@@ -84,7 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="update_user != null">#{update_user},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateProductBatch" parameterType="ProductBatch">

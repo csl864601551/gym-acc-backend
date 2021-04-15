@@ -4,8 +4,6 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 产品批次对象 t_product_batch
@@ -22,11 +20,11 @@ public class ProductBatch extends BaseEntity
 
     /** 企业ID */
     @Excel(name = "企业ID")
-    private Long company_id;
+    private Long companyId;
 
     /** 编号 */
     @Excel(name = "编号")
-    private String batch_no;
+    private String batchNo;
 
     /** 状态 */
     @Excel(name = "状态")
@@ -34,24 +32,23 @@ public class ProductBatch extends BaseEntity
 
     /** 批次标题 */
     @Excel(name = "批次标题")
-    private String batch_title;
+    private String batchTitle;
 
     /** 批次日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "批次日期", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date batch_date;
+    private Date batchDate;
 
     /** 产品id */
     @Excel(name = "产品id")
-    private Long product_id;
+    private Long productId;
 
-    /** 创建人 */
-    @Excel(name = "创建人")
-    private Long create_user;
-
-    /** 更新人 */
-    @Excel(name = "更新人")
-    private Long update_user;
+    /*---------------------- 冗余字段 ----------------------*/
+    private String creatorName;
+    private String productName;
+    private String productNo;
+    private String barCode;
+    private String storageName;
 
     public void setId(Long id)
     {
@@ -67,20 +64,20 @@ public class ProductBatch extends BaseEntity
         return serialVersionUID;
     }
 
-    public Long getCompany_id() {
-        return company_id;
+    public Long getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany_id(Long company_id) {
-        this.company_id = company_id;
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
-    public String getBatch_no() {
-        return batch_no;
+    public String getBatchNo() {
+        return batchNo;
     }
 
-    public void setBatch_no(String batch_no) {
-        this.batch_no = batch_no;
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
     public Long getStatus() {
@@ -91,59 +88,80 @@ public class ProductBatch extends BaseEntity
         this.status = status;
     }
 
-    public String getBatch_title() {
-        return batch_title;
+    public String getBatchTitle() {
+        return batchTitle;
     }
 
-    public void setBatch_title(String batch_title) {
-        this.batch_title = batch_title;
+    public void setBatchTitle(String batchTitle) {
+        this.batchTitle = batchTitle;
     }
 
-    public Date getBatch_date() {
-        return batch_date;
+    public Date getBatchDate() {
+        return batchDate;
     }
 
-    public void setBatch_date(Date batch_date) {
-        this.batch_date = batch_date;
+    public void setBatchDate(Date batchDate) {
+        this.batchDate = batchDate;
     }
 
-    public Long getProduct_id() {
-        return product_id;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct_id(Long product_id) {
-        this.product_id = product_id;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public Long getCreate_user() {
-        return create_user;
+    public String getCreatorName() {
+        return creatorName;
     }
 
-    public void setCreate_user(Long create_user) {
-        this.create_user = create_user;
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
     }
 
-    public Long getUpdate_user() {
-        return update_user;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setUpdate_user(Long update_user) {
-        this.update_user = update_user;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+
+    public String getStorageName() {
+        return storageName;
+    }
+
+    public void setStorageName(String storageName) {
+        this.storageName = storageName;
+    }
 
     @Override
     public String toString() {
         return "ProductBatch{" +
                 "id=" + id +
-                ", company_id=" + company_id +
-                ", batch_no='" + batch_no + '\'' +
+                ", company_id=" + companyId +
+                ", batch_no='" + batchNo + '\'' +
                 ", status=" + status +
-                ", batch_title='" + batch_title + '\'' +
-                ", batch_date=" + batch_date +
-                ", product_id=" + product_id +
-                ", create_user=" + create_user +
-                ", update_user=" + update_user +
+                ", batch_title='" + batchTitle + '\'' +
+                ", batch_date=" + batchDate +
+                ", product_id=" + productId +
                 '}';
     }
 }
