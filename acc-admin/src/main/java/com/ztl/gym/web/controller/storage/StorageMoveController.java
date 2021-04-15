@@ -1,4 +1,4 @@
-package com.ztl.gym.storage.controller;
+package com.ztl.gym.web.controller.storage;
 
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;

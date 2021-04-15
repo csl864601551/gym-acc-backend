@@ -3,7 +3,6 @@ package com.ztl.gym.product.service.impl;
 import java.util.List;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.product.domain.TProduct;
-import com.ztl.gym.product.domain.TProductCategory;
 import com.ztl.gym.product.mapper.TProductMapper;
 import com.ztl.gym.product.service.ITProductService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,6 @@ package com.ztl.gym.product.service;
 import java.util.List;
 
 import com.ztl.gym.product.domain.TProduct;
-import com.ztl.gym.product.domain.TProductCategory;
 
 /**
  * 产品Service接口

@@ -1,4 +1,4 @@
-package com.ztl.gym.product.controller;
+package com.ztl.gym.web.controller.product;
 
 import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;

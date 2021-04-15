@@ -3,6 +3,7 @@ package com.ztl.gym.product.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,15 @@ public class ProductBatchServiceImpl implements IProductBatchService
     /**
      * 查询产品批次列表
      *
-     * @param productBatch 产品批次
      * @return 产品批次
      */
     @Override
     public List<Map<String,Object>> selectProductBatchList(Map<String, Object> param)
     {
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            param.put("company_id",SecurityUtils.getLoginUserTopCompanyId());
+        }
         return productBatchMapper.selectProductBatchList(param);
     }
 
@@ -57,7 +61,7 @@ public class ProductBatchServiceImpl implements IProductBatchService
     public int insertProductBatch(ProductBatch productBatch)
     {
         Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-        if(company_id!=100){
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
             productBatch.setCompany_id(SecurityUtils.getLoginUserTopCompanyId());
         }
         productBatch.setCreateTime(DateUtils.getNowDate());

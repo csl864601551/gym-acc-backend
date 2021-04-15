@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class AttrServiceImpl implements IAttrService
     public List<Attr> selectAttrList(Attr attr)
     {
         Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
-        if(company_id!=100){
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
             attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
         return attrMapper.selectAttrList(attr);
@@ -63,7 +64,7 @@ public class AttrServiceImpl implements IAttrService
     public int insertAttr(Attr attr)
     {
         Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
-        if(company_id!=100){
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
             attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
         attr.setCreateTime(DateUtils.getNowDate());

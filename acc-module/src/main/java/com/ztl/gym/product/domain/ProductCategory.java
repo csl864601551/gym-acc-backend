@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author ruoyi
  * @date 2021-04-12
  */
-public class TProductCategory extends BaseEntity
+public class ProductCategory extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

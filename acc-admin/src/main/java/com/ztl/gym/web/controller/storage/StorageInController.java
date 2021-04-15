@@ -1,4 +1,4 @@
-package com.ztl.gym.storage.controller;
+package com.ztl.gym.web.controller.storage;
 
 import java.util.List;
 import java.util.Map;
