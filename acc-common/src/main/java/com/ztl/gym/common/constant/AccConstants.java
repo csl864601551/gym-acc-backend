@@ -101,9 +101,18 @@ public class AccConstants {
      */
     public final static Long STORAGE_DELETE_YSE = 1L;
 
-    /*---------------------------- 平台ID ----------------------------*/
+    /*---------------------------- 部门常量 ----------------------------*/
     /**
      * 平台ID
      */
     public final static Long ADMIN_DEPT_ID = 100L;
+
+    /**
+     * 部门状态-正常
+     */
+    public final static String DEPT_STATUS_NORMAL = "0";
+    /**
+     * 部门状态-停用
+     */
+    public final static String DEPT_STATUS_STOP = "1";
 }
