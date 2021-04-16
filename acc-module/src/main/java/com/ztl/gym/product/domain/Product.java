@@ -41,11 +41,11 @@ public class Product extends BaseEntity
 
     /** 产品一级分类 */
     @Excel(name = "产品一级分类")
-    private String categoryOne;
+    private Long categoryOne;
 
     /** 产品二级分类 */
     @Excel(name = "产品二级分类")
-    private String categoryTwo;
+    private Long categoryTwo;
 
     /** 售价 */
     @Excel(name = "售价")
@@ -153,26 +153,24 @@ public class Product extends BaseEntity
     {
         return barCode;
     }
-    public void setCategoryOne(String categoryOne)
-    {
+
+    public Long getCategoryOne() {
+        return categoryOne;
+    }
+
+    public void setCategoryOne(Long categoryOne) {
         this.categoryOne = categoryOne;
     }
 
-    public String getCategoryOne()
-    {
-        return categoryOne;
+    public Long getCategoryTwo() {
+        return categoryTwo;
     }
-    public void setCategoryTwo(String categoryTwo)
-    {
+
+    public void setCategoryTwo(Long categoryTwo) {
         this.categoryTwo = categoryTwo;
     }
 
-    public String getCategoryTwo()
-    {
-        return categoryTwo;
-    }
-    public void setSalePrice(BigDecimal salePrice)
-    {
+    public void setSalePrice(BigDecimal salePrice) {
         this.salePrice = salePrice;
     }
 

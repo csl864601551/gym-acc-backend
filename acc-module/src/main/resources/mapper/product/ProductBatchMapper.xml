@@ -74,6 +74,14 @@
         </where>
     </select>
 
+    <select id="selectProductBatchListV2" parameterType="Product" resultMap="ProductBatchResult">
+        <include refid="selectProductBatchVo"/>
+        <where>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+        </where>
+    </select>
+
     <select id="selectProductBatchById" parameterType="Long" resultMap="ProductBatchResult">
         <include refid="selectProductBatchVo"/>
         where id = #{id}

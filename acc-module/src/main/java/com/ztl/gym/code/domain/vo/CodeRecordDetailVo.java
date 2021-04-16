@@ -13,6 +13,10 @@ public class CodeRecordDetailVo {
      */
     private long recordId;
     /**
+     * 状态
+     */
+    private String status;
+    /**
      * 生码类型
      */
     private String type;
@@ -115,5 +119,13 @@ public class CodeRecordDetailVo {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

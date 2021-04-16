@@ -51,6 +51,15 @@ public class AccConstants {
      */
     public final static String CODE_TYPE_BOX = "box";
 
+    /**
+     * 码状态-未赋值
+     */
+    public final static int CODE_STATUS_WAIT = 0;
+    /**
+     * 码状态-已赋值
+     */
+    public final static int CODE_STATUS_FINISH = 1;
+
     /*---------------------------- 生码记录常量 ----------------------------*/
     /**
      * 生码记录状态-生码中

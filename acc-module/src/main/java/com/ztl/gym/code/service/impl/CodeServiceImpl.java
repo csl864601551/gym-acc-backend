@@ -153,4 +153,14 @@ public class CodeServiceImpl implements ICodeService {
         }
         return correct;
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int updateStatusByAttrId(Long companyId, Long codeAttrId, int status) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("codeAttrId", codeAttrId);
+        params.put("status", status);
+        return codeMapper.updateStatusByAttrId(params);
+    }
 }

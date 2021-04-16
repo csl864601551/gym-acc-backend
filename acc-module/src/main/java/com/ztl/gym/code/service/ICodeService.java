@@ -67,9 +67,19 @@ public interface ICodeService {
      * @param codeRecordId 生码记录id
      * @param codeTotalNum 生码总数
      * @param pCode        箱码
-     * @param codeAttrId        生码属性id
+     * @param codeAttrId   生码属性id
      * @return
      */
     int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, String pCode, Long codeAttrId);
 
+    /**
+     * 根据属性id修改码状态
+     *
+     * @param companyId
+     * @param codeAttrId
+     * @param status
+     * @param remark
+     * @return
+     */
+    int updateStatusByAttrId(Long companyId, Long codeAttrId, int status);
 }

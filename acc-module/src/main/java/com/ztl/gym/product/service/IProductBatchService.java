@@ -28,6 +28,7 @@ public interface IProductBatchService
      * @return 产品批次集合
      */
     public List<Map<String,Object>> selectProductBatchList(Map<String, Object> param);
+    public List<ProductBatch> selectProductBatchList(ProductBatch productBatch);
 
     /**
      * 新增产品批次
