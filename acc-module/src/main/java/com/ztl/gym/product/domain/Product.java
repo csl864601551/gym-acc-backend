@@ -1,6 +1,9 @@
 package com.ztl.gym.product.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -98,6 +101,13 @@ public class Product extends BaseEntity
     /** 更新人 */
     @Excel(name = "更新人")
     private Long updateUser;
+
+    /**----------冗余字段-------------*/
+    /** 产品分类*/
+    private Long proaductCategory;
+
+    /** 产品属性*/
+    private List<Map<String,Object>> attributeList;
 
     public void setId(Long id)
     {
@@ -287,6 +297,22 @@ public class Product extends BaseEntity
     public Long getUpdateUser()
     {
         return updateUser;
+    }
+
+    public Long getProaductCategory() {
+        return proaductCategory;
+    }
+
+    public void setProaductCategory(Long proaductCategory) {
+        this.proaductCategory = proaductCategory;
+    }
+
+    public List<Map<String, Object>> getAttributeList() {
+        return attributeList;
+    }
+
+    public void setAttributeList(List<Map<String, Object>> attributeList) {
+        this.attributeList = attributeList;
     }
 
     @Override

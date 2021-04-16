@@ -28,6 +28,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateUser"    column="update_user"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="productId"    column="product_id"    />
+        <result property="attrNameCn"    column="attr_name_cn"    />
+        <result property="attrNameEn"    column="attr_name_en"    />
+        <result property="attrValue"    column="attr_value"    />
+    </resultMap>
+    <resultMap type="Map" id="map">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="productNo"    column="product_no"    />
+        <result property="status"    column="status"    />
+        <result property="productName"    column="product_name"    />
+        <result property="barCode"    column="bar_code"    />
+        <result property="categoryOne"    column="category_one"    />
+        <result property="categoryTwo"    column="category_two"    />
+        <result property="salePrice"    column="sale_price"    />
+        <result property="marketPrice"    column="market_price"    />
+        <result property="productIntroduce"    column="product_introduce"    />
+        <result property="productDetailPc"    column="product_detail_pc"    />
+        <result property="productDetailMobile"    column="product_detail_mobile"    />
+        <result property="storageId"    column="storage_id"    />
+        <result property="stock"    column="stock"    />
+        <result property="stockLimit"    column="stock_limit"    />
+        <result property="unit"    column="unit"    />
+        <result property="sort"    column="sort"    />
+        <result property="salesNum"    column="sales_num"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="productId"    column="product_id"    />
+        <result property="attrNameCn"    column="attr_name_cn"    />
+        <result property="attrNameEn"    column="attr_name_en"    />
+        <result property="attrValue"    column="attr_value"    />
     </resultMap>
 
     <sql id="selectTProductVo">
@@ -39,11 +72,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="companyId != null "> and company_id = #{companyId}</if>
             <if test="productNo != null  and productNo != ''"> and product_no = #{productNo}</if>
-            <if test="status != null "> and status = #{status}</if>
+            <if test="status != null"> and status = #{status}</if>
+            <if test="status == null "> and status != 1</if>
             <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
             <if test="barCode != null  and barCode != ''"> and bar_code = #{barCode}</if>
             <if test="categoryOne != null  and categoryOne != ''"> and category_one = #{categoryOne}</if>
             <if test="categoryTwo != null  and categoryTwo != ''"> and category_two = #{categoryTwo}</if>
+            <if test="proaductCategory != null  and proaductCategory != ''"> and( category_two = #{proaductCategory} or category_one=#{proaductCategory})</if>
             <if test="salePrice != null "> and sale_price = #{salePrice}</if>
             <if test="marketPrice != null "> and market_price = #{marketPrice}</if>
             <if test="productIntroduce != null  and productIntroduce != ''"> and product_introduce = #{productIntroduce}</if>
@@ -58,11 +93,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createUser != null "> and create_user = #{createUser}</if>
             <if test="updateUser != null "> and update_user = #{updateUser}</if>
         </where>
+        order by sort
     </select>
 
     <select id="selectTProductById" parameterType="Long" resultMap="TProductResult">
         <include refid="selectTProductVo"/>
         where id = #{id}
+    </select>
+
+    <select id="getAttributeList" resultMap="map">
+        select id, company_id, product_id, attr_name_cn, attr_name_en, attr_value, sort, create_user, create_time, update_user, update_time
+        from t_product_attr
+        where product_id = #{id}
     </select>
 
     <insert id="insertTProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="id">
@@ -117,6 +159,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+    <insert id="insertProductAttr" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+        insert into t_product_attr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="attrNameCn != null">attr_name_cn,</if>
+            <if test="attrNameEn != null">attr_name_en,</if>
+            <if test="attrValue != null">attr_value,</if>
+            <if test="sort != null">sort,</if>
+            <if test="salesNum != null">sales_num,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="attrNameCn != null">#{attrNameCn},</if>
+            <if test="attrNameEn != null">#{attrNameEn},</if>
+            <if test="attrValue != null">#{attrValue},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="salesNum != null">#{salesNum},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
     <update id="updateTProduct" parameterType="Product">
         update t_product
         <trim prefix="SET" suffixOverrides=",">
@@ -147,13 +219,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteTProductById" parameterType="Long">
-        delete from t_product where id = #{id}
+        update t_product set status=1 where id = #{id}
     </delete>
 
     <delete id="deleteTProductByIds" parameterType="String">
-        delete from t_product where id in
+        update t_product set status=1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+    <delete id="deleteProductAttrById" parameterType="Long">
+        delete from t_product_attr where product_id = #{id}
     </delete>
 </mapper>

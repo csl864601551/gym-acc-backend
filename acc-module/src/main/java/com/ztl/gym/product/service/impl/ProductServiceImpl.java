@@ -1,13 +1,19 @@
 package com.ztl.gym.product.service.impl;
 
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.mapper.AttrMapper;
 import com.ztl.gym.product.mapper.ProductMapper;
 import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 产品Service业务层处理
@@ -20,6 +26,9 @@ public class ProductServiceImpl implements IProductService
 {
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private AttrMapper attrMapper;
+
 
     /**
      * 查询产品
@@ -30,7 +39,10 @@ public class ProductServiceImpl implements IProductService
     @Override
     public Product selectTProductById(Long id)
     {
-        return productMapper.selectTProductById(id);
+        Product product=productMapper.selectTProductById(id);
+        List<Map<String,Object>> list=productMapper.getAttributeList(id);
+        product.setAttributeList(list);
+        return product;
     }
 
     /**
@@ -42,6 +54,10 @@ public class ProductServiceImpl implements IProductService
     @Override
     public List<Product> selectTProductList(Product product)
     {
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            product.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         return productMapper.selectTProductList(product);
     }
 
@@ -52,10 +68,31 @@ public class ProductServiceImpl implements IProductService
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     public int insertTProduct(Product product)
     {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        Long company_temp=null;//公司ID
+        Long createUser=SecurityUtils.getLoginUser().getUser().getUserId();//用户ID
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            company_temp=SecurityUtils.getLoginUserTopCompanyId();
+            product.setCompanyId(company_temp);
+        }
+        product.setCreateUser(createUser);
         product.setCreateTime(DateUtils.getNowDate());
-        return productMapper.insertTProduct(product);
+        int result=productMapper.insertTProduct(product);//插入product主表
+        Long id=product.getId();
+        List<Map<String,Object>> list=product.getAttributeList();
+        Map<String,Object> map=new HashMap<>();
+        for(int i=0;i<list.size();i++){
+            map=list.get(i);
+            map.put("productId",id);
+            map.put("companyId",company_temp);
+            map.put("createUser",createUser);
+            map.put("createTime",DateUtils.getNowDate());
+            productMapper.insertProductAttr(map);
+        }
+        return result;
     }
 
     /**
@@ -65,10 +102,45 @@ public class ProductServiceImpl implements IProductService
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     public int updateTProduct(Product product)
     {
+        Long id=product.getId();
         product.setUpdateTime(DateUtils.getNowDate());
-        return productMapper.updateTProduct(product);
+
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        Long company_temp=null;//公司ID
+        Long createUser=SecurityUtils.getLoginUser().getUser().getUserId();//用户ID
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            company_temp=SecurityUtils.getLoginUserTopCompanyId();
+            product.setCompanyId(company_temp);
+        }
+        product.setCreateUser(createUser);
+        product.setCreateTime(DateUtils.getNowDate());
+
+        int result=productMapper.updateTProduct(product);//更新product
+        productMapper.deleteProductAttrById(id);//删除product_attr
+        List<Map<String,Object>> list=product.getAttributeList();
+        Map<String,Object> map=new HashMap<>();
+        for(int i=0;i<list.size();i++){
+            map=list.get(i);
+            map.put("productId",id);
+            map.put("companyId",company_temp);
+            map.put("createUser",createUser);
+            map.put("createTime",DateUtils.getNowDate());
+
+
+            try {
+                Long attr_id= Long.parseLong(map.get("attrNameCn").toString());
+                map.put("attrNameCn",attrMapper.selectAttrById(attr_id).getAttrNameCn());
+            }catch (Exception e){
+
+            }
+
+            productMapper.insertProductAttr(map);//插入product_attr
+        }
+
+        return result;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.ztl.gym.product.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ztl.gym.product.domain.Product;
 
@@ -59,4 +60,10 @@ public interface ProductMapper
      * @return 结果
      */
     public int deleteTProductByIds(Long[] ids);
+
+    void insertProductAttr(Map<String, Object> map);
+
+    List<Map<String, Object>> getAttributeList(Long id);
+
+    void deleteProductAttrById(Long id);
 }
