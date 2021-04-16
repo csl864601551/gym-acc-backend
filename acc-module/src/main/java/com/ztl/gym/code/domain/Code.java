@@ -22,13 +22,11 @@ public class Code extends BaseEntity {
     /**
      * 企业ID
      */
-    @Excel(name = "企业ID")
     private Long companyId;
 
     /**
      * 状态
      */
-    @Excel(name = "状态")
     private int status;
 
     /**
@@ -46,7 +44,6 @@ public class Code extends BaseEntity {
     /**
      * 码类型（箱码or单码）
      */
-    @Excel(name = "码类型", readConverterExp = "箱码or单码")
     private String codeType;
 
     /**
@@ -58,8 +55,14 @@ public class Code extends BaseEntity {
     /**
      * 码属性id
      */
-    @Excel(name = "码属性id")
+//    @Excel(name = "码属性id")
     private Long codeAttrId;
+
+    /*---------------------- 冗余字段 ----------------------*/
+    @Excel(name = "码状态")
+    private String statusName;
+    @Excel(name = "码类型")
+    private String codeTypeName;
 
     public void setCodeIndex(Long codeIndex) {
         this.codeIndex = codeIndex;
@@ -123,6 +126,22 @@ public class Code extends BaseEntity {
 
     public Long getCodeAttrId() {
         return codeAttrId;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getCodeTypeName() {
+        return codeTypeName;
+    }
+
+    public void setCodeTypeName(String codeTypeName) {
+        this.codeTypeName = codeTypeName;
     }
 
     @Override

@@ -51,6 +51,15 @@ public class AccConstants {
      */
     public final static String CODE_TYPE_BOX = "box";
 
+    /**
+     * 码状态-未赋值
+     */
+    public final static int CODE_STATUS_WAIT = 0;
+    /**
+     * 码状态-已赋值
+     */
+    public final static int CODE_STATUS_FINISH = 1;
+
     /*---------------------------- 生码记录常量 ----------------------------*/
     /**
      * 生码记录状态-生码中
@@ -92,9 +101,18 @@ public class AccConstants {
      */
     public final static Long STORAGE_DELETE_YSE = 1L;
 
-    /*---------------------------- 平台ID ----------------------------*/
+    /*---------------------------- 部门常量 ----------------------------*/
     /**
      * 平台ID
      */
     public final static Long ADMIN_DEPT_ID = 100L;
+
+    /**
+     * 部门状态-正常
+     */
+    public final static String DEPT_STATUS_NORMAL = "0";
+    /**
+     * 部门状态-停用
+     */
+    public final static String DEPT_STATUS_STOP = "1";
 }

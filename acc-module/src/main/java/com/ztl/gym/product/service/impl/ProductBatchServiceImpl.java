@@ -6,6 +6,7 @@ import java.util.Map;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.product.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.product.mapper.ProductBatchMapper;
@@ -49,6 +50,11 @@ public class ProductBatchServiceImpl implements IProductBatchService
             param.put("company_id",SecurityUtils.getLoginUserTopCompanyId());
         }
         return productBatchMapper.selectProductBatchList(param);
+    }
+    @Override
+    public List<ProductBatch> selectProductBatchList(ProductBatch productBatch)
+    {
+        return productBatchMapper.selectProductBatchListV2(productBatch);
     }
 
     /**

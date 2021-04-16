@@ -7,15 +7,14 @@ import com.ztl.gym.product.domain.ProductBatch;
 
 /**
  * 产品批次Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2021-04-14
  */
-public interface ProductBatchMapper 
-{
+public interface ProductBatchMapper {
     /**
      * 查询产品批次
-     * 
+     *
      * @param id 产品批次ID
      * @return 产品批次
      */
@@ -23,15 +22,17 @@ public interface ProductBatchMapper
 
     /**
      * 查询产品批次列表
-     * 
+     *
      * @param productBatch 产品批次
      * @return 产品批次集合
      */
-    public List<Map<String,Object>> selectProductBatchList(Map<String, Object> param);
+    public List<Map<String, Object>> selectProductBatchList(Map<String, Object> param);
+
+    public List<ProductBatch> selectProductBatchListV2(ProductBatch productBatch);
 
     /**
      * 新增产品批次
-     * 
+     *
      * @param productBatch 产品批次
      * @return 结果
      */
@@ -39,7 +40,7 @@ public interface ProductBatchMapper
 
     /**
      * 修改产品批次
-     * 
+     *
      * @param productBatch 产品批次
      * @return 结果
      */
@@ -47,7 +48,7 @@ public interface ProductBatchMapper
 
     /**
      * 删除产品批次
-     * 
+     *
      * @param id 产品批次ID
      * @return 结果
      */
@@ -55,7 +56,7 @@ public interface ProductBatchMapper
 
     /**
      * 批量删除产品批次
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
