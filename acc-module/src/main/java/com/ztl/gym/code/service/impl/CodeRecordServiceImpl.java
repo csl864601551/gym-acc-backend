@@ -135,6 +135,12 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int createCodeRecord(long companyId, long num, String remark) {
+        //TODO 企业经销商区域设置
+        //TODO 判断企业是否生码中
+        //TODO 批量插入
+        //TODO 数据源切换效率
+
+
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
@@ -156,7 +162,6 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         }
         return res;
     }
-
 
     /**
      * 生码-套标
@@ -190,8 +195,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             code.setCodeIndex(codeNo + 1);
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_BOX);
-            //生码规则 企业id+日期+流水
-            String pCode = "P" + companyId + DateUtils.dateTimeNow() + code.getCodeIndex();
+            //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
+            String pCode = "P" + companyId + "-" + DateUtils.dateTimeNow() + code.getCodeIndex();
             code.setCode(pCode);
             code.setCodeAttrId(codeAttrId);
             codeMapper.insertCode(code);

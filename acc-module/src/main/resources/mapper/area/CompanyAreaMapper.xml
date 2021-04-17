@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.area.mapper.CompanyAreaMapper">
+
+    <resultMap type="CompanyArea" id="CompanyAreaResult">
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="area" column="area"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="creatorName" column="nick_name"/>
+    </resultMap>
+
+    <sql id="selectCompanyAreaVo">
+        select id, company_id, tenant_id, province, city, area, create_user, create_time, update_user, update_time from t_company_area
+    </sql>
+
+    <sql id="selectCompanyAreaExtraVo">
+        select a.id,
+        a.company_id,
+        a.tenant_id,
+        a.province,
+        a.city,
+        a.area,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        u.nick_name
+        from t_company_area a left join sys_user u on a.create_user = u.user_id
+    </sql>
+
+    <select id="selectCompanyAreaList" parameterType="CompanyArea" resultMap="CompanyAreaResult">
+        <include refid="selectCompanyAreaExtraVo"/>
+        <where>
+            <if test="companyId != null ">and company_id = #{companyId}</if>
+            <if test="tenantId != null ">and tenant_id = #{tenantId}</if>
+            <if test="province != null  and province != ''">and province = #{province}</if>
+            <if test="city != null  and city != ''">and city = #{city}</if>
+            <if test="area != null  and area != ''">and area = #{area}</if>
+            <if test="createUser != null ">and create_user = #{createUser}</if>
+            <if test="updateUser != null ">and update_user = #{updateUser}</if>
+        </where>
+    </select>
+
+    <select id="selectCompanyAreaById" parameterType="Long" resultMap="CompanyAreaResult">
+        <include refid="selectCompanyAreaVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCompanyArea" parameterType="CompanyArea" useGeneratedKeys="true" keyProperty="id">
+        insert into t_company_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="area != null">area,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="area != null">#{area},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCompanyArea" parameterType="CompanyArea">
+        update t_company_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCompanyAreaById" parameterType="Long">
+        delete from t_company_area where id = #{id}
+    </delete>
+
+    <delete id="deleteCompanyAreaByIds" parameterType="String">
+        delete from t_company_area where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
