@@ -52,6 +52,8 @@ public interface IProductService
      */
     public int deleteTProductByIds(Long[] ids);
 
+    public int deleteTProductTrueByIds(Long[] ids);
+
     /**
      * 删除产品信息
      *

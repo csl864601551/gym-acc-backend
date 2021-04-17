@@ -70,7 +70,7 @@
                 <bind name="product_noLike" value="'%'+productNo+'%'"/>
                 and p.product_no like #{product_noLike}
             </if>
-            <if test="storageId != null ">and p.storage_id = #{storageId}</if>
+            <if test='proaductCategory != null and proaductCategory != ""'>and p.category_one = #{proaductCategory}</if>
         </where>
     </select>
 

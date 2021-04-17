@@ -119,26 +119,33 @@ public class ProductServiceImpl implements IProductService
         product.setCreateTime(DateUtils.getNowDate());
 
         int result=productMapper.updateTProduct(product);//更新product
-        productMapper.deleteProductAttrById(id);//删除product_attr
+
         List<Map<String,Object>> list=product.getAttributeList();
-        Map<String,Object> map=new HashMap<>();
-        for(int i=0;i<list.size();i++){
-            map=list.get(i);
-            map.put("productId",id);
-            map.put("companyId",company_temp);
-            map.put("createUser",createUser);
-            map.put("createTime",DateUtils.getNowDate());
+        if(list!=null){
+            if(list.size()>0){
+                productMapper.deleteProductAttrById(id);//删除product_attr
+                Map<String,Object> map=new HashMap<>();
+                for(int i=0;i<list.size();i++){
+                    map=list.get(i);
+                    map.put("productId",id);
+                    map.put("companyId",company_temp);
+                    map.put("createUser",createUser);
+                    map.put("createTime",DateUtils.getNowDate());
 
 
-            try {
-                Long attr_id= Long.parseLong(map.get("attrNameCn").toString());
-                map.put("attrNameCn",attrMapper.selectAttrById(attr_id).getAttrNameCn());
-            }catch (Exception e){
+                    try {
+                        Long attr_id= Long.parseLong(map.get("attrNameCn").toString());
+                        map.put("attrNameCn",attrMapper.selectAttrById(attr_id).getAttrNameCn());
+                    }catch (Exception e){
 
+                    }
+
+                    productMapper.insertProductAttr(map);//插入product_attr
+                }
             }
-
-            productMapper.insertProductAttr(map);//插入product_attr
         }
+
+
 
         return result;
     }
@@ -153,6 +160,11 @@ public class ProductServiceImpl implements IProductService
     public int deleteTProductByIds(Long[] ids)
     {
         return productMapper.deleteTProductByIds(ids);
+    }
+    @Override
+    public int deleteTProductTrueByIds(Long[] ids)
+    {
+        return productMapper.deleteTProductTrueByIds(ids);
     }
 
     /**

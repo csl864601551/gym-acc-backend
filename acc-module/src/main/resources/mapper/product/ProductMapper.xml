@@ -228,6 +228,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="deleteTProductTrueByIds" parameterType="String">
+        delete from t_product where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <delete id="deleteProductAttrById" parameterType="Long">
         delete from t_product_attr where product_id = #{id}
     </delete>

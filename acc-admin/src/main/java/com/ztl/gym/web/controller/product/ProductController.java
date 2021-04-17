@@ -94,4 +94,15 @@ public class ProductController extends BaseController
     {
         return toAjax(tProductService.deleteTProductByIds(ids));
     }
+
+    /**
+     * 删除产品
+     */
+    @PreAuthorize("@ss.hasPermi('product:del:remove')")
+    @Log(title = "产品", businessType = BusinessType.DELETE)
+    @DeleteMapping("/del/{ids}")
+    public AjaxResult removeTrue(@PathVariable Long[] ids)
+    {
+        return toAjax(tProductService.deleteTProductTrueByIds(ids));
+    }
 }

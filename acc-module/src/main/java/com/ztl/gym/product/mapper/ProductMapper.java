@@ -61,6 +61,8 @@ public interface ProductMapper
      */
     public int deleteTProductByIds(Long[] ids);
 
+    public int deleteTProductTrueByIds(Long[] ids);
+
     void insertProductAttr(Map<String, Object> map);
 
     List<Map<String, Object>> getAttributeList(Long id);
