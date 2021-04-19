@@ -128,7 +128,7 @@ public class CodeServiceImpl implements ICodeService {
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
             //生码规则 企业id+日期+流水
-            String codeStr = "S" + companyId + DateUtils.dateTimeNow() + codeIndex;
+            String codeStr = "S" + companyId + "/" + DateUtils.dateTimeNow() + codeIndex;
             code.setCode(codeStr);
             if (codeAttrId != null && codeAttrId > 0) {
                 code.setCodeAttrId(codeAttrId);
