@@ -22,11 +22,11 @@ public class StorageOut extends BaseEntity
 
     /** 企业ID */
     @Excel(name = "企业ID")
-    private Long company_id;
+    private Long companyId;
 
     /** 经销商id */
     @Excel(name = "经销商id")
-    private Long tenant_id;
+    private Long tenantId;
 
     /** 状态 */
     @Excel(name = "状态")
@@ -34,204 +34,218 @@ public class StorageOut extends BaseEntity
 
     /** 出库单号 */
     @Excel(name = "出库单号")
-    private String out_no;
+    private String outNo;
 
     /** 产品id */
     @Excel(name = "产品id")
-    private Long product_id;
+    private Long productId;
 
     /** 产品批次 */
     @Excel(name = "产品批次")
-    private String batch_no;
+    private String batchNo;
 
     /** 出库数量 */
     @Excel(name = "出库数量")
-    private Long out_num;
+    private Long outNum;
 
     /** 实际出库数量 */
     @Excel(name = "实际出库数量")
-    private Long act_out_num;
+    private Long actOutNum;
 
     /** 发货单位 */
     @Excel(name = "发货单位")
-    private String storage_from;
+    private String storageFrom;
 
     /** 收货单位 */
     @Excel(name = "收货单位")
-    private String storage_to;
+    private String storageTo;
 
     /** 出货仓库 */
     @Excel(name = "出货仓库")
-    private Long from_storage_id;
+    private Long fromStorageId;
 
     /** 收货仓库 */
     @Excel(name = "收货仓库")
-    private Long to_storage_id;
+    private Long toStorageId;
 
     /** 创建人 */
     @Excel(name = "创建人")
-    private Long create_user;
+    private Long createUser;
 
     /** 修改人 */
     @Excel(name = "修改人")
-    private Long update_user;
-    
+    private Long updateUser;
+
     /** 出库时间 */
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
-    private Date out_time;
+    private Date outTime;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public Long getCompany_id() {
-        return company_id;
+    public Long getId()
+    {
+        return id;
+    }
+    public void setCompanyId(Long companyId)
+    {
+        this.companyId = companyId;
     }
 
-    public void setCompany_id(Long company_id) {
-        this.company_id = company_id;
+    public Long getCompanyId()
+    {
+        return companyId;
+    }
+    public void setTenantId(Long tenantId)
+    {
+        this.tenantId = tenantId;
     }
 
-    public Long getTenant_id() {
-        return tenant_id;
+    public Long getTenantId()
+    {
+        return tenantId;
     }
-
-    public void setTenant_id(Long tenant_id) {
-        this.tenant_id = tenant_id;
-    }
-
-    public Long getStatus() {
-        return status;
-    }
-
-    public void setStatus(Long status) {
+    public void setStatus(Long status)
+    {
         this.status = status;
     }
 
-    public String getOut_no() {
-        return out_no;
+    public Long getStatus()
+    {
+        return status;
+    }
+    public void setOutNo(String outNo)
+    {
+        this.outNo = outNo;
     }
 
-    public void setOut_no(String out_no) {
-        this.out_no = out_no;
+    public String getOutNo()
+    {
+        return outNo;
+    }
+    public void setProductId(Long productId)
+    {
+        this.productId = productId;
     }
 
-    public Long getProduct_id() {
-        return product_id;
+    public Long getProductId()
+    {
+        return productId;
+    }
+    public void setBatchNo(String batchNo)
+    {
+        this.batchNo = batchNo;
     }
 
-    public void setProduct_id(Long product_id) {
-        this.product_id = product_id;
+    public String getBatchNo()
+    {
+        return batchNo;
+    }
+    public void setOutNum(Long outNum)
+    {
+        this.outNum = outNum;
     }
 
-    public String getBatch_no() {
-        return batch_no;
+    public Long getOutNum()
+    {
+        return outNum;
+    }
+    public void setActOutNum(Long actOutNum)
+    {
+        this.actOutNum = actOutNum;
     }
 
-    public void setBatch_no(String batch_no) {
-        this.batch_no = batch_no;
+    public Long getActOutNum()
+    {
+        return actOutNum;
+    }
+    public void setStorageFrom(String storageFrom)
+    {
+        this.storageFrom = storageFrom;
     }
 
-    public Long getOut_num() {
-        return out_num;
+    public String getStorageFrom()
+    {
+        return storageFrom;
+    }
+    public void setStorageTo(String storageTo)
+    {
+        this.storageTo = storageTo;
     }
 
-    public void setOut_num(Long out_num) {
-        this.out_num = out_num;
+    public String getStorageTo()
+    {
+        return storageTo;
+    }
+    public void setFromStorageId(Long fromStorageId)
+    {
+        this.fromStorageId = fromStorageId;
     }
 
-    public Long getAct_out_num() {
-        return act_out_num;
+    public Long getFromStorageId()
+    {
+        return fromStorageId;
+    }
+    public void setToStorageId(Long toStorageId)
+    {
+        this.toStorageId = toStorageId;
     }
 
-    public void setAct_out_num(Long act_out_num) {
-        this.act_out_num = act_out_num;
+    public Long getToStorageId()
+    {
+        return toStorageId;
+    }
+    public void setOutTime(Date outTime)
+    {
+        this.outTime = outTime;
     }
 
-    public String getStorage_from() {
-        return storage_from;
+    public Date getOutTime()
+    {
+        return outTime;
     }
 
-    public void setStorage_from(String storage_from) {
-        this.storage_from = storage_from;
+    public Long getCreateUser() {
+        return createUser;
     }
 
-    public String getStorage_to() {
-        return storage_to;
+    public void setCreateUser(Long createUser) {
+        this.createUser = createUser;
     }
 
-    public void setStorage_to(String storage_to) {
-        this.storage_to = storage_to;
+    public Long getUpdateUser() {
+        return updateUser;
     }
 
-    public Long getFrom_storage_id() {
-        return from_storage_id;
-    }
-
-    public void setFrom_storage_id(Long from_storage_id) {
-        this.from_storage_id = from_storage_id;
-    }
-
-    public Long getTo_storage_id() {
-        return to_storage_id;
-    }
-
-    public void setTo_storage_id(Long to_storage_id) {
-        this.to_storage_id = to_storage_id;
-    }
-
-    public Long getCreate_user() {
-        return create_user;
-    }
-
-    public void setCreate_user(Long create_user) {
-        this.create_user = create_user;
-    }
-
-    public Long getUpdate_user() {
-        return update_user;
-    }
-
-    public void setUpdate_user(Long update_user) {
-        this.update_user = update_user;
-    }
-
-    public Date getOut_time() {
-        return out_time;
-    }
-
-    public void setOut_time(Date out_time) {
-        this.out_time = out_time;
+    public void setUpdateUser(Long updateUser) {
+        this.updateUser = updateUser;
     }
 
     @Override
     public String toString() {
-        return "StorageOut{" +
-                "id=" + id +
-                ", company_id=" + company_id +
-                ", tenant_id=" + tenant_id +
-                ", status=" + status +
-                ", out_no='" + out_no + '\'' +
-                ", product_id=" + product_id +
-                ", batch_no='" + batch_no + '\'' +
-                ", out_num=" + out_num +
-                ", act_out_num=" + act_out_num +
-                ", storage_from='" + storage_from + '\'' +
-                ", storage_to='" + storage_to + '\'' +
-                ", from_storage_id=" + from_storage_id +
-                ", to_storage_id=" + to_storage_id +
-                ", create_user=" + create_user +
-                ", update_user=" + update_user +
-                ", out_time=" + out_time +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("companyId", getCompanyId())
+                .append("tenantId", getTenantId())
+                .append("status", getStatus())
+                .append("outNo", getOutNo())
+                .append("productId", getProductId())
+                .append("batchNo", getBatchNo())
+                .append("outNum", getOutNum())
+                .append("actOutNum", getActOutNum())
+                .append("storageFrom", getStorageFrom())
+                .append("storageTo", getStorageTo())
+                .append("fromStorageId", getFromStorageId())
+                .append("toStorageId", getToStorageId())
+                .append("remark", getRemark())
+                .append("createUser", getCreateUser())
+                .append("createTime", getCreateTime())
+                .append("outTime", getOutTime())
+                .append("updateUser", getUpdateUser())
+                .append("updateTime", getUpdateTime())
+                .toString();
     }
 }
