@@ -36,6 +36,26 @@ public class CodeRuleUtils {
     }
 
     /**
+     * 根据码获得该码类型
+     *
+     * @param code
+     * @return
+     */
+    public static String getCodeType(String code) {
+        String[] codes = code.split("/");
+        if (codes.length > 1) {
+            String prefix = codes[0];
+            String prefixStr = prefix.substring(0, 1);
+            if (prefixStr.equals("P")) {
+                return AccConstants.CODE_TYPE_BOX;
+            } else if (prefixStr.equals("S")) {
+                return AccConstants.CODE_TYPE_SINGLE;
+            }
+        }
+        return AccConstants.CODE_TYPE_ERROR;
+    }
+
+    /**
      * 根据码获得该码所属企业id
      *
      * @param code

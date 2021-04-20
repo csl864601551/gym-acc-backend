@@ -2,8 +2,10 @@ package com.ztl.gym.code.service;
 
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.storage.domain.vo.FlowVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 码 Service接口
@@ -86,8 +88,32 @@ public interface ICodeService {
      * @param companyId
      * @param codeAttrId
      * @param status
-     * @param remark
      * @return
      */
     int updateStatusByAttrId(Long companyId, Long codeAttrId, int status);
+
+    /**
+     * 新增单码流转明细
+     *
+     * @param flowVo
+     * @return
+     */
+    int insertCodeFlowForSingle(FlowVo flowVo);
+
+    /**
+     * 批量新增单码流转明细 【insertProvider形式】
+     *
+     * @param list
+     * @return
+     */
+    int insertCodeFlowForBatchSingle(long companyId, List<FlowVo> list);
+
+    /**
+     * 新增箱码流转明细
+     *
+     * @param flowVo
+     * @return
+     */
+    int insertCodeFlowForBox(FlowVo flowVo);
+
 }

@@ -4,7 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.service.impl.CodeServiceImpl;
+import com.ztl.gym.storage.domain.vo.FlowVo;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 码 Mapper接口
@@ -13,10 +18,10 @@ import org.springframework.stereotype.Repository;
  * @date 2021-04-14
  */
 @Repository
-public interface CodeMapper
-{
+public interface CodeMapper {
     /**
      * 查询单个码
+     *
      * @param code
      * @return
      */
@@ -78,4 +83,36 @@ public interface CodeMapper
      */
     int updateStatusByAttrId(Map<String, Object> params);
 
+    /**
+     * 新增单码流转明细
+     *
+     * @param flowVo
+     * @return
+     */
+    int insertCodeFlowForSingle(FlowVo flowVo);
+
+    /**
+     * 新增箱码流转明细
+     *
+     * @param flowVo
+     * @return
+     */
+    int insertCodeFlowForBox(FlowVo flowVo);
+
+    /**
+     * 批量新增单码流转明细 【insertProvider形式】
+     *
+     * @param list
+     * @return
+     */
+    @InsertProvider(type = CodeServiceImpl.class, method = "buildInsertBatchCodeFlowSql")
+    int insertCodeFlowForBatchSingle(long companyId, List<FlowVo> list);
+
+    /**
+     * 批量新增单码流转明细 【xml形式】
+     *
+     * @param list
+     * @return
+     */
+    int insertCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
 }

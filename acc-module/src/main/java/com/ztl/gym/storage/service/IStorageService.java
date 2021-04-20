@@ -69,10 +69,18 @@ public interface IStorageService {
     List<Storage> selectStorageByUser(Storage storage);
 
     /**
-     * 查询码最新的物流信息
+     * 查询码信息 【包含码属性、产品、批次】
      *
      * @param codeVal
      * @return
      */
     StorageVo selectLastStorageByCode(String codeVal);
+
+    /**
+     * 新增码流转明细 【1.新增码流转明细 2.修改码属性codeAttr中最新流转信息】
+     *
+     * @return
+     */
+    int addCodeFlow(int storageType, long storageRecordId, String code);
+
 }

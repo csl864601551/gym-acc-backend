@@ -1,23 +1,29 @@
 package com.ztl.gym.storage.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.*;
+import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.domain.vo.StorageVo;
 import com.ztl.gym.storage.mapper.StorageMapper;
 import com.ztl.gym.storage.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sun.plugin.com.event.COMEventHandler;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * 仓库Service业务层处理
@@ -187,6 +193,12 @@ public class StorageServiceImpl implements IStorageService {
         return storageMapper.selectStorageByUser(storage);
     }
 
+    /**
+     * 查询码信息 【包含码属性、产品、批次】
+     *
+     * @param codeVal
+     * @return
+     */
     @Override
     public StorageVo selectLastStorageByCode(String codeVal) {
         StorageVo storageVo = new StorageVo(); //TODO 查询码的最新物流信息
@@ -221,5 +233,72 @@ public class StorageServiceImpl implements IStorageService {
         return storageVo;
     }
 
+    /**
+     * 新增码流转明细 【1.新增码流转明细,传入箱码则会更新下属所有单码 2.修改码属性codeAttr中最新流转信息】
+     *
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @DataSource(DataSourceType.SHARDING)
+    public int addCodeFlow(int storageType, long storageRecordId, String code) {
+        String codeType = CodeRuleUtils.getCodeType(code);
+        Long companyId = CodeRuleUtils.getCompanyIdByCode(code);
+
+        Code codeEntity = new Code();
+        Code codeRes = null;
+        codeEntity.setCode(code);
+        codeEntity.setCompanyId(companyId);
+
+        int insertRes = 0;
+        if (codeType.equals(AccConstants.CODE_TYPE_SINGLE)) {
+            insertRes = codeService.insertCodeFlowForSingle(buildFlowParam(companyId, code, storageType, storageRecordId));
+        } else if (codeType.equals(AccConstants.CODE_TYPE_BOX)) {
+            //箱码
+            insertRes = codeService.insertCodeFlowForBox(buildFlowParam(companyId, code, storageType, storageRecordId));
+
+            //批量插入单码
+            Code codeParam = new Code();
+            codeParam.setCompanyId(companyId);
+            codeParam.setpCode(code);
+            List<Code> sonList = codeService.selectCodeList(codeParam);
+            List<FlowVo> insertList = new ArrayList<>();
+            for (Code sonCode : sonList) {
+                insertList.add(buildFlowParam(companyId, sonCode.getCode(), storageType, storageRecordId));
+            }
+            codeService.insertCodeFlowForBatchSingle(companyId, insertList);
+        }
+        int updRes = 0;
+        if (insertRes > 0) {
+            codeRes = codeService.selectCode(codeEntity);
+            CodeAttr codeAttr = new CodeAttr();
+            codeAttr.setId(codeRes.getCodeAttrId());
+            codeAttr.setStorageType(storageType);
+            codeAttr.setStorageRecordId(storageRecordId);
+            updRes = codeAttrService.updateCodeAttr(codeAttr);
+        }
+        return updRes;
+    }
+
+    /**
+     * 组建码流转明细参数
+     *
+     * @param companyId
+     * @param code
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    private static FlowVo buildFlowParam(long companyId, String code, int storageType, long storageRecordId) {
+        FlowVo flowVo = new FlowVo();
+        flowVo.setCompanyId(companyId);
+        flowVo.setCode(code);
+        flowVo.setStorageType(storageType);
+        flowVo.setStorageRecordId(storageRecordId);
+//        flowVo.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId()); FIXME
+        flowVo.setCreateUser(1);
+        flowVo.setCreateTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", new Date()));
+        return flowVo;
+    }
 
 }

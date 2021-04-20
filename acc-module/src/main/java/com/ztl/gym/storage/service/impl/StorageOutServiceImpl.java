@@ -61,12 +61,12 @@ public class StorageOutServiceImpl implements IStorageOutService
     public int insertStorageOut(Map<String, Object> map)
     {
         map.put("create_time",(DateUtils.getNowDate()));
-        storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
-        storageInMapper.insertStorageMoveRecord(map);//新增t_storage_move_record产品流转记录表
-        storageInMapper.insertStorageMove(map);//新增t_storage_move产品流转明细表
-        storageInMapper.insertStorageCode(map);//新增t_storage_code物流码明细表
-        storageInMapper.insertPcodeMove(map);//新增t_pcode_move箱码流转记录表
-        storageInMapper.insertCodeMove(map);//新增t_code_move单码流转记录表
+//        storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
+//        storageInMapper.insertStorageMoveRecord(map);//新增t_storage_move_record产品流转记录表
+//        storageInMapper.insertStorageMove(map);//新增t_storage_move产品流转明细表
+//        storageInMapper.insertStorageCode(map);//新增t_storage_code物流码明细表
+//        storageInMapper.insertPcodeMove(map);//新增t_pcode_move箱码流转记录表
+//        storageInMapper.insertCodeMove(map);//新增t_code_move单码流转记录表
         storageInMapper.updateProductStock(map);//更新t_product_stock库存统计表
         return 0;
     }

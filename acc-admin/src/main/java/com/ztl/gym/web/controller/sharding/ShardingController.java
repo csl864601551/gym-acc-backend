@@ -9,6 +9,8 @@ import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.utils.uuid.IdUtils;
 import com.ztl.gym.sharding.domain.SysOrder;
 import com.ztl.gym.sharding.service.ISysOrderService;
+import com.ztl.gym.storage.service.IStorageInService;
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +35,9 @@ public class ShardingController extends BaseController {
     private ISysOrderService sysOrderService;
     @Autowired
     private CodeTestService codeService;
+    @Autowired
+    private IStorageService storageService;
+
 
     @GetMapping("/add/{userId}")
     public AjaxResult add(@PathVariable("userId") Long userId) {
@@ -92,7 +97,7 @@ public class ShardingController extends BaseController {
         // 获取当前的用户信息
 //        LoginUser currentUser = SecurityUtils.getLoginUser();
         // 获取当前的用户企业
-        long deptId =200;
+        long deptId = 200;
         Code code = new Code();
         code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
         code.setCode(codeValue);
@@ -121,4 +126,12 @@ public class ShardingController extends BaseController {
         long deptId = 200;
         return AjaxResult.success(codeService.selectCodeById(deptId, deptId));
     }
+
+    @GetMapping("/code/testTran1")
+    public AjaxResult testTran1(String code) {
+        System.out.println(code);
+        return AjaxResult.success(storageService.addCodeFlow(1, 1, code));
+    }
+
+
 }

@@ -10,6 +10,7 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,5 +169,68 @@ public class CodeServiceImpl implements ICodeService {
         params.put("codeAttrId", codeAttrId);
         params.put("status", status);
         return codeMapper.updateStatusByAttrId(params);
+    }
+
+    /**
+     * 新增单码流转明细
+     *
+     * @param flowVo
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int insertCodeFlowForSingle(FlowVo flowVo) {
+        return codeMapper.insertCodeFlowForSingle(flowVo);
+    }
+
+    /**
+     * 批量新增单码流转明细 【insertProvider形式】
+     *
+     * @param list
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int insertCodeFlowForBatchSingle(long companyId, List<FlowVo> list) {
+//        return codeMapper.insertCodeFlowForBatchSingle(companyId, list);
+        return codeMapper.insertCodeFlowForBatchSingleV2(companyId, list);
+    }
+
+    /**
+     * 新增箱码流转明细
+     *
+     * @param flowVo
+     * @return
+     */
+    @Override
+    public int insertCodeFlowForBox(FlowVo flowVo) {
+        return codeMapper.insertCodeFlowForBox(flowVo);
+    }
+
+    /**
+     * 构建批量插入单码明细sql
+     *
+     * @param list
+     * @return
+     */
+    public static String buildInsertBatchCodeFlowSql(long companyId, List<FlowVo> list) {
+        StringBuffer sqlList = new StringBuffer();
+        sqlList.append(" INSERT INTO t_code_flow(company_id,code,storage_type,storage_record_id,create_user,create_time)  VALUES ");
+        for (int i = 0; i < list.size(); i++) {
+            FlowVo flowVo = list.get(i);
+            sqlList.append(" (").
+                    append(companyId).append(",")
+                    .append("'").append(flowVo.getCode()).append("',")
+                    .append(flowVo.getStorageType()).append(",")
+                    .append(flowVo.getStorageRecordId()).append(",")
+                    .append(flowVo.getCreateUser()).append(",")
+                    .append("'").append(flowVo.getCreateTime()).append("'")
+                    .append(")");
+            if (i < list.size() - 1) {
+                sqlList.append(",");
+            }
+        }
+        System.out.println("sql: " + sqlList.toString());
+        return sqlList.toString();
     }
 }

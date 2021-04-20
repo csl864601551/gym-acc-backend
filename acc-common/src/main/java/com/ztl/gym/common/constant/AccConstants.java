@@ -72,13 +72,17 @@ public class AccConstants {
 
     /*---------------------------- 生码常量 ----------------------------*/
     /**
-     * 单码
+     * 码类型-单码
      */
     public final static String CODE_TYPE_SINGLE = "single";
     /**
-     * 箱码
+     * 码类型-箱码
      */
     public final static String CODE_TYPE_BOX = "box";
+    /**
+     * 码类型-错误类型
+     */
+    public final static String CODE_TYPE_ERROR = "error";
 
     /**
      * 码状态-未赋值
