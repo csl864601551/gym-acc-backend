@@ -63,15 +63,9 @@ public interface StorageInMapper
      */
     public int deleteStorageInByIds(Long[] ids);
 
-    void insertStorageMoveRecord(Map<String, Object> storageIn);
+    void insertPcodeFlow(Map<String, Object> storageIn);
 
-    void insertStorageMove(Map<String, Object> storageIn);
-
-    void insertStorageCode(Map<String, Object> storageIn);
-
-    void insertPcodeMove(Map<String, Object> storageIn);
-
-    void insertCodeMove(Map<String, Object> storageIn);
+    void insertCodeFlow(Map<String, Object> storageIn);
 
     void updateProductStock(Map<String, Object> storageIn);
 

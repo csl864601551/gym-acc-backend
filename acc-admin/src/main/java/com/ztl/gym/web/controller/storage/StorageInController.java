@@ -3,6 +3,7 @@ package com.ztl.gym.web.controller.storage;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,8 @@ public class StorageInController extends BaseController
     @Autowired
     private IStorageInService storageInService;
 
+    @Autowired
+    private IStorageService storageService;
     /**
      * 查询入库列表
      */
@@ -107,8 +110,8 @@ public class StorageInController extends BaseController
      * 根据码号查询相关产品和码信息
      */
     @GetMapping(value = "/getRecordByCode/{code}")
-    public AjaxResult getCodeInfo(@PathVariable("code") String code)
+    public AjaxResult getRecordByCode(@PathVariable("code") String code)
     {
-        return AjaxResult.success(storageInService.getCodeInfo(code));
+        return AjaxResult.success(storageService.selectLastStorageByCode(code));
     }
 }
