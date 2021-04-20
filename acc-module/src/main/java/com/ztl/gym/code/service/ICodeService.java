@@ -13,6 +13,14 @@ import java.util.List;
  */
 public interface ICodeService {
     /**
+     * 查询单个码
+     *
+     * @return
+     */
+    public Code selectCode(Code code);
+
+
+    /**
      * 查询码
      *
      * @param codeIndex 码 ID

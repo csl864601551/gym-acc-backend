@@ -135,12 +135,14 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int createCodeRecord(long companyId, long num, String remark) {
-        //TODO 企业经销商区域设置
         //TODO 判断企业是否生码中
+        //TODO 生码数量不能为0
+        //TODO 生码回显
+        //TODO 生码规则工具类集成
+
+        //TODO 企业经销商区域设置
         //TODO 批量插入
         //TODO 数据源切换效率
-
-
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {

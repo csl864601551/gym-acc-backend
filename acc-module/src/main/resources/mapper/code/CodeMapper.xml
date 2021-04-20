@@ -13,11 +13,67 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="codeType"    column="code_type"    />
         <result property="pCode"    column="p_code"    />
         <result property="codeAttrId"    column="code_attr_id"    />
+        <association property="codeAttr"
+                     column="code_attr_id"
+                     select="com.ztl.gym.code.mapper.CodeAttrMapper.selectCodeAttrById">
+        </association>
     </resultMap>
 
     <sql id="selectCodeVo">
         select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id from t_code
     </sql>
+
+    <sql id="selectCodeExtraVo">
+        select tc.code_index,
+        tc.company_id,
+        tc.status,
+        tc.code,
+        tc.code_acc,
+        tc.code_type,
+        tc.p_code,
+        tc.code_attr_id,
+
+        ca.storage_type,
+        ca.storage_record_id,
+        ca.record_id,
+        ca.index_start,
+        ca.index_end,
+        ca.product_id,
+        ca.product_no,
+        ca.bar_code,
+        ca.product_category,
+        ca.product_unit,
+        ca.batch_id,
+        ca.batch_no,
+        ca.product_introduce,
+        ca.remark,
+        ca.input_by,
+        ca.input_time,
+        ca.create_user,
+        ca.create_time,
+        ca.update_user,
+        ca.update_time,
+
+        p.product_no,
+        p.product_name,
+        p.bar_code,
+        p.category_one,
+        p.category_two
+
+        from t_code tc
+        left join t_code_attr ca on tc.code_attr_id = ca.id
+        left join t_product p on ca.product_id = p.id
+        left join t_product_batch pb on ca.batch_id = pb.id
+
+    </sql>
+
+    <select id="selectCode" parameterType="Code" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+        </where>
+        limit 1
+    </select>
 
     <select id="selectCodeList" parameterType="Code" resultMap="CodeResult">
         <include refid="selectCodeVo"/>

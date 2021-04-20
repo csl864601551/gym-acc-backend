@@ -63,6 +63,10 @@ public class Code extends BaseEntity {
     private String statusName;
     @Excel(name = "码类型")
     private String codeTypeName;
+    /**
+     * 码属性
+     */
+    private CodeAttr codeAttr;
 
     public void setCodeIndex(Long codeIndex) {
         this.codeIndex = codeIndex;
@@ -142,6 +146,14 @@ public class Code extends BaseEntity {
 
     public void setCodeTypeName(String codeTypeName) {
         this.codeTypeName = codeTypeName;
+    }
+
+    public CodeAttr getCodeAttr() {
+        return codeAttr;
+    }
+
+    public void setCodeAttr(CodeAttr codeAttr) {
+        this.codeAttr = codeAttr;
     }
 
     @Override
