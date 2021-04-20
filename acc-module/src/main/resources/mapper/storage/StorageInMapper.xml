@@ -86,7 +86,23 @@
         where si.id = #{id}
     </select>
     <select id="getCodeInfo" resultMap="map">
+        select c.code_index, c.company_id, c.status, c.code, c.code_acc, c.code_type, c.p_code, c.code_attr_id
+        ,p.product_no,p.product_name,p.bar_code, p.category_one, p.category_two, p.sale_price, p.market_price,
+        p.product_introduce, p.product_detail_pc, p.product_detail_mobile, p.storage_id, p.stock, p.stock_limit,
+        p.unit, p.sort, p.sales_num
+        from t_code as c
+        left join t_code_attr ca on ca.id=c.code_attr_id
+        left join t_code_record cr on cr.id=ca.record_id
+        left join t_product p on p.id=cr.product_id
 
+        <where>
+            <if test="companyId != null "> and c.company_id = #{companyId}</if>
+            <if test="code != null  and code != ''"> and c.code = #{code}</if>
+            <if test="codeAcc != null  and codeAcc != ''"> and c.code_acc = #{codeAcc}</if>
+            <if test="codeType != null  and codeType != ''"> and c.code_type = #{codeType}</if>
+            <if test="pCode != null  and pCode != ''"> and c.p_code = #{pCode}</if>
+            <if test="codeAttrId != null "> and c.code_attr_id = #{codeAttrId}</if>
+        </where>
     </select>
     <select id="getCodeDetail" resultMap="map">
 

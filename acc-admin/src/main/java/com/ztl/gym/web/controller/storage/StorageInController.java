@@ -107,7 +107,7 @@ public class StorageInController extends BaseController
      * 根据码号查询相关产品和码信息
      */
     @GetMapping(value = "/getRecordByCode/{code}")
-    public AjaxResult getCodeInfo(@PathVariable("code") String code)
+    public AjaxResult getRecordByCode(@PathVariable("code") String code)
     {
         return AjaxResult.success(storageInService.getCodeInfo(code));
     }
