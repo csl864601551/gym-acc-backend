@@ -1,6 +1,10 @@
 package com.ztl.gym.web.controller.storage;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +32,7 @@ import com.ztl.gym.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/storage/storage")
-public class StorageController extends BaseController
-{
+public class StorageController extends BaseController {
     @Autowired
     private IStorageService storageService;
 
@@ -38,8 +41,7 @@ public class StorageController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:storage:list')")
     @GetMapping("/list")
-    public TableDataInfo list(Storage storage)
-    {
+    public TableDataInfo list(Storage storage) {
         startPage();
         List<Storage> list = storageService.selectStorageList(storage);
         return getDataTable(list);
@@ -51,8 +53,7 @@ public class StorageController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:storage:export')")
     @Log(title = "仓库", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(Storage storage)
-    {
+    public AjaxResult export(Storage storage) {
         List<Storage> list = storageService.selectStorageList(storage);
         ExcelUtil<Storage> util = new ExcelUtil<Storage>(Storage.class);
         return util.exportExcel(list, "storage");
@@ -63,8 +64,7 @@ public class StorageController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:storage:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(storageService.selectStorageById(id));
     }
 
@@ -74,8 +74,7 @@ public class StorageController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:storage:add')")
     @Log(title = "仓库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Storage storage)
-    {
+    public AjaxResult add(@RequestBody Storage storage) {
         return toAjax(storageService.insertStorage(storage));
     }
 
@@ -85,8 +84,7 @@ public class StorageController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:storage:edit')")
     @Log(title = "仓库", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Storage storage)
-    {
+    public AjaxResult edit(@RequestBody Storage storage) {
         return toAjax(storageService.updateStorage(storage));
     }
 
@@ -95,9 +93,32 @@ public class StorageController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:storage:remove')")
     @Log(title = "仓库", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(storageService.deleteStorageByIds(ids));
+    }
+
+
+    /**
+     * 获取用户仓库信息
+     */
+    @PreAuthorize("@ss.hasPermi('storage:storage:listByUser')")
+    @GetMapping(value = "/listStorageByUser")
+    public AjaxResult getUserStotageList() {
+        Storage storage = new Storage();
+        storage.setStatus(0L);
+        if (!SecurityUtils.getLoginUserCompany().getDeptId().equals(AccConstants.TOP_DEPT_ID)) {
+            //判断用户是企业还是经销商
+            String[] ancestors = SecurityUtils.getLoginUserCompany().getAncestors().split(",");
+            if (ancestors.length > 2) {
+                storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
+                storage.setTenantId(SecurityUtils.getLoginUser().getUser().getUserId());
+            } else {
+                storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
+                storage.setCompanyId(SecurityUtils.getLoginUser().getUser().getUserId());
+            }
+        }
+        List<Storage> list = storageService.selectStorageByUser(storage);
+        return AjaxResult.success(list);
     }
 }

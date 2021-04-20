@@ -1,6 +1,7 @@
 package com.ztl.gym.code.domain;
 
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
@@ -13,95 +14,151 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author ruoyi
  * @date 2021-04-15
  */
-public class CodeAttr extends BaseEntity
-{
+public class CodeAttr extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     private Long id;
 
-    /** 企业ID */
+    /**
+     * 企业ID
+     */
     @Excel(name = "企业ID")
     private Long companyId;
 
-    /** 生码记录id */
+    /**
+     * 当前流转类型
+     */
+    private int storageType;
+
+    /**
+     * 当前流转记录id
+     */
+    private int storageRecordId;
+
+    /**
+     * 生码记录id
+     */
     @Excel(name = "生码记录id")
     private Long recordId;
 
-    /** 起始流水号 */
+    /**
+     * 起始流水号
+     */
     @Excel(name = "起始流水号")
     private Long indexStart;
 
-    /** 截止流水号 */
+    /**
+     * 截止流水号
+     */
     @Excel(name = "截止流水号")
     private Long indexEnd;
 
-    /** 关联产品id */
+    /**
+     * 关联产品id
+     */
     @Excel(name = "关联产品id")
     private Long productId;
 
-    /** 关联产品编号 */
+    /**
+     * 关联产品编号
+     */
     @Excel(name = "关联产品编号")
     private String productNo;
 
-    /** 关联产品条码 */
+    /**
+     * 关联产品条码
+     */
     @Excel(name = "关联产品条码")
     private String barCode;
 
-    /** 关联产品分类 */
+    /**
+     * 关联产品分类
+     */
     @Excel(name = "关联产品分类")
     private String productCategory;
 
-    /** 关联产品单位 */
+    /**
+     * 关联产品单位
+     */
     @Excel(name = "关联产品单位")
     private String productUnit;
 
-    /** 关联批次id */
+    /**
+     * 关联批次id
+     */
     @Excel(name = "关联批次id")
     private Long batchId;
 
-    /** 关联批次编号 */
+    /**
+     * 关联批次编号
+     */
     @Excel(name = "关联批次编号")
     private String batchNo;
 
-    /** 关联产品简介 */
+    /**
+     * 关联产品简介
+     */
     @Excel(name = "关联产品简介")
     private String productIntroduce;
 
-    /** 赋值操作人 */
+    /**
+     * 赋值操作人
+     */
     @Excel(name = "赋值操作人")
     private Long inputBy;
 
-    /** 赋值时间 */
+    /**
+     * 赋值时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "赋值时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date inputTime;
 
-    /** 创建人 */
+    /**
+     * 创建人
+     */
     @Excel(name = "创建人")
     private Long createUser;
 
-    /** 更新人 */
+    /**
+     * 更新人
+     */
     @Excel(name = "更新人")
     private Long updateUser;
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
-    public void setCompanyId(Long companyId)
-    {
+
+    public void setCompanyId(Long companyId) {
         this.companyId = companyId;
     }
 
-    public Long getCompanyId()
-    {
+    public Long getCompanyId() {
         return companyId;
+    }
+
+    public int getStorageType() {
+        return storageType;
+    }
+
+    public void setStorageType(int storageType) {
+        this.storageType = storageType;
+    }
+
+    public int getStorageRecordId() {
+        return storageRecordId;
+    }
+
+    public void setStorageRecordId(int storageRecordId) {
+        this.storageRecordId = storageRecordId;
     }
 
     public Long getRecordId() {
@@ -112,130 +169,115 @@ public class CodeAttr extends BaseEntity
         this.recordId = recordId;
     }
 
-    public void setIndexStart(Long indexStart)
-    {
+    public void setIndexStart(Long indexStart) {
         this.indexStart = indexStart;
     }
 
-    public Long getIndexStart()
-    {
+    public Long getIndexStart() {
         return indexStart;
     }
-    public void setIndexEnd(Long indexEnd)
-    {
+
+    public void setIndexEnd(Long indexEnd) {
         this.indexEnd = indexEnd;
     }
 
-    public Long getIndexEnd()
-    {
+    public Long getIndexEnd() {
         return indexEnd;
     }
-    public void setProductId(Long productId)
-    {
+
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public Long getProductId()
-    {
+    public Long getProductId() {
         return productId;
     }
-    public void setProductNo(String productNo)
-    {
+
+    public void setProductNo(String productNo) {
         this.productNo = productNo;
     }
 
-    public String getProductNo()
-    {
+    public String getProductNo() {
         return productNo;
     }
-    public void setBarCode(String barCode)
-    {
+
+    public void setBarCode(String barCode) {
         this.barCode = barCode;
     }
 
-    public String getBarCode()
-    {
+    public String getBarCode() {
         return barCode;
     }
-    public void setProductCategory(String productCategory)
-    {
+
+    public void setProductCategory(String productCategory) {
         this.productCategory = productCategory;
     }
 
-    public String getProductCategory()
-    {
+    public String getProductCategory() {
         return productCategory;
     }
-    public void setProductUnit(String productUnit)
-    {
+
+    public void setProductUnit(String productUnit) {
         this.productUnit = productUnit;
     }
 
-    public String getProductUnit()
-    {
+    public String getProductUnit() {
         return productUnit;
     }
-    public void setBatchId(Long batchId)
-    {
+
+    public void setBatchId(Long batchId) {
         this.batchId = batchId;
     }
 
-    public Long getBatchId()
-    {
+    public Long getBatchId() {
         return batchId;
     }
-    public void setBatchNo(String batchNo)
-    {
+
+    public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
     }
 
-    public String getBatchNo()
-    {
+    public String getBatchNo() {
         return batchNo;
     }
-    public void setProductIntroduce(String productIntroduce)
-    {
+
+    public void setProductIntroduce(String productIntroduce) {
         this.productIntroduce = productIntroduce;
     }
 
-    public String getProductIntroduce()
-    {
+    public String getProductIntroduce() {
         return productIntroduce;
     }
-    public void setInputBy(Long inputBy)
-    {
+
+    public void setInputBy(Long inputBy) {
         this.inputBy = inputBy;
     }
 
-    public Long getInputBy()
-    {
+    public Long getInputBy() {
         return inputBy;
     }
-    public void setInputTime(Date inputTime)
-    {
+
+    public void setInputTime(Date inputTime) {
         this.inputTime = inputTime;
     }
 
-    public Date getInputTime()
-    {
+    public Date getInputTime() {
         return inputTime;
     }
-    public void setCreateUser(Long createUser)
-    {
+
+    public void setCreateUser(Long createUser) {
         this.createUser = createUser;
     }
 
-    public Long getCreateUser()
-    {
+    public Long getCreateUser() {
         return createUser;
     }
-    public void setUpdateUser(Long updateUser)
-    {
+
+    public void setUpdateUser(Long updateUser) {
         this.updateUser = updateUser;
     }
 
-    public Long getUpdateUser()
-    {
+    public Long getUpdateUser() {
         return updateUser;
     }
 

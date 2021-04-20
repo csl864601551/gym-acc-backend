@@ -1,19 +1,20 @@
 package com.ztl.gym.storage.service;
 
 import java.util.List;
+
 import com.ztl.gym.storage.domain.Storage;
+import com.ztl.gym.storage.domain.vo.StorageVo;
 
 /**
  * 仓库Service接口
- * 
+ *
  * @author zhucl
  * @date 2021-04-13
  */
-public interface IStorageService 
-{
+public interface IStorageService {
     /**
      * 查询仓库
-     * 
+     *
      * @param id 仓库ID
      * @return 仓库
      */
@@ -21,7 +22,7 @@ public interface IStorageService
 
     /**
      * 查询仓库列表
-     * 
+     *
      * @param storage 仓库
      * @return 仓库集合
      */
@@ -29,7 +30,7 @@ public interface IStorageService
 
     /**
      * 新增仓库
-     * 
+     *
      * @param storage 仓库
      * @return 结果
      */
@@ -37,7 +38,7 @@ public interface IStorageService
 
     /**
      * 修改仓库
-     * 
+     *
      * @param storage 仓库
      * @return 结果
      */
@@ -45,7 +46,7 @@ public interface IStorageService
 
     /**
      * 批量删除仓库
-     * 
+     *
      * @param ids 需要删除的仓库ID
      * @return 结果
      */
@@ -53,9 +54,25 @@ public interface IStorageService
 
     /**
      * 删除仓库信息
-     * 
+     *
      * @param id 仓库ID
      * @return 结果
      */
     public int deleteStorageById(Long id);
+
+    /**
+     * 根据用户查询仓库
+     *
+     * @param storage
+     * @return
+     */
+    List<Storage> selectStorageByUser(Storage storage);
+
+    /**
+     * 查询码最新的物流信息
+     *
+     * @param codeVal
+     * @return
+     */
+    StorageVo selectLastStorageByCode(String codeVal);
 }

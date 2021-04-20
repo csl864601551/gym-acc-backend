@@ -16,6 +16,13 @@ import org.springframework.stereotype.Repository;
 public interface CodeMapper
 {
     /**
+     * 查询单个码
+     * @param code
+     * @return
+     */
+    Code selectCode(Code code);
+
+    /**
      * 查询码
      *
      * @param codeIndex 码 ID
@@ -70,4 +77,5 @@ public interface CodeMapper
      * @return
      */
     int updateStatusByAttrId(Map<String, Object> params);
+
 }

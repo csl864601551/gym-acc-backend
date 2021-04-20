@@ -14,6 +14,35 @@ public class AccConstants {
      */
     public final static int STATUS_NORMAL = 1;
 
+    /**
+     * 文本类型-未知
+     */
+    public final static int TEXT_TYPE_UNKONW = 0;
+    /**
+     * 文本类型-码-箱码
+     */
+    public final static int TEXT_TYPE_CODE_P = 1;
+    /**
+     * 文本类型-码-单码
+     */
+    public final static int TEXT_TYPE_CODE_S = 2;
+    /**
+     * 文本类型-物流单号-入库
+     */
+    public final static int TEXT_TYPE_STORAGE_IN = 3;
+    /**
+     * 文本类型-物流单号-出库
+     */
+    public final static int TEXT_TYPE_STORAGE_OUT = 4;
+    /**
+     * 文本类型-物流单号-退货
+     */
+    public final static int TEXT_TYPE_STORAGE_BACK = 5;
+    /**
+     * 文本类型-物流单号-调拨
+     */
+    public final static int TEXT_TYPE_STORAGE_TRANSFER = 6;
+
 
     /*---------------------------- 企业常量 ----------------------------*/
     /**
@@ -115,4 +144,22 @@ public class AccConstants {
      * 部门状态-停用
      */
     public final static String DEPT_STATUS_STOP = "1";
+
+    /*---------------------------- 物流常量 ----------------------------*/
+    /**
+     * 物流类型-入库
+     */
+    public final static int STORAGE_TYPE_IN = 1;
+    /**
+     * 物流类型-出库
+     */
+    public final static int STORAGE_TYPE_OUT = 2;
+    /**
+     * 物流类型-调拨
+     */
+    public final static int STORAGE_TYPE_TRANSFER = 3;
+    /**
+     * 物流类型-退货入库
+     */
+    public final static int STORAGE_TYPE_BACK = 4;
 }

@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageMapper">
-    
+
     <resultMap type="Storage" id="StorageResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
@@ -59,12 +59,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storageName != null  and storageName != ''"> and t1.storage_name like concat('%', #{storageName}, '%')</if>
         </where>
     </select>
-    
+
     <select id="selectStorageById" parameterType="Long" resultMap="StorageResult">
         <include refid="selectStorageVo"/>
         where id = #{id} and status = 0
     </select>
-        
+
     <insert id="insertStorage" parameterType="Storage" useGeneratedKeys="true" keyProperty="id">
         insert into t_storage
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -146,4 +146,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateUser != null "> and update_user = #{updateUser}</if>
         </where>
     </select>
+
+    <select id="selectStorageByUser" parameterType="Storage" resultMap="StorageResult">
+        <include refid="selectStorageJoinVo"/>,
+        cu.nick_name as createUserName,
+        uu.nick_name as updateUserName
+        from t_storage t1
+        left join sys_user cu on cu.user_id = t1.create_user
+        left join sys_user uu on uu.user_id = t1.update_user
+        <where>
+            <if test="level != null "> and t1.level = #{level}</if>
+            <if test="companyId != null "> and t1.company_id = #{companyId}</if>
+            <if test="tenantId != null "> and t1.tenant_id = #{tenantId}</if>
+            <if test="status != null "> and t1.status = #{status}</if>
+        </where>
+    </select>
+
 </mapper>

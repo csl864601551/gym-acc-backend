@@ -39,6 +39,12 @@ public class CodeServiceImpl implements ICodeService {
     @Autowired
     private CommonService commonService;
 
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Code selectCode(Code code) {
+        return codeMapper.selectCode(code);
+    }
+
     /**
      * 查询码
      *
