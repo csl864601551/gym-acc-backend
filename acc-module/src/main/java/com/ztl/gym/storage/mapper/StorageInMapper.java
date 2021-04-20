@@ -77,7 +77,7 @@ public interface StorageInMapper
 
     StorageIn selectStorageCodeById(Long id);
 
-    Map<String, Object> getCodeInfo(Long id);
+    Map<String, Object> getCodeInfo(String code);
 
-    List<Map<String, Object>> getCodeDetail(Long id);
+    List<Map<String, Object>> getCodeDetail(String code);
 }
