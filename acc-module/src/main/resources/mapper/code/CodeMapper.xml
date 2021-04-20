@@ -16,8 +16,6 @@
         <association property="codeAttr" column="code_attr_id"
                      select="com.ztl.gym.code.mapper.CodeAttrMapper.selectCodeAttrById">
         </association>
-        <association property="product" javaType="product"></association>
-        <association property="productBatch" javaType="ProductBatch"></association>
     </resultMap>
 
     <sql id="selectCodeVo">
@@ -109,4 +107,14 @@
         </trim>
         where code_attr_id = #{codeAttrId} and company_id = #{companyId}
     </update>
+
+    <insert id="insertCodeFlowForSingle" parameterType="map">
+        insert into t_code_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
+        values(#{companyId},#{code},#{storageType},#{storageRecordId},#{createUser},#{createTime} )
+    </insert>
+
+    <insert id="insertCodeFlowForBox" parameterType="map">
+        insert into t_pcode_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
+        values(#{companyId},#{code},#{storageType},#{storageRecordId},#{createUser},#{createTime} )
+    </insert>
 </mapper>
