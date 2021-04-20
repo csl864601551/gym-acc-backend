@@ -66,11 +66,8 @@ public class StorageInServiceImpl implements IStorageInService
         map.put("create_time",DateUtils.getNowDate());
         map.put("create_user",SecurityUtils.getLoginUser().getUser().getUserId());
         storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
-        storageInMapper.insertStorageMoveRecord(map);//新增t_storage_move_record产品流转记录表
-        storageInMapper.insertStorageMove(map);//新增t_storage_move产品流转明细表
-        storageInMapper.insertStorageCode(map);//新增t_storage_code物流码明细表
-        storageInMapper.insertPcodeMove(map);//新增t_pcode_move箱码流转记录表
-        storageInMapper.insertCodeMove(map);//新增t_code_move单码流转记录表
+        storageInMapper.insertPcodeFlow(map);//新增t_pcode_flow箱码流转记录表
+        storageInMapper.insertCodeFlow(map);//新增t_code_flow单码流转记录表
         storageInMapper.updateProductStock(map);//更新t_product_stock库存统计表
         return 0;
     }

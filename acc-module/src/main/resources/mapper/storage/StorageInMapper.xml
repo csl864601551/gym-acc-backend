@@ -151,24 +151,12 @@
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
-    <insert id="insertStorageMoveRecord">
-        INSERT INTO `gym-acc`.`t_storage_move_record`(`company_id`, `tenant_id`, `number`, `status`, `product_id`, `batch_no`, `remark`, `create_user`, `create_time`, `update_user`, `update_time`)
-        VALUES ( #{company_id}, #{tenant_id}, #{number}, #{status}, #{product_id}, #{batch_no}, #{remark}, #{create_user}, #{create_time}, #{update_user}, #{update_time});
-    </insert>
-    <insert id="insertStorageMove">
-        INSERT INTO `gym-acc`.`t_storage_move`( `company_id`, `tenant_id`, `product_id`, `batch_no`, `product_num`, `move_type`, `out_id`, `in_id`, `remark`, `create_user`, `create_time`, `update_user`, `update_time`)
-        VALUES ( #{company_id}, #{tenant_id}, #{product_id}, #{batch_no}, #{product_num}, #{move_type}, #{out_id}, #{in_id}, #{remark}, #{create_user}, #{create_time}, #{update_user}, #{update_time});
-    </insert>
-    <insert id="insertStorageCode">
-        INSERT INTO `gym-acc`.`t_storage_code`( `company_id`, `p_code`, `code`, `move_type`, `move_id`, `create_user`, `create_time`)
-        VALUES ( #{company_id}, #{p_code}, #{code}, #{move_type}, #{move_id}, #{create_user}, #{create_time});
-    </insert>
-    <insert id="insertPcodeMove">
-        INSERT INTO `gym-acc`.`t_pcode_move`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
+    <insert id="insertPcodeFlow">
+        INSERT INTO `gym-acc`.`t_pcode_flow`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
         VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
     </insert>
-    <insert id="insertCodeMove">
-        INSERT INTO `gym-acc`.`t_code_move`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
+    <insert id="insertCodeFlow">
+        INSERT INTO `gym-acc`.`t_code_flow`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
         VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
     </insert>
 
