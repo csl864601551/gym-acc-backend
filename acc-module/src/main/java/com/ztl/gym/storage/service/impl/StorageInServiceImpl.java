@@ -36,13 +36,9 @@ public class StorageInServiceImpl implements IStorageInService
      * @return 入库
      */
     @Override
-    public Map<String, Object> selectStorageInById(Long id)
+    public StorageIn selectStorageInById(Long id)
     {
-        Map<String, Object> map=new HashMap<>();
-        map= storageInMapper.selectStorageInById(id);//查询t_storage_in明细
-        List<Map<String, Object>> listMap=storageInMapper.selectStorageCodeById(id);//查询单码或箱码明细
-        map.put("listMap",listMap);
-        return map;
+        return storageInMapper.selectStorageInById(id);
     }
 
     /**
@@ -60,7 +56,7 @@ public class StorageInServiceImpl implements IStorageInService
     /**
      * 新增入库
      *
-     * @param storageIn 入库
+     * @param map 入库
      * @return 结果
      */
     @Override

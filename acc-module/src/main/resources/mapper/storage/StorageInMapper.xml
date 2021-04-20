@@ -64,7 +64,7 @@
 
     </select>
 
-    <select id="selectStorageInById" parameterType="Long" resultMap="map">
+    <select id="selectStorageInById" parameterType="Long" resultMap="StorageInResult">
         SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
         ,p.product_name

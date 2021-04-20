@@ -4,26 +4,28 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.storage.domain.StorageIn;
+import org.springframework.stereotype.Repository;
 
 /**
  * 入库Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2021-04-09
  */
-public interface StorageInMapper 
+@Repository
+public interface StorageInMapper
 {
     /**
      * 查询入库
-     * 
+     *
      * @param id 入库ID
      * @return 入库
      */
-    public Map<String, Object> selectStorageInById(Long id);
+    public StorageIn selectStorageInById(Long id);
 
     /**
      * 查询入库列表
-     * 
+     *
      * @param storageIn 入库
      * @return 入库集合
      */
@@ -31,7 +33,7 @@ public interface StorageInMapper
 
     /**
      * 新增入库
-     * 
+     *
      * @param storageIn 入库
      * @return 结果
      */
@@ -39,7 +41,7 @@ public interface StorageInMapper
 
     /**
      * 修改入库
-     * 
+     *
      * @param storageIn 入库
      * @return 结果
      */
@@ -47,7 +49,7 @@ public interface StorageInMapper
 
     /**
      * 删除入库
-     * 
+     *
      * @param id 入库ID
      * @return 结果
      */
@@ -55,7 +57,7 @@ public interface StorageInMapper
 
     /**
      * 批量删除入库
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
@@ -73,7 +75,7 @@ public interface StorageInMapper
 
     void updateProductStock(Map<String, Object> storageIn);
 
-    List<Map<String, Object>> selectStorageCodeById(Long id);
+    StorageIn selectStorageCodeById(Long id);
 
     Map<String, Object> getCodeInfo(Long id);
 
