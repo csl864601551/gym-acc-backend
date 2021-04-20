@@ -113,10 +113,10 @@ public class StorageInServiceImpl implements IStorageInService
     }
 
     @Override
-    public Map<String, Object> getCodeInfo(Long id) {
+    public Map<String, Object> getCodeInfo(String code) {
         Map<String, Object> map=new HashMap<>();
-        map=storageInMapper.getCodeInfo(id);//获取码产品信息
-        List<Map<String, Object>> listMap=storageInMapper.getCodeDetail(id);//获取码产品明细
+        map=storageInMapper.getCodeInfo(code);//获取码产品信息
+        List<Map<String, Object>> listMap=storageInMapper.getCodeDetail(code);//获取码产品明细
         map.put("listMap",listMap);
         return map;
     }

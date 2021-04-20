@@ -59,8 +59,7 @@
             <if test="toStorageId != null "> and to_storage_id = #{toStorageId}</if>
             <if test="inTime != null "> and in_time = #{inTime}</if>
         </where>
-        <!--            ${@com.ztl.gym.common.utils.sql.SqlUtil@curcompany('and si.')}-->
-        <!-- 数据范围过滤 ${curcompany}-->
+
 
     </select>
 
