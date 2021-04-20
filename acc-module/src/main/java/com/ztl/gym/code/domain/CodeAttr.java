@@ -140,6 +140,10 @@ public class CodeAttr extends BaseEntity {
      * 产品批次
      */
     private ProductBatch productBatch;
+    /**
+     * 生码记录
+     */
+    private CodeRecord codeRecord;
 
     public void setId(Long id) {
         this.id = id;
@@ -307,6 +311,14 @@ public class CodeAttr extends BaseEntity {
 
     public void setProductBatch(ProductBatch productBatch) {
         this.productBatch = productBatch;
+    }
+
+    public CodeRecord getCodeRecord() {
+        return codeRecord;
+    }
+
+    public void setCodeRecord(CodeRecord codeRecord) {
+        this.codeRecord = codeRecord;
     }
 
     @Override
