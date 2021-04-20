@@ -5,6 +5,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.domain.ProductBatch;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -31,12 +33,12 @@ public class CodeAttr extends BaseEntity {
     /**
      * 当前流转类型
      */
-    private int storageType;
+    private Integer storageType;
 
     /**
      * 当前流转记录id
      */
-    private int storageRecordId;
+    private Long storageRecordId;
 
     /**
      * 生码记录id
@@ -129,6 +131,16 @@ public class CodeAttr extends BaseEntity {
     @Excel(name = "更新人")
     private Long updateUser;
 
+    /*--------------------------------  冗余字段  --------------------------------*/
+    /**
+     * 产品信息
+     */
+    private Product product;
+    /**
+     * 产品批次
+     */
+    private ProductBatch productBatch;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -145,19 +157,19 @@ public class CodeAttr extends BaseEntity {
         return companyId;
     }
 
-    public int getStorageType() {
+    public Integer getStorageType() {
         return storageType;
     }
 
-    public void setStorageType(int storageType) {
+    public void setStorageType(Integer storageType) {
         this.storageType = storageType;
     }
 
-    public int getStorageRecordId() {
+    public Long getStorageRecordId() {
         return storageRecordId;
     }
 
-    public void setStorageRecordId(int storageRecordId) {
+    public void setStorageRecordId(Long storageRecordId) {
         this.storageRecordId = storageRecordId;
     }
 
@@ -279,6 +291,22 @@ public class CodeAttr extends BaseEntity {
 
     public Long getUpdateUser() {
         return updateUser;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public ProductBatch getProductBatch() {
+        return productBatch;
+    }
+
+    public void setProductBatch(ProductBatch productBatch) {
+        this.productBatch = productBatch;
     }
 
     @Override

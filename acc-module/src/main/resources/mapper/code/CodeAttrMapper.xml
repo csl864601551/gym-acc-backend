@@ -25,6 +25,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateUser"    column="update_user"    />
         <result property="updateTime"    column="update_time"    />
+
+        <association property="product" column="product_id" select="com.ztl.gym.product.mapper.ProductMapper.selectTProductById"></association>
+        <association property="productBatch" column="batch_id" select="com.ztl.gym.product.mapper.ProductBatchMapper.selectProductBatchById"></association>
     </resultMap>
 
     <sql id="selectCodeAttrVo">

@@ -2,6 +2,8 @@ package com.ztl.gym.code.domain;
 
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.domain.ProductBatch;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 

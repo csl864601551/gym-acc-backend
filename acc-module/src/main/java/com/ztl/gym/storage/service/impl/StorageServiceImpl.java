@@ -197,21 +197,24 @@ public class StorageServiceImpl implements IStorageService {
         if (companyId > 0) {
             code.setCompanyId(companyId);
             Code Code = codeService.selectCode(code);
-            int storageType = Code.getCodeAttr().getStorageType();
-            long storageRecordId = Code.getCodeAttr().getStorageRecordId();
-
-            if (storageType == AccConstants.STORAGE_TYPE_IN) {
-                StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
-            } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
-                StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
-                storageVo.setOutNo(storageOut.getOutNo());
-                storageVo.setOutUserName(storageOut.getStorageFrom());
-                storageVo.setOutTime(storageOut.getOutTime());
-            } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
-                StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
-
-            } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
-                StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
+            Integer storageType = Code.getCodeAttr().getStorageType();
+            Long storageRecordId = Code.getCodeAttr().getStorageRecordId();
+            if (storageType != null && storageRecordId != 0) {
+                if (storageType == AccConstants.STORAGE_TYPE_IN) {
+                    StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
+                    //TODO
+                } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+                    StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
+                    storageVo.setOutNo(storageOut.getOutNo());
+                    storageVo.setOutUserName(storageOut.getStorageFrom());
+                    storageVo.setOutTime(storageOut.getOutTime());
+                } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+                    StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
+                    //TODO
+                } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
+                    StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
+                    //TODO
+                }
             }
         }
 
