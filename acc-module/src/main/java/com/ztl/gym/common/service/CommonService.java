@@ -31,13 +31,18 @@ public interface CommonService {
 
     /**
      * 查询下级经销商用户列表
-     *
      */
     List<SysUser> getNextLevelUser();
 
     /**
      * 查询同级经销商用户列表
-     *
      */
     List<SysUser> getSameLevelUser();
+
+    /**
+     * 获取用于查询的tenantId
+     *
+     * @return
+     */
+    Long getTenantId();
 }
