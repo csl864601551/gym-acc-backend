@@ -212,16 +212,7 @@ public class StorageServiceImpl implements IStorageService {
             code.setCompanyId(companyId);
             Code Code = codeService.selectCode(code);
             if(Code!=null){
-                storageVo.setCode(codeVal);
-                storageVo.setCompanyId(companyId);
-                storageVo.setInNo("RK"+companyId+new Date().getTime());
-                storageVo.setpCode(Code.getpCode());
-                storageVo.setProductId(Code.getCodeAttr().getProductId());//产品ID
-                storageVo.setProductNo(Code.getCodeAttr().getProductNo());//产品编号
-                storageVo.setProductName(Code.getCodeAttr().getProduct().getProductName());//产品名称
-                storageVo.setBatchId(Code.getCodeAttr().getBatchId());//产品批次ID
-                storageVo.setBatchNo(Code.getCodeAttr().getBatchNo());//产品批次
-                storageVo.setNum(Code.getCodeAttr().getCodeRecord().getCount());//产品批次
+
 
                 Integer storageType = Code.getCodeAttr().getStorageType();
                 Long storageRecordId = Code.getCodeAttr().getStorageRecordId();
@@ -232,7 +223,7 @@ public class StorageServiceImpl implements IStorageService {
                     } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
                         StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
                         storageVo.setOutNo(storageOut.getOutNo());
-                        storageVo.setOutUserName(storageOut.getStorageFrom());
+                        storageVo.setStorageFrom(storageOut.getStorageFrom());
                         storageVo.setOutTime(storageOut.getOutTime());
                     } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
                         StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
@@ -241,6 +232,17 @@ public class StorageServiceImpl implements IStorageService {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
                         //TODO
                     }
+                }else{
+                    storageVo.setCode(codeVal);
+                    storageVo.setCompanyId(companyId);
+                    storageVo.setInNo("RK"+companyId+new Date().getTime());
+                    storageVo.setpCode(Code.getpCode());
+                    storageVo.setProductId(Code.getCodeAttr().getProductId());//产品ID
+                    storageVo.setProductNo(Code.getCodeAttr().getProductNo());//产品编号
+                    storageVo.setProductName(Code.getCodeAttr().getProduct().getProductName());//产品名称
+                    storageVo.setBatchId(Code.getCodeAttr().getBatchId());//产品批次ID
+                    storageVo.setBatchNo(Code.getCodeAttr().getBatchNo());//产品批次
+                    storageVo.setNum(Code.getCodeAttr().getCodeRecord().getCount());//产品批次
                 }
             }
 

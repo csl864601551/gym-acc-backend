@@ -40,6 +40,10 @@ public class StorageOut extends BaseEntity
     @Excel(name = "产品id")
     private Long productId;
 
+    /** 相关单号 */
+    @Excel(name = "相关单号")
+    private String extraNo;
+
     /** 产品批次 */
     @Excel(name = "产品批次")
     private String batchNo;
@@ -54,11 +58,11 @@ public class StorageOut extends BaseEntity
 
     /** 发货单位 */
     @Excel(name = "发货单位")
-    private String storageFrom;
+    private Long storageFrom;
 
     /** 收货单位 */
     @Excel(name = "收货单位")
-    private String storageTo;
+    private Long storageTo;
 
     /** 出货仓库 */
     @Excel(name = "出货仓库")
@@ -162,24 +166,31 @@ public class StorageOut extends BaseEntity
     {
         return actOutNum;
     }
-    public void setStorageFrom(String storageFrom)
-    {
+
+    public String getExtraNo() {
+        return extraNo;
+    }
+
+    public void setExtraNo(String extraNo) {
+        this.extraNo = extraNo;
+    }
+
+    public Long getStorageFrom() {
+        return storageFrom;
+    }
+
+    public void setStorageFrom(Long storageFrom) {
         this.storageFrom = storageFrom;
     }
 
-    public String getStorageFrom()
-    {
-        return storageFrom;
+    public Long getStorageTo() {
+        return storageTo;
     }
-    public void setStorageTo(String storageTo)
-    {
+
+    public void setStorageTo(Long storageTo) {
         this.storageTo = storageTo;
     }
 
-    public String getStorageTo()
-    {
-        return storageTo;
-    }
     public void setFromStorageId(Long fromStorageId)
     {
         this.fromStorageId = fromStorageId;

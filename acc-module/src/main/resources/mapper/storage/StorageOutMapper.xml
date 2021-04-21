@@ -10,6 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tenantId"    column="tenant_id"    />
         <result property="status"    column="status"    />
         <result property="outNo"    column="out_no"    />
+        <result property="extraNo"    column="extra_no"    />
         <result property="productId"    column="product_id"    />
         <result property="batchNo"    column="batch_no"    />
         <result property="outNum"    column="out_num"    />

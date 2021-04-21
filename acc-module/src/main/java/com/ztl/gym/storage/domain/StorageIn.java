@@ -38,6 +38,10 @@ public class StorageIn extends BaseEntity
     @Excel(name = "入库单号")
     private String inNo;
 
+    /** 相关单号 */
+    @Excel(name = "相关单号")
+    private String extraNo;
+
     /** 产品id */
     @Excel(name = "产品id")
     private Long productId;
@@ -56,11 +60,11 @@ public class StorageIn extends BaseEntity
 
     /** 发货单位 */
     @Excel(name = "发货单位")
-    private String storageFrom;
+    private Long storageFrom;
 
     /** 收货单位 */
     @Excel(name = "收货单位")
-    private String storageTo;
+    private Long storageTo;
 
     /** 出库仓库 */
     @Excel(name = "出库仓库")
@@ -136,6 +140,15 @@ public class StorageIn extends BaseEntity
     {
         return inNo;
     }
+
+    public String getExtraNo() {
+        return extraNo;
+    }
+
+    public void setExtraNo(String extraNo) {
+        this.extraNo = extraNo;
+    }
+
     public void setProductId(Long productId)
     {
         this.productId = productId;
@@ -172,21 +185,21 @@ public class StorageIn extends BaseEntity
     {
         return actInNum;
     }
-    public void setStorageFrom(String storageFrom)
+    public void setStorageFrom(Long storageFrom)
     {
         this.storageFrom = storageFrom;
     }
 
-    public String getStorageFrom()
+    public Long getStorageFrom()
     {
         return storageFrom;
     }
-    public void setStorageTo(String storageTo)
+    public void setStorageTo(Long storageTo)
     {
         this.storageTo = storageTo;
     }
 
-    public String getStorageTo()
+    public Long getStorageTo()
     {
         return storageTo;
     }

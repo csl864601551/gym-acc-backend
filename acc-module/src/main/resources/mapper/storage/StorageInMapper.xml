@@ -10,6 +10,7 @@
         <result property="tenantId"    column="tenant_id"    />
         <result property="status"    column="status"    />
         <result property="inNo"    column="in_no"    />
+        <result property="extraNo"    column="extra_no"    />
         <result property="productId"    column="product_id"    />
         <result property="batchNo"    column="batch_no"    />
         <result property="inNum"    column="in_num"    />

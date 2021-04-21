@@ -114,9 +114,13 @@ public class StorageVo {
      */
     private String outNo;
     /**
-     * 出库单位
+     * 发货企业/经销商
      */
-    private String outUserName;
+    private Long storageFrom;
+    /**
+     * 收货企业/经销商
+     */
+    private Long storageTo;
     /**
      * 出库时间
      */
@@ -299,12 +303,20 @@ public class StorageVo {
         this.outNo = outNo;
     }
 
-    public String getOutUserName() {
-        return outUserName;
+    public Long getStorageFrom() {
+        return storageFrom;
     }
 
-    public void setOutUserName(String outUserName) {
-        this.outUserName = outUserName;
+    public void setStorageFrom(Long storageFrom) {
+        this.storageFrom = storageFrom;
+    }
+
+    public Long getStorageTo() {
+        return storageTo;
+    }
+
+    public void setStorageTo(Long storageTo) {
+        this.storageTo = storageTo;
     }
 
     public Date getOutTime() {
