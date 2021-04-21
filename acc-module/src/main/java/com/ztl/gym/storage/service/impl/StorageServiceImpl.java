@@ -216,8 +216,6 @@ public class StorageServiceImpl implements IStorageService {
             Code codeEntity = codeService.selectCode(code);
             if (codeEntity != null) {
                 Integer storageType = codeEntity.getCodeAttr().getStorageType();
-
-
                 Long storageRecordId = codeEntity.getCodeAttr().getStorageRecordId();
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
@@ -247,9 +245,7 @@ public class StorageServiceImpl implements IStorageService {
                     storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品批次
                 }
             }
-
         }
-
         return storageVo;
     }
 
