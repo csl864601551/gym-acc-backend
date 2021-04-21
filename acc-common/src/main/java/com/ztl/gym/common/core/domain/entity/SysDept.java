@@ -25,6 +25,9 @@ public class SysDept extends BaseEntity
     /** 父部门ID */
     private Long parentId;
 
+    /** 父部门ID  1:直属  2：自营 */
+    private int deptType;
+
     /** 祖级列表 */
     private String ancestors;
 
@@ -179,6 +182,14 @@ public class SysDept extends BaseEntity
     public void setChildren(List<SysDept> children)
     {
         this.children = children;
+    }
+
+    public int getDeptType() {
+        return deptType;
+    }
+
+    public void setDeptType(int deptType) {
+        this.deptType = deptType;
     }
 
     @Override
