@@ -13,6 +13,7 @@ import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.storage.domain.*;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.domain.vo.StorageVo;
@@ -21,9 +22,10 @@ import com.ztl.gym.storage.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.plugin.com.event.COMEventHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 仓库Service业务层处理
@@ -242,25 +244,42 @@ public class StorageServiceImpl implements IStorageService {
     @Transactional(rollbackFor = Exception.class)
     @DataSource(DataSourceType.SHARDING)
     public int addCodeFlow(int storageType, long storageRecordId, String code) {
+        //查询码类型与企业id
         String codeType = CodeRuleUtils.getCodeType(code);
         Long companyId = CodeRuleUtils.getCompanyIdByCode(code);
 
+        //查询码
         Code codeEntity = new Code();
         Code codeRes = null;
         codeEntity.setCode(code);
         codeEntity.setCompanyId(companyId);
+        codeRes = codeService.selectCode(codeEntity);
 
+        //判断该单码有无箱码，如果有则更新整箱
+        boolean isBox = false;
+        String boxCode = null;
         int insertRes = 0;
         if (codeType.equals(AccConstants.CODE_TYPE_SINGLE)) {
-            insertRes = codeService.insertCodeFlowForSingle(buildFlowParam(companyId, code, storageType, storageRecordId));
+            if (StringUtils.isNotBlank(codeRes.getpCode())) {
+                isBox = true;
+                boxCode = codeRes.getpCode();
+            } else {
+                //只更新单码
+                insertRes = codeService.insertCodeFlowForSingle(buildFlowParam(companyId, code, storageType, storageRecordId));
+            }
         } else if (codeType.equals(AccConstants.CODE_TYPE_BOX)) {
+            isBox = true;
+            boxCode = code;
+        }
+        //批量更新
+        if (isBox && StringUtils.isNotBlank(boxCode)) {
             //箱码
-            insertRes = codeService.insertCodeFlowForBox(buildFlowParam(companyId, code, storageType, storageRecordId));
+            insertRes = codeService.insertCodeFlowForBox(buildFlowParam(companyId, boxCode, storageType, storageRecordId));
 
             //批量插入单码明细
             Code codeParam = new Code();
             codeParam.setCompanyId(companyId);
-            codeParam.setpCode(code);
+            codeParam.setpCode(boxCode);
             List<Code> sonList = codeService.selectCodeList(codeParam);
             List<FlowVo> insertList = new ArrayList<>();
             for (Code sonCode : sonList) {
@@ -268,9 +287,10 @@ public class StorageServiceImpl implements IStorageService {
             }
             codeService.insertCodeFlowForBatchSingle(companyId, insertList);
         }
+
+        //更新码属性最新物流节点
         int updRes = 0;
         if (insertRes > 0) {
-            codeRes = codeService.selectCode(codeEntity);
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(codeRes.getCodeAttrId());
             codeAttr.setStorageType(storageType);
