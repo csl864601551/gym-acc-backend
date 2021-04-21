@@ -45,4 +45,11 @@ public interface CommonService {
      * @return
      */
     Long getTenantId();
+
+    /**
+     * 获取流转记录编号
+     *
+     * @return
+     */
+    String getStorageNo(int storageType);
 }

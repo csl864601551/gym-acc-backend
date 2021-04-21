@@ -5,6 +5,7 @@ import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.mapper.CommonMapper;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,5 +94,20 @@ public class CommonServiceImpl implements CommonService {
             }
         }
         return tenantId;
+    }
+
+    @Override
+    public String getStorageNo(int storageType) {
+        String no = null;
+        if (storageType == AccConstants.STORAGE_TYPE_IN) {
+            no = "RK" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+        } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+            no = "CK" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+        } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
+            no = "DB" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+        } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+            no = "TH" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+        }
+        return no;
     }
 }
