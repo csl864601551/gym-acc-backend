@@ -23,5 +23,5 @@ public interface CommonService {
      * @param companyId
      * @param codeIndex
      */
-    void updateVal(long companyId, long codeIndex);
+    int updateVal(long companyId, long codeIndex);
 }

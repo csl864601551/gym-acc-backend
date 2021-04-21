@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +124,17 @@ public class CodeServiceImpl implements ICodeService {
         long codeIndex = codeVal;
         if (StringUtils.isNotBlank(pCode)) {
             codeIndex += 1;
+            //箱码
+            Code code = new Code();
+            code.setCodeIndex(codeIndex);
+            code.setCompanyId(companyId);
+            code.setCodeType(AccConstants.CODE_TYPE_BOX);
+            //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
+            code.setCode(pCode + codeIndex);
+            code.setCodeAttrId(codeAttrId);
+            codeMapper.insertCode(code);
         }
+        List<Code> codeList = new ArrayList<>();
         for (int i = 1; i <= codeTotalNum; i++) {
             //流水号
             codeIndex += 1;
@@ -140,23 +151,23 @@ public class CodeServiceImpl implements ICodeService {
             if (codeAttrId != null && codeAttrId > 0) {
                 code.setCodeAttrId(codeAttrId);
             }
-            int res = codeMapper.insertCode(code);
-            if (res > 0) {
-                correct++;
-            }
+            codeList.add(code);
+
             //更新自增数
             if (i == codeTotalNum) {
                 commonService.updateVal(companyId, codeIndex);
             }
         }
-        if (correct < codeTotalNum) {
-            logger.error("生码记录ID：" + codeRecordId + "生码异常，总数：" + codeTotalNum + "，生码数：" + correct);
-        } else {
+
+        int res = codeMapper.insertCodeForBatch(codeList);
+        if (res > 0) {
             logger.info("生码记录ID：" + codeRecordId + "生码成功，总数：" + codeTotalNum);
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecordId);
             params.put("status", AccConstants.CODE_RECORD_STATUS_FINISH);
             codeRecordMapper.insertCodeRecordStatus(params);
+        } else {
+            logger.error("生码记录ID：" + codeRecordId + "生码异常，总数：" + codeTotalNum + "，生码数：" + correct);
         }
         return correct;
     }

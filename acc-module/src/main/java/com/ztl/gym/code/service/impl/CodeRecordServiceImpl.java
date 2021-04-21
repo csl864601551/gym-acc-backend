@@ -139,10 +139,12 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         //TODO 生码数量不能为0
         //TODO 生码回显
         //TODO 生码规则工具类集成
+        //TODO 出异常自增数bug,异步生码上一个事物未提交，导致生码时主键重复
 
         //TODO 企业经销商区域设置
         //TODO 批量插入
         //TODO 数据源切换效率
+
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
@@ -193,16 +195,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
 
             //箱码
-            Code code = new Code();
-            code.setCodeIndex(codeNo + 1);
-            code.setCompanyId(companyId);
-            code.setCodeType(AccConstants.CODE_TYPE_BOX);
             //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
-            String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow() + code.getCodeIndex();
-            code.setCode(pCode);
-            code.setCodeAttrId(codeAttrId);
-            codeMapper.insertCode(code);
-
+            String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow();
             //异步生码
             String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + pCode;
             stringRedisTemplate.convertAndSend("code.gen", message);

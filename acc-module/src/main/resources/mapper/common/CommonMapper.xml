@@ -5,7 +5,7 @@
 <mapper namespace="com.ztl.gym.common.mapper.CommonMapper">
 
     <select id="selectCurrentVal" parameterType="Map" resultType="long">
-        SELECT CURRVAL(#{companyId})
+        SELECT CURRVAL(#{companyId}) for update
     </select>
 
     <select id="selectNextVal" parameterType="Map" resultType="long">

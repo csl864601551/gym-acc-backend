@@ -52,6 +52,14 @@ public interface CodeMapper {
     public int insertCode(Code code);
 
     /**
+     * 批量插入码
+     *
+     * @param list
+     * @return
+     */
+    int insertCodeForBatch(List<Code> list);
+
+    /**
      * 修改码
      *
      * @param code 码

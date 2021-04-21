@@ -39,5 +39,5 @@ public interface CommonMapper {
      *
      * @param params
      */
-    void updateVal(Map<String, Object> params);
+    int updateVal(Map<String, Object> params);
 }

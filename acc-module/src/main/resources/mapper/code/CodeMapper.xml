@@ -75,6 +75,15 @@
         </trim>
     </insert>
 
+    <insert id="insertCodeForBatch">
+        insert into t_code(code_index, code, company_id, status, code_acc, code_type, p_code, code_attr_id)
+        values
+        <foreach collection="list" item="code" separator=",">
+            (#{code.codeIndex}, #{code.code}, #{code.companyId}, #{code.status}, #{code.codeAcc}, #{code.codeType},
+            #{code.pCode}, #{code.codeAttrId})
+        </foreach>
+    </insert>
+
     <update id="updateCode" parameterType="Code">
         update t_code
         <trim prefix="SET" suffixOverrides=",">
@@ -115,10 +124,11 @@
 
     <insert id="insertCodeFlowForBatchSingleV2">
         insert into t_code_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
-         values
-        <foreach collection ="list" item="code" separator =",">
-            (#{companyId}, #{code.code}, #{code.storageType}, #{code.storageRecordId}, #{code.createUser}, #{code.createTime})
-        </foreach >
+        values
+        <foreach collection="list" item="code" separator=",">
+            (#{companyId}, #{code.code}, #{code.storageType}, #{code.storageRecordId}, #{code.createUser},
+            #{code.createTime})
+        </foreach>
     </insert>
 
     <insert id="insertCodeFlowForBox" parameterType="FlowVo">

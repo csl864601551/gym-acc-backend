@@ -257,7 +257,7 @@ public class StorageServiceImpl implements IStorageService {
             //箱码
             insertRes = codeService.insertCodeFlowForBox(buildFlowParam(companyId, code, storageType, storageRecordId));
 
-            //批量插入单码
+            //批量插入单码明细
             Code codeParam = new Code();
             codeParam.setCompanyId(companyId);
             codeParam.setpCode(code);

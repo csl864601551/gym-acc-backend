@@ -36,10 +36,10 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public void updateVal(long companyId, long val) {
+    public int updateVal(long companyId, long val) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
         params.put("val", val);
-        commonMapper.updateVal(params);
+        return commonMapper.updateVal(params);
     }
 }
