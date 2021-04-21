@@ -144,32 +144,16 @@ public class SysDeptController extends BaseController {
 
                 //2.t_code_move
                 if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_code_move_")) {
-                    String sql = "CREATE TABLE t_code_move_" + companyId + "(\n" +
+                    String sql = "CREATE TABLE t_code_flow_" + companyId + "(\n" +
                             "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
                             "    company_id BIGINT    COMMENT '企业ID' ,\n" +
-                            "    tenant_id BIGINT    COMMENT '经销商id' ,\n" +
                             "    code VARCHAR(64)    COMMENT '单码' ,\n" +
-                            "    record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                            "    storage_type INT    COMMENT '流转类型' ,\n" +
+                            "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
                             "    create_user BIGINT    COMMENT '创建人' ,\n" +
                             "    create_time DATETIME    COMMENT '创建时间' ,\n" +
                             "    PRIMARY KEY (id)\n" +
                             ") COMMENT = '单码流转记录表 ';";
-                    res = createTableByCompany(sql);
-                }
-
-                //3.t_storage_code
-                if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_storage_code_")) {
-                    String sql = "CREATE TABLE t_storage_code_" + companyId + "(\n" +
-                            "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
-                            "    company_id BIGINT    COMMENT '企业ID' ,\n" +
-                            "    p_code VARCHAR(64)    COMMENT '箱码' ,\n" +
-                            "    code VARCHAR(64)    COMMENT '单码' ,\n" +
-                            "    move_type VARCHAR(32)    COMMENT '流转类型（出库、入库、调货、退货）' ,\n" +
-                            "    move_id BIGINT    COMMENT '对应物流操作记录id' ,\n" +
-                            "    create_user BIGINT    COMMENT '创建人' ,\n" +
-                            "    create_time DATETIME    COMMENT '创建时间' ,\n" +
-                            "    PRIMARY KEY (id)\n" +
-                            ") COMMENT = '物流码明细表 ';";
                     res = createTableByCompany(sql);
                 }
 

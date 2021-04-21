@@ -10,6 +10,7 @@ import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -39,6 +40,8 @@ public class StorageServiceImpl implements IStorageService {
     private StorageMapper storageMapper;
     @Autowired
     private ICodeService codeService;
+    @Autowired
+    private CommonService commonService;
     @Autowired
     private ICodeAttrService codeAttrService;
     @Autowired
@@ -210,12 +213,12 @@ public class StorageServiceImpl implements IStorageService {
         Long companyId = CodeRuleUtils.getCompanyIdByCode(codeVal);
         if (companyId > 0) {
             code.setCompanyId(companyId);
-            Code Code = codeService.selectCode(code);
-            if(Code!=null){
+            Code codeEntity = codeService.selectCode(code);
+            if (codeEntity != null) {
+                Integer storageType = codeEntity.getCodeAttr().getStorageType();
 
 
-                Integer storageType = Code.getCodeAttr().getStorageType();
-                Long storageRecordId = Code.getCodeAttr().getStorageRecordId();
+                Long storageRecordId = codeEntity.getCodeAttr().getStorageRecordId();
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
@@ -331,8 +334,7 @@ public class StorageServiceImpl implements IStorageService {
         flowVo.setCode(code);
         flowVo.setStorageType(storageType);
         flowVo.setStorageRecordId(storageRecordId);
-//        flowVo.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId()); FIXME
-        flowVo.setCreateUser(1);
+        flowVo.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         flowVo.setCreateTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", new Date()));
         return flowVo;
     }
