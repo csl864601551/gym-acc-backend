@@ -85,6 +85,24 @@ public class StorageVo {
      */
     private Long num;
 
+    /*--------------------- 物流流转公共信息 ---------------------*/
+    /**
+     * 出库单位id
+     */
+    private Long outUserId;
+    /**
+     * 出库单位名称
+     */
+    private String outUserName;
+    /**
+     * 入库单位id
+     */
+    private Long inUserId;
+    /**
+     * 入库单位名称
+     */
+    private String inUserName;
+
     /*--------------------- 入库信息 ---------------------*/
     /**
      * 入库单号
@@ -136,6 +154,10 @@ public class StorageVo {
 
     /*--------------------- 退货信息 ---------------------*/
     /**
+     * 退货类型
+     */
+    private int backType;
+    /**
      * 退货入库单号
      */
     private String backNo;
@@ -143,14 +165,6 @@ public class StorageVo {
      * 对应出库单号
      */
     private String backOutNo;
-    /**
-     * 对应出库单位
-     */
-    private String backOutUserName;
-    /**
-     * 退货单位
-     */
-    private String backUserName;
     /**
      * 退货时间
      */
@@ -166,6 +180,21 @@ public class StorageVo {
 
     /*--------------------- 调拨信息 ---------------------*/
 
+    public Long getInUserId() {
+        return inUserId;
+    }
+
+    public void setInUserId(Long inUserId) {
+        this.inUserId = inUserId;
+    }
+
+    public String getInUserName() {
+        return inUserName;
+    }
+
+    public void setInUserName(String inUserName) {
+        this.inUserName = inUserName;
+    }
 
     public long getCompanyId() {
         return companyId;
@@ -359,22 +388,6 @@ public class StorageVo {
         this.backOutNo = backOutNo;
     }
 
-    public String getBackOutUserName() {
-        return backOutUserName;
-    }
-
-    public void setBackOutUserName(String backOutUserName) {
-        this.backOutUserName = backOutUserName;
-    }
-
-    public String getBackUserName() {
-        return backUserName;
-    }
-
-    public void setBackUserName(String backUserName) {
-        this.backUserName = backUserName;
-    }
-
     public Date getBackTime() {
         return backTime;
     }
@@ -453,5 +466,21 @@ public class StorageVo {
 
     public void setNum(Long num) {
         this.num = num;
+    }
+
+    public int getBackType() {
+        return backType;
+    }
+
+    public void setBackType(int backType) {
+        this.backType = backType;
+    }
+
+    public Long getOutUserId() {
+        return outUserId;
+    }
+
+    public void setOutUserId(Long outUserId) {
+        this.outUserId = outUserId;
     }
 }

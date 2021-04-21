@@ -226,7 +226,6 @@ public class StorageServiceImpl implements IStorageService {
                     } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
                         StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
                         storageVo.setOutNo(storageOut.getOutNo());
-                        storageVo.setStorageFrom(storageOut.getStorageFrom());
                         storageVo.setOutTime(storageOut.getOutTime());
                     } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
                         StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
@@ -235,10 +234,10 @@ public class StorageServiceImpl implements IStorageService {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
                         //TODO
                     }
-                }else{
+                } else {
                     storageVo.setCode(codeVal);
                     storageVo.setCompanyId(companyId);
-                    storageVo.setInNo("RK"+companyId+new Date().getTime());
+                    storageVo.setInNo("RK" + companyId + new Date().getTime());
                     storageVo.setpCode(codeEntity.getpCode());
                     storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
                     storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
