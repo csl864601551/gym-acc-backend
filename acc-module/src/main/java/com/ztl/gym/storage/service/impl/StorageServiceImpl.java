@@ -239,13 +239,13 @@ public class StorageServiceImpl implements IStorageService {
                     storageVo.setCode(codeVal);
                     storageVo.setCompanyId(companyId);
                     storageVo.setInNo("RK"+companyId+new Date().getTime());
-                    storageVo.setpCode(Code.getpCode());
-                    storageVo.setProductId(Code.getCodeAttr().getProductId());//产品ID
-                    storageVo.setProductNo(Code.getCodeAttr().getProductNo());//产品编号
-                    storageVo.setProductName(Code.getCodeAttr().getProduct().getProductName());//产品名称
-                    storageVo.setBatchId(Code.getCodeAttr().getBatchId());//产品批次ID
-                    storageVo.setBatchNo(Code.getCodeAttr().getBatchNo());//产品批次
-                    storageVo.setNum(Code.getCodeAttr().getCodeRecord().getCount());//产品批次
+                    storageVo.setpCode(codeEntity.getpCode());
+                    storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
+                    storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
+                    storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
+                    storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
+                    storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
+                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品批次
                 }
             }
 
