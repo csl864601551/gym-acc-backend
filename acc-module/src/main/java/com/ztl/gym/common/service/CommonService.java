@@ -1,5 +1,9 @@
 package com.ztl.gym.common.service;
 
+import com.ztl.gym.common.core.domain.entity.SysUser;
+
+import java.util.List;
+
 public interface CommonService {
     /**
      * 根据企业查询当前最新自增数
@@ -24,4 +28,16 @@ public interface CommonService {
      * @param codeIndex
      */
     int updateVal(long companyId, long codeIndex);
+
+    /**
+     * 查询下级经销商用户列表
+     *
+     */
+    List<SysUser> getNextLevelUser();
+
+    /**
+     * 查询同级经销商用户列表
+     *
+     */
+    List<SysUser> getSameLevelUser();
 }

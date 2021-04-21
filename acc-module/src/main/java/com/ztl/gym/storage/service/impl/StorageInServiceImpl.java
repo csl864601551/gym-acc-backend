@@ -8,8 +8,12 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 //import com.ztl.gym.common.annotation.Curcompany;
 //import com.ztl.gym.common.annotation.DataScope;
+import com.ztl.gym.common.annotation.DataSource;
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.StorageInMapper;
@@ -28,6 +32,8 @@ public class StorageInServiceImpl implements IStorageInService
 {
     @Autowired
     private StorageInMapper storageInMapper;
+    @Autowired
+    private IStorageService storageService;
 
     /**
      * 查询入库
@@ -61,15 +67,17 @@ public class StorageInServiceImpl implements IStorageInService
      */
     @Override
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
+    @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map)
     {
-        map.put("create_time",DateUtils.getNowDate());
-        map.put("create_user",SecurityUtils.getLoginUser().getUser().getUserId());
-        storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
-        storageInMapper.insertPcodeFlow(map);//新增t_pcode_flow箱码流转记录表
-        storageInMapper.insertCodeFlow(map);//新增t_code_flow单码流转记录表
-        storageInMapper.updateProductStock(map);//更新t_product_stock库存统计表
-        return 0;
+        map.put("createTime",DateUtils.getNowDate());
+        map.put("inTime",DateUtils.getNowDate());
+        map.put("createUser",SecurityUtils.getLoginUser().getUser().getUserId());
+        int result=storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
+        Long id=Long.valueOf(map.get("id").toString());
+        //storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, id ,map.get("code").toString());//转移到PDA执行
+        //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
+        return result;
     }
 
     /**

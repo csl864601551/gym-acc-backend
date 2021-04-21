@@ -1,5 +1,8 @@
 package com.ztl.gym.common.mapper;
 
+import com.ztl.gym.common.core.domain.entity.SysUser;
+
+import java.util.List;
 import java.util.Map;
 
 public interface CommonMapper {
@@ -40,4 +43,8 @@ public interface CommonMapper {
      * @param params
      */
     int updateVal(Map<String, Object> params);
+
+    List<SysUser> getNextLevelUser(Map<String, Object> params);
+
+    List<SysUser> getSameLevelUser(Map<String, Object> params);
 }

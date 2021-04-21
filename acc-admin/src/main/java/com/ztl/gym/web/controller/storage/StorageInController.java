@@ -6,14 +6,7 @@ import java.util.Map;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -109,8 +102,8 @@ public class StorageInController extends BaseController
     /**
      * 根据码号查询相关产品和码信息
      */
-    @GetMapping(value = "/getRecordByCode/{code}")
-    public AjaxResult getRecordByCode(@PathVariable("code") String code)
+    @GetMapping(value = "/getRecordByCode")
+    public AjaxResult getRecordByCode(@RequestParam("code") String code)
     {
         return AjaxResult.success(storageService.selectLastStorageByCode(code));
     }

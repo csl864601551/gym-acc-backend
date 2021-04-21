@@ -1,11 +1,15 @@
 package com.ztl.gym.common.service.impl;
 
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.mapper.CommonMapper;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -42,4 +46,29 @@ public class CommonServiceImpl implements CommonService {
         params.put("val", val);
         return commonMapper.updateVal(params);
     }
+
+    @Override
+    public List<SysUser> getNextLevelUser( ) {
+        Map<String, Object> params = new HashMap<>();
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            params.put("companyId",SecurityUtils.getLoginUserTopCompanyId());
+        }else{
+            params.put("companyId",AccConstants.ADMIN_DEPT_ID);
+        }
+        return commonMapper.getNextLevelUser(params);
+    }
+
+    @Override
+    public List<SysUser> getSameLevelUser( ) {
+        Map<String, Object> params = new HashMap<>();
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            params.put("companyId",SecurityUtils.getLoginUserTopCompanyId());
+        }else{
+            params.put("companyId",AccConstants.ADMIN_DEPT_ID);
+        }
+        return commonMapper.getSameLevelUser(params);
+    }
+
 }

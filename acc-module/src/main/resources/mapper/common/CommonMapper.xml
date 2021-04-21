@@ -3,6 +3,26 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.common.mapper.CommonMapper">
+    <resultMap type="SysUser" id="SysUserResult">
+        <id     property="userId"       column="user_id"      />
+        <result property="deptId"       column="dept_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+        <result property="avatar"       column="avatar"       />
+        <result property="password"     column="password"     />
+        <result property="status"       column="status"       />
+        <result property="delFlag"      column="del_flag"     />
+        <result property="loginIp"      column="login_ip"     />
+        <result property="loginDate"    column="login_date"   />
+        <result property="createBy"     column="create_by"    />
+        <result property="createTime"   column="create_time"  />
+        <result property="updateBy"     column="update_by"    />
+        <result property="updateTime"   column="update_time"  />
+        <result property="remark"       column="remark"       />
+    </resultMap>
 
     <select id="selectCurrentVal" parameterType="Map" resultType="long">
         SELECT CURRVAL(#{companyId}) for update
@@ -14,6 +34,12 @@
 
     <select id="selectIsExist" parameterType="Map" resultType="int">
         SELECT count(*) from t_code_sequence where company_id = #{companyId }
+    </select>
+    <select id="getNextLevelUser" parameterType="Map"  resultMap="SysUserResult">
+        select * from sys_user where del_flag=0 and dept_id in (SELECT dept_id FROM `sys_dept` where parent_id=#{companyId})
+    </select>
+    <select id="getSameLevelUser" parameterType="Map"  resultMap="SysUserResult">
+        select * from sys_user where del_flag=0 and dept_id!=#{companyId} and dept_id in (SELECT dept_id FROM `sys_dept` where parent_id in (SELECT parent_id FROM `sys_dept` where dept_id=#{companyId}))
     </select>
 
     <insert id="insertCompany" parameterType="Map">

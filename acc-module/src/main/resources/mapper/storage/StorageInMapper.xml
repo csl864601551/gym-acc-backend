@@ -108,7 +108,7 @@
 
     </select>
 
-    <insert id="insertStorageIn" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertStorageIn" parameterType="Map" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into t_storage_in
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.Constants;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -31,6 +33,9 @@ public class CommonController
 
     @Autowired
     private ServerConfig serverConfig;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 通用下载请求
@@ -115,5 +120,24 @@ public class CommonController
         {
             log.error("下载文件失败", e);
         }
+    }
+
+    /**
+     * 查询下级经销商用户列表
+     */
+
+    @GetMapping("/common/getNextLevelUser")
+    public AjaxResult getNextLevelUser()
+    {
+        return AjaxResult.success(commonService.getNextLevelUser());
+    }
+    /**
+     * 查询同级经销商用户列表
+     */
+
+    @GetMapping("/common/getSameLevelUser")
+    public AjaxResult getSameLevelUser()
+    {
+        return AjaxResult.success(commonService.getSameLevelUser());
     }
 }

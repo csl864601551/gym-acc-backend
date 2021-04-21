@@ -211,25 +211,39 @@ public class StorageServiceImpl implements IStorageService {
         if (companyId > 0) {
             code.setCompanyId(companyId);
             Code Code = codeService.selectCode(code);
-            Integer storageType = Code.getCodeAttr().getStorageType();
-            Long storageRecordId = Code.getCodeAttr().getStorageRecordId();
-            if (storageType != null && storageRecordId != 0) {
-                if (storageType == AccConstants.STORAGE_TYPE_IN) {
-                    StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
-                    //TODO
-                } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
-                    StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
-                    storageVo.setOutNo(storageOut.getOutNo());
-                    storageVo.setOutUserName(storageOut.getStorageFrom());
-                    storageVo.setOutTime(storageOut.getOutTime());
-                } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
-                    StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
-                    //TODO
-                } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
-                    StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
-                    //TODO
+            if(Code!=null){
+                storageVo.setCode(codeVal);
+                storageVo.setCompanyId(companyId);
+                storageVo.setInNo("RK"+companyId+new Date().getTime());
+                storageVo.setpCode(Code.getpCode());
+                storageVo.setProductId(Code.getCodeAttr().getProductId());//产品ID
+                storageVo.setProductNo(Code.getCodeAttr().getProductNo());//产品编号
+                storageVo.setProductName(Code.getCodeAttr().getProduct().getProductName());//产品名称
+                storageVo.setBatchId(Code.getCodeAttr().getBatchId());//产品批次ID
+                storageVo.setBatchNo(Code.getCodeAttr().getBatchNo());//产品批次
+                storageVo.setNum(Code.getCodeAttr().getCodeRecord().getCount());//产品批次
+
+                Integer storageType = Code.getCodeAttr().getStorageType();
+                Long storageRecordId = Code.getCodeAttr().getStorageRecordId();
+                if (storageType != null && storageRecordId != 0) {
+                    if (storageType == AccConstants.STORAGE_TYPE_IN) {
+                        StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
+                        //TODO
+                    } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+                        StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
+                        storageVo.setOutNo(storageOut.getOutNo());
+                        storageVo.setOutUserName(storageOut.getStorageFrom());
+                        storageVo.setOutTime(storageOut.getOutTime());
+                    } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+                        StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
+                        //TODO
+                    } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
+                        StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
+                        //TODO
+                    }
                 }
             }
+
         }
 
         return storageVo;

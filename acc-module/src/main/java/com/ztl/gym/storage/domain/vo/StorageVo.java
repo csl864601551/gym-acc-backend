@@ -83,7 +83,7 @@ public class StorageVo {
     /**
      * 单码数量
      */
-    private int num;
+    private Long num;
 
     /*--------------------- 入库信息 ---------------------*/
     /**
@@ -435,11 +435,11 @@ public class StorageVo {
         this.indexEnd = indexEnd;
     }
 
-    public int getNum() {
+    public Long getNum() {
         return num;
     }
 
-    public void setNum(int num) {
+    public void setNum(Long num) {
         this.num = num;
     }
 }
