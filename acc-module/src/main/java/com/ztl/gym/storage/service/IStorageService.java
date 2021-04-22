@@ -69,7 +69,7 @@ public interface IStorageService {
     List<Storage> selectStorageByUser(Storage storage);
 
     /**
-     * 查询码信息 【包含码属性、产品、批次】
+     * 查询码流转信息 【包含码属性、产品、批次、流转信息】
      *
      * @param codeVal
      * @return

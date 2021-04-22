@@ -1,63 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.code.mapper.CodeAttrMapper">
 
     <resultMap type="CodeAttr" id="CodeAttrResult">
-        <result property="id"    column="id"    />
-        <result property="companyId"    column="company_id"    />
-        <result property="storageType"    column="storage_type"    />
-        <result property="storageRecordId"    column="storage_record_id"    />
-        <result property="recordId"    column="record_id"    />
-        <result property="indexStart"    column="index_start"    />
-        <result property="indexEnd"    column="index_end"    />
-        <result property="productId"    column="product_id"    />
-        <result property="productNo"    column="product_no"    />
-        <result property="barCode"    column="bar_code"    />
-        <result property="productCategory"    column="product_category"    />
-        <result property="productUnit"    column="product_unit"    />
-        <result property="batchId"    column="batch_id"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="productIntroduce"    column="product_introduce"    />
-        <result property="remark"    column="remark"    />
-        <result property="inputBy"    column="input_by"    />
-        <result property="inputTime"    column="input_time"    />
-        <result property="createUser"    column="create_user"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateUser"    column="update_user"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="storageRecordId" column="storage_record_id"/>
+        <result property="recordId" column="record_id"/>
+        <result property="indexStart" column="index_start"/>
+        <result property="indexEnd" column="index_end"/>
+        <result property="productId" column="product_id"/>
+        <result property="productNo" column="product_no"/>
+        <result property="barCode" column="bar_code"/>
+        <result property="productCategory" column="product_category"/>
+        <result property="productUnit" column="product_unit"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="productIntroduce" column="product_introduce"/>
+        <result property="remark" column="remark"/>
+        <result property="inputBy" column="input_by"/>
+        <result property="inputTime" column="input_time"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
 
-        <association property="product" column="product_id" select="com.ztl.gym.product.mapper.ProductMapper.selectTProductById"></association>
-        <association property="productBatch" column="batch_id" select="com.ztl.gym.product.mapper.ProductBatchMapper.selectProductBatchById"></association>
-        <association property="codeRecord" column="record_id" select="com.ztl.gym.code.mapper.CodeRecordMapper.selectCodeRecordById"></association>
+        <association property="product" column="product_id"
+                     select="com.ztl.gym.product.mapper.ProductMapper.selectTProductById"></association>
+        <association property="productBatch" column="batch_id"
+                     select="com.ztl.gym.product.mapper.ProductBatchMapper.selectProductBatchById"></association>
+        <association property="codeRecord" column="record_id"
+                     select="com.ztl.gym.code.mapper.CodeRecordMapper.selectCodeRecordById"></association>
     </resultMap>
 
     <sql id="selectCodeAttrVo">
-        select id, company_id, storage_type, storage_record_id, record_id, index_start, index_end, product_id, product_no, bar_code, product_category, product_unit, batch_id, batch_no, product_introduce, remark, input_by, input_time, create_user, create_time, update_user, update_time from t_code_attr
+        select id, company_id, tenant_id, storage_type, storage_record_id, record_id, index_start, index_end, product_id, product_no, bar_code, product_category, product_unit, batch_id, batch_no, product_introduce, remark, input_by, input_time, create_user, create_time, update_user, update_time from t_code_attr
     </sql>
 
     <select id="selectCodeAttrList" parameterType="CodeAttr" resultMap="CodeAttrResult">
         <include refid="selectCodeAttrVo"/>
         <where>
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="storageType != null "> and storage_type = #{storageType}</if>
-            <if test="storageRecordId != null "> and storage_record_id = #{storageRecordId}</if>
-            <if test="recordId != null "> and record_id = #{recordId}</if>
-            <if test="indexStart != null "> and index_start = #{indexStart}</if>
-            <if test="indexEnd != null "> and index_end = #{indexEnd}</if>
-            <if test="productId != null "> and product_id = #{productId}</if>
-            <if test="productNo != null  and productNo != ''"> and product_no = #{productNo}</if>
-            <if test="barCode != null  and barCode != ''"> and bar_code = #{barCode}</if>
-            <if test="productCategory != null  and productCategory != ''"> and product_category = #{productCategory}</if>
-            <if test="productUnit != null  and productUnit != ''"> and product_unit = #{productUnit}</if>
-            <if test="batchId != null "> and batch_id = #{batchId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and batch_no = #{batchNo}</if>
-            <if test="productIntroduce != null  and productIntroduce != ''"> and product_introduce = #{productIntroduce}</if>
-            <if test="inputBy != null "> and input_by = #{inputBy}</if>
-            <if test="inputTime != null "> and input_time = #{inputTime}</if>
-            <if test="createUser != null "> and create_user = #{createUser}</if>
-            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+            <if test="companyId != null ">and company_id = #{companyId}</if>
+            <if test="storageType != null ">and storage_type = #{storageType}</if>
+            <if test="storageRecordId != null ">and storage_record_id = #{storageRecordId}</if>
+            <if test="recordId != null ">and record_id = #{recordId}</if>
+            <if test="indexStart != null ">and index_start = #{indexStart}</if>
+            <if test="indexEnd != null ">and index_end = #{indexEnd}</if>
+            <if test="productId != null ">and product_id = #{productId}</if>
+            <if test="productNo != null  and productNo != ''">and product_no = #{productNo}</if>
+            <if test="barCode != null  and barCode != ''">and bar_code = #{barCode}</if>
+            <if test="productCategory != null  and productCategory != ''">and product_category = #{productCategory}</if>
+            <if test="productUnit != null  and productUnit != ''">and product_unit = #{productUnit}</if>
+            <if test="batchId != null ">and batch_id = #{batchId}</if>
+            <if test="batchNo != null  and batchNo != ''">and batch_no = #{batchNo}</if>
+            <if test="productIntroduce != null  and productIntroduce != ''">and product_introduce =
+                #{productIntroduce}
+            </if>
+            <if test="inputBy != null ">and input_by = #{inputBy}</if>
+            <if test="inputTime != null ">and input_time = #{inputTime}</if>
+            <if test="createUser != null ">and create_user = #{createUser}</if>
+            <if test="updateUser != null ">and update_user = #{updateUser}</if>
         </where>
     </select>
 
@@ -79,6 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into t_code_attr
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
             <if test="storageType != null">storage_type,</if>
             <if test="storageRecordId != null">storage_record_id,</if>
             <if test="recordId != null">record_id,</if>
@@ -99,9 +106,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
             <if test="storageType != null">#{storageType},</if>
             <if test="storageRecordId != null">#{storageRecordId},</if>
             <if test="recordId != null">#{recordId},</if>
@@ -122,13 +130,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateCodeAttr" parameterType="CodeAttr">
         update t_code_attr
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="storageType != null">storage_type = #{storageType},</if>
             <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
             <if test="recordId != null">recordId = #{recordId},</if>

@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageTransferMapper">
-    
+
     <resultMap type="StorageTransfer" id="StorageTransferResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStorageTransferList" parameterType="StorageTransfer" resultMap="StorageTransferResult">
         <include refid="selectStorageTransferVo"/>
-        <where>  
+        <where>
             <if test="companyId != null "> and company_id = #{companyId}</if>
             <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
             <if test="status != null "> and status = #{status}</if>
@@ -48,12 +48,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outTime != null "> and out_time = #{outTime}</if>
         </where>
     </select>
-    
+
     <select id="selectStorageTransferById" parameterType="Long" resultMap="StorageTransferResult">
         <include refid="selectStorageTransferVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectStorageTransferByNo" parameterType="String" resultMap="StorageTransferResult">
+        <include refid="selectStorageTransferVo"/>
+        where transferNo = #{transferNo}
+    </select>
+
     <insert id="insertStorageTransfer" parameterType="StorageTransfer" useGeneratedKeys="true" keyProperty="id">
         insert into t_storage_transfer
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -128,7 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteStorageTransferByIds" parameterType="String">
-        delete from t_storage_transfer where id in 
+        delete from t_storage_transfer where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

@@ -40,6 +40,13 @@ public interface CommonService {
     List<SysUser> getSameLevelUser();
 
     /**
+     * 查询上级部门id
+     *
+     * @return
+     */
+    Long getParentDeptId(long deptId);
+
+    /**
      * 获取用于查询的tenantId
      *
      * @return
@@ -49,7 +56,18 @@ public interface CommonService {
     /**
      * 获取流转记录编号
      *
+     * @param storageType 流转类型 【见AccConstants】
      * @return
      */
     String getStorageNo(int storageType);
+
+    /**
+     * 查询码或者流转单号当前操作是否合法 【输入流转操作输入货码时调用】
+     *
+     * @param storageType 当前流转操作类型 【见AccConstants】
+     * @param queryType   查询值类型 1：码  2：流转单
+     * @param queryValue  查询值
+     * @return
+     */
+    boolean judgeStorageIsIllegalByValue(Integer storageType, Integer queryType, String queryValue);
 }

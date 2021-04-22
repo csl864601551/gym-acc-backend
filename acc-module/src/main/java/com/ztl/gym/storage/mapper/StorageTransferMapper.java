@@ -1,19 +1,19 @@
 package com.ztl.gym.storage.mapper;
 
 import java.util.List;
+
 import com.ztl.gym.storage.domain.StorageTransfer;
 
 /**
  * 调货Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2021-04-09
  */
-public interface StorageTransferMapper 
-{
+public interface StorageTransferMapper {
     /**
      * 查询调货
-     * 
+     *
      * @param id 调货ID
      * @return 调货
      */
@@ -21,7 +21,7 @@ public interface StorageTransferMapper
 
     /**
      * 查询调货列表
-     * 
+     *
      * @param storageTransfer 调货
      * @return 调货集合
      */
@@ -29,7 +29,7 @@ public interface StorageTransferMapper
 
     /**
      * 新增调货
-     * 
+     *
      * @param storageTransfer 调货
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface StorageTransferMapper
 
     /**
      * 修改调货
-     * 
+     *
      * @param storageTransfer 调货
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface StorageTransferMapper
 
     /**
      * 删除调货
-     * 
+     *
      * @param id 调货ID
      * @return 结果
      */
@@ -53,9 +53,17 @@ public interface StorageTransferMapper
 
     /**
      * 批量删除调货
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
     public int deleteStorageTransferByIds(Long[] ids);
+
+    /**
+     * 根据调拨单号查询调拨信息
+     *
+     * @param transferNo
+     * @return
+     */
+    StorageTransfer selectStorageTransferByNo(String transferNo);
 }

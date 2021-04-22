@@ -1,6 +1,7 @@
 package com.ztl.gym.storage.service.impl;
 
 import java.util.List;
+
 import com.ztl.gym.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,7 @@ import com.ztl.gym.storage.service.IStorageTransferService;
  * @date 2021-04-09
  */
 @Service
-public class StorageTransferServiceImpl implements IStorageTransferService
-{
+public class StorageTransferServiceImpl implements IStorageTransferService {
     @Autowired
     private StorageTransferMapper storageTransferMapper;
 
@@ -27,9 +27,19 @@ public class StorageTransferServiceImpl implements IStorageTransferService
      * @return 调货
      */
     @Override
-    public StorageTransfer selectStorageTransferById(Long id)
-    {
+    public StorageTransfer selectStorageTransferById(Long id) {
         return storageTransferMapper.selectStorageTransferById(id);
+    }
+
+    /**
+     * 根据调拨单号查询调拨信息
+     *
+     * @param transferNo
+     * @return
+     */
+    @Override
+    public StorageTransfer selectStorageTransferByNo(String transferNo) {
+        return storageTransferMapper.selectStorageTransferByNo(transferNo);
     }
 
     /**
@@ -39,8 +49,7 @@ public class StorageTransferServiceImpl implements IStorageTransferService
      * @return 调货
      */
     @Override
-    public List<StorageTransfer> selectStorageTransferList(StorageTransfer storageTransfer)
-    {
+    public List<StorageTransfer> selectStorageTransferList(StorageTransfer storageTransfer) {
         return storageTransferMapper.selectStorageTransferList(storageTransfer);
     }
 
@@ -51,8 +60,7 @@ public class StorageTransferServiceImpl implements IStorageTransferService
      * @return 结果
      */
     @Override
-    public int insertStorageTransfer(StorageTransfer storageTransfer)
-    {
+    public int insertStorageTransfer(StorageTransfer storageTransfer) {
         storageTransfer.setCreateTime(DateUtils.getNowDate());
         return storageTransferMapper.insertStorageTransfer(storageTransfer);
     }
@@ -64,8 +72,7 @@ public class StorageTransferServiceImpl implements IStorageTransferService
      * @return 结果
      */
     @Override
-    public int updateStorageTransfer(StorageTransfer storageTransfer)
-    {
+    public int updateStorageTransfer(StorageTransfer storageTransfer) {
         storageTransfer.setUpdateTime(DateUtils.getNowDate());
         return storageTransferMapper.updateStorageTransfer(storageTransfer);
     }
@@ -77,8 +84,7 @@ public class StorageTransferServiceImpl implements IStorageTransferService
      * @return 结果
      */
     @Override
-    public int deleteStorageTransferByIds(Long[] ids)
-    {
+    public int deleteStorageTransferByIds(Long[] ids) {
         return storageTransferMapper.deleteStorageTransferByIds(ids);
     }
 
@@ -89,8 +95,7 @@ public class StorageTransferServiceImpl implements IStorageTransferService
      * @return 结果
      */
     @Override
-    public int deleteStorageTransferById(Long id)
-    {
+    public int deleteStorageTransferById(Long id) {
         return storageTransferMapper.deleteStorageTransferById(id);
     }
 }

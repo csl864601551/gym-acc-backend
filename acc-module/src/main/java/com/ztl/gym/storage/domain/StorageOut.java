@@ -1,6 +1,7 @@
 package com.ztl.gym.storage.domain;
 
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
@@ -13,30 +14,41 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author ruoyi
  * @date 2021-04-09
  */
-public class StorageOut extends BaseEntity
-{
+public class StorageOut extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     private Long id;
 
-    /** 企业ID */
+    /**
+     * 企业ID
+     */
     @Excel(name = "企业ID")
     private Long companyId;
 
-    /** 经销商id */
+    /**
+     * 经销商id
+     */
     @Excel(name = "经销商id")
     private Long tenantId;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     @Excel(name = "状态")
     private Long status;
 
-    /** 出库单号 */
+    /**
+     * 出库单号
+     */
     @Excel(name = "出库单号")
     private String outNo;
 
-    /** 产品id */
+    /**
+     * 产品id
+     */
     @Excel(name = "产品id")
     private Long productId;
 
@@ -44,126 +56,136 @@ public class StorageOut extends BaseEntity
     @Excel(name = "相关单号")
     private String extraNo;
 
-    /** 产品批次 */
+    /**
+     * 产品批次
+     */
     @Excel(name = "产品批次")
     private String batchNo;
 
-    /** 出库数量 */
+    /**
+     * 出库数量
+     */
     @Excel(name = "出库数量")
     private Long outNum;
 
-    /** 实际出库数量 */
+    /**
+     * 实际出库数量
+     */
     @Excel(name = "实际出库数量")
     private Long actOutNum;
 
-    /** 发货单位 */
+    /**
+     * 发货单位
+     */
     @Excel(name = "发货单位")
     private Long storageFrom;
 
-    /** 收货单位 */
+    /**
+     * 收货单位
+     */
     @Excel(name = "收货单位")
     private Long storageTo;
 
-    /** 出货仓库 */
+    /**
+     * 出货仓库
+     */
     @Excel(name = "出货仓库")
     private Long fromStorageId;
 
-    /** 收货仓库 */
+    /**
+     * 收货仓库
+     */
     @Excel(name = "收货仓库")
     private Long toStorageId;
 
-    /** 创建人 */
+    /**
+     * 创建人
+     */
     @Excel(name = "创建人")
     private Long createUser;
 
-    /** 修改人 */
+    /**
+     * 修改人
+     */
     @Excel(name = "修改人")
     private Long updateUser;
 
-    /** 出库时间 */
+    /**
+     * 出库时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
     private Date outTime;
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
-    public void setCompanyId(Long companyId)
-    {
+
+    public void setCompanyId(Long companyId) {
         this.companyId = companyId;
     }
 
-    public Long getCompanyId()
-    {
+    public Long getCompanyId() {
         return companyId;
     }
-    public void setTenantId(Long tenantId)
-    {
+
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
 
-    public Long getTenantId()
-    {
+    public Long getTenantId() {
         return tenantId;
     }
-    public void setStatus(Long status)
-    {
+
+    public void setStatus(Long status) {
         this.status = status;
     }
 
-    public Long getStatus()
-    {
+    public Long getStatus() {
         return status;
     }
-    public void setOutNo(String outNo)
-    {
+
+    public void setOutNo(String outNo) {
         this.outNo = outNo;
     }
 
-    public String getOutNo()
-    {
+    public String getOutNo() {
         return outNo;
     }
-    public void setProductId(Long productId)
-    {
+
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public Long getProductId()
-    {
+    public Long getProductId() {
         return productId;
     }
-    public void setBatchNo(String batchNo)
-    {
+
+    public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
     }
 
-    public String getBatchNo()
-    {
+    public String getBatchNo() {
         return batchNo;
     }
-    public void setOutNum(Long outNum)
-    {
+
+    public void setOutNum(Long outNum) {
         this.outNum = outNum;
     }
 
-    public Long getOutNum()
-    {
+    public Long getOutNum() {
         return outNum;
     }
-    public void setActOutNum(Long actOutNum)
-    {
+
+    public void setActOutNum(Long actOutNum) {
         this.actOutNum = actOutNum;
     }
 
-    public Long getActOutNum()
-    {
+    public Long getActOutNum() {
         return actOutNum;
     }
 
@@ -191,31 +213,32 @@ public class StorageOut extends BaseEntity
         this.storageTo = storageTo;
     }
 
-    public void setFromStorageId(Long fromStorageId)
-    {
+
+    public void setStorageTo(Long storageTo) {
+        this.storageTo = storageTo;
+    }
+
+    public void setFromStorageId(Long fromStorageId) {
         this.fromStorageId = fromStorageId;
     }
 
-    public Long getFromStorageId()
-    {
+    public Long getFromStorageId() {
         return fromStorageId;
     }
-    public void setToStorageId(Long toStorageId)
-    {
+
+    public void setToStorageId(Long toStorageId) {
         this.toStorageId = toStorageId;
     }
 
-    public Long getToStorageId()
-    {
+    public Long getToStorageId() {
         return toStorageId;
     }
-    public void setOutTime(Date outTime)
-    {
+
+    public void setOutTime(Date outTime) {
         this.outTime = outTime;
     }
 
-    public Date getOutTime()
-    {
+    public Date getOutTime() {
         return outTime;
     }
 

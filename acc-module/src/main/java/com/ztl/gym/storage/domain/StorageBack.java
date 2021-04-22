@@ -35,6 +35,11 @@ public class StorageBack extends BaseEntity {
     private Long tenantId;
 
     /**
+     * 退货类型
+     */
+    private Integer backType;
+
+    /**
      * 状态
      */
     @Excel(name = "状态")
@@ -249,6 +254,14 @@ public class StorageBack extends BaseEntity {
 
     public void setCodeStr(String codeStr) {
         this.codeStr = codeStr;
+    }
+
+    public Integer getBackType() {
+        return backType;
+    }
+
+    public void setBackType(Integer backType) {
+        this.backType = backType;
     }
 
     @Override

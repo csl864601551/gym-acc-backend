@@ -17,38 +17,31 @@ public class AccConstants {
     /**
      * 文本类型-未知
      */
-    public final static int TEXT_TYPE_UNKONW = 0;
+    public final static int NO_TYPE_UNKONW = 0;
     /**
      * 文本类型-码-箱码
      */
-    public final static int TEXT_TYPE_CODE_P = 1;
+    public final static int NO_TYPE_CODE_P = 1;
     /**
      * 文本类型-码-单码
      */
-    public final static int TEXT_TYPE_CODE_S = 2;
+    public final static int NO_TYPE_CODE_S = 2;
     /**
      * 文本类型-物流单号-入库
      */
-    public final static int TEXT_TYPE_STORAGE_IN = 3;
+    public final static int NO_TYPE_STORAGE_IN = 3;
     /**
      * 文本类型-物流单号-出库
      */
-    public final static int TEXT_TYPE_STORAGE_OUT = 4;
+    public final static int NO_TYPE_STORAGE_OUT = 4;
     /**
      * 文本类型-物流单号-退货
      */
-    public final static int TEXT_TYPE_STORAGE_BACK = 5;
+    public final static int NO_TYPE_STORAGE_BACK = 5;
     /**
      * 文本类型-物流单号-调拨
      */
-    public final static int TEXT_TYPE_STORAGE_TRANSFER = 6;
-
-
-    /*---------------------------- 企业常量 ----------------------------*/
-    /**
-     * 平台部门id
-     */
-    public final static Long TOP_DEPT_ID = 100l;
+    public final static int NO_TYPE_STORAGE_TRANSFER = 6;
 
 
     /*---------------------------- 用户常量 ----------------------------*/
@@ -166,4 +159,27 @@ public class AccConstants {
      * 物流类型-退货入库
      */
     public final static int STORAGE_TYPE_BACK = 4;
+
+    /**
+     * 退货类型-正常（经销商退企业）
+     */
+    public final static int BACK_TYPE_COMMON = 1;
+    /**
+     * 退货类型-调拨（经销商退经销商）
+     */
+    public final static int BACK_TYPE_TRANSFER = 2;
+
+    /**
+     * 调拨状态-待发货
+     */
+    public final static int STORAGE_TRANSFER_STATUS_WAIT = 0;
+    /**
+     * 调拨状态-发货中
+     */
+    public final static int STORAGE_TRANSFER_STATUS_OUT = 0;
+    /**
+     * 调拨状态-已入库
+     */
+    public final static int STORAG_TRANSFERE_STATUS_IN = 0;
+
 }
