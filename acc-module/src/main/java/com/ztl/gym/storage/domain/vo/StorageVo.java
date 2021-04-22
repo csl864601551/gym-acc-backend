@@ -57,6 +57,11 @@ public class StorageVo {
      */
     private int codeType;
 
+    /**
+     * 单码or箱码
+     */
+    private String codeTypeName;
+
     /*--------------------- 单码操作 ---------------------*/
     /**
      * 流水号
@@ -102,6 +107,10 @@ public class StorageVo {
      * 入库单位名称
      */
     private String inUserName;
+    /**
+     * 相关单号
+     */
+    private String extraNo;
 
     /*--------------------- 入库信息 ---------------------*/
     /**
@@ -139,6 +148,14 @@ public class StorageVo {
      * 收货企业/经销商
      */
     private Long storageTo;
+    /**
+     * 出货仓库
+     */
+    private Long fromStorageId;
+    /**
+     * 收货仓库
+     */
+    private Long toStorageId;
     /**
      * 出库时间
      */
@@ -482,5 +499,45 @@ public class StorageVo {
 
     public void setOutUserId(Long outUserId) {
         this.outUserId = outUserId;
+    }
+
+    public String getCodeTypeName() {
+        return codeTypeName;
+    }
+
+    public void setCodeTypeName(String codeTypeName) {
+        this.codeTypeName = codeTypeName;
+    }
+
+    public String getOutUserName() {
+        return outUserName;
+    }
+
+    public void setOutUserName(String outUserName) {
+        this.outUserName = outUserName;
+    }
+
+    public String getExtraNo() {
+        return extraNo;
+    }
+
+    public void setExtraNo(String extraNo) {
+        this.extraNo = extraNo;
+    }
+
+    public Long getFromStorageId() {
+        return fromStorageId;
+    }
+
+    public void setFromStorageId(Long fromStorageId) {
+        this.fromStorageId = fromStorageId;
+    }
+
+    public Long getToStorageId() {
+        return toStorageId;
+    }
+
+    public void setToStorageId(Long toStorageId) {
+        this.toStorageId = toStorageId;
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.mapper.StorageInMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,12 +61,11 @@ public class StorageOutServiceImpl implements IStorageOutService
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     public int insertStorageOut(Map<String, Object> map)
     {
-        map.put("create_time",(DateUtils.getNowDate()));
-        storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
-        storageInMapper.insertPcodeFlow(map);//新增t_pcode_flow箱码流转记录表
-        storageInMapper.insertCodeFlow(map);//新增t_code_flow单码流转记录表
-        storageInMapper.updateProductStock(map);//更新t_product_stock库存统计表
-        return 0;
+        map.put("createTime",(DateUtils.getNowDate()));
+        map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
+
+        //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
+        return storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
     }
 
     /**

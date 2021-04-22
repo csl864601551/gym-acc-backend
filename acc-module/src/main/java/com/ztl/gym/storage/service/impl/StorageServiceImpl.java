@@ -215,12 +215,35 @@ public class StorageServiceImpl implements IStorageService {
             code.setCompanyId(companyId);
             Code codeEntity = codeService.selectCode(code);
             if (codeEntity != null) {
+                storageVo.setCode(codeVal);//区分前端是否查询到码相关信息
+                storageVo.setCompanyId(companyId);
+                if(codeEntity.getCodeType().toString().equals("single")){//判断单码是属于单码or箱码
+                    if(codeEntity.getpCode().equals("")||codeEntity.getpCode().equals(null)){
+                        storageVo.setCodeTypeName("单码");
+                    }else{
+                        storageVo.setCodeTypeName("箱码");
+                        storageVo.setpCode(codeEntity.getpCode());
+                    }
+                }else if(codeEntity.getCodeType().toString().equals("box")){
+                    storageVo.setpCode(codeEntity.getCode());
+                    storageVo.setCodeTypeName("箱码");
+                }
+                storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
+                storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
+                storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
+                storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
+                storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
+
                 Integer storageType = codeEntity.getCodeAttr().getStorageType();
                 Long storageRecordId = codeEntity.getCodeAttr().getStorageRecordId();
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
                         //TODO
+                        storageVo.setOutNo("CH" + companyId + new Date().getTime());//企业第一次出库
+                        storageVo.setExtraNo(storageIn.getInNo());
+                        storageVo.setNum(storageIn.getActInNum());
+                        storageVo.setFromStorageId(storageIn.getToStorageId());
                     } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
                         StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
                         storageVo.setOutNo(storageOut.getOutNo());
@@ -233,16 +256,8 @@ public class StorageServiceImpl implements IStorageService {
                         //TODO
                     }
                 } else {
-                    storageVo.setCode(codeVal);
-                    storageVo.setCompanyId(companyId);
-                    storageVo.setInNo("RK" + companyId + new Date().getTime());
-                    storageVo.setpCode(codeEntity.getpCode());
-                    storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
-                    storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
-                    storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
-                    storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
-                    storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
-                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品批次
+                    storageVo.setInNo("RK" + companyId + new Date().getTime());//企业第一次入库
+                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品数量
                 }
             }
         }

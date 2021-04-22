@@ -33,13 +33,13 @@
     </resultMap>
 
     <sql id="selectStorageInVo">
-        select id, company_id, tenant_id, status, in_no, product_id, batch_no, in_num, act_in_num, storage_from, storage_to,
+        select id, company_id, tenant_id, status, in_no,extra_no, product_id, batch_no, in_num, act_in_num, storage_from, storage_to,
         from_storage_id, to_storage_id, remark, create_user, create_time, in_time, update_user, update_time
         from t_storage_in where status=0
     </sql>
 
     <select id="selectStorageInList" parameterType="StorageIn" resultMap="StorageInResult">
-        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
         FROM
         t_storage_in AS si
@@ -50,6 +50,7 @@
             <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="inNo != null  and inNo != ''"> and in_no = #{inNo}</if>
+            <if test="extraNo != null  and extraNo != ''"> and extra_no = #{extraNo}</if>
             <if test="productId != null "> and product_id = #{productId}</if>
             <if test="batchNo != null  and batchNo != ''"> and batch_no = #{batchNo}</if>
             <if test="inNum != null "> and in_num = #{inNum}</if>
@@ -65,7 +66,7 @@
     </select>
 
     <select id="selectStorageInById" parameterType="Long" resultMap="StorageInResult">
-        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
         ,p.product_name
         FROM
@@ -76,7 +77,7 @@
         where si.id = #{id}
     </select>
     <select id="selectStorageCodeById" resultMap="map">
-        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
         ,p.product_name
         FROM
@@ -116,6 +117,7 @@
             <if test="tenantId != null">tenant_id,</if>
             <if test="status != null">status,</if>
             <if test="inNo != null">in_no,</if>
+            <if test="extraNo != null">extra_no,</if>
             <if test="productId != null">product_id,</if>
             <if test="batchNo != null">batch_no,</if>
             <if test="inNum != null">in_num,</if>
@@ -136,6 +138,7 @@
             <if test="tenantId != null">#{tenantId},</if>
             <if test="status != null">#{status},</if>
             <if test="inNo != null">#{inNo},</if>
+            <if test="extraNo != null">#{extraNo},</if>
             <if test="productId != null">#{productId},</if>
             <if test="batchNo != null">#{batchNo},</if>
             <if test="inNum != null">#{inNum},</if>
@@ -153,11 +156,11 @@
         </trim>
     </insert>
     <insert id="insertPcodeFlow">
-        INSERT INTO `gym-acc`.`t_pcode_flow`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
+        INSERT INTO `gym-acc`.`t_pcode_flow`( `company_id`,  `code`, `record_id`, `create_user`, `create_time`)
         VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
     </insert>
     <insert id="insertCodeFlow">
-        INSERT INTO `gym-acc`.`t_code_flow`( `company_id`, `tenant_id`, `code`, `record_id`, `create_user`, `create_time`)
+        INSERT INTO `gym-acc`.`t_code_flow`( `company_id`,  `code`, `record_id`, `create_user`, `create_time`)
         VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
     </insert>
 
@@ -168,6 +171,7 @@
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="inNo != null">in_no = #{inNo},</if>
+            <if test="extraNo != null">extra_no = #{extraNo},</if>
             <if test="productId != null">product_id = #{productId},</if>
             <if test="batchNo != null">batch_no = #{batchNo},</if>
             <if test="inNum != null">in_num = #{inNum},</if>
