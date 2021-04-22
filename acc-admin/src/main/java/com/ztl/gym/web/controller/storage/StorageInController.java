@@ -124,7 +124,7 @@ public class StorageInController extends BaseController
      * 修改入库
      */
     @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
-    @PutMapping
+    @PutMapping(value = "/updateInStatusByCode")
     public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
     {
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
