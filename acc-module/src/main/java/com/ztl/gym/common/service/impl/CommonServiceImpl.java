@@ -147,6 +147,9 @@ public class CommonServiceImpl implements CommonService {
             codeParam.setCode(queryValue);
             codeParam.setCompanyId(CodeRuleUtils.getCompanyIdByCode(queryValue));
             codeResult = codeService.selectCode(codeParam);
+            if (codeResult == null) {
+                throw new CustomException("码不存在！", HttpStatus.ERROR);
+            }
 
             //判断该码是否属于当前用户的企业
             if (codeParam.getCompanyId().equals(AccConstants.ADMIN_DEPT_ID)) {
@@ -163,7 +166,20 @@ public class CommonServiceImpl implements CommonService {
                     throw new CustomException("该码当前无状态！", HttpStatus.ERROR);
                 }
             }
+        } else {
+            //有流转单说明是调拨退货操作
+            StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(queryValue);
+            if (storageTransfer == null) {
+                throw new CustomException("该调拨单号查找不到！", HttpStatus.ERROR);
+            }
+
+            //判断调拨接受方是否是当前用户
+            if (storageTransfer.getStorageTo() != currentUserDeptId) {
+                throw new CustomException("调拨接收方不属于当前部门！", HttpStatus.ERROR);
+            }
         }
+
+        //判断码合不合规
         switch (storageType) {
             case AccConstants.STORAGE_TYPE_IN:
                 if (codeResult.getCodeAttr().getStorageType() == null || codeResult.getCodeAttr().getStorageType() == 0) {
@@ -246,23 +262,7 @@ public class CommonServiceImpl implements CommonService {
                     } else {
                         throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
                     }
-                } else if (queryType == 2) {
-                    //流转单
-                    if (!queryValue.startsWith("DB")) {
-                        throw new CustomException("单号不是调拨单号！", HttpStatus.ERROR);
-                    } else {
-                        StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(queryValue);
-                        if (storageTransfer == null) {
-                            throw new CustomException("调拨单异常！", HttpStatus.ERROR);
-                        } else {
-                            //判断调拨接受方是否是当前用户
-                            if (storageTransfer.getStorageTo() != currentUserDeptId) {
-                                throw new CustomException("调拨接收方不属于当前部门！", HttpStatus.ERROR);
-                            }
-                        }
-                    }
                 }
-
         }
         return true;
     }
