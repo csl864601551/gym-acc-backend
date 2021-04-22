@@ -9,6 +9,7 @@ import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
@@ -123,8 +124,10 @@ public class StorageInController extends BaseController {
      */
     @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateInStatusByCode")
-    public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map) {
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//转移到PDA执行
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
+    public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
+    {
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
         return toAjax(storageInService.updateStorageInActNum(Long.valueOf(map.get("id").toString())));
     }
 }
