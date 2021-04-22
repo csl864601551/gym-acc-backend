@@ -52,6 +52,11 @@ public class StorageBack extends BaseEntity {
     private String backNo;
 
     /**
+     * 相关单号
+     */
+    private String extraNo;
+
+    /**
      * 产品id
      */
     @Excel(name = "产品id")
@@ -79,13 +84,13 @@ public class StorageBack extends BaseEntity {
      * 退货单位
      */
     @Excel(name = "退货单位")
-    private String storageFrom;
+    private Long storageFrom;
 
     /**
      * 收货单位
      */
     @Excel(name = "收货单位")
-    private String storageTo;
+    private Long storageTo;
 
     /**
      * 退货仓库
@@ -98,13 +103,6 @@ public class StorageBack extends BaseEntity {
      */
     @Excel(name = "收入仓库")
     private Long toStorageId;
-
-    /**
-     * 出库时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date outTime;
 
     /*------------------------------ 冗余字段 ------------------------------*/
     /**
@@ -119,6 +117,16 @@ public class StorageBack extends BaseEntity {
      * 操作人昵称
      */
     private String nickName;
+    /**
+     * 退货单位名称
+     */
+    private String storageFromName;
+    ;
+    /**
+     * 货码 【码或者调拨单号】
+     */
+    private String value;
+    ;
 
     public void setId(Long id) {
         this.id = id;
@@ -192,20 +200,20 @@ public class StorageBack extends BaseEntity {
         return actBackNum;
     }
 
-    public void setStorageFrom(String storageFrom) {
-        this.storageFrom = storageFrom;
-    }
-
-    public String getStorageFrom() {
+    public Long getStorageFrom() {
         return storageFrom;
     }
 
-    public void setStorageTo(String storageTo) {
-        this.storageTo = storageTo;
+    public void setStorageFrom(Long storageFrom) {
+        this.storageFrom = storageFrom;
     }
 
-    public String getStorageTo() {
+    public Long getStorageTo() {
         return storageTo;
+    }
+
+    public void setStorageTo(Long storageTo) {
+        this.storageTo = storageTo;
     }
 
     public void setFromStorageId(Long fromStorageId) {
@@ -222,14 +230,6 @@ public class StorageBack extends BaseEntity {
 
     public Long getToStorageId() {
         return toStorageId;
-    }
-
-    public void setOutTime(Date outTime) {
-        this.outTime = outTime;
-    }
-
-    public Date getOutTime() {
-        return outTime;
     }
 
     public String getToStorageName() {
@@ -264,6 +264,30 @@ public class StorageBack extends BaseEntity {
         this.backType = backType;
     }
 
+    public String getStorageFromName() {
+        return storageFromName;
+    }
+
+    public void setStorageFromName(String storageFromName) {
+        this.storageFromName = storageFromName;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getExtraNo() {
+        return extraNo;
+    }
+
+    public void setExtraNo(String extraNo) {
+        this.extraNo = extraNo;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -283,7 +307,6 @@ public class StorageBack extends BaseEntity {
                 .append("remark", getRemark())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
-                .append("outTime", getOutTime())
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .toString();

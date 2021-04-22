@@ -123,4 +123,20 @@ public interface CodeMapper {
      * @return
      */
     int insertCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
+
+    /**
+     * 根据物流流转信息查询箱码
+     *
+     * @param params
+     * @return
+     */
+    String selectPcodeByStorage(Map<String, Object> params);
+
+    /**
+     * 根据物流流转信息查询单码
+     *
+     * @param params
+     * @return
+     */
+    List<String> selectCodeByStorage(Map<String, Object> params);
 }

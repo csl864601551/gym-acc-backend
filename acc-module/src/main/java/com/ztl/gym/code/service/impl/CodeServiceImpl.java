@@ -218,6 +218,21 @@ public class CodeServiceImpl implements ICodeService {
         return codeMapper.insertCodeFlowForBox(flowVo);
     }
 
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId) {
+        List<String> list = new ArrayList<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("storageType", storageType);
+        params.put("storageRecordId", storageRecordId);
+        String pCode = codeMapper.selectPcodeByStorage(params);
+        list.add(pCode);
+        List<String> code = codeMapper.selectCodeByStorage(params);
+        list.addAll(code);
+        return list;
+    }
+
     /**
      * 构建批量插入单码明细sql
      *

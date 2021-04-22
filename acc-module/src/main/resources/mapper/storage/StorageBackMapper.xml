@@ -21,7 +21,6 @@
         <result property="remark" column="remark"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
-        <result property="outTime" column="out_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="toStorageName" column="storage_name"/>
@@ -45,7 +44,6 @@
         b.remark,
         b.create_user,
         b.create_time,
-        b.out_time,
         b.update_user,
         b.update_time,
         s.storage_name,
@@ -70,7 +68,6 @@
             <if test="storageTo != null  and storageTo != ''">and storage_to = #{storageTo}</if>
             <if test="fromStorageId != null ">and from_storage_id = #{fromStorageId}</if>
             <if test="toStorageId != null ">and to_storage_id = #{toStorageId}</if>
-            <if test="outTime != null ">and out_time = #{outTime}</if>
         </where>
     </select>
 
@@ -97,7 +94,6 @@
             <if test="remark != null">remark,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
-            <if test="outTime != null">out_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
@@ -117,7 +113,6 @@
             <if test="remark != null">#{remark},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="outTime != null">#{outTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
@@ -141,7 +136,6 @@
             <if test="remark != null">remark = #{remark},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="outTime != null">out_time = #{outTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

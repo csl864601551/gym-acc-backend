@@ -116,4 +116,13 @@ public interface ICodeService {
      */
     int insertCodeFlowForBox(FlowVo flowVo);
 
+    /**
+     * 根据物流流转信息查询码集合
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
 }

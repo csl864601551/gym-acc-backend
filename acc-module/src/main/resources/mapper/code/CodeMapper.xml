@@ -135,4 +135,12 @@
         insert into t_pcode_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
         values(#{companyId},#{code},#{storageType},#{storageRecordId},#{createUser},#{createTime} )
     </insert>
+
+    <select id="selectPcodeByStorage" parameterType="Map" resultType="String">
+        select code from t_pcode_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
+    </select>
+
+    <select id="selectCodeByStorage" parameterType="Map" resultType="String">
+        select code from t_code_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
+    </select>
 </mapper>

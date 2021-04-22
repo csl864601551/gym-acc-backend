@@ -38,23 +38,23 @@ public class StorageTransfer extends BaseEntity
 
     /** 产品id */
     @Excel(name = "产品id")
-    private Long product_id;
+    private Long productId;
 
     /** 产品批次 */
     @Excel(name = "产品批次")
-    private String batch_no;
+    private String batchNo;
 
     /** 调拨数量 */
     @Excel(name = "调拨数量")
-    private Long transfer_num;
+    private Long transferNum;
 
     /** 实际调拨数量 */
     @Excel(name = "实际调拨数量")
-    private Long act_transfer_num;
+    private Long actTransferNum;
 
     /** 调出单位 */
     @Excel(name = "调出单位")
-    private String storage_from;
+    private String storageFrom;
 
     /** 调入单位 */
     @Excel(name = "调入单位")
@@ -62,24 +62,12 @@ public class StorageTransfer extends BaseEntity
 
     /** 出货仓库 */
     @Excel(name = "出货仓库")
-    private Long from_storage_id;
+    private Long fromStorageId;
 
     /** 收货仓库 */
     @Excel(name = "收货仓库")
-    private Long to_storage_id;
+    private Long toStorageId;
 
-    /** 创建人 */
-    @Excel(name = "创建人")
-    private Long create_user;
-
-    /** 修改人 */
-    @Excel(name = "修改人")
-    private Long update_user;
-
-    /** 出库时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
-    @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
-    private Date out_time;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -125,46 +113,6 @@ public class StorageTransfer extends BaseEntity
         this.transfer_no = transfer_no;
     }
 
-    public Long getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(Long product_id) {
-        this.product_id = product_id;
-    }
-
-    public String getBatch_no() {
-        return batch_no;
-    }
-
-    public void setBatch_no(String batch_no) {
-        this.batch_no = batch_no;
-    }
-
-    public Long getTransfer_num() {
-        return transfer_num;
-    }
-
-    public void setTransfer_num(Long transfer_num) {
-        this.transfer_num = transfer_num;
-    }
-
-    public Long getAct_transfer_num() {
-        return act_transfer_num;
-    }
-
-    public void setAct_transfer_num(Long act_transfer_num) {
-        this.act_transfer_num = act_transfer_num;
-    }
-
-    public String getStorage_from() {
-        return storage_from;
-    }
-
-    public void setStorage_from(String storage_from) {
-        this.storage_from = storage_from;
-    }
-
     public Long getStorageTo() {
         return storageTo;
     }
@@ -173,64 +121,59 @@ public class StorageTransfer extends BaseEntity
         this.storageTo = storageTo;
     }
 
-    public Long getFrom_storage_id() {
-        return from_storage_id;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setFrom_storage_id(Long from_storage_id) {
-        this.from_storage_id = from_storage_id;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public Long getTo_storage_id() {
-        return to_storage_id;
+    public String getBatchNo() {
+        return batchNo;
     }
 
-    public void setTo_storage_id(Long to_storage_id) {
-        this.to_storage_id = to_storage_id;
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
-    public Long getCreate_user() {
-        return create_user;
+    public Long getTransferNum() {
+        return transferNum;
     }
 
-    public void setCreate_user(Long create_user) {
-        this.create_user = create_user;
+    public void setTransferNum(Long transferNum) {
+        this.transferNum = transferNum;
     }
 
-    public Long getUpdate_user() {
-        return update_user;
+    public Long getActTransferNum() {
+        return actTransferNum;
     }
 
-    public void setUpdate_user(Long update_user) {
-        this.update_user = update_user;
+    public void setActTransferNum(Long actTransferNum) {
+        this.actTransferNum = actTransferNum;
     }
 
-    public Date getOut_time() {
-        return out_time;
+    public String getStorageFrom() {
+        return storageFrom;
     }
 
-    public void setOut_time(Date out_time) {
-        this.out_time = out_time;
+    public void setStorageFrom(String storageFrom) {
+        this.storageFrom = storageFrom;
     }
 
-    @Override
-    public String toString() {
-        return "StorageTransfer{" +
-                "id=" + id +
-                ", company_id=" + company_id +
-                ", tenant_id=" + tenant_id +
-                ", status=" + status +
-                ", transfer_no='" + transfer_no + '\'' +
-                ", product_id=" + product_id +
-                ", batch_no='" + batch_no + '\'' +
-                ", transfer_num=" + transfer_num +
-                ", act_transfer_num=" + act_transfer_num +
-                ", storage_from='" + storage_from + '\'' +
-                ", from_storage_id=" + from_storage_id +
-                ", to_storage_id=" + to_storage_id +
-                ", create_user=" + create_user +
-                ", update_user=" + update_user +
-                ", out_time=" + out_time +
-                '}';
+    public Long getFromStorageId() {
+        return fromStorageId;
+    }
+
+    public void setFromStorageId(Long fromStorageId) {
+        this.fromStorageId = fromStorageId;
+    }
+
+    public Long getToStorageId() {
+        return toStorageId;
+    }
+
+    public void setToStorageId(Long toStorageId) {
+        this.toStorageId = toStorageId;
     }
 }

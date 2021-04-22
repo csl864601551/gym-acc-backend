@@ -1,12 +1,17 @@
 package com.ztl.gym.storage.service.impl;
 
-import java.util.List;
+import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.storage.domain.StorageBack;
+import com.ztl.gym.storage.mapper.StorageBackMapper;
+import com.ztl.gym.storage.service.IStorageBackService;
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.storage.mapper.StorageBackMapper;
-import com.ztl.gym.storage.domain.StorageBack;
-import com.ztl.gym.storage.service.IStorageBackService;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 退货Service业务层处理
@@ -15,10 +20,13 @@ import com.ztl.gym.storage.service.IStorageBackService;
  * @date 2021-04-19
  */
 @Service
-public class StorageBackServiceImpl implements IStorageBackService
-{
+public class StorageBackServiceImpl implements IStorageBackService {
     @Autowired
     private StorageBackMapper storageBackMapper;
+    @Autowired
+    private IStorageService storageService;
+    @Autowired
+    private ICodeService codeService;
 
     /**
      * 查询退货
@@ -27,8 +35,7 @@ public class StorageBackServiceImpl implements IStorageBackService
      * @return 退货
      */
     @Override
-    public StorageBack selectStorageBackById(Long id)
-    {
+    public StorageBack selectStorageBackById(Long id) {
         return storageBackMapper.selectStorageBackById(id);
     }
 
@@ -39,21 +46,25 @@ public class StorageBackServiceImpl implements IStorageBackService
      * @return 退货
      */
     @Override
-    public List<StorageBack> selectStorageBackList(StorageBack storageBack)
-    {
+    public List<StorageBack> selectStorageBackList(StorageBack storageBack) {
         return storageBackMapper.selectStorageBackList(storageBack);
     }
 
     /**
-     * 新增退货
+     * 新增退货入库
      *
      * @param storageBack 退货
      * @return 结果
      */
     @Override
-    public int insertStorageBack(StorageBack storageBack)
-    {
+    @Transactional(rollbackFor = Exception.class)
+    public int insertStorageBack(StorageBack storageBack) {
         storageBack.setCreateTime(DateUtils.getNowDate());
+        int res = storageBackMapper.insertStorageBack(storageBack);
+        if (res > 0) {
+            List<String> codes = codeService.selectCodeByStorage(storageBack.getCompanyId(), AccConstants.STORAGE_TYPE_BACK, storageBack.getId());
+            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), codes.get(0));
+        }
         return storageBackMapper.insertStorageBack(storageBack);
     }
 
@@ -64,8 +75,7 @@ public class StorageBackServiceImpl implements IStorageBackService
      * @return 结果
      */
     @Override
-    public int updateStorageBack(StorageBack storageBack)
-    {
+    public int updateStorageBack(StorageBack storageBack) {
         storageBack.setUpdateTime(DateUtils.getNowDate());
         return storageBackMapper.updateStorageBack(storageBack);
     }
@@ -77,8 +87,7 @@ public class StorageBackServiceImpl implements IStorageBackService
      * @return 结果
      */
     @Override
-    public int deleteStorageBackByIds(Long[] ids)
-    {
+    public int deleteStorageBackByIds(Long[] ids) {
         return storageBackMapper.deleteStorageBackByIds(ids);
     }
 
@@ -89,8 +98,7 @@ public class StorageBackServiceImpl implements IStorageBackService
      * @return 结果
      */
     @Override
-    public int deleteStorageBackById(Long id)
-    {
+    public int deleteStorageBackById(Long id) {
         return storageBackMapper.deleteStorageBackById(id);
     }
 }
