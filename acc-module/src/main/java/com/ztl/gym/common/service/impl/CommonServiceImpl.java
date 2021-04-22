@@ -130,7 +130,7 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 查询码或者流转单号当前操作是否合法
      *
-     * @param companyId 企业id
+     * @param companyId   企业id
      * @param storageType 当前流转操作类型 【见AccConstants】
      * @param queryType   查询值类型 1：码  2：流转单
      * @param queryValue  查询值
@@ -139,6 +139,11 @@ public class CommonServiceImpl implements CommonService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     public boolean judgeStorageIsIllegalByValue(long companyId, Integer storageType, Integer queryType, String queryValue) {
+        //判断是否是平台
+        if (companyId == AccConstants.ADMIN_DEPT_ID || companyId == 0) {
+            throw new CustomException("平台无需进行码操作！", HttpStatus.ERROR);
+        }
+
         //查询当前用户信息
         SysUser currentUser = SecurityUtils.getLoginUser().getUser();
         long currentUserId = currentUser.getUserId();
@@ -150,17 +155,13 @@ public class CommonServiceImpl implements CommonService {
         if (queryType == 1) {
             codeParam.setCode(queryValue);
             Long codeCompanyId = CodeRuleUtils.getCompanyIdByCode(queryValue);
-            if(codeCompanyId == null || codeCompanyId == 0) {
+            //判断码
+            if (codeCompanyId == null || codeCompanyId == 0) {
                 throw new CustomException("码格式错误！", HttpStatus.ERROR);
             }
 
-            //判断该码是否属于当前用户的企业
-            if (codeParam.getCompanyId().equals(AccConstants.ADMIN_DEPT_ID)) {
-                throw new CustomException("平台无需进行码操作！", HttpStatus.ERROR);
-            } else {
-                if (codeCompanyId != companyId) {
-                    throw new CustomException("该码不属于当前用户企业！", HttpStatus.ERROR);
-                }
+            if (codeCompanyId != companyId) {
+                throw new CustomException("该码不属于当前用户企业！", HttpStatus.ERROR);
             }
 
             codeParam.setCompanyId(codeCompanyId);
@@ -172,7 +173,7 @@ public class CommonServiceImpl implements CommonService {
             //除入库以外的流转都需要有状态 【所有产品必须先入库，所以其他流转状态时需判断是否已入库或是否有其他状态】
             if (storageType != AccConstants.STORAGE_TYPE_IN) {
                 if (codeResult.getCodeAttr().getStorageType() == null) {
-                    throw new CustomException("该码当前无状态！", HttpStatus.ERROR);
+                    throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
                 }
             }
         } else {
