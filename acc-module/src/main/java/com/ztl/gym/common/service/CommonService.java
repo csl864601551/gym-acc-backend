@@ -54,7 +54,7 @@ public interface CommonService {
     Long getTenantId();
 
     /**
-     * 获取流转记录编号
+     * 生成流转记录编号
      *
      * @param storageType 流转类型 【见AccConstants】
      * @return
