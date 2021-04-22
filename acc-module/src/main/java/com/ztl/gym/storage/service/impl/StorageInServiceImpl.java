@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.service.IStorageService;
@@ -34,6 +35,8 @@ public class StorageInServiceImpl implements IStorageInService
     private StorageInMapper storageInMapper;
     @Autowired
     private IStorageService storageService;
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 查询入库
@@ -70,6 +73,7 @@ public class StorageInServiceImpl implements IStorageInService
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map)
     {
+        map.put("tenantId",commonService.getTenantId());
         map.put("createTime",DateUtils.getNowDate());
         map.put("inTime",DateUtils.getNowDate());
         map.put("createUser",SecurityUtils.getLoginUser().getUser().getUserId());
@@ -124,5 +128,10 @@ public class StorageInServiceImpl implements IStorageInService
         List<Map<String, Object>> listMap=storageInMapper.getCodeDetail(code);//获取码产品明细
         map.put("listMap",listMap);
         return map;
+    }
+
+    @Override
+    public int updateStorageInActNum(Long id) {
+        return storageInMapper.updateStorageInActNum(id);
     }
 }

@@ -200,6 +200,9 @@
         WHERE company_id = #{update_time} and  product_id = #{product_id};
 
     </update>
+    <update id="updateStorageInActNum">
+        update t_storage_in set act_in_num=in_num where id = #{id}
+    </update>
 
     <delete id="deleteStorageInById" parameterType="Long">
         update t_storage_in set status=1 where id = #{id}

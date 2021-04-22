@@ -62,4 +62,6 @@ public interface IStorageInService
     public int deleteStorageInById(Long id);
 
     Map<String,Object> getCodeInfo(String id);
+
+    int updateStorageInActNum(Long id);
 }
