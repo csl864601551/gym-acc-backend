@@ -213,11 +213,6 @@ public class StorageOut extends BaseEntity {
         this.storageTo = storageTo;
     }
 
-
-    public void setStorageTo(Long storageTo) {
-        this.storageTo = storageTo;
-    }
-
     public void setFromStorageId(Long fromStorageId) {
         this.fromStorageId = fromStorageId;
     }
