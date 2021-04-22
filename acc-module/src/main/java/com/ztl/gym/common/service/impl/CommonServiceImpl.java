@@ -74,27 +74,10 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public List<SysUser> getNextLevelUser() {
+    public List<SysUser> getTenantByParent() {
         Map<String, Object> params = new HashMap<>();
-        Long company_id = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!company_id.equals(AccConstants.ADMIN_DEPT_ID)) {
-            params.put("companyId", SecurityUtils.getLoginUserTopCompanyId());
-        } else {
-            params.put("companyId", AccConstants.ADMIN_DEPT_ID);
-        }
-        return commonMapper.getNextLevelUser(params);
-    }
-
-    @Override
-    public List<SysUser> getSameLevelUser() {
-        Map<String, Object> params = new HashMap<>();
-        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            params.put("companyId", SecurityUtils.getLoginUserTopCompanyId());
-        } else {
-            params.put("companyId", AccConstants.ADMIN_DEPT_ID);
-        }
-        return commonMapper.getSameLevelUser(params);
+        params.put("companyId", SecurityUtils.getLoginUserCompany().getDeptId());
+        return commonMapper.getTenantByParent(params);
     }
 
     @Override
@@ -183,7 +166,13 @@ public class CommonServiceImpl implements CommonService {
         }
         switch (storageType) {
             case AccConstants.STORAGE_TYPE_IN:
-                if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
+                if (codeResult.getCodeAttr().getStorageType() == null || codeResult.getCodeAttr().getStorageType() == 0) {
+                    //第一次入库只有企业才有权限
+                    long userCompanyId = SecurityUtils.getLoginUserTopCompanyId();
+                    if (userCompanyId != currentUserDeptId) {
+                        throw new CustomException("首次入库需要企业权限！", HttpStatus.ERROR);
+                    }
+                } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
                     //查询当前码状态是否是入库
                     throw new CustomException("该码当前流转状态为入库中，无法重复入库", HttpStatus.ERROR);
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_OUT) {
@@ -203,12 +192,6 @@ public class CommonServiceImpl implements CommonService {
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_TRANSFER) {
                     //判断调拨状态
                     throw new CustomException("该码当前为调拨中状态，无法入库！", HttpStatus.ERROR);
-                } else if (codeResult.getCodeAttr().getStorageType() == null || codeResult.getCodeAttr().getStorageType() == 0) {
-                    //第一次入库只有企业才有权限
-                    long userCompanyId = SecurityUtils.getLoginUserTopCompanyId();
-                    if (userCompanyId != currentUserDeptId) {
-                        throw new CustomException("首次入库需要企业权限！", HttpStatus.ERROR);
-                    }
                 }
             case AccConstants.STORAGE_TYPE_OUT:
                 if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {

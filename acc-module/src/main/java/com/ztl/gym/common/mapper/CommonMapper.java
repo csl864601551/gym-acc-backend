@@ -46,7 +46,9 @@ public interface CommonMapper {
      */
     int updateVal(Map<String, Object> params);
 
-    List<SysUser> getNextLevelUser(Map<String, Object> params);
+    /**
+     * 查询下级经销商用户列表 【自营】
+     */
+    List<SysUser> getTenantByParent(Map<String, Object> params);
 
-    List<SysUser> getSameLevelUser(Map<String, Object> params);
 }

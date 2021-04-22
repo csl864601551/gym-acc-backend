@@ -172,8 +172,8 @@ public class SysDeptServiceImpl implements ISysDeptService {
             throw new CustomException("部门停用，不允许新增");
         }
         //如果是直属，上级必须是自营
-        if(dept.getDeptType() == 1 && info.getDeptType() == 1) {
-            throw new CustomException("上级部门类型须为自营才可添加直属部门");
+        if(info.getDeptType() == 1) {
+            throw new CustomException("上级部门类型须为自营才可添加下级");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         int addres = deptMapper.insertDept(dept);

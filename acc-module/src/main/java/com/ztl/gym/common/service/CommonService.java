@@ -30,14 +30,9 @@ public interface CommonService {
     int updateVal(long companyId, long codeIndex);
 
     /**
-     * 查询下级经销商用户列表
+     * 查询下级经销商用户列表 【自营】
      */
-    List<SysUser> getNextLevelUser();
-
-    /**
-     * 查询同级经销商用户列表
-     */
-    List<SysUser> getSameLevelUser();
+    List<SysUser> getTenantByParent();
 
     /**
      * 查询上级部门id
@@ -47,7 +42,7 @@ public interface CommonService {
     Long getParentDeptId(long deptId);
 
     /**
-     * 获取用于查询的tenantId
+     * 获取用于查询的企业/经销商id
      *
      * @return
      */
