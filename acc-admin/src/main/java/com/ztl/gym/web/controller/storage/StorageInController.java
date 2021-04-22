@@ -101,22 +101,6 @@ public class StorageInController extends BaseController {
     }
 
     /**
-     * 根据码号查询相关产品和码信息
-     */
-    @GetMapping(value = "/getRecordByCode")
-    public AjaxResult getRecordByCode(@RequestParam("storageType") Integer storageType, @RequestParam("code") String code) {
-        long companyId = 0;
-        if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
-            companyId = SecurityUtils.getLoginUserTopCompanyId();
-        }
-        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, AccConstants.STORAGE_TYPE_IN, code)) {
-
-            return AjaxResult.success(storageService.selectLastStorageByCode(code));
-        }
-        return AjaxResult.error();
-
-    }
-    /**
      * updateInStatusByCode
      */
     /**
@@ -124,10 +108,8 @@ public class StorageInController extends BaseController {
      */
     @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateInStatusByCode")
-    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
     {
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
-        return toAjax(storageInService.updateStorageInActNum(Long.valueOf(map.get("id").toString())));
+        return toAjax(storageInService.updateStorageInActNum(map));
     }
 }

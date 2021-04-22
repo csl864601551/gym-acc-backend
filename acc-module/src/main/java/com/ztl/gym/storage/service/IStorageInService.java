@@ -63,5 +63,5 @@ public interface IStorageInService
 
     Map<String,Object> getCodeInfo(String id);
 
-    int updateStorageInActNum(Long id);
+    int updateStorageInActNum(Map<String, Object> map);
 }

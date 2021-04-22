@@ -131,7 +131,10 @@ public class StorageInServiceImpl implements IStorageInService
     }
 
     @Override
-    public int updateStorageInActNum(Long id) {
-        return storageInMapper.updateStorageInActNum(id);
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
+    @DataSource(DataSourceType.SHARDING)
+    public int updateStorageInActNum(Map<String, Object> map) {
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
+        return storageInMapper.updateStorageInActNum(Long.valueOf(map.get("id").toString()));
     }
 }

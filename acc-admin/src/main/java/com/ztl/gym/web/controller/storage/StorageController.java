@@ -4,17 +4,11 @@ import java.util.List;
 
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -35,6 +29,8 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 public class StorageController extends BaseController {
     @Autowired
     private IStorageService storageService;
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 查询仓库列表
@@ -120,5 +116,22 @@ public class StorageController extends BaseController {
         }
         List<Storage> list = storageService.selectStorageByUser(storage);
         return AjaxResult.success(list);
+    }
+
+    /**
+     * 根据码号查询相关产品和码信息
+     */
+    @GetMapping(value = "/getRecordByCode")
+    public AjaxResult getRecordByCode(@RequestParam("storageType") Integer storageType, @RequestParam("code") String code) {
+        long companyId = 0;
+        if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
+            companyId = SecurityUtils.getLoginUserTopCompanyId();
+        }
+        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, AccConstants.STORAGE_TYPE_IN, code)) {
+
+            return AjaxResult.success(storageService.selectLastStorageByCode(code));
+        }
+        return AjaxResult.error();
+
     }
 }
