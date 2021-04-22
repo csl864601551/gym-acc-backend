@@ -209,6 +209,7 @@ public class CommonServiceImpl implements CommonService {
                     //判断调拨状态
                     throw new CustomException("该码当前为调拨中状态，无法入库！", HttpStatus.ERROR);
                 }
+                break;
             case AccConstants.STORAGE_TYPE_OUT:
                 if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
                     if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
@@ -233,7 +234,9 @@ public class CommonServiceImpl implements CommonService {
                 } else {
                     throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
                 }
+                break;
             case AccConstants.STORAGE_TYPE_TRANSFER:
+                break;
             case AccConstants.STORAGE_TYPE_BACK:
                 //码
                 if (queryType == 1) {
@@ -263,6 +266,7 @@ public class CommonServiceImpl implements CommonService {
                         throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
                     }
                 }
+                break;
         }
         return true;
     }
