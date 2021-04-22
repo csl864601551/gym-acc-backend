@@ -58,7 +58,7 @@ public class StorageTransfer extends BaseEntity
 
     /** 调入单位 */
     @Excel(name = "调入单位")
-    private String storage_to;
+    private Long storageTo;
 
     /** 出货仓库 */
     @Excel(name = "出货仓库")
@@ -75,7 +75,7 @@ public class StorageTransfer extends BaseEntity
     /** 修改人 */
     @Excel(name = "修改人")
     private Long update_user;
-    
+
     /** 出库时间 */
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
@@ -165,12 +165,12 @@ public class StorageTransfer extends BaseEntity
         this.storage_from = storage_from;
     }
 
-    public String getStorage_to() {
-        return storage_to;
+    public Long getStorageTo() {
+        return storageTo;
     }
 
-    public void setStorage_to(String storage_to) {
-        this.storage_to = storage_to;
+    public void setStorageTo(Long storageTo) {
+        this.storageTo = storageTo;
     }
 
     public Long getFrom_storage_id() {
@@ -226,7 +226,6 @@ public class StorageTransfer extends BaseEntity
                 ", transfer_num=" + transfer_num +
                 ", act_transfer_num=" + act_transfer_num +
                 ", storage_from='" + storage_from + '\'' +
-                ", storage_to='" + storage_to + '\'' +
                 ", from_storage_id=" + from_storage_id +
                 ", to_storage_id=" + to_storage_id +
                 ", create_user=" + create_user +

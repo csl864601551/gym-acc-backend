@@ -31,6 +31,11 @@ public class CodeAttr extends BaseEntity {
     private Long companyId;
 
     /**
+     * 当前所属经销商id
+     */
+    private Long tenantId;
+
+    /**
      * 当前流转类型
      */
     private Integer storageType;
@@ -319,6 +324,14 @@ public class CodeAttr extends BaseEntity {
 
     public void setCodeRecord(CodeRecord codeRecord) {
         this.codeRecord = codeRecord;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override

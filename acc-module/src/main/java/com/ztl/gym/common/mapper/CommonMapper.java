@@ -1,10 +1,12 @@
 package com.ztl.gym.common.mapper;
 
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public interface CommonMapper {
     /**
      * 根据企业查询当前最大自增数

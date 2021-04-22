@@ -300,7 +300,7 @@ public class StorageServiceImpl implements IStorageService {
             isBox = true;
             boxCode = code;
         }
-        //批量更新
+        //批量插入码明细
         if (isBox && StringUtils.isNotBlank(boxCode)) {
             //箱码
             insertRes = codeService.insertCodeFlowForBox(buildFlowParam(companyId, boxCode, storageType, storageRecordId));
@@ -322,6 +322,10 @@ public class StorageServiceImpl implements IStorageService {
         if (insertRes > 0) {
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(codeRes.getCodeAttrId());
+            //入库或退货入库时需更新码所属经销商
+            if (storageType == AccConstants.STORAGE_TYPE_IN || storageType == AccConstants.STORAGE_TYPE_BACK) {
+                codeAttr.setTenantId(commonService.getTenantId());
+            }
             codeAttr.setStorageType(storageType);
             codeAttr.setStorageRecordId(storageRecordId);
             updRes = codeAttrService.updateCodeAttr(codeAttr);

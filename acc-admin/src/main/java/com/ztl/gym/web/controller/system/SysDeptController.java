@@ -121,7 +121,7 @@ public class SysDeptController extends BaseController {
         int addres = (int)deptService.insertDept(dept);
         if (addres > 0) {
             //判断新增dept是不是企业级别
-            if (dept.getParentId() == AccConstants.TOP_DEPT_ID) {
+            if (dept.getParentId() == AccConstants.ADMIN_DEPT_ID) {
                 long companyId = addres;
 
                 //判断该企业对应的分表是否创建

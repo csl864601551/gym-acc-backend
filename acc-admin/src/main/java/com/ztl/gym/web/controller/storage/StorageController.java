@@ -107,7 +107,7 @@ public class StorageController extends BaseController {
     public AjaxResult getUserStotageList() {
         Storage storage = new Storage();
         storage.setStatus(0L);
-        if (!SecurityUtils.getLoginUserCompany().getDeptId().equals(AccConstants.TOP_DEPT_ID)) {
+        if (!SecurityUtils.getLoginUserCompany().getDeptId().equals(AccConstants.ADMIN_DEPT_ID)) {
             //判断用户是企业还是经销商
             String[] ancestors = SecurityUtils.getLoginUserCompany().getAncestors().split(",");
             if (ancestors.length > 2) {
