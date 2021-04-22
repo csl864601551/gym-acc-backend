@@ -3,6 +3,7 @@ package com.ztl.gym.storage.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.mapper.StorageInMapper;
@@ -27,6 +28,8 @@ public class StorageOutServiceImpl implements IStorageOutService
 
     @Autowired
     private StorageInMapper storageInMapper;
+    @Autowired
+    private CommonService commonService;
     /**
      * 查询出库
      *
@@ -61,6 +64,7 @@ public class StorageOutServiceImpl implements IStorageOutService
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     public int insertStorageOut(Map<String, Object> map)
     {
+        map.put("tenantId",commonService.getTenantId());
         map.put("createTime",(DateUtils.getNowDate()));
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
 

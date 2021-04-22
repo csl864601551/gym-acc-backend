@@ -3,6 +3,8 @@ package com.ztl.gym.web.controller.storage;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class StorageInController extends BaseController
 
     @Autowired
     private IStorageService storageService;
+
+    @Autowired
+    private CommonService commonService;
     /**
      * 查询入库列表
      */
@@ -103,8 +108,26 @@ public class StorageInController extends BaseController
      * 根据码号查询相关产品和码信息
      */
     @GetMapping(value = "/getRecordByCode")
-    public AjaxResult getRecordByCode(@RequestParam("code") String code)
+    public AjaxResult getRecordByCode(@RequestParam("storageType") Integer storageType,@RequestParam("code") String code)
     {
-        return AjaxResult.success(storageService.selectLastStorageByCode(code));
+        if(commonService.judgeStorageIsIllegalByValue(storageType,1,code)){
+
+            return AjaxResult.success(storageService.selectLastStorageByCode(code));
+        }
+        return AjaxResult.error();
+
+    }
+    /**
+     * updateInStatusByCode
+     */
+    /**
+     * 修改入库
+     */
+    @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
+    @PutMapping(value = "/updateInStatusByCode")
+    public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
+    {
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
+        return toAjax(storageInService.updateStorageInActNum(Long.valueOf(map.get("id").toString())));
     }
 }
