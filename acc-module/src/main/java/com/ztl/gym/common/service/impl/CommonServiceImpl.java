@@ -109,11 +109,15 @@ public class CommonServiceImpl implements CommonService {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
             String[] ancestors = SecurityUtils.getLoginUserCompany().getAncestors().split(",");
-            if (ancestors.length > 2) {
+            if (ancestors.length == 2) {
+                tenantId = companyId;
+            } else if (ancestors.length > 2) {
                 if (SecurityUtils.getLoginUserCompany().getDeptType() == 1) {
                     SysDept pDept = deptService.selectDeptById(SecurityUtils.getLoginUserCompany().getParentId());
                     if (pDept.getDeptType() == 2) {
                         tenantId = pDept.getDeptId();
+                    } else {
+                        throw new CustomException("企业数据异常：上级用户不是自营！", HttpStatus.ERROR);
                     }
                 } else if (SecurityUtils.getLoginUserCompany().getDeptType() == 2) {
                     tenantId = companyId;
@@ -255,7 +259,6 @@ public class CommonServiceImpl implements CommonService {
                         //查询当前码状态是否是入库
                         throw new CustomException("该码当前流转状态为退货入库中，无法重复退货入库", HttpStatus.ERROR);
                     } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_TRANSFER) {
-                        //判断调拨状态
                         throw new CustomException("该码状态当前为调拨中，请撤销调拨！", HttpStatus.ERROR);
                     } else {
                         throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
