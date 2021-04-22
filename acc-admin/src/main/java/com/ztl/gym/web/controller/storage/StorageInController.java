@@ -110,6 +110,6 @@ public class StorageInController extends BaseController {
     @PutMapping(value = "/updateInStatusByCode")
     public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
     {
-        return toAjax(storageInService.updateStorageInActNum(map));
+        return toAjax(storageInService.updateInStatusByCode(map));
     }
 }

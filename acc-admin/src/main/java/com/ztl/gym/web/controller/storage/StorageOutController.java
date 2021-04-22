@@ -102,4 +102,17 @@ public class StorageOutController extends BaseController
     {
         return toAjax(storageOutService.deleteStorageOutByIds(ids));
     }
+
+    /**
+     * updateInStatusByCode
+     */
+    /**
+     * PDA出库，执行更新出库表，调用addCodeFlow,插入出库表
+     */
+    @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
+    @PutMapping(value = "/updateOutStatusByCode")
+    public AjaxResult updateOutStatusByCode(@RequestBody Map<String, Object> map)
+    {
+        return toAjax(storageOutService.updateOutStatusByCode(map));
+    }
 }

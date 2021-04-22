@@ -63,5 +63,5 @@ public interface IStorageInService
 
     Map<String,Object> getCodeInfo(String id);
 
-    int updateStorageInActNum(Map<String, Object> map);
+    int updateInStatusByCode(Map<String, Object> map);
 }

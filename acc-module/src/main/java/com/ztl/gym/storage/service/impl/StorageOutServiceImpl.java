@@ -1,12 +1,18 @@
 package com.ztl.gym.storage.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.common.annotation.DataSource;
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.mapper.StorageInMapper;
+import com.ztl.gym.storage.service.IStorageInService;
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.StorageOutMapper;
@@ -30,6 +36,12 @@ public class StorageOutServiceImpl implements IStorageOutService
     private StorageInMapper storageInMapper;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private IStorageService storageService;
+    @Autowired
+    private IStorageInService storageInService;
+
+
     /**
      * 查询出库
      *
@@ -107,5 +119,27 @@ public class StorageOutServiceImpl implements IStorageOutService
     public int deleteStorageOutById(Long id)
     {
         return storageOutMapper.deleteStorageOutById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
+    @DataSource(DataSourceType.SHARDING)
+    public int updateOutStatusByCode(Map<String, Object> map) {
+        map.put("updateTime",DateUtils.getNowDate());
+        map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//插入物流码
+        storageOutMapper.updateOutStatusByCode(map);//更新出库数量
+        //查询插入入库单需要的相关信息
+        StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
+        Map<String,Object> inMap= new HashMap<>();
+        inMap.put("companyId",storageOut.getCompanyId());
+        inMap.put("tenantId",storageOut.getStorageTo());
+        inMap.put("extraNo",storageOut.getOutNo());
+        inMap.put("inNo",commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));
+        inMap.put("productId",storageOut.getProductId());
+        inMap.put("batchNo",storageOut.getBatchNo());
+        inMap.put("inNum",storageOut.getOutNum());
+        inMap.put("storageFrom",commonService.getTenantId());
+        return storageInService.insertStorageIn(inMap);//插入入库
     }
 }

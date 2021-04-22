@@ -60,4 +60,6 @@ public interface IStorageOutService
      * @return 结果
      */
     public int deleteStorageOutById(Long id);
+
+    int updateOutStatusByCode(Map<String, Object> map);
 }

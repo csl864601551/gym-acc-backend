@@ -62,4 +62,6 @@ public interface StorageOutMapper
      * @return 结果
      */
     public int deleteStorageOutByIds(Long[] ids);
+
+    int updateOutStatusByCode(Map<String, Object> map);
 }

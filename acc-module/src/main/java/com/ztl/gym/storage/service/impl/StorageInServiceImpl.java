@@ -73,7 +73,9 @@ public class StorageInServiceImpl implements IStorageInService
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map)
     {
-        map.put("tenantId",commonService.getTenantId());
+        if(map.get("tenantId")==""||map.get("tenantId")==null){
+            map.put("tenantId",commonService.getTenantId());
+        }
         map.put("createTime",DateUtils.getNowDate());
         map.put("inTime",DateUtils.getNowDate());
         map.put("createUser",SecurityUtils.getLoginUser().getUser().getUserId());
@@ -133,8 +135,10 @@ public class StorageInServiceImpl implements IStorageInService
     @Override
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
-    public int updateStorageInActNum(Map<String, Object> map) {
+    public int updateInStatusByCode(Map<String, Object> map) {
+        map.put("updateTime",DateUtils.getNowDate());
+        map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
-        return storageInMapper.updateStorageInActNum(Long.valueOf(map.get("id").toString()));
+        return storageInMapper.updateInStatusByCode(map);
     }
 }

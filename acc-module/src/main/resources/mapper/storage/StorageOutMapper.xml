@@ -130,6 +130,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+    <update id="updateOutStatusByCode" parameterType="Map">
+        update t_storage_out set act_out_num=out_num
+        <if test="updateUser != null">,update_user = #{updateUser}</if>
+        <if test="updateTime != null">,update_time = #{updateTime}</if>
+        where id = #{id}
+    </update>
 
     <delete id="deleteStorageOutById" parameterType="Long">
         update t_storage_out set status=1 where id = #{id}
