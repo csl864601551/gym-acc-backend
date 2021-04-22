@@ -129,7 +129,7 @@ public class CommonServiceImpl implements CommonService {
         if (storageType == AccConstants.STORAGE_TYPE_IN) {
             no = "RK" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
         } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
-            no = "CK" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+            no = "CH" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
         } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
             no = "DB" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
         } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {

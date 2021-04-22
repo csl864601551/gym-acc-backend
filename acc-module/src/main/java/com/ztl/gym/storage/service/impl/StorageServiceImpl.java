@@ -233,6 +233,7 @@ public class StorageServiceImpl implements IStorageService {
                 storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
                 storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
                 storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
+                storageVo.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));//企业入库单号
 
                 Integer storageType = codeEntity.getCodeAttr().getStorageType();
                 Long storageRecordId = codeEntity.getCodeAttr().getStorageRecordId();
@@ -240,7 +241,7 @@ public class StorageServiceImpl implements IStorageService {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
                         //TODO
-                        storageVo.setOutNo("CH" + companyId + new Date().getTime());//企业第一次出库
+                        storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
                         storageVo.setExtraNo(storageIn.getInNo());
                         storageVo.setNum(storageIn.getActInNum());
                         storageVo.setFromStorageId(storageIn.getToStorageId());
@@ -256,7 +257,6 @@ public class StorageServiceImpl implements IStorageService {
                         //TODO
                     }
                 } else {
-                    storageVo.setInNo("RK" + companyId + new Date().getTime());//企业第一次入库
                     storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品数量
                 }
             }

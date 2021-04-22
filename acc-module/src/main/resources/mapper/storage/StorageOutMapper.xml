@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStorageOutList" parameterType="StorageOut" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
-        <where>  
+        <where>  status=0
             <if test="companyId != null "> and company_id = #{companyId}</if>
             <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
             <if test="status != null "> and status = #{status}</if>
@@ -132,11 +132,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteStorageOutById" parameterType="Long">
-        delete from t_storage_out where id = #{id}
+        update t_storage_out set status=1 where id = #{id}
     </delete>
 
     <delete id="deleteStorageOutByIds" parameterType="String">
-        delete from t_storage_out where id in 
+        update t_storage_out set status=1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
