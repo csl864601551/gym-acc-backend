@@ -185,6 +185,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             long codeRecordId = codeRecord.getId();
             //更新生码记录流水号
             long codeNo = commonService.selectCurrentVal(companyId);
+            long pCodeIndex = codeNo + 1;
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecord.getId());
             params.put("indexStart", codeNo + 1);
@@ -196,7 +197,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
             //箱码
             //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
-            String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow();
+            String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow() + pCodeIndex;
             //异步生码
             String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + pCode;
             stringRedisTemplate.convertAndSend("code.gen", message);

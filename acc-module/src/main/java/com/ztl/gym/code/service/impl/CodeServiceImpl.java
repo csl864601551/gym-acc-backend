@@ -131,7 +131,7 @@ public class CodeServiceImpl implements ICodeService {
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_BOX);
             //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
-            code.setCode(pCode + codeIndex);
+            code.setCode(pCode);
             code.setCodeAttrId(codeAttrId);
             codeList.add(code);
         }
