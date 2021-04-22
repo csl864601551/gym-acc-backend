@@ -142,6 +142,15 @@ public class AccConstants {
      */
     public final static String DEPT_STATUS_STOP = "1";
 
+    /**
+     * 部门类型-直属
+     */
+    public final static int DEPT_TYPE_ZS = 1;
+    /**
+     * 部门类型-自营
+     */
+    public final static int DEPT_TYPE_ZY = 2;
+
     /*---------------------------- 物流常量 ----------------------------*/
     /**
      * 物流类型-入库

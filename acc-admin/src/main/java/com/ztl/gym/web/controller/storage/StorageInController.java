@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,7 @@ import com.ztl.gym.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/storage/in")
-public class StorageInController extends BaseController
-{
+public class StorageInController extends BaseController {
     @Autowired
     private IStorageInService storageInService;
 
@@ -36,13 +36,13 @@ public class StorageInController extends BaseController
 
     @Autowired
     private CommonService commonService;
+
     /**
      * 查询入库列表
      */
     @PreAuthorize("@ss.hasPermi('storage:in:list')")
     @GetMapping("/list")
-    public TableDataInfo list(StorageIn storageIn)
-    {
+    public TableDataInfo list(StorageIn storageIn) {
         startPage();
         List<StorageIn> list = storageInService.selectStorageInList(storageIn);
         return getDataTable(list);
@@ -54,8 +54,7 @@ public class StorageInController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:in:export')")
     @Log(title = "入库", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(StorageIn storageIn)
-    {
+    public AjaxResult export(StorageIn storageIn) {
         List<StorageIn> list = storageInService.selectStorageInList(storageIn);
         ExcelUtil<StorageIn> util = new ExcelUtil<StorageIn>(StorageIn.class);
         return util.exportExcel(list, "in");
@@ -66,8 +65,7 @@ public class StorageInController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:in:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(storageInService.selectStorageInById(id));
     }
 
@@ -77,8 +75,7 @@ public class StorageInController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:in:add')")
     @Log(title = "入库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Map<String, Object> map)
-    {
+    public AjaxResult add(@RequestBody Map<String, Object> map) {
         return toAjax(storageInService.insertStorageIn(map));
     }
 
@@ -88,8 +85,7 @@ public class StorageInController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:in:edit')")
     @Log(title = "入库", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody StorageIn storageIn)
-    {
+    public AjaxResult edit(@RequestBody StorageIn storageIn) {
         return toAjax(storageInService.updateStorageIn(storageIn));
     }
 
@@ -98,9 +94,8 @@ public class StorageInController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:in:remove')")
     @Log(title = "入库", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(storageInService.deleteStorageInByIds(ids));
     }
 
@@ -108,9 +103,12 @@ public class StorageInController extends BaseController
      * 根据码号查询相关产品和码信息
      */
     @GetMapping(value = "/getRecordByCode")
-    public AjaxResult getRecordByCode(@RequestParam("storageType") Integer storageType,@RequestParam("code") String code)
-    {
-        if(commonService.judgeStorageIsIllegalByValue(storageType,1,code)){
+    public AjaxResult getRecordByCode(@RequestParam("storageType") Integer storageType, @RequestParam("code") String code) {
+        long companyId = 0;
+        if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
+            companyId = SecurityUtils.getLoginUserTopCompanyId();
+        }
+        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, AccConstants.STORAGE_TYPE_IN, code)) {
 
             return AjaxResult.success(storageService.selectLastStorageByCode(code));
         }
@@ -125,9 +123,8 @@ public class StorageInController extends BaseController
      */
     @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateInStatusByCode")
-    public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
-    {
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
+    public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map) {
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//转移到PDA执行
         return toAjax(storageInService.updateStorageInActNum(Long.valueOf(map.get("id").toString())));
     }
 }

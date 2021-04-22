@@ -2,10 +2,12 @@ package com.ztl.gym.common.service.impl;
 
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.mapper.CommonMapper;
 import com.ztl.gym.common.service.CommonService;
@@ -128,13 +130,15 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 查询码或者流转单号当前操作是否合法
      *
+     * @param companyId 企业id
      * @param storageType 当前流转操作类型 【见AccConstants】
      * @param queryType   查询值类型 1：码  2：流转单
      * @param queryValue  查询值
      * @return
      */
     @Override
-    public boolean judgeStorageIsIllegalByValue(Integer storageType, Integer queryType, String queryValue) {
+    @DataSource(DataSourceType.SHARDING)
+    public boolean judgeStorageIsIllegalByValue(long companyId, Integer storageType, Integer queryType, String queryValue) {
         //查询当前用户信息
         SysUser currentUser = SecurityUtils.getLoginUser().getUser();
         long currentUserId = currentUser.getUserId();
@@ -145,21 +149,26 @@ public class CommonServiceImpl implements CommonService {
         Code codeResult = null;
         if (queryType == 1) {
             codeParam.setCode(queryValue);
-            codeParam.setCompanyId(CodeRuleUtils.getCompanyIdByCode(queryValue));
-            codeResult = codeService.selectCode(codeParam);
-            if (codeResult == null) {
-                throw new CustomException("码不存在！", HttpStatus.ERROR);
+            Long codeCompanyId = CodeRuleUtils.getCompanyIdByCode(queryValue);
+            if(codeCompanyId == null || codeCompanyId == 0) {
+                throw new CustomException("码格式错误！", HttpStatus.ERROR);
             }
 
             //判断该码是否属于当前用户的企业
             if (codeParam.getCompanyId().equals(AccConstants.ADMIN_DEPT_ID)) {
                 throw new CustomException("平台无需进行码操作！", HttpStatus.ERROR);
             } else {
-                long userCompanyId = SecurityUtils.getLoginUserTopCompanyId();
-                if (codeParam.getCompanyId() != userCompanyId) {
+                if (codeCompanyId != companyId) {
                     throw new CustomException("该码不属于当前用户企业！", HttpStatus.ERROR);
                 }
             }
+
+            codeParam.setCompanyId(codeCompanyId);
+            codeResult = codeService.selectCode(codeParam);
+            if (codeResult == null) {
+                throw new CustomException("码不存在！", HttpStatus.ERROR);
+            }
+
             //除入库以外的流转都需要有状态 【所有产品必须先入库，所以其他流转状态时需判断是否已入库或是否有其他状态】
             if (storageType != AccConstants.STORAGE_TYPE_IN) {
                 if (codeResult.getCodeAttr().getStorageType() == null) {
