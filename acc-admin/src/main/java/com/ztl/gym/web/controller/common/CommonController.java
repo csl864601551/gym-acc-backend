@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ztl.gym.common.config.RuoYiConfig;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.Constants;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.StringUtils;
@@ -11,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.utils.file.FileUploadUtils;
@@ -113,6 +111,11 @@ public class CommonController {
     @GetMapping("/common/getTenantByParent")
     public AjaxResult getTenantByParent() {
         return AjaxResult.success(commonService.getTenantByParent());
+    }
+
+    @GetMapping("/common/getStorageNo/{i}")
+    public String getStorageNo(@PathVariable int i) {
+        return commonService.getStorageNo(i);
     }
 
 }

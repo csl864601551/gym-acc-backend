@@ -210,7 +210,7 @@
         where id = #{id}
     </update>
     <update id="updateTenantIn"  parameterType="Map">
-        update t_storage_in set status=0
+        update t_storage_in set status=1
         <if test="actInNum != null">,act_in_num = #{actInNum}</if>
         <if test="toStorageId != null">,to_storage_id = #{toStorageId}</if>
         <if test="remark != null">,remark = #{remark}</if>
@@ -220,11 +220,11 @@
     </update>
 
     <delete id="deleteStorageInById">
-        update t_storage_in set status=1 where id = #{id}
+        update t_storage_in set status=9 where id = #{id}
     </delete>
 
     <delete id="deleteStorageInByIds" parameterType="String">
-        update t_storage_in set status=1 where id in
+        update t_storage_in set status=9 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
