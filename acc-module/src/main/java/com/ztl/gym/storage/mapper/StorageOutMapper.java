@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
  * @date 2021-04-09
  */
 @Repository
-public interface StorageOutMapper
-{
+public interface StorageOutMapper {
     /**
      * 查询出库
      *
@@ -38,6 +37,14 @@ public interface StorageOutMapper
      * @return 结果
      */
     public int insertStorageOut(Map<String, Object> storageOut);
+
+    /**
+     * 新增出库
+     *
+     * @param storageOut 出库
+     * @return 结果
+     */
+    public int insertStorageOutV2(StorageOut storageOut);
 
     /**
      * 修改出库

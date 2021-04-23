@@ -1,6 +1,7 @@
 package com.ztl.gym.storage.domain;
 
 import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
@@ -15,129 +16,181 @@ import com.baomidou.mybatisplus.annotations.TableField;
  * @author ruoyi
  * @date 2021-04-09
  */
-public class StorageIn extends BaseEntity
-{
+public class StorageIn extends BaseEntity {
     private static final long serialVersionUID = 1L;
+    /**
+     * 状态-待入库
+     */
+    public final static int STATUS_WAIT = 0;
+    /**
+     * 状态-已确认收货
+     */
+    public final static int STATUS_NORMAL = 1;
+    /**
+     * 状态-已发货 【针对一键发货】
+     */
+    public final static int STATUS_OUT = 2;
+    /**
+     * 状态-已撤销
+     */
+    public final static int STATUS_CANCEL = 8;
+    /**
+     * 状态-已删除
+     */
+    public final static int STATUS_DELETE = 9;
 
-    /** 主键ID */
+
+    /**
+     * 主键ID
+     */
     private Long id;
 
-    /** 企业ID */
+    /**
+     * 企业ID
+     */
     @Excel(name = "企业ID")
     private Long companyId;
 
-    /** 经销商id */
+    /**
+     * 经销商id
+     */
     @Excel(name = "经销商id")
     private Long tenantId;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     @Excel(name = "状态")
     private Long status;
 
-    /** 入库单号 */
+    /**
+     * 入库单号
+     */
     @Excel(name = "入库单号")
     private String inNo;
 
-    /** 相关单号 */
+    /**
+     * 相关单号
+     */
     @Excel(name = "相关单号")
     private String extraNo;
 
-    /** 产品id */
+    /**
+     * 产品id
+     */
     @Excel(name = "产品id")
     private Long productId;
 
-    /** 产品批次 */
+    /**
+     * 产品批次
+     */
     @Excel(name = "产品批次")
     private String batchNo;
 
-    /** 入库数量 */
+    /**
+     * 入库数量
+     */
     @Excel(name = "入库数量")
     private Long inNum;
 
-    /** 实际入库数量 */
+    /**
+     * 实际入库数量
+     */
     @Excel(name = "实际入库数量")
     private Long actInNum;
 
-    /** 发货单位 */
+    /**
+     * 发货单位
+     */
     @Excel(name = "发货单位")
     private Long storageFrom;
 
-    /** 收货单位 */
+    /**
+     * 收货单位
+     */
     @Excel(name = "收货单位")
     private Long storageTo;
 
-    /** 出库仓库 */
+    /**
+     * 出库仓库
+     */
     @Excel(name = "出库仓库")
     private Long fromStorageId;
 
-    /** 入库仓库 */
+    /**
+     * 入库仓库
+     */
     @Excel(name = "入库仓库")
     private Long toStorageId;
 
-    /** 创建人 */
+    /**
+     * 创建人
+     */
     private Long createUser;
 
-    /** 创建人 */
+    /**
+     * 创建人
+     */
     @Excel(name = "创建人")
     @TableField(exist = false)
     private String createUserName;
 
-    /** 修改人 */
+    /**
+     * 修改人
+     */
     private Long updateUser;
 
-    /** 修改人 */
+    /**
+     * 修改人
+     */
     @Excel(name = "修改人")
     @TableField(exist = false)
     private String updateUserName;
 
-    /** 入库时间 */
+    /**
+     * 入库时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Excel(name = "入库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
     private Date inTime;
 
-    public void setId(Long id)
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
-    public void setCompanyId(Long companyId)
-    {
+
+    public void setCompanyId(Long companyId) {
         this.companyId = companyId;
     }
 
-    public Long getCompanyId()
-    {
+    public Long getCompanyId() {
         return companyId;
     }
-    public void setTenantId(Long tenantId)
-    {
+
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
 
-    public Long getTenantId()
-    {
+    public Long getTenantId() {
         return tenantId;
     }
-    public void setStatus(Long status)
-    {
+
+    public void setStatus(Long status) {
         this.status = status;
     }
 
-    public Long getStatus()
-    {
+    public Long getStatus() {
         return status;
     }
-    public void setInNo(String inNo)
-    {
+
+    public void setInNo(String inNo) {
         this.inNo = inNo;
     }
 
-    public String getInNo()
-    {
+    public String getInNo() {
         return inNo;
     }
 
@@ -149,85 +202,75 @@ public class StorageIn extends BaseEntity
         this.extraNo = extraNo;
     }
 
-    public void setProductId(Long productId)
-    {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
-    public Long getProductId()
-    {
+    public Long getProductId() {
         return productId;
     }
-    public void setBatchNo(String batchNo)
-    {
+
+    public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
     }
 
-    public String getBatchNo()
-    {
+    public String getBatchNo() {
         return batchNo;
     }
-    public void setInNum(Long inNum)
-    {
+
+    public void setInNum(Long inNum) {
         this.inNum = inNum;
     }
 
-    public Long getInNum()
-    {
+    public Long getInNum() {
         return inNum;
     }
-    public void setActInNum(Long actInNum)
-    {
+
+    public void setActInNum(Long actInNum) {
         this.actInNum = actInNum;
     }
 
-    public Long getActInNum()
-    {
+    public Long getActInNum() {
         return actInNum;
     }
-    public void setStorageFrom(Long storageFrom)
-    {
+
+    public void setStorageFrom(Long storageFrom) {
         this.storageFrom = storageFrom;
     }
 
-    public Long getStorageFrom()
-    {
+    public Long getStorageFrom() {
         return storageFrom;
     }
-    public void setStorageTo(Long storageTo)
-    {
+
+    public void setStorageTo(Long storageTo) {
         this.storageTo = storageTo;
     }
 
-    public Long getStorageTo()
-    {
+    public Long getStorageTo() {
         return storageTo;
     }
-    public void setFromStorageId(Long fromStorageId)
-    {
+
+    public void setFromStorageId(Long fromStorageId) {
         this.fromStorageId = fromStorageId;
     }
 
-    public Long getFromStorageId()
-    {
+    public Long getFromStorageId() {
         return fromStorageId;
     }
-    public void setToStorageId(Long toStorageId)
-    {
+
+    public void setToStorageId(Long toStorageId) {
         this.toStorageId = toStorageId;
     }
 
-    public Long getToStorageId()
-    {
+    public Long getToStorageId() {
         return toStorageId;
     }
-    public void setInTime(Date inTime)
-    {
+
+    public void setInTime(Date inTime) {
         this.inTime = inTime;
     }
 
-    public Date getInTime()
-    {
+    public Date getInTime() {
         return inTime;
     }
 

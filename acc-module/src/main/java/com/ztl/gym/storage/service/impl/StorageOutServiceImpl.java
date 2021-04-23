@@ -1,5 +1,6 @@
 package com.ztl.gym.storage.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2021-04-09
  */
 @Service
-public class StorageOutServiceImpl implements IStorageOutService
-{
+public class StorageOutServiceImpl implements IStorageOutService {
     @Autowired
     private StorageOutMapper storageOutMapper;
 
@@ -36,6 +36,7 @@ public class StorageOutServiceImpl implements IStorageOutService
     private StorageInMapper storageInMapper;
     @Autowired
     private CommonService commonService;
+
     @Autowired
     private IStorageService storageService;
     @Autowired
@@ -49,8 +50,7 @@ public class StorageOutServiceImpl implements IStorageOutService
      * @return 出库
      */
     @Override
-    public StorageOut selectStorageOutById(Long id)
-    {
+    public StorageOut selectStorageOutById(Long id) {
         return storageOutMapper.selectStorageOutById(id);
     }
 
@@ -61,8 +61,7 @@ public class StorageOutServiceImpl implements IStorageOutService
      * @return 出库
      */
     @Override
-    public List<StorageOut> selectStorageOutList(StorageOut storageOut)
-    {
+    public List<StorageOut> selectStorageOutList(StorageOut storageOut) {
         return storageOutMapper.selectStorageOutList(storageOut);
     }
 
@@ -74,14 +73,29 @@ public class StorageOutServiceImpl implements IStorageOutService
      */
     @Override
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
-    public int insertStorageOut(Map<String, Object> map)
-    {
-        map.put("tenantId",commonService.getTenantId());
-        map.put("createTime",(DateUtils.getNowDate()));
+    public int insertStorageOut(Map<String, Object> map) {
+        map.put("tenantId", commonService.getTenantId());
+        map.put("createTime", (DateUtils.getNowDate()));
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
 
         //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
         return storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
+    }
+
+    /**
+     * 新增出库
+     *
+     * @param storageOut 出库
+     * @return 结果
+     */
+    @Override
+    public int insertStorageOut(StorageOut storageOut) {
+        storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageOut.setCreateTime(new Date());
+        storageOut.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageOut.setUpdateTime(new Date());
+        //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
+        return storageOutMapper.insertStorageOutV2(storageOut);//插入t_storage_out出库表
     }
 
     /**
@@ -91,8 +105,7 @@ public class StorageOutServiceImpl implements IStorageOutService
      * @return 结果
      */
     @Override
-    public int updateStorageOut(StorageOut storageOut)
-    {
+    public int updateStorageOut(StorageOut storageOut) {
         storageOut.setUpdateTime(DateUtils.getNowDate());
         return storageOutMapper.updateStorageOut(storageOut);
     }
@@ -104,8 +117,7 @@ public class StorageOutServiceImpl implements IStorageOutService
      * @return 结果
      */
     @Override
-    public int deleteStorageOutByIds(Long[] ids)
-    {
+    public int deleteStorageOutByIds(Long[] ids) {
         return storageOutMapper.deleteStorageOutByIds(ids);
     }
 
@@ -116,8 +128,7 @@ public class StorageOutServiceImpl implements IStorageOutService
      * @return 结果
      */
     @Override
-    public int deleteStorageOutById(Long id)
-    {
+    public int deleteStorageOutById(Long id) {
         return storageOutMapper.deleteStorageOutById(id);
     }
 

@@ -88,13 +88,13 @@ public class StorageBackController extends BaseController {
     }
 
     /**
-     * 退货录入（整箱退货）-步骤1 【生成退货单号】
+     * 退货录入（整箱退货）-步骤1 【生成退货信息】
      */
     @PreAuthorize("@ss.hasPermi('storage:back:addFirst')")
     @PostMapping(value = "/addFirst")
     public AjaxResult addFirst(@RequestBody StorageBack storageBack) {
         long companyId = 0;
-        if(SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
+        if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
         }
         //判断当前货码能否退货
@@ -126,6 +126,7 @@ public class StorageBackController extends BaseController {
                     productId = storageIn.getProductId();
                     batchNo = storageIn.getBatchNo();
                     actTransferNum = storageIn.getActInNum();
+                    storageBack.setCompanyForceFlag(1);
                 } else {
                     StorageOut storageOut = storageOutService.selectStorageOutById(codeRes.getCodeAttr().getStorageRecordId());
                     productId = storageOut.getProductId();
@@ -155,7 +156,7 @@ public class StorageBackController extends BaseController {
     }
 
     /**
-     * 退货录入（整箱退货）-步骤2 【退货单更新仓库、备注信息】
+     * 退货录入（整箱退货）-步骤2 【保存退货信息】
      */
     @PreAuthorize("@ss.hasPermi('storage:back:add')")
     @Log(title = "退货", businessType = BusinessType.INSERT)

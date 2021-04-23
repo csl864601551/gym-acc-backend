@@ -8,7 +8,7 @@ import com.ztl.gym.storage.domain.StorageTransfer;
  * 调货Service接口
  *
  * @author ruoyi
- * @date 2021-04-09
+ * @date 2021-04-22
  */
 public interface IStorageTransferService {
     /**

@@ -7,15 +7,14 @@ import com.ztl.gym.storage.domain.StorageOut;
 
 /**
  * 出库Service接口
- * 
+ *
  * @author ruoyi
  * @date 2021-04-09
  */
-public interface IStorageOutService 
-{
+public interface IStorageOutService {
     /**
      * 查询出库
-     * 
+     *
      * @param id 出库ID
      * @return 出库
      */
@@ -23,7 +22,7 @@ public interface IStorageOutService
 
     /**
      * 查询出库列表
-     * 
+     *
      * @param storageOut 出库
      * @return 出库集合
      */
@@ -31,15 +30,23 @@ public interface IStorageOutService
 
     /**
      * 新增出库
-     * 
+     *
      * @param storageOut 出库
      * @return 结果
      */
     public int insertStorageOut(Map<String, Object> storageOut);
 
     /**
+     * 新增出库
+     *
+     * @param storageOut 出库
+     * @return 结果
+     */
+    public int insertStorageOut(StorageOut storageOut);
+
+    /**
      * 修改出库
-     * 
+     *
      * @param storageOut 出库
      * @return 结果
      */
@@ -47,7 +54,7 @@ public interface IStorageOutService
 
     /**
      * 批量删除出库
-     * 
+     *
      * @param ids 需要删除的出库ID
      * @return 结果
      */
@@ -55,7 +62,7 @@ public interface IStorageOutService
 
     /**
      * 删除出库信息
-     * 
+     *
      * @param id 出库ID
      * @return 结果
      */

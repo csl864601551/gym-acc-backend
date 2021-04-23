@@ -3,13 +3,15 @@ package com.ztl.gym.storage.mapper;
 import java.util.List;
 
 import com.ztl.gym.storage.domain.StorageTransfer;
+import org.springframework.stereotype.Repository;
 
 /**
  * 调货Mapper接口
  *
  * @author ruoyi
- * @date 2021-04-09
+ * @date 2021-04-22
  */
+@Repository
 public interface StorageTransferMapper {
     /**
      * 查询调货

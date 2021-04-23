@@ -2,10 +2,14 @@ package com.ztl.gym.storage.service.impl;
 
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.storage.domain.StorageBack;
+import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.mapper.StorageBackMapper;
 import com.ztl.gym.storage.service.IStorageBackService;
+import com.ztl.gym.storage.service.IStorageOutService;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +30,11 @@ public class StorageBackServiceImpl implements IStorageBackService {
     @Autowired
     private IStorageService storageService;
     @Autowired
+    private IStorageOutService storageOutService;
+    @Autowired
     private ICodeService codeService;
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 查询退货
@@ -62,6 +70,27 @@ public class StorageBackServiceImpl implements IStorageBackService {
         storageBack.setCreateTime(DateUtils.getNowDate());
         int res = storageBackMapper.insertStorageBack(storageBack);
         if (res > 0) {
+            //如果是企业绕过经销商直接退货入库，则自动给对应经销商出具一条出库单
+            if (storageBack.getCompanyForceFlag() != null && storageBack.getCompanyForceFlag() == 1) {
+                StorageOut storageOut = new StorageOut();
+                storageOut.setCompanyId(storageBack.getCompanyId());
+                storageOut.setTenantId(storageBack.getStorageFrom());
+                String outNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT);
+                storageOut.setOutNo(outNo);
+                storageBack.setExtraNo(outNo);
+
+                storageOut.setProductId(storageBack.getProductId());
+                storageOut.setBatchNo(storageBack.getBatchNo());
+                storageOut.setOutNum(storageBack.getActBackNum());
+                storageOut.setActOutNum(storageBack.getActBackNum());
+                storageOut.setStorageFrom(storageBack.getStorageFrom());
+                storageOut.setStorageTo(storageBack.getCompanyId());
+                storageOut.setToStorageId(storageBack.getToStorageId());
+                storageOut.setRemark("企业直接退货入库，强制出库");
+                storageOutService.insertStorageOut(storageOut);
+            }
+
+            //退货入库 新增码明细
             List<String> codes = codeService.selectCodeByStorage(storageBack.getCompanyId(), AccConstants.STORAGE_TYPE_BACK, storageBack.getId());
             storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), codes.get(0));
         }

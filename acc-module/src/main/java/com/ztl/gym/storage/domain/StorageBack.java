@@ -18,6 +18,23 @@ public class StorageBack extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 状态-待退货
+     */
+    public final static int STATUS_WAIT = 0;
+    /**
+     * 状态-正常退货
+     */
+    public final static int STATUS_NORMAL = 1;
+    /**
+     * 状态-已撤销
+     */
+    public final static int STATUS_CANCEL = 8;
+    /**
+     * 状态-已删除
+     */
+    public final static int STATUS_DELETE = 9;
+
+    /**
      * 主键ID
      */
     private Long id;
@@ -38,6 +55,11 @@ public class StorageBack extends BaseEntity {
      * 退货类型
      */
     private Integer backType;
+
+    /**
+     * 是否是企业绕过经销商退货
+     */
+    private Integer companyForceFlag;
 
     /**
      * 状态
@@ -126,7 +148,7 @@ public class StorageBack extends BaseEntity {
      * 货码 【码或者调拨单号】
      */
     private String value;
-    ;
+
 
     public void setId(Long id) {
         this.id = id;
@@ -286,6 +308,14 @@ public class StorageBack extends BaseEntity {
 
     public void setExtraNo(String extraNo) {
         this.extraNo = extraNo;
+    }
+
+    public Integer getCompanyForceFlag() {
+        return companyForceFlag;
+    }
+
+    public void setCompanyForceFlag(Integer companyForceFlag) {
+        this.companyForceFlag = companyForceFlag;
     }
 
     @Override

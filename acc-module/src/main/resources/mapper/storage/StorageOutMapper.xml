@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageOutMapper">
-    
+
     <resultMap type="StorageOut" id="StorageOutResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
@@ -53,12 +53,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outTime != null "> and out_time = #{outTime}</if>
         </where>
     </select>
-    
+
     <select id="selectStorageOutById" parameterType="Long" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertStorageOut" parameterType="map" useGeneratedKeys="true" keyProperty="id">
         insert into t_storage_out
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -104,6 +104,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
     </insert>
+
+    <insert id="insertStorageOutV2" parameterType="StorageOut" useGeneratedKeys="true" keyProperty="id">
+        insert into t_storage_out
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="status != null">status,</if>
+            <if test="outNo != null">out_no,</if>
+            <if test="extraNo != null">extra_no,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="outNum != null">out_num,</if>
+            <if test="actOutNum != null">act_out_num,</if>
+            <if test="storageFrom != null">storage_from,</if>
+            <if test="storageTo != null">storage_to,</if>
+            <if test="fromStorageId != null">from_storage_id,</if>
+            <if test="toStorageId != null">to_storage_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="outTime != null">out_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="outNo != null">#{outNo},</if>
+            <if test="extraNo != null">#{extraNo},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="outNum != null">#{outNum},</if>
+            <if test="actOutNum != null">#{actOutNum},</if>
+            <if test="storageFrom != null">#{storageFrom},</if>
+            <if test="storageTo != null">#{storageTo},</if>
+            <if test="fromStorageId != null">#{fromStorageId},</if>
+            <if test="toStorageId != null">#{toStorageId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="outTime != null">#{outTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+
 
     <update id="updateStorageOut" parameterType="StorageOut">
         update t_storage_out

@@ -21,13 +21,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="createUser"    column="create_user"    />
         <result property="createTime"    column="create_time"    />
-        <result property="outTime"    column="out_time"    />
         <result property="updateUser"    column="update_user"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectStorageTransferVo">
-        select id, company_id, tenant_id, status, transfer_no, product_id, batch_no, transfer_num, act_transfer_num, storage_from, storage_to, from_storage_id, to_storage_id, remark, create_user, create_time, out_time, update_user, update_time from t_storage_transfer
+        select id, company_id, tenant_id, status, transfer_no, product_id, batch_no, transfer_num, act_transfer_num, storage_from, storage_to, from_storage_id, to_storage_id, remark, create_user, create_time, update_user, update_time from t_storage_transfer
     </sql>
 
     <select id="selectStorageTransferList" parameterType="StorageTransfer" resultMap="StorageTransferResult">
@@ -56,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStorageTransferByNo" parameterType="String" resultMap="StorageTransferResult">
         <include refid="selectStorageTransferVo"/>
-        where transferNo = #{transferNo}
+        where transfer_no = #{value}
     </select>
 
     <insert id="insertStorageTransfer" parameterType="StorageTransfer" useGeneratedKeys="true" keyProperty="id">
@@ -77,7 +76,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">remark,</if>
             <if test="createUser != null">create_user,</if>
             <if test="createTime != null">create_time,</if>
-            <if test="outTime != null">out_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
@@ -97,7 +95,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">#{remark},</if>
             <if test="createUser != null">#{createUser},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="outTime != null">#{outTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
@@ -121,7 +118,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">remark = #{remark},</if>
             <if test="createUser != null">create_user = #{createUser},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="outTime != null">out_time = #{outTime},</if>
             <if test="updateUser != null">update_user = #{updateUser},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

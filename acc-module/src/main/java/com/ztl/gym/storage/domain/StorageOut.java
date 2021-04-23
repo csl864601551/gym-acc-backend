@@ -16,6 +16,22 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class StorageOut extends BaseEntity {
     private static final long serialVersionUID = 1L;
+    /**
+     * 状态-待出库
+     */
+    public final static int STATUS_WAIT = 0;
+    /**
+     * 状态-正常出库
+     */
+    public final static int STATUS_NORMAL = 1;
+    /**
+     * 状态-已撤销
+     */
+    public final static int STATUS_CANCEL = 8;
+    /**
+     * 状态-已删除
+     */
+    public final static int STATUS_DELETE = 9;
 
     /**
      * 主键ID
