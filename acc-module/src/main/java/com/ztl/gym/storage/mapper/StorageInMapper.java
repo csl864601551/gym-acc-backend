@@ -76,4 +76,8 @@ public interface StorageInMapper
     List<Map<String, Object>> getCodeDetail(String code);
 
     int updateInStatusByCode(Map<String, Object> map);
+
+    int updateTenantIn(Map<String, Object> map);
+
+    long selectOutIdByExtraNo(String extraNo);
 }

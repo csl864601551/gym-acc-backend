@@ -102,14 +102,22 @@ public class StorageInController extends BaseController {
 
     /**
      * updateInStatusByCode
-     */
-    /**
-     * 修改入库
+     * PDA扫码入库
      */
     @Log(title = "PDA扫码入库", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateInStatusByCode")
     public AjaxResult updateInStatusByCode(@RequestBody Map<String, Object> map)
     {
         return toAjax(storageInService.updateInStatusByCode(map));
+    }
+    /**
+     * updateTenantIn
+     * 经销商确认收货
+     */
+    @Log(title = "经销商确认收货", businessType = BusinessType.UPDATE)
+    @PutMapping(value = "/updateTenantIn")
+    public AjaxResult updateTenantIn(@RequestBody Map<String, Object> map)
+    {
+        return toAjax(storageInService.updateTenantIn(map));
     }
 }

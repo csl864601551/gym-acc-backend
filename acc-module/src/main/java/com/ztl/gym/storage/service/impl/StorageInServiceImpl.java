@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 //import com.ztl.gym.common.annotation.Curcompany;
 //import com.ztl.gym.common.annotation.DataScope;
+import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
@@ -37,7 +38,8 @@ public class StorageInServiceImpl implements IStorageInService
     private IStorageService storageService;
     @Autowired
     private CommonService commonService;
-
+    @Autowired
+    private ICodeService codeService;
     /**
      * 查询入库
      *
@@ -140,5 +142,17 @@ public class StorageInServiceImpl implements IStorageInService
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
         return storageInMapper.updateInStatusByCode(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
+    @DataSource(DataSourceType.SHARDING)
+    public int updateTenantIn(Map<String, Object> map) {
+        map.put("updateTime",DateUtils.getNowDate());
+        map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
+        long storageRecordId=storageInMapper.selectOutIdByExtraNo(map.get("extraNo").toString());
+        List<String> codes=codeService.selectCodeByStorage(Long.valueOf(map.get("companyId").toString()) ,AccConstants.STORAGE_TYPE_OUT,storageRecordId);
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,codes.get(0));//转移到PDA执行
+        return storageInMapper.updateTenantIn(map);
     }
 }

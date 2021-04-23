@@ -64,4 +64,6 @@ public interface IStorageInService
     Map<String,Object> getCodeInfo(String id);
 
     int updateInStatusByCode(Map<String, Object> map);
+
+    int updateTenantIn(Map<String, Object> map);
 }

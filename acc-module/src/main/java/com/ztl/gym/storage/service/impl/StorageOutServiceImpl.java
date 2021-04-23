@@ -127,7 +127,7 @@ public class StorageOutServiceImpl implements IStorageOutService
     public int updateOutStatusByCode(Map<String, Object> map) {
         map.put("updateTime",DateUtils.getNowDate());
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//插入物流码
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//插入物流码
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
         //查询插入入库单需要的相关信息
         StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));

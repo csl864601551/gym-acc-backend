@@ -109,6 +109,9 @@
     <select id="getCodeDetail" resultMap="map">
 
     </select>
+    <select id="selectOutIdByExtraNo" resultType="java.lang.Long">
+        select id from t_storage_out where out_no=#{extraNo}
+    </select>
 
     <insert id="insertStorageIn" parameterType="Map" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into t_storage_in
@@ -202,6 +205,15 @@
     </update>
     <update id="updateInStatusByCode" parameterType="Map">
         update t_storage_in set act_in_num=in_num
+        <if test="updateUser != null">,update_user = #{updateUser}</if>
+        <if test="updateTime != null">,update_time = #{updateTime}</if>
+        where id = #{id}
+    </update>
+    <update id="updateTenantIn"  parameterType="Map">
+        update t_storage_in set status=0
+        <if test="actInNum != null">,act_in_num = #{actInNum}</if>
+        <if test="toStorageId != null">,to_storage_id = #{toStorageId}</if>
+        <if test="remark != null">,remark = #{remark}</if>
         <if test="updateUser != null">,update_user = #{updateUser}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
