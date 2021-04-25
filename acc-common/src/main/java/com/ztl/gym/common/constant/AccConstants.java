@@ -4,6 +4,9 @@ package com.ztl.gym.common.constant;
  * 业务常量
  */
 public class AccConstants {
+    public final static String SUCCESS = "SUCCESS";
+    public final static String FAILURE = "FAILURE";
+
     /*---------------------------- 通用常量 ----------------------------*/
     /**
      * 状态-删除
@@ -126,6 +129,15 @@ public class AccConstants {
      * 仓库状态-已删除
      */
     public final static Long STORAGE_DELETE_YSE = 1L;
+
+    /**
+     * 产品库存变动类型-新增
+     */
+    public final static int STOCK_TYPE_ADD = 1;
+    /**
+     * 产品库存变动类型-减少
+     */
+    public final static int STOCK_TYPE_REDUCE = 2;
 
     /*---------------------------- 部门常量 ----------------------------*/
     /**

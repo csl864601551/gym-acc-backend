@@ -55,7 +55,7 @@
         SELECT count(*) from t_code_sequence where company_id = #{companyId }
     </select>
     <select id="getTenantByParent" parameterType="Map" resultMap="SysDeptResult">
-       SELECT * FROM `sys_dept` where parent_id=#{companyId} and dept_type = 2
+       SELECT * FROM `sys_dept` where parent_id=#{companyId} and dept_type = 2 and status = 0
     </select>
 
     <insert id="insertCompany" parameterType="Map">

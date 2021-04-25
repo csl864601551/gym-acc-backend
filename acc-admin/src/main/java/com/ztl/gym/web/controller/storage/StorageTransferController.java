@@ -1,6 +1,9 @@
 package com.ztl.gym.web.controller.storage;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.service.CommonService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,18 +31,18 @@ import com.ztl.gym.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/storage/transfer")
-public class StorageTransferController extends BaseController
-{
+public class StorageTransferController extends BaseController {
     @Autowired
     private IStorageTransferService storageTransferService;
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 查询调货列表
      */
     @PreAuthorize("@ss.hasPermi('storage:transfer:list')")
     @GetMapping("/list")
-    public TableDataInfo list(StorageTransfer storageTransfer)
-    {
+    public TableDataInfo list(StorageTransfer storageTransfer) {
         startPage();
         List<StorageTransfer> list = storageTransferService.selectStorageTransferList(storageTransfer);
         return getDataTable(list);
@@ -51,8 +54,7 @@ public class StorageTransferController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:transfer:export')")
     @Log(title = "调货", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(StorageTransfer storageTransfer)
-    {
+    public AjaxResult export(StorageTransfer storageTransfer) {
         List<StorageTransfer> list = storageTransferService.selectStorageTransferList(storageTransfer);
         ExcelUtil<StorageTransfer> util = new ExcelUtil<StorageTransfer>(StorageTransfer.class);
         return util.exportExcel(list, "transfer");
@@ -63,10 +65,21 @@ public class StorageTransferController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:transfer:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(storageTransferService.selectStorageTransferById(id));
     }
+
+    /**
+     * 获取调拨单号
+     *
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('storage:transfer:getTransferNo')")
+    @GetMapping(value = "/getTransferNo")
+    public AjaxResult getTransferNo() {
+        return AjaxResult.success(AccConstants.SUCCESS, commonService.getStorageNo(AccConstants.STORAGE_TYPE_TRANSFER));
+    }
+
 
     /**
      * 新增调货
@@ -74,8 +87,7 @@ public class StorageTransferController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:transfer:add')")
     @Log(title = "调货", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody StorageTransfer storageTransfer)
-    {
+    public AjaxResult add(@RequestBody StorageTransfer storageTransfer) {
         return toAjax(storageTransferService.insertStorageTransfer(storageTransfer));
     }
 
@@ -85,8 +97,7 @@ public class StorageTransferController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:transfer:edit')")
     @Log(title = "调货", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody StorageTransfer storageTransfer)
-    {
+    public AjaxResult edit(@RequestBody StorageTransfer storageTransfer) {
         return toAjax(storageTransferService.updateStorageTransfer(storageTransfer));
     }
 
@@ -95,9 +106,8 @@ public class StorageTransferController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:transfer:remove')")
     @Log(title = "调货", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(storageTransferService.deleteStorageTransferByIds(ids));
     }
 }
