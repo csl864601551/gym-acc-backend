@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.product.mapper.ProductStockFlowMapper">
+
+    <resultMap type="ProductStockFlow" id="ProductStockFlowResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="stockId"    column="stock_id"    />
+        <result property="flowType"    column="flow_type"    />
+        <result property="storageType"    column="storage_type"    />
+        <result property="storageRecordId"    column="storage_record_id"    />
+        <result property="flowNum"    column="flow_num"    />
+        <result property="flowBefore"    column="flow_before"    />
+        <result property="flowAfter"    column="flow_after"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUserName"    column="nick_name"    />
+    </resultMap>
+
+    <sql id="selectProductStockFlowVo">
+        select f.id,
+        f.company_id,
+        f.stock_id,
+        f.flow_type,
+        f.storage_type,
+        f.storage_record_id,
+        f.flow_num,
+        f.flow_before,
+        f.flow_after,
+        f.create_user,
+        f.create_time,
+        u.nick_name
+        from t_product_stock_flow f
+        left join sys_user u on f.create_user = u.user_id
+    </sql>
+
+    <select id="selectProductStockFlowList" parameterType="ProductStockFlow" resultMap="ProductStockFlowResult">
+        <include refid="selectProductStockFlowVo"/>
+        <where>
+            <if test="companyId != null "> and f.company_id = #{companyId}</if>
+            <if test="stockId != null "> and f.stock_id = #{stockId}</if>
+            <if test="flowType != null and flowType != 0 "> and f.flow_type = #{flowType}</if>
+            <if test="storageType != null and storageType != 0 "> and f.storage_type = #{storageType}</if>
+            <if test="storageRecordId != null "> and f.storage_record_id = #{storageRecordId}</if>
+            <if test="createUser != null "> and f.create_user = #{createUser}</if>
+        </where>
+    </select>
+
+    <select id="selectProductStockFlowById" parameterType="Long" resultMap="ProductStockFlowResult">
+        <include refid="selectProductStockFlowVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProductStockFlow" parameterType="ProductStockFlow" useGeneratedKeys="true" keyProperty="id">
+        insert into t_product_stock_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="stockId != null">stock_id,</if>
+            <if test="flowType != null">flow_type,</if>
+            <if test="storageType != null">storage_type,</if>
+            <if test="storageRecordId != null">storage_record_id,</if>
+            <if test="flowNum != null">flow_num,</if>
+            <if test="flowBefore != null">flow_before,</if>
+            <if test="flowAfter != null">flow_after,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="stockId != null">#{stockId},</if>
+            <if test="flowType != null">#{flowType},</if>
+            <if test="storageType != null">#{storageType},</if>
+            <if test="storageRecordId != null">#{storageRecordId},</if>
+            <if test="flowNum != null">#{flowNum},</if>
+            <if test="flowBefore != null">#{flowBefore},</if>
+            <if test="flowAfter != null">#{flowAfter},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProductStockFlow" parameterType="ProductStockFlow">
+        update t_product_stock_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="stockId != null">stock_id = #{stockId},</if>
+            <if test="flowType != null">flow_type = #{flowType},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
+            <if test="flowNum != null">flow_num = #{flowNum},</if>
+            <if test="flowBefore != null">flow_before = #{flowBefore},</if>
+            <if test="flowAfter != null">flow_after = #{flowAfter},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductStockFlowById" parameterType="Long">
+        delete from t_product_stock_flow where id = #{id}
+    </delete>
+
+    <delete id="deleteProductStockFlowByIds" parameterType="String">
+        delete from t_product_stock_flow where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

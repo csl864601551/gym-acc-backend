@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.product.mapper.ProductStockMapper">
+
+    <resultMap type="ProductStock" id="ProductStockResult">
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="storageId" column="storage_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="inNum" column="in_num"/>
+        <result property="outNum" column="out_num"/>
+        <result property="backNum" column="back_num"/>
+        <result property="saleNum" column="sale_num"/>
+        <result property="remainNum" column="remain_num"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="productNo" column="product_no"/>
+        <result property="productName" column="product_name"/>
+        <result property="storageNo" column="storage_no"/>
+        <result property="storageName" column="storage_name"/>
+    </resultMap>
+
+    <sql id="selectProductStockVo">
+        select s.id,
+        s.company_id,
+        s.storage_id,
+        s.product_id,
+        s.in_num,
+        s.out_num,
+        s.back_num,
+        s.sale_num,
+        s.remain_num,
+        s.update_time,
+        p.product_name,
+        p.product_no,
+        t.storage_no,
+        t.storage_name
+        from t_product_stock s
+        left join t_product p on s.product_id = p.id
+        left join t_storage t on s.storage_id = t.id
+    </sql>
+
+    <select id="selectProductStockByParam" parameterType="Map" resultMap="ProductStockResult">
+        <include refid="selectProductStockVo"/>
+        <where>
+            s.storage_id = #{storageId}
+            and s.product_id = #{productId}
+        </where>
+    </select>
+
+    <select id="selectProductStockList" parameterType="ProductStock" resultMap="ProductStockResult">
+        <include refid="selectProductStockVo"/>
+        <where>
+            <if test="companyId != null ">and s.company_id = #{companyId}</if>
+            <if test="storageId != null ">and s.storage_id = #{storageId}</if>
+            <if test="productId != null ">and s.product_id = #{productId}</if>
+            <if test="productNo != null ">and p.product_no like CONCAT('%',#{productNo},'%')</if>
+            <if test="productName != null ">and p.product_name like CONCAT('%',#{productName},'%')</if>
+        </where>
+    </select>
+
+    <select id="selectProductStockById" parameterType="Long" resultMap="ProductStockResult">
+        <include refid="selectProductStockVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProductStock" parameterType="ProductStock" useGeneratedKeys="true" keyProperty="id">
+        insert into t_product_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="storageId != null">storage_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="inNum != null">in_num,</if>
+            <if test="outNum != null">out_num,</if>
+            <if test="backNum != null">back_num,</if>
+            <if test="saleNum != null">sale_num,</if>
+            <if test="remainNum != null">remain_num,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="storageId != null">#{storageId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="inNum != null">#{inNum},</if>
+            <if test="outNum != null">#{outNum},</if>
+            <if test="backNum != null">#{backNum},</if>
+            <if test="saleNum != null">#{saleNum},</if>
+            <if test="remainNum != null">#{remainNum},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateProductStock" parameterType="ProductStock">
+        update t_product_stock
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="storageId != null">storage_id = #{storageId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="inNum != null">in_num = #{inNum},</if>
+            <if test="outNum != null">out_num = #{outNum},</if>
+            <if test="backNum != null">back_num = #{backNum},</if>
+            <if test="saleNum != null">sale_num = #{saleNum},</if>
+            <if test="remainNum != null">remain_num = #{remainNum},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductStockById" parameterType="Long">
+        delete from t_product_stock where id = #{id}
+    </delete>
+
+    <delete id="deleteProductStockByIds" parameterType="String">
+        delete from t_product_stock where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
