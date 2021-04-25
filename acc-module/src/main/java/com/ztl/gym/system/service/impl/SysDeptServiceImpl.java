@@ -116,6 +116,26 @@ public class SysDeptServiceImpl implements ISysDeptService {
     public int selectNormalChildrenDeptById(Long deptId) {
         return deptMapper.selectNormalChildrenDeptById(deptId);
     }
+    /**
+     * 查询企业或者经销商所有下级信息
+     * @param deptId
+     * @return
+     * selectAllChildDeptById* List<SysDept> children = deptMapper.selectChildrenDeptById(deptId);
+     */
+    @Override
+    public String selectAllChildDeptById(Long deptId) {
+        List<SysDept> list=deptMapper.selectAllChildDeptById(deptId);
+        StringBuffer sb = new StringBuffer();
+        sb.append(deptId + ",");
+        for(int i=0;i<=list.size()-1;i++){
+            if(i<list.size()-1){
+                sb.append(list.get(i).getDeptId() + ",");
+            }else {
+                sb.append(list.get(i).getDeptId());
+            }
+        }
+        return sb.toString();
+    }
 
     /**
      * 是否存在子节点

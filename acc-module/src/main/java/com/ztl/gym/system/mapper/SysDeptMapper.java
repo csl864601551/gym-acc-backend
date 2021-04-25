@@ -54,6 +54,13 @@ public interface SysDeptMapper
     public int selectNormalChildrenDeptById(Long deptId);
 
     /**
+     * 查询企业或者经销商所有下级信息
+     * @param deptId
+     * @return
+     */
+    public List<SysDept> selectAllChildDeptById(Long deptId);
+
+    /**
      * 是否存在子节点
      *
      * @param deptId 部门ID

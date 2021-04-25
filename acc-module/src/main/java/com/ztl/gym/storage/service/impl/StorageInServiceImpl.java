@@ -16,6 +16,7 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.service.IStorageService;
+import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.StorageInMapper;
@@ -40,6 +41,8 @@ public class StorageInServiceImpl implements IStorageInService
     private CommonService commonService;
     @Autowired
     private ICodeService codeService;
+    @Autowired
+    private ISysDeptService deptService;
     /**
      * 查询入库
      *

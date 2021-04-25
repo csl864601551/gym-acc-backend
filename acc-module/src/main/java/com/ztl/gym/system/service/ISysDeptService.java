@@ -60,6 +60,14 @@ public interface ISysDeptService
     public int selectNormalChildrenDeptById(Long deptId);
 
     /**
+     * 查询企业或者经销商所有下级信息
+     * @param deptId
+     * @return
+     * selectAllChildDeptById* List<SysDept> children = deptMapper.selectChildrenDeptById(deptId);
+     */
+    public String selectAllChildDeptById(Long deptId);
+
+    /**
      * 是否存在部门子节点
      *
      * @param deptId 部门ID

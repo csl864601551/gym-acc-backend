@@ -20,7 +20,9 @@ import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.domain.vo.StorageVo;
 import com.ztl.gym.storage.mapper.StorageMapper;
 import com.ztl.gym.storage.service.*;
+import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +54,8 @@ public class StorageServiceImpl implements IStorageService {
     private IStorageTransferService storageTransferService;
     @Autowired
     private IStorageBackService storageBackService;
+    @Autowired
+    private ISysDeptService deptService;
 
     /**
      * 查询仓库
@@ -352,5 +356,12 @@ public class StorageServiceImpl implements IStorageService {
         flowVo.setCreateTime(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", new Date()));
         return flowVo;
     }
+
+    public static String getAllChildId(String sql) {
+        String deptId=SecurityUtils.getLoginUser().getUser().getDeptId().toString();
+        String concat = sql.concat("in ( select ").concat(deptId).concat(" union select dept_id from sys_dept where status = 0 and del_flag = '0' and dept_type=2 and find_in_set(").concat(deptId).concat(", ancestors))");
+        return concat;
+    }
+
 
 }

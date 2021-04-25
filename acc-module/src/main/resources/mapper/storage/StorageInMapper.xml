@@ -46,7 +46,8 @@
         LEFT JOIN sys_user suc ON suc.user_id = si.create_user
         LEFT JOIN sys_user suu ON suu.user_id = si.update_user
 
-        <where>  si.status =0
+        <where>  1=1
+            <if test="companyId != null "> and company_id = #{companyId}</if>
             <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="inNo != null  and inNo != ''"> and in_no = #{inNo}</if>
@@ -61,7 +62,8 @@
             <if test="toStorageId != null "> and to_storage_id = #{toStorageId}</if>
             <if test="inTime != null "> and in_time = #{inTime}</if>
         </where>
-
+        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and tenant_id ')}
+        order by create_time
 
     </select>
 

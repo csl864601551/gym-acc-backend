@@ -14,6 +14,7 @@ import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageService;
+import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.StorageOutMapper;
@@ -41,6 +42,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
     private IStorageService storageService;
     @Autowired
     private IStorageInService storageInService;
+    @Autowired
+    private ISysDeptService deptService;
 
 
     /**
