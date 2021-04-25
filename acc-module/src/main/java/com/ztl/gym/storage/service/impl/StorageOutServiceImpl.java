@@ -11,6 +11,7 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageService;
@@ -97,7 +98,9 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateTime(new Date());
         storageOut.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setUpdateTime(new Date());
+        storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
         //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
+
         return storageOutMapper.insertStorageOutV2(storageOut);//插入t_storage_out出库表
     }
 
@@ -135,6 +138,11 @@ public class StorageOutServiceImpl implements IStorageOutService {
         return storageOutMapper.deleteStorageOutById(id);
     }
 
+    /**
+     * PDA出库动作
+     * @param map
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)

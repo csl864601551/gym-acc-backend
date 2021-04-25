@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-//import com.ztl.gym.common.annotation.Curcompany;
-//import com.ztl.gym.common.annotation.DataScope;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
@@ -128,6 +124,11 @@ public class StorageInServiceImpl implements IStorageInService
         return storageInMapper.deleteStorageInById(id);
     }
 
+    /**
+     * 获取相关码产品信息
+     * @param code
+     * @return
+     */
     @Override
     public Map<String, Object> getCodeInfo(String code) {
         Map<String, Object> map=new HashMap<>();
@@ -137,20 +138,32 @@ public class StorageInServiceImpl implements IStorageInService
         return map;
     }
 
+    /**
+     * 企业确认入库
+     * @param map
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int updateInStatusByCode(Map<String, Object> map) {
+        map.put("status",StorageIn.STATUS_NORMAL);
         map.put("updateTime",DateUtils.getNowDate());
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
         return storageInMapper.updateInStatusByCode(map);
     }
 
+    /**
+     * 经销商确认入库
+     * @param map
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int updateTenantIn(Map<String, Object> map) {
+        map.put("status",StorageIn.STATUS_NORMAL);
         map.put("updateTime",DateUtils.getNowDate());
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
         long storageRecordId=storageInMapper.selectOutIdByExtraNo(map.get("extraNo").toString());

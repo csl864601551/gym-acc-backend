@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.StorageOut;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -80,4 +81,6 @@ public interface StorageInMapper
     int updateTenantIn(Map<String, Object> map);
 
     long selectOutIdByExtraNo(String extraNo);
+
+    void updateInStatusByOut(StorageOut storageOut);
 }

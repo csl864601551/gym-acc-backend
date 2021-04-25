@@ -46,23 +46,23 @@
         LEFT JOIN sys_user suc ON suc.user_id = si.create_user
         LEFT JOIN sys_user suu ON suu.user_id = si.update_user
 
-        <where>  1=1
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="inNo != null  and inNo != ''"> and in_no = #{inNo}</if>
-            <if test="extraNo != null  and extraNo != ''"> and extra_no = #{extraNo}</if>
-            <if test="productId != null "> and product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and batch_no = #{batchNo}</if>
-            <if test="inNum != null "> and in_num = #{inNum}</if>
-            <if test="actInNum != null "> and act_in_num = #{actInNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''"> and storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''"> and storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null "> and from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null "> and to_storage_id = #{toStorageId}</if>
-            <if test="inTime != null "> and in_time = #{inTime}</if>
+        <where>  si.status!=9
+            <if test="companyId != null "> and si.company_id = #{companyId}</if>
+            <if test="tenantId != null "> and si.tenant_id = #{tenantId}</if>
+            <if test="status != null "> and si.status = #{status}</if>
+            <if test="inNo != null  and inNo != ''"> and si.in_no = #{inNo}</if>
+            <if test="extraNo != null  and extraNo != ''"> and si.extra_no = #{extraNo}</if>
+            <if test="productId != null "> and si.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''"> and si.batch_no = #{batchNo}</if>
+            <if test="inNum != null "> and si.in_num = #{inNum}</if>
+            <if test="actInNum != null "> and si.act_in_num = #{actInNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''"> and si.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''"> and si.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null "> and si.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null "> and si.to_storage_id = #{toStorageId}</if>
+            <if test="inTime != null "> and si.in_time = #{inTime}</if>
         </where>
-        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and tenant_id ')}
+        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and si.tenant_id ')}
         order by create_time
 
     </select>
@@ -206,13 +206,20 @@
 
     </update>
     <update id="updateInStatusByCode" parameterType="Map">
-        update t_storage_in set act_in_num=in_num
+        update t_storage_in set act_in_num=in_num,status=#{status}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
     </update>
+    <update id="updateInStatusByOut" parameterType="StorageOut">
+        update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_OUT}
+        <if test="updateUser != null">,update_user = #{updateUser}</if>
+        <if test="updateTime != null">,update_time = #{updateTime}</if>
+        where in_no = #{extraNo}
+    </update>
+
     <update id="updateTenantIn"  parameterType="Map">
-        update t_storage_in set status=1
+        update t_storage_in set status=#{status}
         <if test="actInNum != null">,act_in_num = #{actInNum}</if>
         <if test="toStorageId != null">,to_storage_id = #{toStorageId}</if>
         <if test="remark != null">,remark = #{remark}</if>
@@ -222,11 +229,11 @@
     </update>
 
     <delete id="deleteStorageInById">
-        update t_storage_in set status=9 where id = #{id}
+        update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_DELETE} where id = #{id}
     </delete>
 
     <delete id="deleteStorageInByIds" parameterType="String">
-        update t_storage_in set status=9 where id in
+        update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_DELETE} where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

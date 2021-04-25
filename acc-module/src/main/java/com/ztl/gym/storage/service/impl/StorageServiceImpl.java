@@ -357,9 +357,14 @@ public class StorageServiceImpl implements IStorageService {
         return flowVo;
     }
 
+    /**
+     * 查询权限控制，关联到mapper.xml
+     * @param sql
+     * @return
+     */
     public static String getAllChildId(String sql) {
-        String deptId=SecurityUtils.getLoginUser().getUser().getDeptId().toString();
-        String concat = sql.concat("in ( select ").concat(deptId).concat(" union select dept_id from sys_dept where status = 0 and del_flag = '0' and dept_type=2 and find_in_set(").concat(deptId).concat(", ancestors))");
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        String concat = sql.concat("in ( select ").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(" union select dept_id from sys_dept where status = 0 and del_flag = '0' and dept_type=2 and find_in_set(").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(", ancestors))");
         return concat;
     }
 

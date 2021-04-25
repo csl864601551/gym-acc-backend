@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStorageOutList" parameterType="StorageOut" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
-        <where>  1=1
+        <where>  status!=9
             <if test="companyId != null "> and company_id = #{companyId}</if>
             <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
             <if test="status != null "> and status = #{status}</if>
@@ -181,18 +181,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
     <update id="updateOutStatusByCode" parameterType="Map">
-        update t_storage_out set act_out_num=out_num
+        update t_storage_out set act_out_num=out_num,status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_NORMAL}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
     </update>
 
     <delete id="deleteStorageOutById" parameterType="Long">
-        update t_storage_out set status=1 where id = #{id}
+        update t_storage_out set status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_DELETE} where id = #{id}
     </delete>
 
     <delete id="deleteStorageOutByIds" parameterType="String">
-        update t_storage_out set status=1 where id in
+        update t_storage_out set status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_DELETE} where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
