@@ -62,6 +62,11 @@ public class StorageVo {
      */
     private String codeTypeName;
 
+    /**
+     * 码记录表ID
+     */
+    private long recordId;
+
     /*--------------------- 单码操作 ---------------------*/
     /**
      * 流水号
@@ -539,5 +544,13 @@ public class StorageVo {
 
     public void setToStorageId(Long toStorageId) {
         this.toStorageId = toStorageId;
+    }
+
+    public long getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(long recordId) {
+        this.recordId = recordId;
     }
 }

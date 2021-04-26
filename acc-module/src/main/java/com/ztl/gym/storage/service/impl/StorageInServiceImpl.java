@@ -75,7 +75,7 @@ public class StorageInServiceImpl implements IStorageInService
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map)
     {
-        if(map.get("tenantId")==""||map.get("tenantId")==null){
+        if(map.get("tenantId").toString().equals("")||map.get("tenantId")==null||map.get("tenantId").toString().equals("0")){
             map.put("tenantId",commonService.getTenantId());
         }
         map.put("createTime",DateUtils.getNowDate());

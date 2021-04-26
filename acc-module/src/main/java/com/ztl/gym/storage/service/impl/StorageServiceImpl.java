@@ -234,11 +234,15 @@ public class StorageServiceImpl implements IStorageService {
                     storageVo.setpCode(codeEntity.getCode());
                     storageVo.setCodeTypeName("箱码");
                 }
-                storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
-                storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
-                storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
-                storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
-                storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
+                //判断是否码是否绑定了产品
+                if(codeEntity.getCodeAttr().getProductId()!=null){
+                    storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
+                    storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
+                    storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
+                    storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
+                    storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
+                }
+                storageVo.setRecordId(codeEntity.getCodeAttr().getRecordId());//码记录表ID
                 storageVo.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));//企业入库单号
 
                 Integer storageType = codeEntity.getCodeAttr().getStorageType();
