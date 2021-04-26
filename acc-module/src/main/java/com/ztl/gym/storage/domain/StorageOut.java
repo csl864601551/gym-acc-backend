@@ -2,6 +2,7 @@ package com.ztl.gym.storage.domain;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
@@ -126,6 +127,37 @@ public class StorageOut extends BaseEntity {
     @Excel(name = "修改人")
     private Long updateUser;
 
+    /**
+     * 创建人
+     */
+    @Excel(name = "创建人")
+    @TableField(exist = false)
+    private String createUserName;
+
+    /**
+     * 修改人
+     */
+    @Excel(name = "修改人")
+    @TableField(exist = false)
+    private String updateUserName;
+    /**
+     * 发货单位
+     */
+    @Excel(name = "发货单位")
+    @TableField(exist = false)
+    private String storageFromName;
+    /**
+     * 收货单位
+     */
+    @Excel(name = "收货单位")
+    @TableField(exist = false)
+    private String storageToName;
+    /**
+     * 出库仓库
+     */
+    @Excel(name = "出库仓库")
+    @TableField(exist = false)
+    private String fromStorageIdName;
     /**
      * 出库时间
      */
@@ -267,6 +299,46 @@ public class StorageOut extends BaseEntity {
 
     public void setUpdateUser(Long updateUser) {
         this.updateUser = updateUser;
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
+    public String getUpdateUserName() {
+        return updateUserName;
+    }
+
+    public void setUpdateUserName(String updateUserName) {
+        this.updateUserName = updateUserName;
+    }
+
+    public String getStorageFromName() {
+        return storageFromName;
+    }
+
+    public void setStorageFromName(String storageFromName) {
+        this.storageFromName = storageFromName;
+    }
+
+    public String getFromStorageIdName() {
+        return fromStorageIdName;
+    }
+
+    public void setFromStorageIdName(String fromStorageIdName) {
+        this.fromStorageIdName = fromStorageIdName;
+    }
+
+    public String getStorageToName() {
+        return storageToName;
+    }
+
+    public void setStorageToName(String storageToName) {
+        this.storageToName = storageToName;
     }
 
     @Override

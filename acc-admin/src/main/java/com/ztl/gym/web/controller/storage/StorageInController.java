@@ -69,6 +69,13 @@ public class StorageInController extends BaseController {
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(storageInService.selectStorageInById(id));
     }
+    /**
+     * 获取入库码产品详细信息
+     */
+    @GetMapping("/getCodeDetailById")
+    public AjaxResult getCodeDetailById(@RequestParam("companyId") Long companyId, @RequestParam("id") Integer id) {
+        return AjaxResult.success(storageInService.getCodeDetailById(companyId,id));
+    }
 
     /**
      * 新增入库

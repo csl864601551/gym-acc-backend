@@ -27,9 +27,16 @@
         <result property="updateUser"    column="update_user"    />
         <result property="updateUserName"    column="update_user_name"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="storageFromName"    column="storage_from_name"    />
+        <result property="toStorageIdName"    column="to_storage_id_name"    />
     </resultMap>
 
     <resultMap type="HashMap" id="map">
+        <result property="code"    column="code"    />
+        <result property="productNo"    column="product_no"    />
+        <result property="productName"    column="product_name"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="num"    column="num"    />
     </resultMap>
 
     <sql id="selectStorageInVo">
@@ -40,9 +47,12 @@
 
     <select id="selectStorageInList" parameterType="StorageIn" resultMap="StorageInResult">
         SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
-        si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
+        si.from_storage_id,si.to_storage_id,si.remark,si.create_time,si.in_time,si.update_time
+        ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,sd.dept_name as storage_from_name,s.storage_name as to_storage_id_name
         FROM
         t_storage_in AS si
+        left join sys_dept sd on sd.dept_id=si.storage_from
+        left join t_storage s on s.id=si.to_storage_id
         LEFT JOIN sys_user suc ON suc.user_id = si.create_user
         LEFT JOIN sys_user suu ON suu.user_id = si.update_user
 
@@ -70,15 +80,17 @@
     <select id="selectStorageInById" parameterType="Long" resultMap="StorageInResult">
         SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
-        ,p.product_name
+        ,p.product_name,sd.dept_name as storage_from_name,s.storage_name as to_storage_id_name
         FROM
         t_storage_in AS si
+        left join sys_dept sd on sd.dept_id=si.storage_from
+        left join t_storage s on s.id=si.to_storage_id
         LEFT JOIN sys_user suc ON suc.user_id = si.create_user
         LEFT JOIN sys_user suu ON suu.user_id = si.update_user
         left join t_product p on p.id=si.product_id
         where si.id = #{id}
     </select>
-    <select id="selectStorageCodeById" resultMap="map">
+    <select id="selectStorageCodeById" resultMap="StorageInResult">
         SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
         ,p.product_name
@@ -113,6 +125,13 @@
     </select>
     <select id="selectOutIdByExtraNo" resultType="java.lang.Long">
         select id from t_storage_out where out_no=#{extraNo}
+    </select>
+
+    <select id="getCodeDetailById" resultMap="map">
+        select cf.code,p.product_no,p.product_name,si.batch_no,1 as num from t_product p
+        left join t_storage_in si on si.product_id=p.id
+        left join t_code_flow cf on cf.storage_record_id=si.id
+        where si.id=#{id} and cf.company_id = #{companyId}
     </select>
 
     <insert id="insertStorageIn" parameterType="Map" useGeneratedKeys="true" keyProperty="id" keyColumn="id">

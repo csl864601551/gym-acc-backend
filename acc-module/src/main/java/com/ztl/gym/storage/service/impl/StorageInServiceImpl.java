@@ -11,6 +11,7 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.vo.StorageVo;
 import com.ztl.gym.storage.service.IStorageService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,5 +171,12 @@ public class StorageInServiceImpl implements IStorageInService
         List<String> codes=codeService.selectCodeByStorage(Long.valueOf(map.get("companyId").toString()) ,AccConstants.STORAGE_TYPE_OUT,storageRecordId);
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,codes.get(0));//转移到PDA执行
         return storageInMapper.updateTenantIn(map);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id) {
+        List<Map<String,Object>> list=storageInMapper.getCodeDetailById(companyId,id);
+        return list;
     }
 }

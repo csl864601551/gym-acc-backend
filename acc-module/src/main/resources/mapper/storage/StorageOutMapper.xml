@@ -25,40 +25,66 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="outTime"    column="out_time"    />
         <result property="updateUser"    column="update_user"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="createUserName"    column="create_user_name"    />
+        <result property="updateUserName"    column="update_user_name"    />
+        <result property="storageFromName"    column="storage_from_name"    />
+        <result property="storageToName"    column="storage_to_name"    />
+        <result property="fromStorageIdName"    column="from_storage_id_name"    />
     </resultMap>
 
     <resultMap type="HashMap" id="map">
+        <result property="code"    column="code"    />
+        <result property="productNo"    column="product_no"    />
+        <result property="productName"    column="product_name"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="num"    column="num"    />
     </resultMap>
 
     <sql id="selectStorageOutVo">
-        select id, company_id, tenant_id, status, out_no,extra_no, product_id, batch_no, out_num, act_out_num, storage_from, storage_to, from_storage_id, to_storage_id, remark, create_user, create_time, out_time, update_user, update_time from t_storage_out
+        select so.id,so.company_id,so.tenant_id,so.status,so.out_no,extra_no,so.product_id,so.batch_no,so.out_num,so.act_out_num,so.storage_from,so.storage_to,
+        so.from_storage_id,so.to_storage_id,so.remark,so.create_user,so.create_time,so.out_time,so.update_user,so.update_time
+        ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,
+        sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,s.storage_name as from_storage_id_name
+        from t_storage_out so
+        left join sys_dept sd on sd.dept_id=so.storage_from
+        left join sys_dept sd2 on sd2.dept_id=so.storage_to
+        left join t_storage s on s.id=so.from_storage_id
+        LEFT JOIN sys_user suc ON suc.user_id = so.create_user
+        LEFT JOIN sys_user suu ON suu.user_id = so.update_user
     </sql>
 
     <select id="selectStorageOutList" parameterType="StorageOut" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
-        <where>  status!=9
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="outNo != null  and outNo != ''"> and out_no = #{outNo}</if>
-            <if test="extraNo != null  and extraNo != ''"> and extra_no = #{extraNo}</if>
-            <if test="productId != null "> and product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and batch_no = #{batchNo}</if>
-            <if test="outNum != null "> and out_num = #{outNum}</if>
-            <if test="actOutNum != null "> and act_out_num = #{actOutNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''"> and storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''"> and storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null "> and from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null "> and to_storage_id = #{toStorageId}</if>
-            <if test="outTime != null "> and out_time = #{outTime}</if>
+        <where>  so.status!=9
+            <if test="companyId != null "> and so.company_id = #{companyId}</if>
+            <if test="tenantId != null "> and so.tenant_id = #{tenantId}</if>
+            <if test="status != null "> and so.status = #{status}</if>
+            <if test="outNo != null  and outNo != ''"> and so.out_no = #{outNo}</if>
+            <if test="extraNo != null  and extraNo != ''"> and so.extra_no = #{extraNo}</if>
+            <if test="productId != null "> and so.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''"> and so.batch_no = #{batchNo}</if>
+            <if test="outNum != null "> and so.out_num = #{outNum}</if>
+            <if test="actOutNum != null "> and so.act_out_num = #{actOutNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''"> and so.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''"> and so.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null "> and so.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null "> and so.to_storage_id = #{toStorageId}</if>
+            <if test="outTime != null "> and so.out_time = #{outTime}</if>
         </where>
-        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and tenant_id ')}
-        order by create_time
+        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and so.tenant_id ')}
+        order by so.create_time
     </select>
 
     <select id="selectStorageOutById" parameterType="Long" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
-        where id = #{id}
+        where so.id = #{id}
+    </select>
+
+    <select id="getCodeDetailById" resultMap="map">
+        select cf.code,p.product_no,p.product_name,si.batch_no,1 as num from t_product p
+        left join t_storage_out si on si.product_id=p.id
+        left join t_code_flow cf on cf.storage_record_id=si.id
+        where si.id=#{id} and cf.company_id = #{companyId}
     </select>
 
     <insert id="insertStorageOut" parameterType="map" useGeneratedKeys="true" keyProperty="id">

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.storage.domain.StorageOut;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -71,4 +72,6 @@ public interface StorageOutMapper {
     public int deleteStorageOutByIds(Long[] ids);
 
     int updateOutStatusByCode(Map<String, Object> map);
+
+    List<Map<String, Object>> getCodeDetailById(@Param("companyId")Long companyId, @Param("id")Integer id);
 }
