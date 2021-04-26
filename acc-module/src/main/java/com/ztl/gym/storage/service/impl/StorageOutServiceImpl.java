@@ -164,4 +164,11 @@ public class StorageOutServiceImpl implements IStorageOutService {
         inMap.put("storageFrom",commonService.getTenantId());
         return storageInService.insertStorageIn(inMap);//插入入库
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id) {
+        List<Map<String,Object>> list=storageOutMapper.getCodeDetailById(companyId,id);
+        return list;
+    }
 }

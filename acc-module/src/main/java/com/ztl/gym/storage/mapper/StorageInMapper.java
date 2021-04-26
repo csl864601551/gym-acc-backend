@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.StorageOut;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -83,4 +84,6 @@ public interface StorageInMapper
     long selectOutIdByExtraNo(String extraNo);
 
     void updateInStatusByOut(StorageOut storageOut);
+
+    List<Map<String, Object>> getCodeDetailById(@Param("companyId")Long companyId, @Param("id")Integer id);
 }

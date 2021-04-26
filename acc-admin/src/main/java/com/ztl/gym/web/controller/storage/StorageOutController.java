@@ -5,14 +5,7 @@ import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -68,6 +61,13 @@ public class StorageOutController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(storageOutService.selectStorageOutById(id));
+    }
+    /**
+     * 获取出库码产品详细信息
+     */
+    @GetMapping("/getCodeDetailById")
+    public AjaxResult getCodeDetailById(@RequestParam("companyId") Long companyId, @RequestParam("id") Integer id) {
+        return AjaxResult.success(storageOutService.getCodeDetailById(companyId,id));
     }
 
     /**

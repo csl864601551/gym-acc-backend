@@ -146,6 +146,20 @@ public class StorageIn extends BaseEntity {
     @Excel(name = "修改人")
     @TableField(exist = false)
     private String updateUserName;
+    /**
+     * 发货单位
+     */
+    @Excel(name = "发货单位")
+    @TableField(exist = false)
+    private String storageFromName;
+    /**
+     * 入库仓库
+     */
+    @Excel(name = "入库仓库")
+    @TableField(exist = false)
+    private String toStorageIdName;
+
+
 
     /**
      * 入库时间
@@ -304,6 +318,22 @@ public class StorageIn extends BaseEntity {
 
     public void setUpdateUserName(String updateUserName) {
         this.updateUserName = updateUserName;
+    }
+
+    public String getStorageFromName() {
+        return storageFromName;
+    }
+
+    public void setStorageFromName(String storageFromName) {
+        this.storageFromName = storageFromName;
+    }
+
+    public String getToStorageIdName() {
+        return toStorageIdName;
+    }
+
+    public void setToStorageIdName(String toStorageIdName) {
+        this.toStorageIdName = toStorageIdName;
     }
 
     @Override

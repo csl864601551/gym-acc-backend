@@ -69,4 +69,6 @@ public interface IStorageOutService {
     public int deleteStorageOutById(Long id);
 
     int updateOutStatusByCode(Map<String, Object> map);
+
+    List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id);
 }

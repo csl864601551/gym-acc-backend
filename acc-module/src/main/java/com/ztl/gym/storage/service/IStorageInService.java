@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.vo.StorageVo;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 入库Service接口
@@ -66,4 +68,6 @@ public interface IStorageInService
     int updateInStatusByCode(Map<String, Object> map);
 
     int updateTenantIn(Map<String, Object> map);
+
+    List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id);
 }
