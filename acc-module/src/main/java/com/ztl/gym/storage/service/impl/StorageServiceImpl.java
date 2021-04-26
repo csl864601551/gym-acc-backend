@@ -85,8 +85,10 @@ public class StorageServiceImpl implements IStorageService {
             int count = (ancestors.length() - ancestors.replace(",", "").length()) / ",".length();
             if (count == 1) {
                 storage.setCompanyId(deptId);
+                storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             } else {
                 storage.setTenantId(deptId);
+                storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
             }
 
             //FIXME
