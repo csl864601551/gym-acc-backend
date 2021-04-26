@@ -119,6 +119,21 @@ public class StorageController extends BaseController {
     }
 
     /**
+     * 根据tenant获取用户仓库信息
+     */
+    @PreAuthorize("@ss.hasPermi('storage:storage:listByTenant')")
+    @GetMapping(value = "/getStoragesByTenant/{tenantId}")
+    public AjaxResult getStoragesByTenant(@PathVariable("tenantId") Long tenantId) {
+        Storage storage = new Storage();
+        storage.setStatus(0L);
+        if (tenantId != null && tenantId > 0) {
+            storage.setTenantId(tenantId);
+        }
+        List<Storage> list = storageService.selectStorageByUser(storage);
+        return AjaxResult.success(list);
+    }
+
+    /**
      * 根据码号查询相关产品和码信息
      */
     @GetMapping(value = "/getRecordByCode")

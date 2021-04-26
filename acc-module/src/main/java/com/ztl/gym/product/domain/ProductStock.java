@@ -26,6 +26,11 @@ public class ProductStock extends BaseEntity {
     private Long companyId;
 
     /**
+     * 经销商id
+     */
+    private Long tenantId;
+
+    /**
      * 仓库id
      */
     @Excel(name = "仓库id")
@@ -187,6 +192,14 @@ public class ProductStock extends BaseEntity {
 
     public void setStorageName(String storageName) {
         this.storageName = storageName;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override

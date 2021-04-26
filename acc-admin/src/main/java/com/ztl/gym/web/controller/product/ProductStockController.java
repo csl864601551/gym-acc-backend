@@ -1,6 +1,9 @@
 package com.ztl.gym.web.controller.product;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +31,7 @@ import com.ztl.gym.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/product/stock")
-public class ProductStockController extends BaseController
-{
+public class ProductStockController extends BaseController {
     @Autowired
     private IProductStockService productStockService;
 
@@ -38,8 +40,25 @@ public class ProductStockController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:stock:list')")
     @GetMapping("/list")
-    public TableDataInfo list(ProductStock productStock)
-    {
+    public TableDataInfo list(ProductStock productStock) {
+        startPage();
+        if (!SecurityUtils.getLoginUserCompany().getDeptId().equals(AccConstants.ADMIN_DEPT_ID)) {
+            productStock.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            if (SecurityUtils.getLoginUserTopCompanyId() != SecurityUtils.getLoginUserCompany().getDeptId()) {
+                productStock.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+            }
+        }
+
+        List<ProductStock> list = productStockService.selectProductStockList(productStock);
+        return getDataTable(list);
+    }
+
+    /**fdfd
+     * 查询企业库存统计
+     */
+    @PreAuthorize("@ss.hasPermi('product:stock:listByTenant')")
+    @GetMapping("/listByTenant")
+    public TableDataInfo listByTenant(ProductStock productStock) {
         startPage();
         List<ProductStock> list = productStockService.selectProductStockList(productStock);
         return getDataTable(list);
@@ -51,8 +70,7 @@ public class ProductStockController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:stock:export')")
     @Log(title = "库存统计 ", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(ProductStock productStock)
-    {
+    public AjaxResult export(ProductStock productStock) {
         List<ProductStock> list = productStockService.selectProductStockList(productStock);
         ExcelUtil<ProductStock> util = new ExcelUtil<ProductStock>(ProductStock.class);
         return util.exportExcel(list, "stock");
@@ -63,8 +81,7 @@ public class ProductStockController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:stock:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(productStockService.selectProductStockById(id));
     }
 
@@ -74,8 +91,7 @@ public class ProductStockController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:stock:add')")
     @Log(title = "库存统计 ", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ProductStock productStock)
-    {
+    public AjaxResult add(@RequestBody ProductStock productStock) {
         return toAjax(2);
     }
 
@@ -85,8 +101,7 @@ public class ProductStockController extends BaseController
     @PreAuthorize("@ss.hasPermi('product:stock:edit')")
     @Log(title = "库存统计 ", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody ProductStock productStock)
-    {
+    public AjaxResult edit(@RequestBody ProductStock productStock) {
         return toAjax(productStockService.updateProductStock(productStock));
     }
 
@@ -95,9 +110,8 @@ public class ProductStockController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:stock:remove')")
     @Log(title = "库存统计 ", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(productStockService.deleteProductStockByIds(ids));
     }
 }
