@@ -227,4 +227,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="backStorageOutById">
+        update t_storage_out set status=#{status} where id = #{id}
+    </delete>
+
 </mapper>

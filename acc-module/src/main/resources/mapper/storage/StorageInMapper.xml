@@ -227,6 +227,7 @@
     <update id="updateInStatusByCode" parameterType="Map">
         update t_storage_in set act_in_num=in_num,status=#{status}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
+        <if test="inTime != null">,in_time = #{inTime}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
     </update>
@@ -243,6 +244,7 @@
         <if test="toStorageId != null">,to_storage_id = #{toStorageId}</if>
         <if test="remark != null">,remark = #{remark}</if>
         <if test="updateUser != null">,update_user = #{updateUser}</if>
+        <if test="inTime != null">,in_time = #{inTime}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
     </update>
