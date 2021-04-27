@@ -57,13 +57,12 @@ public interface CommonService {
     String getStorageNo(int storageType);
 
     /**
-     * 查询码或者流转单号当前操作是否合法 【输入流转操作输入货码时调用】
+     * 查询码当前操作是否合法 【输入流转操作输入货码时调用】
      *
      * @param companyId   企业id
      * @param storageType 当前流转操作类型 【见AccConstants】
-     * @param queryType   查询值类型 1：码  2：流转单
      * @param queryValue  查询值
      * @return
      */
-    boolean judgeStorageIsIllegalByValue(long companyId, Integer storageType, Integer queryType, String queryValue);
+    boolean judgeStorageIsIllegalByValue(long companyId, Integer storageType, String queryValue);
 }
