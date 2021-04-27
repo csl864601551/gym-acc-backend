@@ -47,25 +47,6 @@ public class AccConstants {
     public final static int NO_TYPE_STORAGE_TRANSFER = 6;
 
 
-    /*---------------------------- 用户常量 ----------------------------*/
-    /**
-     * 用户类型-系统
-     */
-    public final static String USER_TYPE_SYSTEM = "00";
-    /**
-     * 用户类型-企业
-     */
-    public final static String USER_TYPE_COMPANY = "10";
-    /**
-     * 用户类型-经销商
-     */
-    public final static String USER_TYPE_TENANT = "20";
-    /**
-     * 用户类型-经销商下级
-     */
-    public final static String USER_TYPE_TENANT_CUSTOM = "30";
-
-
     /*---------------------------- 生码常量 ----------------------------*/
     /**
      * 码类型-单码
@@ -112,7 +93,7 @@ public class AccConstants {
      */
     public final static int GEN_CODE_TYPE_BOX = 2;
 
-    /*---------------------------- 仓库 ----------------------------*/
+    /*---------------------------- 仓库库存 ----------------------------*/
     /**
      * 仓库级别-企业
      */
@@ -121,6 +102,7 @@ public class AccConstants {
      * 仓库级别-经销商
      */
     public final static Long STORAGE_LEVEL_TENANT = 20L;
+
     /**
      * 仓库状态-正常
      */
@@ -138,6 +120,15 @@ public class AccConstants {
      * 产品库存变动类型-减少
      */
     public final static int STOCK_TYPE_REDUCE = 2;
+
+    /**
+     * 仓库级别-企业
+     */
+    public final static int STOCK_LEVEL_COMPANY = 10;
+    /**
+     * 仓库级别-经销商
+     */
+    public final static int STOCK_LEVEL_TENANT = 20;
 
     /*---------------------------- 部门常量 ----------------------------*/
     /**
