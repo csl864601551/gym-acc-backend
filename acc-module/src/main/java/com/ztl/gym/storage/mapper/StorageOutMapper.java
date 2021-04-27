@@ -37,15 +37,7 @@ public interface StorageOutMapper {
      * @param storageOut 出库
      * @return 结果
      */
-    public int insertStorageOut(Map<String, Object> storageOut);
-
-    /**
-     * 新增出库
-     *
-     * @param storageOut 出库
-     * @return 结果
-     */
-    public int insertStorageOutV2(StorageOut storageOut);
+    public int insertStorageOut(StorageOut storageOut);
 
     /**
      * 修改出库
