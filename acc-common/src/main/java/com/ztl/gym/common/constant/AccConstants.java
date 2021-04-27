@@ -168,18 +168,11 @@ public class AccConstants {
      */
     public final static int STORAGE_TYPE_TRANSFER = 3;
     /**
-     * 物流类型-退货入库
+     * 物流类型-退货 【退货相当于出库，例：A发货给B B退货】
      */
     public final static int STORAGE_TYPE_BACK = 4;
 
-    /**
-     * 退货类型-正常（经销商退企业）
-     */
-    public final static int BACK_TYPE_COMMON = 1;
-    /**
-     * 退货类型-调拨（经销商退经销商）
-     */
-    public final static int BACK_TYPE_TRANSFER = 2;
+
 
     /**
      * 调拨状态-待发货

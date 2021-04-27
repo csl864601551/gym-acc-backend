@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageInMapper">
-
     <resultMap type="StorageIn" id="StorageInResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
@@ -29,6 +28,7 @@
         <result property="updateTime"    column="update_time"    />
         <result property="storageFromName"    column="storage_from_name"    />
         <result property="toStorageIdName"    column="to_storage_id_name"    />
+        <result property="productName"    column="product_name"    />
     </resultMap>
 
     <resultMap type="HashMap" id="map">

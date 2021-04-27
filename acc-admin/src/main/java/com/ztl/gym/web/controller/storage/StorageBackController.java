@@ -5,11 +5,13 @@ import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -88,75 +90,101 @@ public class StorageBackController extends BaseController {
     }
 
     /**
-     * 退货录入（整箱退货）-步骤1 【生成退货信息】
+     * 退货录入-步骤1 【生成退货信息】
      */
     @PreAuthorize("@ss.hasPermi('storage:back:addFirst')")
     @PostMapping(value = "/addFirst")
     public AjaxResult addFirst(@RequestBody StorageBack storageBack) {
         long companyId = 0;
+        long currentUserDeptId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
         }
-        //判断当前货码能否退货
-        boolean res = commonService.judgeStorageIsIllegalByValue(companyId, AccConstants.STORAGE_TYPE_BACK, storageBack.getBackType(), storageBack.getValue());
-        if (res) {
-            //生成退货单号
-            String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
-            storageBack.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-            storageBack.setTenantId(SecurityUtils.getLoginUser().getUser().getUserId());
-            storageBack.setBackNo(backNo);
-            storageBack.setStorageTo(SecurityUtils.getLoginUser().getUser().getUserId());
-            storageBack.setCreateTime(new Date());
-            if (storageBack.getBackType() == AccConstants.BACK_TYPE_COMMON) {
-                //普通退货-经销商退给企业
-                Code codeEntity = new Code();
-                codeEntity.setCode(storageBack.getValue());
-                codeEntity.setCompanyId(CodeRuleUtils.getCompanyIdByCode(storageBack.getValue()));
-                Code codeRes = codeService.selectCode(codeEntity);
-                SysDept dept = deptService.selectDeptById(codeRes.getCodeAttr().getTenantId());
-                storageBack.setStorageFrom(dept.getDeptId());
-                storageBack.setStorageFromName(dept.getDeptName());
 
-                //根据上一次流转信息获取产品物流数据
-                Long productId = null;
-                String batchNo = null;
-                Long actTransferNum = null;
-                if (codeRes.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
+        //生成退货单号登记处信息
+        String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
+        storageBack.setBackNo(backNo);
+        storageBack.setCompanyId(companyId);
+        storageBack.setTenantId(currentUserDeptId);
+        storageBack.setStorageTo(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageBack.setCreateTime(new Date());
+        if (storageBack.getBackType() == StorageBack.BACK_TYPE_COMMON) {
+            //普通退货-判断码
+            //查询码属性信息
+            Code codeEntity = new Code();
+            codeEntity.setCode(storageBack.getValue());
+            codeEntity.setCompanyId(CodeRuleUtils.getCompanyIdByCode(storageBack.getValue()));
+            Code codeRes = codeService.selectCode(codeEntity);
+
+            SysDept dept = deptService.selectDeptById(codeRes.getCodeAttr().getTenantId());
+            storageBack.setStorageFrom(dept.getDeptId());
+            storageBack.setStorageFromName(dept.getDeptName());
+
+            //根据上一次流转信息获取产品物流数据
+            Long productId = null;
+            String productName = null;
+            String batchNo = null;
+            Long backNum = null;
+            if (codeRes.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
+                SysDept sysDept = new SysDept();
+                sysDept.setParentId(currentUserDeptId);
+                List<SysDept> son = deptService.selectDeptList(sysDept);
+
+                //判断码是不是当前登录用户的下级所有
+                boolean flag = false;
+                for (SysDept childDept : son) {
+                    if (childDept.getDeptId() == codeRes.getCodeAttr().getTenantId()) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
                     StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
                     productId = storageIn.getProductId();
+                    productName = storageIn.getProductName();
                     batchNo = storageIn.getBatchNo();
-                    actTransferNum = storageIn.getActInNum();
+                    backNum = storageIn.getActInNum();
                     storageBack.setCompanyForceFlag(1);
                 } else {
-                    StorageOut storageOut = storageOutService.selectStorageOutById(codeRes.getCodeAttr().getStorageRecordId());
-                    productId = storageOut.getProductId();
-                    batchNo = storageOut.getBatchNo();
-                    actTransferNum = storageOut.getActOutNum();
+                    throw new CustomException("当前码状态所属企业经销商不是当前登录用户的下级!");
                 }
-                storageBack.setProductId(productId);
-                storageBack.setBatchNo(batchNo);
-                storageBack.setBackNum(actTransferNum);
-                storageBack.setActBackNum(actTransferNum);
             } else {
-                //调拨退货-企业退给企业根据调拨单号查询退货人信息
-                StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(storageBack.getValue());
-                SysDept dept = deptService.selectDeptById(storageTransfer.getStorageTo());
-
-                storageBack.setProductId(storageTransfer.getProductId());
-                storageBack.setBatchNo(storageTransfer.getBatchNo());
-                storageBack.setBackNum(storageTransfer.getActTransferNum());
-                storageBack.setActBackNum(storageTransfer.getActTransferNum());
-
-                storageBack.setExtraNo(storageBack.getValue());
-                storageBack.setStorageFrom(storageTransfer.getStorageTo());
-                storageBack.setStorageFromName(dept.getDeptName());
+                throw new CustomException("当前码状态不是入库状态，企业无法直接退货入库!");
             }
+            storageBack.setProductName(productName);
+            storageBack.setProductId(productId);
+            storageBack.setBatchNo(batchNo);
+            storageBack.setBackNum(backNum);
+            storageBack.setActBackNum(backNum);
+        } else {
+            //调拨退货-判断调拨单
+            //有流转单说明是调拨退货操作
+            StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(storageBack.getValue());
+            if (storageTransfer == null) {
+                throw new CustomException("该调拨单号查找不到！", HttpStatus.ERROR);
+            }
+
+            //判断调拨入库方是否是当前用户
+            if (storageTransfer.getStorageTo() != currentUserDeptId) {
+                throw new CustomException("调拨接收方不属于当前登录企业！", HttpStatus.ERROR);
+            }
+            storageBack.setProductId(storageTransfer.getProductId());
+            storageBack.setProductName(storageTransfer.getProductName());
+            storageBack.setBatchNo(storageTransfer.getBatchNo());
+            storageBack.setBackNum(storageTransfer.getActTransferNum());
+            storageBack.setActBackNum(storageTransfer.getActTransferNum());
+            storageBack.setExtraNo(storageBack.getValue());
+            storageBack.setStorageFrom(storageTransfer.getStorageTo());
+
+            SysDept dept = deptService.selectDeptById(storageTransfer.getStorageTo());
+            storageBack.setStorageFromName(dept.getDeptName());
         }
+
         return AjaxResult.success(storageBack);
     }
 
     /**
-     * 退货录入（整箱退货）-步骤2 【保存退货信息】
+     * 退货录入-步骤2 【保存退货信息】
      */
     @PreAuthorize("@ss.hasPermi('storage:back:add')")
     @Log(title = "退货", businessType = BusinessType.INSERT)

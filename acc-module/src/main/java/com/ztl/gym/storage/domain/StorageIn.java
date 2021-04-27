@@ -39,6 +39,15 @@ public class StorageIn extends BaseEntity {
      */
     public final static int STATUS_DELETE = 9;
 
+    /**
+     * 普通入库
+     */
+    public final static int IN_TYPE_COMMON = 1;
+    /**
+     * 退货入库
+     */
+    public final static int IN_TYPE_BACK = 2;
+
 
     /**
      * 主键ID
@@ -62,6 +71,11 @@ public class StorageIn extends BaseEntity {
      */
     @Excel(name = "状态")
     private Long status;
+
+    /**
+     * 入库类型
+     */
+    private int inType;
 
     /**
      * 入库单号
@@ -159,7 +173,8 @@ public class StorageIn extends BaseEntity {
     @TableField(exist = false)
     private String toStorageIdName;
 
-
+    /*-------------------------------- 冗余 --------------------------------*/
+    private String productName;
 
     /**
      * 入库时间
@@ -167,6 +182,14 @@ public class StorageIn extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Excel(name = "入库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
     private Date inTime;
+
+    public int getInType() {
+        return inType;
+    }
+
+    public void setInType(int inType) {
+        this.inType = inType;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -334,6 +357,14 @@ public class StorageIn extends BaseEntity {
 
     public void setToStorageIdName(String toStorageIdName) {
         this.toStorageIdName = toStorageIdName;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     @Override

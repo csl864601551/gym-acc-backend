@@ -35,6 +35,15 @@ public class StorageBack extends BaseEntity {
     public final static int STATUS_DELETE = 9;
 
     /**
+     * 退货类型-正常（经销商退企业）
+     */
+    public final static int BACK_TYPE_COMMON = 1;
+    /**
+     * 退货类型-调拨（经销商退经销商）
+     */
+    public final static int BACK_TYPE_TRANSFER = 2;
+
+    /**
      * 主键ID
      */
     private Long id;
@@ -127,6 +136,7 @@ public class StorageBack extends BaseEntity {
     private Long toStorageId;
 
     /*------------------------------ 冗余字段 ------------------------------*/
+    private String productName;
     /**
      * 货码【可能是该次退货对应的出库单号，也可能是箱码或单码】
      */
@@ -316,6 +326,14 @@ public class StorageBack extends BaseEntity {
 
     public void setCompanyForceFlag(Integer companyForceFlag) {
         this.companyForceFlag = companyForceFlag;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     @Override
