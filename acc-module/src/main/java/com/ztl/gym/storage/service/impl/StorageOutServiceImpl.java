@@ -170,12 +170,14 @@ public class StorageOutServiceImpl implements IStorageOutService {
         StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
         //判断是否调拨,执行更新调拨单
         String extraNo=storageOut.getExtraNo();
-        if(extraNo.substring(0,2).equals("DB")){
-            StorageTransfer storageTransfer=storageTransferService.selectStorageTransferByNo(extraNo);
-            storageTransfer.setStatus(StorageTransfer.STATUS_DEALING);
-            storageTransfer.setBatchNo(storageOut.getBatchNo());
-            storageTransfer.setActTransferNum(storageOut.getActOutNum());
-            storageTransferService.updateStorageTransfer(storageTransfer);
+        if(extraNo!=null) {//判断非空
+            if (extraNo.substring(0, 2).equals("DB")) {
+                StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(extraNo);
+                storageTransfer.setStatus(StorageTransfer.STATUS_DEALING);
+                storageTransfer.setBatchNo(storageOut.getBatchNo());
+                storageTransfer.setActTransferNum(storageOut.getActOutNum());
+                storageTransferService.updateStorageTransfer(storageTransfer);
+            }
         }
         //更新t_product_stock库存统计表
         productStockService.insertProductStock(storageOut.getFromStorageId(),storageOut.getProductId(),AccConstants.STORAGE_TYPE_OUT,storageOut.getId(),storageOut.getActOutNum().intValue());
