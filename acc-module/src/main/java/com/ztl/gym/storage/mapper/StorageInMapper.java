@@ -83,6 +83,8 @@ public interface StorageInMapper
 
     long selectOutIdByExtraNo(String extraNo);
 
+    long selectInIdByExtraNo(String extraNo);
+
     void updateInStatusByOut(StorageOut storageOut);
 
     List<Map<String, Object>> getCodeDetailById(@Param("companyId")Long companyId, @Param("id")Integer id);

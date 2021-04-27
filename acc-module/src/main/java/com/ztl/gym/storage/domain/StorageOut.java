@@ -55,7 +55,7 @@ public class StorageOut extends BaseEntity {
      * 状态
      */
     @Excel(name = "状态")
-    private int status;
+    private Integer status;
 
     /**
      * 出库单号
@@ -190,11 +190,11 @@ public class StorageOut extends BaseEntity {
     }
 
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

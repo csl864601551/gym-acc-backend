@@ -126,7 +126,9 @@
     <select id="selectOutIdByExtraNo" resultType="java.lang.Long">
         select id from t_storage_out where out_no=#{extraNo}
     </select>
-
+    <select id="selectInIdByExtraNo" resultType="java.lang.Long">
+        select id from t_storage_in where in_no=#{extraNo}
+    </select>
     <select id="getCodeDetailById" resultMap="map">
         select cf.code,p.product_no,p.product_name,si.batch_no,1 as num from t_product p
         left join t_storage_in si on si.product_id=p.id

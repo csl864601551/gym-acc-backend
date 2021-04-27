@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
@@ -40,6 +41,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
     private StorageInMapper storageInMapper;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private ICodeService codeService;
     @Autowired
     private IStorageService storageService;
     @Autowired
@@ -87,8 +90,13 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
         storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
+        int res=storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
 
-        return storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
+        long storageRecordId=storageInMapper.selectInIdByExtraNo(storageOut.getExtraNo());//最新入库单号
+        List<String> codes=codeService.selectCodeByStorage( storageOut.getCompanyId(),AccConstants.STORAGE_TYPE_IN,storageRecordId);
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, storageOut.getId(), codes.get(0));//插入物流码，原先在PDA执行
+
+        return res;
     }
 
     /**
@@ -147,7 +155,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
     public int updateOutStatusByCode(Map<String, Object> map) {
         map.put("updateTime", DateUtils.getNowDate());
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码
+        //storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
         //查询出库单需要的相关信息
         StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
@@ -175,6 +183,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         inMap.put("batchNo", storageOut.getBatchNo());
         inMap.put("inNum", storageOut.getOutNum());
         inMap.put("storageFrom", commonService.getTenantId());
+        inMap.put("code",map.get("code").toString());//新增插入物流码所需要的码信息
         return storageInService.insertStorageIn(inMap);//插入入库
     }
 

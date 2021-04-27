@@ -89,7 +89,7 @@ public class StorageInServiceImpl implements IStorageInService
         map.put("createUser",SecurityUtils.getLoginUser().getUser().getUserId());
         int result=storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
         Long id=Long.valueOf(map.get("id").toString());
-        //storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, id ,map.get("code").toString());//转移到PDA执行
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, id ,map.get("code").toString());//插入码流转明细，原先在PDA执行
 
         return result;
     }
@@ -160,8 +160,8 @@ public class StorageInServiceImpl implements IStorageInService
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
         int res = storageInMapper.updateInStatusByCode(map);//更新企业入库信息
         StorageIn storageIn=storageInMapper.selectStorageInById(Long.valueOf(map.get("id").toString()));//查询入库单信息
+        //storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//插入码流转明细，转移到PC执行
         String extraNo=storageIn.getExtraNo();//相关单号
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//插入码流转明细，转移到PDA执行
         if(extraNo!=null){//判断非空
             //判断是否调拨,执行更新调拨单
             if(extraNo.substring(0,2).equals("DB")){
@@ -196,15 +196,17 @@ public class StorageInServiceImpl implements IStorageInService
         String extraNo=storageIn.getExtraNo();//相关单号
         Long companyId=storageIn.getCompanyId();//顶级企业ID
 
-        long storageRecordId=storageInMapper.selectOutIdByExtraNo(extraNo);//最新入库单号
-        List<String> codes=codeService.selectCodeByStorage( companyId,AccConstants.STORAGE_TYPE_OUT,storageRecordId);
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,codes.get(0));//插入码流转明细，转移到PDA执行
-        //判断是否调拨,执行更新调拨单
-        if(extraNo.substring(0,2).equals("DB")){
-            StorageTransfer storageTransfer=storageTransferService.selectStorageTransferByNo(extraNo);
-            storageTransfer.setStatus(StorageTransfer.STATUS_FINISH);
-            storageTransfer.setToStorageId(storageIn.getToStorageId());
-            storageTransferService.updateStorageTransfer(storageTransfer);//更新调拨表
+        //long storageRecordId=storageInMapper.selectOutIdByExtraNo(extraNo);//最新入库单号
+        //List<String> codes=codeService.selectCodeByStorage( companyId,AccConstants.STORAGE_TYPE_OUT,storageRecordId);
+        //storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,codes.get(0));//插入码流转明细，转移到PC执行
+        if(extraNo!=null) {//判断非空
+            //判断是否调拨,执行更新调拨单
+            if (extraNo.substring(0, 2).equals("DB")) {
+                StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(extraNo);
+                storageTransfer.setStatus(StorageTransfer.STATUS_FINISH);
+                storageTransfer.setToStorageId(storageIn.getToStorageId());
+                storageTransferService.updateStorageTransfer(storageTransfer);//更新调拨表
+            }
         }
         //更新t_product_stock库存统计表
         productStockService.insertProductStock(storageIn.getToStorageId(),storageIn.getProductId(),AccConstants.STORAGE_TYPE_IN,storageIn.getId(),storageIn.getActInNum().intValue());
