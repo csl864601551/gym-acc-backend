@@ -119,7 +119,7 @@ public class StorageInController extends BaseController {
     }
     /**
      * updateTenantIn
-     * 经销商确认收货
+     * PC经销商确认收货
      */
     @Log(title = "经销商确认收货", businessType = BusinessType.UPDATE)
     @PutMapping(value = "/updateTenantIn")

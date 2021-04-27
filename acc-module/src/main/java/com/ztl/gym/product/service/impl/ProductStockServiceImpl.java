@@ -82,14 +82,14 @@ public class ProductStockServiceImpl implements IProductStockService {
     @Transactional(rollbackFor = Exception.class)
     public int insertProductStock(long storageId, long productId, int storageType, long storageRecordId, int flowNum) {
         long companyId = 0;
-        long tenantId = 0;
+        Long tenantId = null;
         int flowBefore = 0;
         int flowAfter = 0;
         int res = 0;
 
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
-            if(SecurityUtils.getLoginUserCompany().getDeptId() != companyId) {
+            if (SecurityUtils.getLoginUserCompany().getDeptId() != companyId) {
                 tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
             }
         }
@@ -103,6 +103,11 @@ public class ProductStockServiceImpl implements IProductStockService {
                 stockInfo = new ProductStock();
                 stockInfo.setCompanyId(companyId);
                 stockInfo.setTenantId(tenantId);
+                if (tenantId == null) {
+                    stockInfo.setStockLevel(AccConstants.STOCK_LEVEL_COMPANY);
+                } else {
+                    stockInfo.setStockLevel(AccConstants.STOCK_LEVEL_TENANT);
+                }
                 stockInfo.setStorageId(storageId);
                 stockInfo.setProductId(productId);
                 //该仓库新建该产品库存信息

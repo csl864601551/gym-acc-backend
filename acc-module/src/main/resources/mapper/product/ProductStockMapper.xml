@@ -88,7 +88,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
-            <if test="tenantId != null">#{tenant_id},</if>
+            <if test="tenantId != null">#{tenantId},</if>
             <if test="stockLevel != null">#{stockLevel},</if>
             <if test="storageId != null">#{storageId},</if>
             <if test="productId != null">#{productId},</if>

@@ -11,6 +11,7 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.mapper.StorageInMapper;
@@ -47,6 +48,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
     private ISysDeptService deptService;
     @Autowired
     private IStorageTransferService storageTransferService;
+    @Autowired
+    private IProductStockService productStockService;
 
     /**
      * 查询出库
@@ -174,6 +177,9 @@ public class StorageOutServiceImpl implements IStorageOutService {
             storageTransfer.setActTransferNum(storageOut.getActOutNum());
             storageTransferService.updateStorageTransfer(storageTransfer);
         }
+        //更新t_product_stock库存统计表
+        productStockService.insertProductStock(storageOut.getFromStorageId(),storageOut.getProductId(),AccConstants.STORAGE_TYPE_OUT,storageOut.getId(),storageOut.getActOutNum().intValue());
+
         //查询插入入库单需要的相关信息
         Map<String, Object> inMap = new HashMap<>();
         inMap.put("companyId", storageOut.getCompanyId());
