@@ -70,6 +70,13 @@ public interface StorageOutMapper {
      * @return 结果
      */
     public int deleteStorageOutByIds(Long[] ids);
+    /**
+     * 撤销出库
+     *
+     * @param id 需要撤销出库数据ID
+     * @return 结果
+     */
+    public int backStorageOutById(@Param("id")Long id,@Param("status")int status);
 
     int updateOutStatusByCode(Map<String, Object> map);
 

@@ -59,6 +59,13 @@ public interface IStorageOutService {
      * @return 结果
      */
     public int deleteStorageOutByIds(Long[] ids);
+    /**
+     * 撤销出库
+     *
+     * @param id 需要撤销出库ID
+     * @return 结果
+     */
+    public int backStorageOutById(Long id,int status);
 
     /**
      * 删除出库信息

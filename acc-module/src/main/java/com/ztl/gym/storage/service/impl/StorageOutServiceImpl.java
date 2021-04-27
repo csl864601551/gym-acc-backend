@@ -127,6 +127,16 @@ public class StorageOutServiceImpl implements IStorageOutService {
     public int deleteStorageOutByIds(Long[] ids) {
         return storageOutMapper.deleteStorageOutByIds(ids);
     }
+    /**
+     * 撤销出库
+     *
+     * @param id 需要删除的出库ID
+     * @return 结果
+     */
+    @Override
+    public int backStorageOutById(Long id,int status) {
+        return storageOutMapper.backStorageOutById(id,status);
+    }
 
     /**
      * 删除出库信息
@@ -153,8 +163,18 @@ public class StorageOutServiceImpl implements IStorageOutService {
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
+        //查询出库单需要的相关信息
+        StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
+        //判断是否调拨,执行更新调拨单
+        String extraNo=storageOut.getExtraNo();
+        if(extraNo.substring(0,2).equals("DB")){
+            StorageTransfer storageTransfer=storageTransferService.selectStorageTransferByNo(extraNo);
+            storageTransfer.setStatus(StorageTransfer.STATUS_DEALING);
+            storageTransfer.setBatchNo(storageOut.getBatchNo());
+            storageTransfer.setActTransferNum(storageOut.getActOutNum());
+            storageTransferService.updateStorageTransfer(storageTransfer);
+        }
         //查询插入入库单需要的相关信息
-        StorageOut storageOut = storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
         Map<String, Object> inMap = new HashMap<>();
         inMap.put("companyId", storageOut.getCompanyId());
         inMap.put("tenantId", storageOut.getStorageTo());

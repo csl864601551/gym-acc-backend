@@ -11,8 +11,10 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.domain.vo.StorageVo;
 import com.ztl.gym.storage.service.IStorageService;
+import com.ztl.gym.storage.service.IStorageTransferService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ public class StorageInServiceImpl implements IStorageInService
     private ICodeService codeService;
     @Autowired
     private ISysDeptService deptService;
+    @Autowired
+    private IStorageTransferService storageTransferService;
     /**
      * 查询入库
      *
@@ -79,7 +83,6 @@ public class StorageInServiceImpl implements IStorageInService
             map.put("tenantId",commonService.getTenantId());
         }
         map.put("createTime",DateUtils.getNowDate());
-        map.put("inTime",DateUtils.getNowDate());
         map.put("createUser",SecurityUtils.getLoginUser().getUser().getUserId());
         int result=storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
         Long id=Long.valueOf(map.get("id").toString());
@@ -149,6 +152,7 @@ public class StorageInServiceImpl implements IStorageInService
     @DataSource(DataSourceType.SHARDING)
     public int updateInStatusByCode(Map<String, Object> map) {
         map.put("status",StorageIn.STATUS_NORMAL);
+        map.put("inTime",DateUtils.getNowDate());
         map.put("updateTime",DateUtils.getNowDate());
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//转移到PDA执行
@@ -165,12 +169,25 @@ public class StorageInServiceImpl implements IStorageInService
     @DataSource(DataSourceType.SHARDING)
     public int updateTenantIn(Map<String, Object> map) {
         map.put("status",StorageIn.STATUS_NORMAL);
+        map.put("inTime",DateUtils.getNowDate());
         map.put("updateTime",DateUtils.getNowDate());
         map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
-        long storageRecordId=storageInMapper.selectOutIdByExtraNo(map.get("extraNo").toString());
-        List<String> codes=codeService.selectCodeByStorage(Long.valueOf(map.get("companyId").toString()) ,AccConstants.STORAGE_TYPE_OUT,storageRecordId);
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()) ,codes.get(0));//转移到PDA执行
-        return storageInMapper.updateTenantIn(map);
+        int res=storageInMapper.updateTenantIn(map);//更新入库表
+        StorageIn storageIn=storageInMapper.selectStorageInById(Long.valueOf(map.get("id").toString()));//查询入库单信息
+        String extraNo=storageIn.getExtraNo();//相关单号
+        Long companyId=storageIn.getCompanyId();//顶级企业ID
+
+        long storageRecordId=storageInMapper.selectOutIdByExtraNo(extraNo);//最新入库单号
+        List<String> codes=codeService.selectCodeByStorage( companyId,AccConstants.STORAGE_TYPE_OUT,storageRecordId);
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, companyId ,codes.get(0));//插入码流转明细，转移到PDA执行
+        //判断是否调拨,执行更新调拨单
+        if(extraNo.substring(0,2).equals("DB")){
+            StorageTransfer storageTransfer=storageTransferService.selectStorageTransferByNo(extraNo);
+            storageTransfer.setStatus(StorageTransfer.STATUS_FINISH);
+            storageTransfer.setToStorageId(storageIn.getToStorageId());
+            storageTransferService.updateStorageTransfer(storageTransfer);//更新调拨表
+        }
+        return res;
     }
 
     @Override

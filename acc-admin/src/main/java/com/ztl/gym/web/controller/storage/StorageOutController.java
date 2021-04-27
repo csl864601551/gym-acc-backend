@@ -104,6 +104,17 @@ public class StorageOutController extends BaseController
     }
 
     /**
+     * 撤销出库
+     */
+    @PreAuthorize("@ss.hasPermi('storage:out:remove')")
+    @Log(title = "出库", businessType = BusinessType.DELETE)
+    @DeleteMapping("/back/{id}")
+    public AjaxResult back(@PathVariable Long id)
+    {
+        return toAjax(storageOutService.backStorageOutById(id,StorageOut.STATUS_CANCEL));
+    }
+
+    /**
      * updateInStatusByCode
      */
     /**
