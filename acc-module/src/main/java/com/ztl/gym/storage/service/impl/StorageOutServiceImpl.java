@@ -73,22 +73,6 @@ public class StorageOutServiceImpl implements IStorageOutService {
         return storageOutMapper.selectStorageOutList(storageOut);
     }
 
-    /**
-     * 新增出库
-     *
-     * @param map 出库
-     * @return 结果
-     */
-    @Override
-    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
-    public int insertStorageOut(Map<String, Object> map) {
-        map.put("tenantId", commonService.getTenantId());
-        map.put("createTime", (DateUtils.getNowDate()));
-        map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
-
-        //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
-        return storageOutMapper.insertStorageOut(map);//插入t_storage_out出库表
-    }
 
     /**
      * 新增出库
@@ -98,14 +82,13 @@ public class StorageOutServiceImpl implements IStorageOutService {
      */
     @Override
     public int insertStorageOut(StorageOut storageOut) {
+        storageOut.setStatus(StorageOut.STATUS_WAIT);
+        storageOut.setTenantId(commonService.getTenantId());
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
-        storageOut.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
-        storageOut.setUpdateTime(new Date());
         storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
-        //storageInMapper.updateProductStock(map);//TODO 更新t_product_stock库存统计表
 
-        return storageOutMapper.insertStorageOutV2(storageOut);//插入t_storage_out出库表
+        return storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
     }
 
     /**
@@ -223,7 +206,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setStorageTo(storageTransfer.getStorageTo());
         storageOut.setFromStorageId(storageTransfer.getFromStorageId());
         storageOut.setRemark("调拨出库，调拨单号：" + storageTransfer.getTransferNo());
-        return storageOutMapper.insertStorageOutV2(storageOut);
+        return storageOutMapper.insertStorageOut(storageOut);
     }
 
     /**

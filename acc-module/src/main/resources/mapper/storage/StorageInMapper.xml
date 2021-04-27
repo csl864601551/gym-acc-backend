@@ -72,7 +72,7 @@
             <if test="toStorageId != null "> and si.to_storage_id = #{toStorageId}</if>
             <if test="inTime != null "> and si.in_time = #{inTime}</if>
         </where>
-        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and si.tenant_id ')}
+        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and si.tenant_id ')}
         order by create_time
 
     </select>

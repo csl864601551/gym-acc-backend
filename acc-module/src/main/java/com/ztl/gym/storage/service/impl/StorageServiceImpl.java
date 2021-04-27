@@ -364,6 +364,8 @@ public class StorageServiceImpl implements IStorageService {
     }
 
     /**
+     * 查询自己和所有下级经销商
+     *  ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and tenant_id ')}
      * 查询权限控制，关联到mapper.xml
      * @param sql
      * @return
@@ -371,6 +373,18 @@ public class StorageServiceImpl implements IStorageService {
     public static String getAllChildId(String sql) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         String concat = sql.concat("in ( select ").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(" union select dept_id from sys_dept where status = 0 and del_flag = '0' and dept_type=2 and find_in_set(").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(", ancestors))");
+        return concat;
+    }
+    /**
+     * 查询自己
+     *  ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and tenant_id ')}
+     * 查询权限控制，关联到mapper.xml
+     * @param sql
+     * @return
+     */
+    public static String getMyTenantId(String sql) {
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        String concat = sql.concat("in (").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(")");
         return concat;
     }
 

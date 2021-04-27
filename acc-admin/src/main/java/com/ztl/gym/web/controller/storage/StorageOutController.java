@@ -76,7 +76,7 @@ public class StorageOutController extends BaseController
     @PreAuthorize("@ss.hasPermi('storage:out:add')")
     @Log(title = "出库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Map<String, Object> storageOut)
+    public AjaxResult add(@RequestBody StorageOut storageOut)
     {
         return toAjax(storageOutService.insertStorageOut(storageOut));
     }
