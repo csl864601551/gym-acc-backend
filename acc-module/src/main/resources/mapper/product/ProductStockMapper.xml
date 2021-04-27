@@ -8,6 +8,7 @@
         <result property="id" column="id"/>
         <result property="companyId" column="company_id"/>
         <result property="tenantId" column="tenant_id"/>
+        <result property="stockLevel" column="stock_level"/>
         <result property="storageId" column="storage_id"/>
         <result property="productId" column="product_id"/>
         <result property="inNum" column="in_num"/>
@@ -26,6 +27,7 @@
         select s.id,
         s.company_id,
         s.tenant_id,
+        s.stock_level,
         s.storage_id,
         s.product_id,
         s.in_num,
@@ -56,6 +58,7 @@
         <where>
             <if test="companyId != null and companyId != 0 ">and s.company_id = #{companyId}</if>
             <if test="tenantId != null  and tenantId != 0 ">and s.tenant_id = #{tenantId}</if>
+            <if test="stockLevel != null and stockLevel != 0 ">and s.stock_level = #{stockLevel}</if>
             <if test="storageId != null ">and s.storage_id = #{storageId}</if>
             <if test="productId != null ">and s.product_id = #{productId}</if>
             <if test="productNo != null ">and p.product_no like CONCAT('%',#{productNo},'%')</if>
@@ -73,6 +76,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
+            <if test="stockLevel != null">stock_level,</if>
             <if test="storageId != null">storage_id,</if>
             <if test="productId != null">product_id,</if>
             <if test="inNum != null">in_num,</if>
@@ -85,6 +89,7 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenant_id},</if>
+            <if test="stockLevel != null">#{stockLevel},</if>
             <if test="storageId != null">#{storageId},</if>
             <if test="productId != null">#{productId},</if>
             <if test="inNum != null">#{inNum},</if>
@@ -101,6 +106,7 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="stockLevel != null">stock_level = #{stockLevel},</if>
             <if test="storageId != null">storage_id = #{storageId},</if>
             <if test="productId != null">product_id = #{productId},</if>
             <if test="inNum != null">in_num = #{inNum},</if>

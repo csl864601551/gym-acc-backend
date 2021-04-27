@@ -31,6 +31,11 @@ public class ProductStock extends BaseEntity {
     private Long tenantId;
 
     /**
+     * 产品库存类型 【见AccConstants常量】
+     */
+    private int stockLevel;
+
+    /**
      * 仓库id
      */
     @Excel(name = "仓库id")
@@ -200,6 +205,14 @@ public class ProductStock extends BaseEntity {
 
     public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public int getStockLevel() {
+        return stockLevel;
+    }
+
+    public void setStockLevel(int stockLevel) {
+        this.stockLevel = stockLevel;
     }
 
     @Override

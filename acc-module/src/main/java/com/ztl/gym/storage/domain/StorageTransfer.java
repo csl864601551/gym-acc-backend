@@ -37,6 +37,16 @@ public class StorageTransfer extends BaseEntity {
      */
     public final static int STATUS_DELETE = 9;
 
+
+    /**
+     * 是否启用-否
+     */
+    public final static int ENABLE_NO = 0;
+    /**
+     * 是否启用-是
+     */
+    public final static int ENABLE_YES = 1;
+
     /**
      * 主键ID
      */
@@ -55,10 +65,20 @@ public class StorageTransfer extends BaseEntity {
     private Long tenantId;
 
     /**
+     * 产品库存id
+     */
+    private Long stockId;
+
+    /**
      * 状态
      */
     @Excel(name = "状态")
     private Integer status;
+
+    /**
+     * 是否启用
+     */
+    private Integer enable;
 
     /**
      * 调拨单号
@@ -120,6 +140,21 @@ public class StorageTransfer extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date outTime;
+
+
+    /*------------------------ 冗余字段 ------------------------*/
+    /**
+     * 产品名称
+     */
+    private String productName;
+    /**
+     * 调出单位
+     */
+    private String storageFromName;
+    /**
+     * 调入单位
+     */
+    private String storageToName;
 
     public void setId(Long id) {
         this.id = id;
@@ -231,6 +266,46 @@ public class StorageTransfer extends BaseEntity {
 
     public Date getOutTime() {
         return outTime;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getStorageFromName() {
+        return storageFromName;
+    }
+
+    public void setStorageFromName(String storageFromName) {
+        this.storageFromName = storageFromName;
+    }
+
+    public String getStorageToName() {
+        return storageToName;
+    }
+
+    public void setStorageToName(String storageToName) {
+        this.storageToName = storageToName;
+    }
+
+    public Long getStockId() {
+        return stockId;
+    }
+
+    public void setStockId(Long stockId) {
+        this.stockId = stockId;
+    }
+
+    public Integer getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Integer enable) {
+        this.enable = enable;
     }
 
     @Override

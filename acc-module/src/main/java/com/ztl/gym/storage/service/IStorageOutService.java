@@ -70,5 +70,21 @@ public interface IStorageOutService {
 
     int updateOutStatusByCode(Map<String, Object> map);
 
-    List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id);
+    List<Map<String, Object>> getCodeDetailById(Long companyId, Integer id);
+
+    /**
+     * 根据调拨单新增一条出库单
+     *
+     * @param transferId
+     * @return
+     */
+    int insertByTransfer(long transferId);
+
+    /**
+     * 根据调拨单删除对应的出库单
+     *
+     * @param transferId
+     * @return
+     */
+    int deleteByTransfer(long transferId);
 }

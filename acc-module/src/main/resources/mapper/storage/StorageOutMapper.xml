@@ -217,6 +217,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update t_storage_out set status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_DELETE} where id = #{id}
     </delete>
 
+    <delete id="deleteByTransfer" parameterType="String">
+        delete from  t_storage_out  where extra_no = #{value}
+    </delete>
+
     <delete id="deleteStorageOutByIds" parameterType="String">
         update t_storage_out set status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_DELETE} where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">

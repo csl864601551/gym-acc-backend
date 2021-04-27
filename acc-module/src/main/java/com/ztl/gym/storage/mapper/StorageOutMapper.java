@@ -73,5 +73,13 @@ public interface StorageOutMapper {
 
     int updateOutStatusByCode(Map<String, Object> map);
 
-    List<Map<String, Object>> getCodeDetailById(@Param("companyId")Long companyId, @Param("id")Integer id);
+    List<Map<String, Object>> getCodeDetailById(@Param("companyId") Long companyId, @Param("id") Integer id);
+
+    /**
+     * 根据调拨单号删除出库单
+     *
+     * @param transferNo
+     * @return
+     */
+    int deleteByTransfer(String transferNo);
 }

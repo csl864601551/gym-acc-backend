@@ -12,9 +12,11 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageService;
+import com.ztl.gym.storage.service.IStorageTransferService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,19 +35,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class StorageOutServiceImpl implements IStorageOutService {
     @Autowired
     private StorageOutMapper storageOutMapper;
-
     @Autowired
     private StorageInMapper storageInMapper;
     @Autowired
     private CommonService commonService;
-
     @Autowired
     private IStorageService storageService;
     @Autowired
     private IStorageInService storageInService;
     @Autowired
     private ISysDeptService deptService;
-
+    @Autowired
+    private IStorageTransferService storageTransferService;
 
     /**
      * 查询出库
@@ -140,6 +141,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
 
     /**
      * PDA出库动作
+     *
      * @param map
      * @return
      */
@@ -147,28 +149,64 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int updateOutStatusByCode(Map<String, Object> map) {
-        map.put("updateTime",DateUtils.getNowDate());
-        map.put("updateUser",SecurityUtils.getLoginUser().getUser().getUserId());
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()) ,map.get("code").toString());//插入物流码
+        map.put("updateTime", DateUtils.getNowDate());
+        map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
         //查询插入入库单需要的相关信息
-        StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
-        Map<String,Object> inMap= new HashMap<>();
-        inMap.put("companyId",storageOut.getCompanyId());
-        inMap.put("tenantId",storageOut.getStorageTo());
-        inMap.put("extraNo",storageOut.getOutNo());
-        inMap.put("inNo",commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));
-        inMap.put("productId",storageOut.getProductId());
-        inMap.put("batchNo",storageOut.getBatchNo());
-        inMap.put("inNum",storageOut.getOutNum());
-        inMap.put("storageFrom",commonService.getTenantId());
+        StorageOut storageOut = storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
+        Map<String, Object> inMap = new HashMap<>();
+        inMap.put("companyId", storageOut.getCompanyId());
+        inMap.put("tenantId", storageOut.getStorageTo());
+        inMap.put("extraNo", storageOut.getOutNo());
+        inMap.put("inNo", commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));
+        inMap.put("productId", storageOut.getProductId());
+        inMap.put("batchNo", storageOut.getBatchNo());
+        inMap.put("inNum", storageOut.getOutNum());
+        inMap.put("storageFrom", commonService.getTenantId());
         return storageInService.insertStorageIn(inMap);//插入入库
     }
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id) {
-        List<Map<String,Object>> list=storageOutMapper.getCodeDetailById(companyId,id);
+    public List<Map<String, Object>> getCodeDetailById(Long companyId, Integer id) {
+        List<Map<String, Object>> list = storageOutMapper.getCodeDetailById(companyId, id);
         return list;
+    }
+
+    /**
+     * 根据调拨单新增一条出库单
+     *
+     * @param transferId
+     * @return
+     */
+    @Override
+    public int insertByTransfer(long transferId) {
+        StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(transferId);
+        StorageOut storageOut = new StorageOut();
+        storageOut.setCompanyId(storageTransfer.getCompanyId());
+        storageOut.setTenantId(storageTransfer.getStorageFrom());
+        storageOut.setStatus(StorageOut.STATUS_WAIT);
+        storageOut.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));
+        storageOut.setExtraNo(storageTransfer.getTransferNo());
+        storageOut.setProductId(storageTransfer.getProductId());
+        storageOut.setOutNum(storageTransfer.getTransferNum());
+        storageOut.setStorageFrom(storageTransfer.getStorageFrom());
+        storageOut.setStorageTo(storageTransfer.getStorageTo());
+        storageOut.setFromStorageId(storageTransfer.getFromStorageId());
+        storageOut.setRemark("调拨出库，调拨单号：" + storageTransfer.getTransferNo());
+        return storageOutMapper.insertStorageOutV2(storageOut);
+    }
+
+    /**
+     * 根据调拨单删除对应的出库单
+     *
+     * @param transferId
+     * @return
+     */
+    @Override
+    public int deleteByTransfer(long transferId) {
+        StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(transferId);
+        return storageOutMapper.deleteByTransfer(storageTransfer.getTransferNo());
     }
 }

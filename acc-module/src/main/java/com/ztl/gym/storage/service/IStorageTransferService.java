@@ -12,7 +12,7 @@ import com.ztl.gym.storage.domain.StorageTransfer;
  */
 public interface IStorageTransferService {
     /**
-     * 查询调货
+     * 查询调拨单
      *
      * @param id 调货ID
      * @return 调货
@@ -66,4 +66,13 @@ public interface IStorageTransferService {
      * @return
      */
     StorageTransfer selectStorageTransferByNo(String transferNo);
+
+    /**
+     * 启用/禁用 调拨单 【只有状态为待发货的调拨单才可以进行此可操作】
+     *
+     * @param transferId 调拨单id
+     * @param enable     启用状态
+     * @return
+     */
+    int updateEnable(long transferId, int enable);
 }

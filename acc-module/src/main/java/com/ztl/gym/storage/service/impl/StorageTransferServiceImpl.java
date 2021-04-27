@@ -1,13 +1,19 @@
 package com.ztl.gym.storage.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.service.IStorageOutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.StorageTransferMapper;
 import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.service.IStorageTransferService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 调货Service业务层处理
@@ -19,6 +25,8 @@ import com.ztl.gym.storage.service.IStorageTransferService;
 public class StorageTransferServiceImpl implements IStorageTransferService {
     @Autowired
     private StorageTransferMapper storageTransferMapper;
+    @Autowired
+    private IStorageOutService storageOutService;
 
     /**
      * 查询调货
@@ -61,6 +69,10 @@ public class StorageTransferServiceImpl implements IStorageTransferService {
      */
     @Override
     public int insertStorageTransfer(StorageTransfer storageTransfer) {
+        storageTransfer.setStatus(StorageTransfer.STATUS_WAIT);
+        storageTransfer.setEnable(StorageTransfer.ENABLE_NO);
+        storageTransfer.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        storageTransfer.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageTransfer.setCreateTime(DateUtils.getNowDate());
         return storageTransferMapper.insertStorageTransfer(storageTransfer);
     }
@@ -97,5 +109,37 @@ public class StorageTransferServiceImpl implements IStorageTransferService {
     @Override
     public int deleteStorageTransferById(Long id) {
         return storageTransferMapper.deleteStorageTransferById(id);
+    }
+
+    /**
+     * 启用/禁用 调拨单 【只有状态为待发货的调拨单才可以进行此可操作， 如果】
+     *
+     * @param transferId 调拨单id
+     * @param enable     启用状态
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateEnable(long transferId, int enable) {
+        int res = 0;
+        StorageTransfer storageTransfer = storageTransferMapper.selectStorageTransferById(transferId);
+        if (storageTransfer.getStatus() == StorageTransfer.STATUS_WAIT) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", transferId);
+            params.put("enable", enable);
+            res = storageTransferMapper.updateEnable(params);
+
+            if (enable == StorageTransfer.ENABLE_YES) {
+                //启用时对应经销商新增一条对应调拨单的出库单
+                storageOutService.insertByTransfer(transferId);
+            } else {
+                //禁用时对应经销商删除对应调拨单的出库单
+                storageOutService.deleteByTransfer(transferId);
+            }
+        } else {
+            throw new CustomException("只有状态为待发货的调拨单才可进行此操作");
+        }
+
+        return res;
     }
 }

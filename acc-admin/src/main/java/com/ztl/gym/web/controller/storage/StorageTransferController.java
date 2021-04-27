@@ -110,4 +110,14 @@ public class StorageTransferController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(storageTransferService.deleteStorageTransferByIds(ids));
     }
+
+    /**
+     * 启用/禁用调货 【启用时新建一条出库单，禁用时删除对应的出库单】
+     */
+    @PreAuthorize("@ss.hasPermi('storage:transfer:enable')")
+    @Log(title = "调货", businessType = BusinessType.DELETE)
+    @GetMapping("/updateEnable")
+    public AjaxResult updateEnable(long transferId, int enable) {
+        return toAjax(storageTransferService.updateEnable(transferId, enable));
+    }
 }

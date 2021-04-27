@@ -142,8 +142,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         //TODO 出异常自增数bug,异步生码上一个事物未提交，导致生码时主键重复
         //TODO insertProvider形式修改
         //TODO 企业经销商区域设置
-        //TODO 批量插入
         //TODO 数据源切换效率
+        //TODO 企业经销商列表新增查看库存页面
+
 
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);

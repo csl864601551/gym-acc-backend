@@ -1,61 +1,93 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageTransferMapper">
 
     <resultMap type="StorageTransfer" id="StorageTransferResult">
-        <result property="id"    column="id"    />
-        <result property="companyId"    column="company_id"    />
-        <result property="tenantId"    column="tenant_id"    />
-        <result property="status"    column="status"    />
-        <result property="transferNo"    column="transfer_no"    />
-        <result property="productId"    column="product_id"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="transferNum"    column="transfer_num"    />
-        <result property="actTransferNum"    column="act_transfer_num"    />
-        <result property="storageFrom"    column="storage_from"    />
-        <result property="storageTo"    column="storage_to"    />
-        <result property="fromStorageId"    column="from_storage_id"    />
-        <result property="toStorageId"    column="to_storage_id"    />
-        <result property="remark"    column="remark"    />
-        <result property="createUser"    column="create_user"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateUser"    column="update_user"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="stockId" column="stock_id"/>
+        <result property="status" column="status"/>
+        <result property="enable" column="enable"/>
+        <result property="transferNo" column="transfer_no"/>
+        <result property="productId" column="product_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="transferNum" column="transfer_num"/>
+        <result property="actTransferNum" column="act_transfer_num"/>
+        <result property="storageFrom" column="storage_from"/>
+        <result property="storageTo" column="storage_to"/>
+        <result property="fromStorageId" column="from_storage_id"/>
+        <result property="toStorageId" column="to_storage_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="productName" column="product_name"/>
+        <result property="storageFromName" column="storage_from_name"/>
+        <result property="storageToName" column="storage_to_name"/>
     </resultMap>
 
     <sql id="selectStorageTransferVo">
-        select id, company_id, tenant_id, status, transfer_no, product_id, batch_no, transfer_num, act_transfer_num, storage_from, storage_to, from_storage_id, to_storage_id, remark, create_user, create_time, update_user, update_time from t_storage_transfer
+        select st.id,
+        st.company_id,
+        st.tenant_id,
+        st.stock_id,
+        st.status,
+        st.enable,
+        st.transfer_no,
+        st.product_id,
+        st.batch_no,
+        st.transfer_num,
+        st.act_transfer_num,
+        st.storage_from,
+        st.storage_to,
+        st.from_storage_id,
+        st.to_storage_id,
+        st.remark,
+        st.create_user,
+        st.create_time,
+        st.update_user,
+        st.update_time,
+        p.product_name,
+        d1.dept_name as storage_from_name,
+        d2.dept_name as storage_to_name
+        from t_storage_transfer st
+        left join t_product p  on st.product_id = p.id
+        left join sys_dept d1  on st.storage_from = d1.dept_id
+        left join sys_dept d2  on st.storage_to = d2.dept_id
     </sql>
 
     <select id="selectStorageTransferList" parameterType="StorageTransfer" resultMap="StorageTransferResult">
         <include refid="selectStorageTransferVo"/>
         <where>
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="transferNo != null  and transferNo != ''"> and transfer_no = #{transferNo}</if>
-            <if test="productId != null "> and product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and batch_no = #{batchNo}</if>
-            <if test="transferNum != null "> and transfer_num = #{transferNum}</if>
-            <if test="actTransferNum != null "> and act_transfer_num = #{actTransferNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''"> and storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''"> and storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null "> and from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null "> and to_storage_id = #{toStorageId}</if>
-            <if test="outTime != null "> and out_time = #{outTime}</if>
+            st.status != 9
+            <if test="companyId != null ">and st.company_id = #{companyId}</if>
+            <if test="tenantId != null ">and st.tenant_id = #{tenantId}</if>
+            <if test="status != null ">and st.status = #{status}</if>
+            <if test="transferNo != null  and transferNo != ''">and st.transfer_no = #{transferNo}</if>
+            <if test="productId != null ">and st.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''">and st.batch_no = #{batchNo}</if>
+            <if test="transferNum != null ">and st.transfer_num = #{transferNum}</if>
+            <if test="actTransferNum != null ">and st.act_transfer_num = #{actTransferNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''">and st.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''">and st.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null ">and st.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null ">and st.to_storage_id = #{toStorageId}</if>
+            <if test="outTime != null ">and st.out_time = #{outTime}</if>
         </where>
     </select>
 
     <select id="selectStorageTransferById" parameterType="Long" resultMap="StorageTransferResult">
         <include refid="selectStorageTransferVo"/>
-        where id = #{id}
+        where st.id = #{id}
     </select>
 
     <select id="selectStorageTransferByNo" parameterType="String" resultMap="StorageTransferResult">
         <include refid="selectStorageTransferVo"/>
-        where transfer_no = #{value}
+        where st.transfer_no = #{value}
     </select>
 
     <insert id="insertStorageTransfer" parameterType="StorageTransfer" useGeneratedKeys="true" keyProperty="id">
@@ -63,7 +95,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
+            <if test="stockId != null">stock_id,</if>
             <if test="status != null">status,</if>
+            <if test="enable != null">enable,</if>
             <if test="transferNo != null">transfer_no,</if>
             <if test="productId != null">product_id,</if>
             <if test="batchNo != null">batch_no,</if>
@@ -78,11 +112,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
+            <if test="stockId != null">#{stockId},</if>
             <if test="status != null">#{status},</if>
+            <if test="enable != null">#{enable},</if>
             <if test="transferNo != null">#{transferNo},</if>
             <if test="productId != null">#{productId},</if>
             <if test="batchNo != null">#{batchNo},</if>
@@ -97,7 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateStorageTransfer" parameterType="StorageTransfer">
@@ -105,6 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="stockId != null">stock_id = #{stockId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="transferNo != null">transfer_no = #{transferNo},</if>
             <if test="productId != null">product_id = #{productId},</if>
@@ -124,9 +161,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteStorageTransferById" parameterType="Long">
-        delete from t_storage_transfer where id = #{id}
-    </delete>
+    <update id="deleteStorageTransferById" parameterType="Long">
+        update t_storage_transfer set status = 9   where id = #{id}
+    </update>
+
+    <update id="updateEnable" parameterType="Map">
+         update t_storage_transfer set enable = #{enable}   where id = #{id}
+    </update>
 
     <delete id="deleteStorageTransferByIds" parameterType="String">
         delete from t_storage_transfer where id in
