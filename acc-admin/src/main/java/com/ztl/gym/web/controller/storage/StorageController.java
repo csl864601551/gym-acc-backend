@@ -142,7 +142,7 @@ public class StorageController extends BaseController {
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
         }
-        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, AccConstants.STORAGE_TYPE_IN, code)) {
+        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, code)) {
 
             return AjaxResult.success(storageService.selectLastStorageByCode(code));
         }
