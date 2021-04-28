@@ -87,6 +87,8 @@ public class StorageInServiceImpl implements IStorageInService {
         if (map.get("tenantId").toString().equals("") || map.get("tenantId") == null || map.get("tenantId").toString().equals("0")) {
             map.put("tenantId", commonService.getTenantId());
         }
+        map.put("inType", StorageIn.IN_TYPE_COMMON);
+        map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
         map.put("createTime", DateUtils.getNowDate());
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
         int result = storageInMapper.insertStorageIn(map);//新增t_storage_in入库表

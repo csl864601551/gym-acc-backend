@@ -145,7 +145,6 @@ public class CommonServiceImpl implements CommonService {
 
         //查询当前用户信息
         SysUser currentUser = SecurityUtils.getLoginUser().getUser();
-        long currentUserId = currentUser.getUserId();
         long currentUserDeptId = currentUser.getDeptId();
 
         //查询码
@@ -194,7 +193,7 @@ public class CommonServiceImpl implements CommonService {
                         throw new CustomException("该码当前出库数据异常", HttpStatus.ERROR);
                     } else {
                         //判断出货的接收人是否是当前用户
-                        if (storageOut.getStorageTo() != currentUserId) {
+                        if (storageOut.getStorageTo() != currentUserDeptId) {
                             throw new CustomException("该码当前出库接收人与当前登录用户不一致", HttpStatus.ERROR);
                         }
                     }

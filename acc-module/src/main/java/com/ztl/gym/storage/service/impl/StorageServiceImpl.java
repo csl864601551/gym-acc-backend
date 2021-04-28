@@ -334,7 +334,7 @@ public class StorageServiceImpl implements IStorageService {
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(codeRes.getCodeAttrId());
             //入库或退货入库时需更新码所属企业/经销商
-            if (storageType == AccConstants.STORAGE_TYPE_IN || storageType == AccConstants.STORAGE_TYPE_BACK) {
+            if (storageType == AccConstants.STORAGE_TYPE_IN) {
                 codeAttr.setTenantId(commonService.getTenantId());
             }
             codeAttr.setStorageType(storageType);

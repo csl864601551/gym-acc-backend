@@ -126,6 +126,9 @@ public class StorageBackController extends BaseController {
         Code codeRes = codeService.selectCode(codeEntity);
 
         //根据上一次流转信息获取产品物流数据
+        if (codeRes.getCodeAttr().getStorageType() == null) {
+            throw new CustomException("该货码尚未开始流转！");
+        }
         if (codeRes.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
             storageBack.setTenantId(codeRes.getCodeAttr().getTenantId());
             storageBack.setStorageFrom(codeRes.getCodeAttr().getTenantId());

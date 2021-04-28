@@ -168,6 +168,7 @@
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="status != null">status,</if>
+            <if test="inType != null">in_type,</if>
             <if test="inNo != null">in_no,</if>
             <if test="extraNo != null">extra_no,</if>
             <if test="productId != null">product_id,</if>
@@ -189,6 +190,7 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="status != null">#{status},</if>
+            <if test="inType != null">#{inType},</if>
             <if test="inNo != null">#{inNo},</if>
             <if test="extraNo != null">#{extraNo},</if>
             <if test="productId != null">#{productId},</if>
@@ -213,6 +215,7 @@
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="status != null">status,</if>
+            <if test="inType != null">in_type,</if>
             <if test="inNo != null">in_no,</if>
             <if test="extraNo != null">extra_no,</if>
             <if test="productId != null">product_id,</if>
@@ -234,6 +237,7 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="status != null">#{status},</if>
+            <if test="inType != null">#{inType},</if>
             <if test="inNo != null">#{inNo},</if>
             <if test="extraNo != null">#{extraNo},</if>
             <if test="productId != null">#{productId},</if>
