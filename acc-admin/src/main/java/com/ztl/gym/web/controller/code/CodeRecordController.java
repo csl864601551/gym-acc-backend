@@ -279,6 +279,7 @@ public class CodeRecordController extends BaseController {
         CodeAttr attrParam = new CodeAttr();
         attrParam.setId(codeAttr.getId());
         attrParam.setProductId(product.getId());
+        attrParam.setProductName(product.getProductName());
         attrParam.setProductNo(product.getProductNo());
         attrParam.setBarCode(product.getBarCode());
         ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());

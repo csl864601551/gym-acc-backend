@@ -1,5 +1,6 @@
 package com.ztl.gym.common.service;
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 
 import java.util.List;
@@ -65,4 +66,14 @@ public interface CommonService {
      * @return
      */
     boolean judgeStorageIsIllegalByValue(long companyId, Integer storageType, String queryValue);
+
+    /**
+     * 根据流转信息查询码集合
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    List<Code> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
 }

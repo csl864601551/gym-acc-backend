@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import com.ztl.gym.storage.domain.vo.ProductBackVo;
@@ -38,6 +39,15 @@ public class StorageBack extends BaseEntity {
     public final static int STATUS_DELETE = 9;
 
     /**
+     * 退货类型-普通退货
+     */
+    public final static int BACK_TYPE_NORMAL = 0;
+    /**
+     * 退货类型-调拨退货
+     */
+    public final static int BACK_TYPE_TRANSFER = 1;
+
+    /**
      * 主键ID
      */
     private Long id;
@@ -58,11 +68,6 @@ public class StorageBack extends BaseEntity {
      * 退货类型
      */
     private Integer backType;
-
-    /**
-     * 是否是企业绕过经销商退货
-     */
-    private Integer companyForceFlag;
 
     /**
      * 状态
@@ -159,6 +164,10 @@ public class StorageBack extends BaseEntity {
      */
     private String storageFromName;
     /**
+     * 收货单位名称
+     */
+    private String storageToName;
+    /**
      * 货码 【码或者调拨单号】
      */
     private String value;
@@ -166,6 +175,10 @@ public class StorageBack extends BaseEntity {
      * 产品信息
      */
     private List<ProductBackVo> productBackVoList;
+    /**
+     * 码信息
+     */
+    private List<Code> codeList;
 
 
     public void setId(Long id) {
@@ -328,14 +341,6 @@ public class StorageBack extends BaseEntity {
         this.extraNo = extraNo;
     }
 
-    public Integer getCompanyForceFlag() {
-        return companyForceFlag;
-    }
-
-    public void setCompanyForceFlag(Integer companyForceFlag) {
-        this.companyForceFlag = companyForceFlag;
-    }
-
     public String getProductName() {
         return productName;
     }
@@ -366,6 +371,22 @@ public class StorageBack extends BaseEntity {
 
     public void setProductNo(String productNo) {
         this.productNo = productNo;
+    }
+
+    public List<Code> getCodeList() {
+        return codeList;
+    }
+
+    public void setCodeList(List<Code> codeList) {
+        this.codeList = codeList;
+    }
+
+    public String getStorageToName() {
+        return storageToName;
+    }
+
+    public void setStorageToName(String storageToName) {
+        this.storageToName = storageToName;
     }
 
     @Override

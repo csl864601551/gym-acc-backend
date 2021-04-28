@@ -24,6 +24,7 @@ import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -248,5 +249,31 @@ public class CommonServiceImpl implements CommonService {
                 break;
         }
         return true;
+    }
+
+    /**
+     * 根据流转信息查询码集合
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeByStorage(long companyId, int storageType, long storageRecordId) {
+        List<Code> list = null;
+        List<String> codeStrs = codeService.selectCodeByStorage(companyId, storageType, storageRecordId);
+        if(codeStrs.size() >0) {
+            Code codeParam = new Code();
+            codeParam.setCompanyId(companyId);
+            codeParam.setCode(codeStrs.get(0));
+            Code code = codeService.selectCode(codeParam);
+
+            codeParam.setCode(null);
+            codeParam.setCodeAttrId(code.getCodeAttrId());
+            list = codeService.selectCodeList(codeParam);
+        }
+        return list;
     }
 }

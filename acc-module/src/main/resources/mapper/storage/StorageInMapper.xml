@@ -78,8 +78,8 @@
         LEFT JOIN sys_user suu ON suu.user_id = si.update_user
 
         <where>si.status!=9
-            <if test="companyId != null ">and si.company_id = #{companyId}</if>
-            <if test="tenantId != null ">and si.tenant_id = #{tenantId}</if>
+            <if test="companyId != null  and companyId != 0 ">and si.company_id = #{companyId}</if>
+            <if test="tenantId != null  and tenantId != 0 ">and si.tenant_id = #{tenantId}</if>
             <if test="status != null ">and si.status = #{status}</if>
             <if test="inNo != null  and inNo != ''">and si.in_no = #{inNo}</if>
             <if test="extraNo != null  and extraNo != ''">and si.extra_no = #{extraNo}</if>
@@ -90,7 +90,7 @@
             <if test="storageFrom != null  and storageFrom != ''">and si.storage_from = #{storageFrom}</if>
             <if test="storageTo != null  and storageTo != ''">and si.storage_to = #{storageTo}</if>
             <if test="fromStorageId != null ">and si.from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null ">and si.to_storage_id = #{toStorageId}</if>
+            <if test="toStorageId != null">and si.to_storage_id = #{toStorageId}</if>
             <if test="inTime != null ">and si.in_time = #{inTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and si.tenant_id ')}

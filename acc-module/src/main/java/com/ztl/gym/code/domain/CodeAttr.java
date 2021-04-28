@@ -70,6 +70,11 @@ public class CodeAttr extends BaseEntity {
     private Long productId;
 
     /**
+     * 关联产品名称
+     */
+    private String productName;
+
+    /**
      * 关联产品编号
      */
     @Excel(name = "关联产品编号")
@@ -212,6 +217,14 @@ public class CodeAttr extends BaseEntity {
 
     public Long getProductId() {
         return productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public void setProductNo(String productNo) {

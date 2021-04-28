@@ -111,5 +111,5 @@ public interface IStorageInService {
      * @param storageBack
      * @return
      */
-    int insertStorageInForBack(StorageBack storageBack);
+    long insertStorageInForBack(StorageBack storageBack);
 }

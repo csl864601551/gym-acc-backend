@@ -9,6 +9,7 @@
         <result property="companyId" column="company_id"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="status" column="status"/>
+        <result property="backType" column="back_type"/>
         <result property="backNo" column="back_no"/>
         <result property="productId" column="product_id"/>
         <result property="batchNo" column="batch_no"/>
@@ -25,6 +26,9 @@
         <result property="updateTime" column="update_time"/>
         <result property="toStorageName" column="storage_name"/>
         <result property="nickName" column="nick_name"/>
+        <result property="storageFromName" column="storage_from_name"/>
+        <result property="storageToName" column="storage_to_name"/>
+        <result property="productName" column="product_name"/>
     </resultMap>
 
     <sql id="selectStorageBackVo">
@@ -32,6 +36,7 @@
         b.company_id,
         b.tenant_id,
         b.status,
+        b.back_type,
         b.back_no,
         b.product_id,
         b.batch_no,
@@ -47,33 +52,40 @@
         b.update_user,
         b.update_time,
         s.storage_name,
-        u.nick_name
+        u.nick_name,
+        d.dept_name as storage_from_name,
+        d1.dept_name as storage_to_name,
+        p.product_name
         from t_storage_back b
         left join t_storage s on b.to_storage_id = s.id
         left join sys_user u on b.create_user = u.user_id
+        left join sys_dept d on b.storage_from = d.dept_id
+        left join sys_dept d1 on b.storage_to = d1.dept_id
+        left join t_product p on b.product_id = p.id
     </sql>
 
     <select id="selectStorageBackList" parameterType="StorageBack" resultMap="StorageBackResult">
         <include refid="selectStorageBackVo"/>
         <where>
-            <if test="companyId != null ">and company_id = #{companyId}</if>
-            <if test="tenantId != null ">and tenant_id = #{tenantId}</if>
+            b.status != 9
+            <if test="companyId != null ">and b.company_id = #{companyId}</if>
+            <if test="tenantId != null ">and b.tenant_id = #{tenantId}</if>
             <if test="status != null ">and status = #{status}</if>
-            <if test="backNo != null  and backNo != ''">and back_no = #{backNo}</if>
-            <if test="productId != null ">and product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''">and batch_no = #{batchNo}</if>
-            <if test="backNum != null ">and back_num = #{backNum}</if>
-            <if test="actBackNum != null ">and act_back_num = #{actBackNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''">and storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''">and storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null ">and from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null ">and to_storage_id = #{toStorageId}</if>
+            <if test="backNo != null  and backNo != ''">and b.back_no = #{backNo}</if>
+            <if test="productId != null ">and b.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''">and b.batch_no = #{batchNo}</if>
+            <if test="backNum != null ">and b.back_num = #{backNum}</if>
+            <if test="actBackNum != null ">and b.act_back_num = #{actBackNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''">and b.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''">and b.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null ">and b.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null ">and b.to_storage_id = #{toStorageId}</if>
         </where>
     </select>
 
     <select id="selectStorageBackById" parameterType="Long" resultMap="StorageBackResult">
         <include refid="selectStorageBackVo"/>
-        where id = #{id}
+        where b.id = #{id}
     </select>
 
     <insert id="insertStorageBack" parameterType="StorageBack" useGeneratedKeys="true" keyProperty="id">
@@ -82,6 +94,7 @@
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="status != null">status,</if>
+            <if test="backType != null">back_type,</if>
             <if test="backNo != null">back_no,</if>
             <if test="productId != null">product_id,</if>
             <if test="batchNo != null">batch_no,</if>
@@ -101,6 +114,7 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="status != null">#{status},</if>
+            <if test="backType != null">#{backType},</if>
             <if test="backNo != null">#{backNo},</if>
             <if test="productId != null">#{productId},</if>
             <if test="batchNo != null">#{batchNo},</if>
@@ -143,7 +157,7 @@
     </update>
 
     <delete id="deleteStorageBackById" parameterType="Long">
-        delete from t_storage_back where id = #{id}
+        update t_storage_back set status = 9 where  id = #{id}
     </delete>
 
     <delete id="deleteStorageBackByIds" parameterType="String">

@@ -1,14 +1,18 @@
 package com.ztl.gym.storage.service.impl;
 
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.mapper.StorageBackMapper;
 import com.ztl.gym.storage.service.IStorageBackService;
+import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageOutService;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,8 @@ public class StorageBackServiceImpl implements IStorageBackService {
     private StorageBackMapper storageBackMapper;
     @Autowired
     private IStorageService storageService;
+    @Autowired
+    private IStorageInService storageInService;
     @Autowired
     private IStorageOutService storageOutService;
     @Autowired
@@ -55,6 +61,7 @@ public class StorageBackServiceImpl implements IStorageBackService {
      */
     @Override
     public List<StorageBack> selectStorageBackList(StorageBack storageBack) {
+        storageBack.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
         return storageBackMapper.selectStorageBackList(storageBack);
     }
 
@@ -66,35 +73,24 @@ public class StorageBackServiceImpl implements IStorageBackService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @DataSource(DataSourceType.SHARDING)
     public int insertStorageBack(StorageBack storageBack) {
         storageBack.setCreateTime(DateUtils.getNowDate());
+        //先新增退货单
+        storageBack.setRemark("退货入库自动创建该退货单");
+        storageBack.setStatus(StorageBack.STATUS_NORMAL);
+        storageBack.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         int res = storageBackMapper.insertStorageBack(storageBack);
+        //退货 新增码明细
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), storageBack.getCodeStr());
+
         if (res > 0) {
-            //如果是企业绕过经销商直接退货入库，则自动给对应经销商出具一条出库单
-            if (storageBack.getCompanyForceFlag() != null && storageBack.getCompanyForceFlag() == 1) {
-                StorageOut storageOut = new StorageOut();
-                storageOut.setCompanyId(storageBack.getCompanyId());
-                storageOut.setTenantId(storageBack.getStorageFrom());
-                String outNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT);
-                storageOut.setOutNo(outNo);
-                storageBack.setExtraNo(outNo);
-
-                storageOut.setProductId(storageBack.getProductId());
-                storageOut.setBatchNo(storageBack.getBatchNo());
-                storageOut.setOutNum(storageBack.getActBackNum());
-                storageOut.setActOutNum(storageBack.getActBackNum());
-                storageOut.setStorageFrom(storageBack.getStorageFrom());
-                storageOut.setStorageTo(storageBack.getCompanyId());
-                storageOut.setToStorageId(storageBack.getToStorageId());
-                storageOut.setRemark("企业直接退货入库，强制出库");
-                storageOutService.insertStorageOut(storageOut);
-            }
-
+            //添加退货入库单
+            long inId = storageInService.insertStorageInForBack(storageBack);
             //退货入库 新增码明细
-            List<String> codes = codeService.selectCodeByStorage(storageBack.getCompanyId(), AccConstants.STORAGE_TYPE_BACK, storageBack.getId());
-            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), codes.get(0));
+            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, inId, storageBack.getCodeStr());
         }
-        return storageBackMapper.insertStorageBack(storageBack);
+        return res;
     }
 
     /**

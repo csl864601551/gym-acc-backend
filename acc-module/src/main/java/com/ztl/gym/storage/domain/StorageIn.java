@@ -70,7 +70,7 @@ public class StorageIn extends BaseEntity {
      * 状态
      */
     @Excel(name = "状态")
-    private int status;
+    private Integer status;
 
     /**
      * 入库类型
@@ -222,11 +222,11 @@ public class StorageIn extends BaseEntity {
         return tenantId;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

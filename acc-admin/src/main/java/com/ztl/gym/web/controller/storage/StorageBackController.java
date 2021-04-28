@@ -84,8 +84,33 @@ public class StorageBackController extends BaseController {
     @PreAuthorize("@ss.hasPermi('storage:back:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return AjaxResult.success(storageBackService.selectStorageBackById(id));
+        StorageBack storageBack = storageBackService.selectStorageBackById(id);
+        return AjaxResult.success(storageBack);
     }
+
+    /**
+     * 查询退货码明细
+     *
+     * @param storageBack
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('storage:back:listCode')")
+    @GetMapping("/listCode")
+    public TableDataInfo listCode(StorageBack storageBack) {
+        startPage();
+        List<Code> codeList = commonService.selectCodeByStorage(SecurityUtils.getLoginUserTopCompanyId(), AccConstants.STORAGE_TYPE_BACK, storageBack.getId());
+        for (Code code : codeList) {
+            String typeName = "未知";
+            if (code.getCode().startsWith("P")) {
+                typeName = "箱码";
+            } else {
+                typeName = "单码";
+            }
+            code.setCodeTypeName(typeName);
+        }
+        return getDataTable(codeList);
+    }
+
 
     /**
      * 退货录入-步骤1 【生成退货信息】
@@ -93,6 +118,65 @@ public class StorageBackController extends BaseController {
     @PreAuthorize("@ss.hasPermi('storage:back:addFirst')")
     @PostMapping(value = "/addFirst")
     public AjaxResult addFirst(@RequestBody StorageBack storageBack) {
+        //判断是否可以退货入库
+        Code codeRes = judgeCodeCompanyCorrect(storageBack);
+
+        //生成退货单号登记处信息
+        String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
+        storageBack.setBackNo(backNo);
+        storageBack.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        storageBack.setTenantId(codeRes.getCodeAttr().getTenantId());
+        storageBack.setStorageFrom(codeRes.getCodeAttr().getTenantId());
+        storageBack.setStorageTo(SecurityUtils.getLoginUserCompany().getDeptId());
+        SysDept dept = deptService.selectDeptById(codeRes.getCodeAttr().getTenantId());
+        storageBack.setStorageFromName(dept.getDeptName());
+        storageBack.setCreateTime(new Date());
+
+        StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
+        if (storageBack.getCodeStr().startsWith("P")) {
+            storageBack.setCodeIndex(codeRes.getCodeAttr().getCodeRecord().getIndexStart() + "~" + codeRes.getCodeAttr().getCodeRecord().getIndexEnd());
+            storageBack.setBackNum(storageIn.getActInNum());
+            storageBack.setActBackNum(storageIn.getActInNum());
+        } else {
+            storageBack.setCodeIndex(String.valueOf(codeRes.getCodeIndex()));
+            storageBack.setBackNum(1L);
+            storageBack.setActBackNum(1L);
+        }
+        storageBack.setProductId(storageIn.getProductId());
+        storageBack.setProductNo(storageIn.getProductNo());
+        storageBack.setProductName(storageIn.getProductName());
+        storageBack.setBatchNo(storageIn.getBatchNo());
+
+        List<ProductBackVo> productList = new ArrayList<>();
+        ProductBackVo vo = new ProductBackVo();
+        vo.setCodeIndex(storageBack.getCodeIndex());
+        vo.setProductNo(storageBack.getProductNo());
+        vo.setProductName(storageBack.getProductName());
+        vo.setBatchNo(storageBack.getBatchNo());
+        vo.setBackNum(String.valueOf(storageBack.getBackNum()));
+        productList.add(vo);
+        storageBack.setProductBackVoList(productList);
+
+        return AjaxResult.success(storageBack);
+    }
+
+    /**
+     * 退货录入-步骤2 【保存退货信息】
+     */
+    @PreAuthorize("@ss.hasPermi('storage:back:add')")
+    @Log(title = "退货", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody StorageBack storageBack) {
+        //判断是否可以退货入库
+        judgeCodeCompanyCorrect(storageBack);
+        //新增退货单
+        return toAjax(storageBackService.insertStorageBack(storageBack));
+    }
+
+    /**
+     * 判断是否可以退货入库
+     */
+    public Code judgeCodeCompanyCorrect(StorageBack storageBack) {
         //登录人企业id
         long companyId = 0;
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
@@ -111,15 +195,7 @@ public class StorageBackController extends BaseController {
             throw new CustomException("该码不属于当前用户企业！", HttpStatus.ERROR);
         }
 
-        //生成退货单号登记处信息
-        String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
-        storageBack.setCompanyForceFlag(1);
-        storageBack.setBackNo(backNo);
-        storageBack.setCompanyId(companyId);
-        storageBack.setStorageTo(SecurityUtils.getLoginUserCompany().getDeptId());
-        storageBack.setCreateTime(new Date());
-
-        //查询码属性信息
+        //查询码信息
         Code codeEntity = new Code();
         codeEntity.setCode(storageBack.getCodeStr());
         codeEntity.setCompanyId(CodeRuleUtils.getCompanyIdByCode(storageBack.getCodeStr()));
@@ -129,64 +205,15 @@ public class StorageBackController extends BaseController {
         if (codeRes.getCodeAttr().getStorageType() == null) {
             throw new CustomException("该货码尚未开始流转！");
         }
-        if (codeRes.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
-            storageBack.setTenantId(codeRes.getCodeAttr().getTenantId());
-            storageBack.setStorageFrom(codeRes.getCodeAttr().getTenantId());
-            SysDept dept = deptService.selectDeptById(codeRes.getCodeAttr().getTenantId());
-            storageBack.setStorageFromName(dept.getDeptName());
-
-            StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
-            if (storageBack.getCodeStr().startsWith("P")) {
-                storageBack.setCodeIndex(codeRes.getCodeAttr().getCodeRecord().getIndexStart() + "~" + codeRes.getCodeAttr().getCodeRecord().getIndexEnd());
-                storageBack.setBackNum(storageIn.getActInNum());
-                storageBack.setActBackNum(storageIn.getActInNum());
-            } else {
-                storageBack.setCodeIndex(String.valueOf(codeRes.getCodeIndex()));
-                storageBack.setBackNum(1L);
-                storageBack.setActBackNum(1L);
-            }
-            storageBack.setProductId(storageIn.getProductId());
-            storageBack.setProductNo(storageIn.getProductNo());
-            storageBack.setProductName(storageIn.getProductName());
-            storageBack.setBatchNo(storageIn.getBatchNo());
-
-            List<ProductBackVo> productList = new ArrayList<>();
-            ProductBackVo vo = new ProductBackVo();
-            vo.setCodeIndex(storageBack.getCodeIndex());
-            vo.setProductNo(storageBack.getProductNo());
-            vo.setProductName(storageBack.getProductName());
-            vo.setBatchNo(storageBack.getBatchNo());
-            vo.setBackNum(String.valueOf(storageBack.getBackNum()));
-            productList.add(vo);
-            storageBack.setProductBackVoList(productList);
-        } else {
+        //判断码当前所属是不是当前登录账户企业
+        if (codeRes.getCodeAttr().getTenantId().equals(SecurityUtils.getLoginUserCompany().getDeptId())) {
+            throw new CustomException("该码已属于当前登录账号");
+        }
+        //判断码当前是不是入库状态，如果是入库状态则无法退货入库
+        if (codeRes.getCodeAttr().getStorageType() != AccConstants.STORAGE_TYPE_IN) {
             throw new CustomException("当前码状态不是入库状态，无法直接退货入库!");
         }
-        return AjaxResult.success(storageBack);
-    }
-
-    /**
-     * 退货录入-步骤2 【保存退货信息】
-     */
-    @PreAuthorize("@ss.hasPermi('storage:back:add')")
-    @Log(title = "退货", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody StorageBack storageBack) {
-        //新增退货单
-        storageBackService.insertStorageBack(storageBack);
-
-        //新增退货入库单 TODO
-        StorageIn storageIn = new StorageIn();
-
-        storageIn.setCompanyId(storageBack.getCompanyId());
-        storageIn.setTenantId(storageBack.getTenantId());
-        storageIn.setInType(StorageIn.IN_TYPE_BACK);
-        storageIn.setExtraNo(storageBack.getBackNo());
-
-
-        int res = storageInService.insertStorageInForBack(storageBack);
-        //新增退货单
-        return toAjax(storageBackService.insertStorageBack(storageBack));
+        return codeRes;
     }
 
     /**
@@ -204,8 +231,8 @@ public class StorageBackController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('storage:back:remove')")
     @Log(title = "退货", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(storageBackService.deleteStorageBackByIds(ids));
+    @DeleteMapping("/{id}")
+    public AjaxResult remove(@PathVariable Long id) {
+        return toAjax(storageBackService.deleteStorageBackById(id));
     }
 }

@@ -247,33 +247,31 @@ public class StorageInServiceImpl implements IStorageInService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insertStorageInForBack(StorageBack storageBack) {
-        //新增退货单
-        int res = storageBackService.insertStorageBack(storageBack);
-        if (res > 0) {
-            StorageIn storageIn = new StorageIn();
-            storageIn.setCompanyId(storageBack.getCompanyId());
-            storageIn.setTenantId(storageBack.getTenantId());
-            storageIn.setInType(StorageIn.IN_TYPE_BACK);
-            storageIn.setExtraNo(storageBack.getBackNo());
-            storageIn.setStatus(StorageIn.STATUS_NORMAL);
-            storageIn.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));
-            storageIn.setProductId(storageBack.getProductId());
-            storageIn.setBatchNo(storageBack.getBatchNo());
-            storageIn.setInNum(storageBack.getBackNum());
-            storageIn.setActInNum(storageBack.getBackNum());
-            storageIn.setStorageFrom(storageBack.getStorageFrom());
-            storageIn.setStorageTo(storageBack.getStorageTo());
-            storageIn.setFromStorageId(storageBack.getFromStorageId());
-            storageIn.setToStorageId(storageBack.getToStorageId());
-            storageIn.setRemark(storageBack.getRemark());
-            storageIn.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
-            storageIn.setCreateTime(new Date());
-            storageIn.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
-            storageIn.setUpdateTime(new Date());
-            int inres = storageInMapper.insertStorageInV2(storageIn);
-            return inres;
+    public long insertStorageInForBack(StorageBack storageBack) {
+        StorageIn storageIn = new StorageIn();
+        storageIn.setCompanyId(storageBack.getCompanyId());
+        storageIn.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+        storageIn.setInType(StorageIn.IN_TYPE_BACK);
+        storageIn.setExtraNo(storageBack.getBackNo());
+        storageIn.setStatus(StorageIn.STATUS_NORMAL);
+        storageIn.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));
+        storageIn.setProductId(storageBack.getProductId());
+        storageIn.setBatchNo(storageBack.getBatchNo());
+        storageIn.setInNum(storageBack.getBackNum());
+        storageIn.setActInNum(storageBack.getBackNum());
+        storageIn.setStorageFrom(storageBack.getStorageFrom());
+        storageIn.setStorageTo(storageBack.getStorageTo());
+        storageIn.setFromStorageId(storageBack.getFromStorageId());
+        storageIn.setToStorageId(storageBack.getToStorageId());
+        storageIn.setRemark(storageBack.getRemark());
+        storageIn.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageIn.setCreateTime(new Date());
+        storageIn.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageIn.setUpdateTime(new Date());
+        int inres = storageInMapper.insertStorageInV2(storageIn);
+        if (inres > 0) {
+            return storageIn.getId();
         }
-        return 0;
+        return 0L;
     }
 }
