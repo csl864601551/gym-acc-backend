@@ -18,6 +18,7 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.framework.web.domain.server.Sys;
 import com.ztl.gym.product.domain.ProductStock;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.StorageBack;
@@ -238,6 +239,8 @@ public class SysDeptController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dept:listStock')")
     @GetMapping("/listStock")
     public TableDataInfo listStock(SysDept dept) {
+        SysDept sysDept = deptService.selectDeptById(dept.getDeptId());
+
         startPage();
         ProductStock productStock = new ProductStock();
         productStock.setTenantId(dept.getDeptId());
