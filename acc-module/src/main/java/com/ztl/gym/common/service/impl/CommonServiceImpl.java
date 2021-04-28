@@ -264,7 +264,7 @@ public class CommonServiceImpl implements CommonService {
     public List<Code> selectCodeByStorage(long companyId, int storageType, long storageRecordId) {
         List<Code> list = null;
         List<String> codeStrs = codeService.selectCodeByStorage(companyId, storageType, storageRecordId);
-        if(codeStrs.size() >0) {
+        if (codeStrs.size() > 0) {
             Code codeParam = new Code();
             codeParam.setCompanyId(companyId);
             codeParam.setCode(codeStrs.get(0));
@@ -275,5 +275,30 @@ public class CommonServiceImpl implements CommonService {
             list = codeService.selectCodeList(codeParam);
         }
         return list;
+    }
+
+    /**
+     * 根据流转信息查询码集合,返回查询条件 【分页查询】
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Code selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId) {
+        List<String> codeStrs = codeService.selectCodeByStorage(companyId, storageType, storageRecordId);
+        if (codeStrs.size() > 0) {
+            Code codeParam = new Code();
+            codeParam.setCompanyId(companyId);
+            codeParam.setCode(codeStrs.get(0));
+            Code code = codeService.selectCode(codeParam);
+
+            codeParam.setCode(null);
+            codeParam.setCodeAttrId(code.getCodeAttrId());
+            return codeParam;
+        }
+        return null;
     }
 }

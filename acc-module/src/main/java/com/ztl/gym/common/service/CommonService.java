@@ -76,4 +76,14 @@ public interface CommonService {
      * @return
      */
     List<Code> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
+
+    /**
+     * 根据流转信息查询码集合,返回查询条件 【分页查询】
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    Code selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
 }

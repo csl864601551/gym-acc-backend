@@ -7,15 +7,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.CodeTestService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.product.domain.ProductStock;
+import com.ztl.gym.product.service.IProductStockService;
+import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +52,9 @@ public class SysDeptController extends BaseController {
 
     @Autowired
     private CodeTestService codeService;
+
+    @Autowired
+    private IProductStockService productStockService;
 
     /**
      * 获取部门列表
@@ -142,7 +150,7 @@ public class SysDeptController extends BaseController {
                     res = createTableByCompany(sql);
                 }
 
-                //2.t_code_move
+                //2.t_code_flow_
                 if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_code_move_")) {
                     String sql = "CREATE TABLE t_code_flow_" + companyId + "(\n" +
                             "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
@@ -221,4 +229,19 @@ public class SysDeptController extends BaseController {
         }
     }
 
+    /**
+     * 查询企业库存
+     *
+     * @param dept
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('system:dept:listStock')")
+    @GetMapping("/listStock")
+    public TableDataInfo listStock(SysDept dept) {
+        startPage();
+        ProductStock productStock = new ProductStock();
+        productStock.setTenantId(dept.getDeptId());
+        List<ProductStock> list = productStockService.selectProductStockList(productStock);
+        return getDataTable(list);
+    }
 }
