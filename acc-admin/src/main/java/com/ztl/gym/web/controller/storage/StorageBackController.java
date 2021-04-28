@@ -18,16 +18,14 @@ import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.storage.domain.StorageIn;
-import com.ztl.gym.storage.domain.StorageOut;
-import com.ztl.gym.storage.domain.StorageTransfer;
+import com.ztl.gym.storage.domain.vo.ProductBackVo;
 import com.ztl.gym.storage.service.*;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 退货Controller
@@ -95,91 +93,72 @@ public class StorageBackController extends BaseController {
     @PreAuthorize("@ss.hasPermi('storage:back:addFirst')")
     @PostMapping(value = "/addFirst")
     public AjaxResult addFirst(@RequestBody StorageBack storageBack) {
+        //登录人企业id
         long companyId = 0;
-        long currentUserDeptId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
+        }
+        //码所属企业id
+        Long codeCompanyId = CodeRuleUtils.getCompanyIdByCode(storageBack.getCodeStr());
+
+        //判断码
+        if (codeCompanyId == null || codeCompanyId == 0) {
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+
+        //判断码企业是否一致
+        if (companyId != codeCompanyId) {
+            throw new CustomException("该码不属于当前用户企业！", HttpStatus.ERROR);
         }
 
         //生成退货单号登记处信息
         String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
+        storageBack.setCompanyForceFlag(1);
         storageBack.setBackNo(backNo);
         storageBack.setCompanyId(companyId);
-        storageBack.setTenantId(currentUserDeptId);
-        storageBack.setStorageTo(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageBack.setStorageTo(SecurityUtils.getLoginUserCompany().getDeptId());
         storageBack.setCreateTime(new Date());
-        if (storageBack.getBackType() == StorageBack.BACK_TYPE_COMMON) {
-            //普通退货-判断码
-            //查询码属性信息
-            Code codeEntity = new Code();
-            codeEntity.setCode(storageBack.getValue());
-            codeEntity.setCompanyId(CodeRuleUtils.getCompanyIdByCode(storageBack.getValue()));
-            Code codeRes = codeService.selectCode(codeEntity);
 
+        //查询码属性信息
+        Code codeEntity = new Code();
+        codeEntity.setCode(storageBack.getCodeStr());
+        codeEntity.setCompanyId(CodeRuleUtils.getCompanyIdByCode(storageBack.getCodeStr()));
+        Code codeRes = codeService.selectCode(codeEntity);
+
+        //根据上一次流转信息获取产品物流数据
+        if (codeRes.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
+            storageBack.setTenantId(codeRes.getCodeAttr().getTenantId());
+            storageBack.setStorageFrom(codeRes.getCodeAttr().getTenantId());
             SysDept dept = deptService.selectDeptById(codeRes.getCodeAttr().getTenantId());
-            storageBack.setStorageFrom(dept.getDeptId());
             storageBack.setStorageFromName(dept.getDeptName());
 
-            //根据上一次流转信息获取产品物流数据
-            Long productId = null;
-            String productName = null;
-            String batchNo = null;
-            Long backNum = null;
-            if (codeRes.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
-                SysDept sysDept = new SysDept();
-                sysDept.setParentId(currentUserDeptId);
-                List<SysDept> son = deptService.selectDeptList(sysDept);
-
-                //判断码是不是当前登录用户的下级所有
-                boolean flag = false;
-                for (SysDept childDept : son) {
-                    if (childDept.getDeptId() == codeRes.getCodeAttr().getTenantId()) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag) {
-                    StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
-                    productId = storageIn.getProductId();
-                    productName = storageIn.getProductName();
-                    batchNo = storageIn.getBatchNo();
-                    backNum = storageIn.getActInNum();
-                    storageBack.setCompanyForceFlag(1);
-                } else {
-                    throw new CustomException("当前码状态所属企业经销商不是当前登录用户的下级!");
-                }
+            StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
+            if (storageBack.getCodeStr().startsWith("P")) {
+                storageBack.setCodeIndex(codeRes.getCodeAttr().getCodeRecord().getIndexStart() + "~" + codeRes.getCodeAttr().getCodeRecord().getIndexEnd());
+                storageBack.setBackNum(storageIn.getActInNum());
+                storageBack.setActBackNum(storageIn.getActInNum());
             } else {
-                throw new CustomException("当前码状态不是入库状态，企业无法直接退货入库!");
+                storageBack.setCodeIndex(String.valueOf(codeRes.getCodeIndex()));
+                storageBack.setBackNum(1L);
+                storageBack.setActBackNum(1L);
             }
-            storageBack.setProductName(productName);
-            storageBack.setProductId(productId);
-            storageBack.setBatchNo(batchNo);
-            storageBack.setBackNum(backNum);
-            storageBack.setActBackNum(backNum);
+            storageBack.setProductId(storageIn.getProductId());
+            storageBack.setProductNo(storageIn.getProductNo());
+            storageBack.setProductName(storageIn.getProductName());
+            storageBack.setBatchNo(storageIn.getBatchNo());
+
+            List<ProductBackVo> productList = new ArrayList<>();
+            ProductBackVo vo = new ProductBackVo();
+            vo.setCodeIndex(storageBack.getCodeIndex());
+            vo.setProductNo(storageBack.getProductNo());
+            vo.setProductName(storageBack.getProductName());
+            vo.setBatchNo(storageBack.getBatchNo());
+            vo.setBackNum(String.valueOf(storageBack.getBackNum()));
+            productList.add(vo);
+            storageBack.setProductBackVoList(productList);
         } else {
-            //调拨退货-判断调拨单
-            //有流转单说明是调拨退货操作
-            StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(storageBack.getValue());
-            if (storageTransfer == null) {
-                throw new CustomException("该调拨单号查找不到！", HttpStatus.ERROR);
-            }
-
-            //判断调拨入库方是否是当前用户
-            if (storageTransfer.getStorageTo() != currentUserDeptId) {
-                throw new CustomException("调拨接收方不属于当前登录企业！", HttpStatus.ERROR);
-            }
-            storageBack.setProductId(storageTransfer.getProductId());
-            storageBack.setProductName(storageTransfer.getProductName());
-            storageBack.setBatchNo(storageTransfer.getBatchNo());
-            storageBack.setBackNum(storageTransfer.getActTransferNum());
-            storageBack.setActBackNum(storageTransfer.getActTransferNum());
-            storageBack.setExtraNo(storageBack.getValue());
-            storageBack.setStorageFrom(storageTransfer.getStorageTo());
-
-            SysDept dept = deptService.selectDeptById(storageTransfer.getStorageTo());
-            storageBack.setStorageFromName(dept.getDeptName());
+            throw new CustomException("当前码状态不是入库状态，无法直接退货入库!");
         }
-
         return AjaxResult.success(storageBack);
     }
 
@@ -190,6 +169,20 @@ public class StorageBackController extends BaseController {
     @Log(title = "退货", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody StorageBack storageBack) {
+        //新增退货单
+        storageBackService.insertStorageBack(storageBack);
+
+        //新增退货入库单 TODO
+        StorageIn storageIn = new StorageIn();
+
+        storageIn.setCompanyId(storageBack.getCompanyId());
+        storageIn.setTenantId(storageBack.getTenantId());
+        storageIn.setInType(StorageIn.IN_TYPE_BACK);
+        storageIn.setExtraNo(storageBack.getBackNo());
+
+
+        int res = storageInService.insertStorageInForBack(storageBack);
+        //新增退货单
         return toAjax(storageBackService.insertStorageBack(storageBack));
     }
 

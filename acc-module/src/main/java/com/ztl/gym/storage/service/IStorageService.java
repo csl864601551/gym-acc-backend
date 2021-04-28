@@ -77,9 +77,10 @@ public interface IStorageService {
     StorageVo selectLastStorageByCode(String codeVal);
 
     /**
-     * 新增码流转明细 【1.新增码流转明细 2.修改码属性codeAttr中最新流转信息】
+     * 新增码流转明细-套标 【1.新增码流转明细 2.修改码属性codeAttr中最新流转信息】
      *
      * @return
+     * @remark 【注意】该接口指针对套标，如果传值单码含有箱码，会自动关联整箱，单个退货不能调用此接口
      */
     int addCodeFlow(int storageType, long storageRecordId, String code);
 
