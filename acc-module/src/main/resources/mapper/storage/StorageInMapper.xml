@@ -155,6 +155,12 @@
         left join t_storage_in si on si.product_id=p.id
         left join t_code_flow cf on cf.storage_record_id=si.id
         where si.id=#{id} and cf.company_id = #{companyId}
+        union all
+        select cf.code,p.product_no,p.product_name,si.batch_no,1 as num from t_product p
+        left join t_storage_in si on si.product_id=p.id
+        left join t_pcode_flow cf on cf.storage_record_id=si.id
+        where si.id=#{id} and cf.company_id = #{companyId}
+        order by code
     </select>
 
     <select id="selectStorageInByExtraNo" parameterType="String">
