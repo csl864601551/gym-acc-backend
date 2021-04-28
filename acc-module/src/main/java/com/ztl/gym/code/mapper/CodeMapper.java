@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.code.service.impl.CodeServiceImpl;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -34,6 +35,14 @@ public interface CodeMapper {
      * @return 码
      */
     public Code selectCodeById(Long codeIndex);
+
+    /**
+     * 查询码
+     *
+     * @param code 码
+     * @return 码
+     */
+    public Code selectCodeByCode(String code);
 
     /**
      * 查询码 列表
@@ -139,4 +148,6 @@ public interface CodeMapper {
      * @return
      */
     List<String> selectCodeByStorage(Map<String, Object> params);
+
+    List<CodeVo> selectCodeByStorageForComplex(Map<String, Object> params );
 }

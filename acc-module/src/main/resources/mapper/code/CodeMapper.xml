@@ -18,6 +18,13 @@
         </association>
     </resultMap>
 
+    <resultMap type="CodeVo" id="CodeComplex">
+        <result property="codeStr" column="code"/>
+        <association property="code" column="code"
+                     select="com.ztl.gym.code.mapper.CodeMapper.selectCodeByCode">
+        </association>
+    </resultMap>
+
     <sql id="selectCodeVo">
         select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id from t_code
     </sql>
@@ -46,6 +53,11 @@
     <select id="selectCodeById" parameterType="Long" resultMap="CodeResult">
         <include refid="selectCodeVo"/>
         where code_index = #{codeIndex}
+    </select>
+
+    <select id="selectCodeByCode" parameterType="String" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where code = #{value}
     </select>
 
     <insert id="insertCode" parameterType="Code" useGeneratedKeys="true" keyProperty="codeIndex">
@@ -141,6 +153,10 @@
     </select>
 
     <select id="selectCodeByStorage" parameterType="Map" resultType="String">
+        select code from t_code_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
+    </select>
+
+    <select id="selectCodeByStorageForComplex" parameterType="Map" resultMap="CodeComplex">
         select code from t_code_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
     </select>
 </mapper>

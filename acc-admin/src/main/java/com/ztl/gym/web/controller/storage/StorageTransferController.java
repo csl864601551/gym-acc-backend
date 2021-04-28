@@ -106,9 +106,9 @@ public class StorageTransferController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('storage:transfer:remove')")
     @Log(title = "调货", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(storageTransferService.deleteStorageTransferByIds(ids));
+    @DeleteMapping("/{id}")
+    public AjaxResult remove(@PathVariable Long id) {
+        return toAjax(storageTransferService.deleteStorageTransferById(id));
     }
 
     /**

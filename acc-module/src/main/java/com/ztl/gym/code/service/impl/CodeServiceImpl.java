@@ -1,6 +1,7 @@
 package com.ztl.gym.code.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.service.ICodeService;
@@ -218,6 +219,14 @@ public class CodeServiceImpl implements ICodeService {
         return codeMapper.insertCodeFlowForBox(flowVo);
     }
 
+    /**
+     * 根据物流流转信息查询码集合
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
     @Override
     @DataSource(DataSourceType.SHARDING)
     public List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId) {
@@ -231,6 +240,17 @@ public class CodeServiceImpl implements ICodeService {
         List<String> code = codeMapper.selectCodeByStorage(params);
         list.addAll(code);
         return list;
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<CodeVo> selectCodeByStorageForComplex(long companyId, int storageType, long storageRecordId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("storageType", storageType);
+        params.put("storageRecordId", storageRecordId);
+        List<CodeVo> code = codeMapper.selectCodeByStorageForComplex(params);
+        return code;
     }
 
     /**

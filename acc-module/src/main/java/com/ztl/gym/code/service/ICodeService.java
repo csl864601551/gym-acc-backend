@@ -2,10 +2,10 @@ package com.ztl.gym.code.service;
 
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 码 Service接口
@@ -117,7 +117,7 @@ public interface ICodeService {
     int insertCodeFlowForBox(FlowVo flowVo);
 
     /**
-     * 根据物流流转信息查询码集合
+     * 根据物流流转信息查询码集合 【分批查询】
      *
      * @param companyId
      * @param storageType
@@ -125,4 +125,14 @@ public interface ICodeService {
      * @return
      */
     List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
+
+    /**
+     * 根据物流流转信息查询码集合 【关联查询】
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    List<CodeVo> selectCodeByStorageForComplex(long companyId, int storageType, long storageRecordId);
 }
