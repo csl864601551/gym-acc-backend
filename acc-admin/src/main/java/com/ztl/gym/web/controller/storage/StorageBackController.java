@@ -89,30 +89,6 @@ public class StorageBackController extends BaseController {
     }
 
     /**
-     * 查询退货码明细
-     *
-     * @param storageBack
-     * @return
-     */
-    @PreAuthorize("@ss.hasPermi('storage:back:listCode')")
-    @GetMapping("/listCode")
-    public TableDataInfo listCode(StorageBack storageBack) {
-        startPage();
-        List<Code> codeList = commonService.selectCodeByStorage(SecurityUtils.getLoginUserTopCompanyId(), AccConstants.STORAGE_TYPE_BACK, storageBack.getId());
-        for (Code code : codeList) {
-            String typeName = "未知";
-            if (code.getCode().startsWith("P")) {
-                typeName = "箱码";
-            } else {
-                typeName = "单码";
-            }
-            code.setCodeTypeName(typeName);
-        }
-        return getDataTable(codeList);
-    }
-
-
-    /**
      * 退货录入-步骤1 【生成退货信息】
      */
     @PreAuthorize("@ss.hasPermi('storage:back:addFirst')")

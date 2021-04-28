@@ -3,6 +3,7 @@ package com.ztl.gym.web.controller.storage;
 import java.util.List;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.service.CommonService;
@@ -33,6 +34,8 @@ public class StorageController extends BaseController {
     private IStorageService storageService;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private ICodeService codeService;
 
     /**
      * 查询仓库列表
@@ -153,7 +156,7 @@ public class StorageController extends BaseController {
     }
 
     /**
-     * 查询流转单的码明细
+     * 查询流转单的码明细列表
      *
      * @param storageType
      * @param storageRecordId
@@ -162,10 +165,11 @@ public class StorageController extends BaseController {
     @PreAuthorize("@ss.hasPermi('storage:storage:listCode')")
     @GetMapping("/listCode")
     public TableDataInfo listCode(int storageType, long storageRecordId) {
+        Code codeParam = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
         startPage();
-        List<Code> codeList = commonService.selectCodeByStorage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
+        List<Code> codeList = codeService.selectCodeList(codeParam);
         for (Code code : codeList) {
-            String typeName = "";
+            String typeName = "未知";
             if (code.getCode().startsWith("P")) {
                 typeName = "箱码";
             } else {

@@ -29,23 +29,16 @@ public class ShardingDataSourceConfig {
         Map<String, DataSource> dataSourceMap = new HashMap<>();
         dataSourceMap.put("master", masterDataSource);
 
-        // sys_order 表规则配置
-        TableRuleConfiguration orderTableRuleConfig = new TableRuleConfiguration("sys_order", "master.sys_order_$->{0..10}");
-        orderTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("order_id", new MyComplexShardingAlgorithm()));
-        // 分布式主键
-        orderTableRuleConfig.setKeyGeneratorConfig(new KeyGeneratorConfiguration("SNOWFLAKE", "order_id"));
-
-        //code 表规则配置
+        //t_code 表规则配置
         TableRuleConfiguration codeTableRuleConfig = new TableRuleConfiguration("t_code", "master.t_code_$->{0..1000}");
         codeTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeShardingAlgorithm()));
 
-        //code 表规则配置
+        //t_code_flow 表规则配置
         TableRuleConfiguration codeFlowTableRuleConfig = new TableRuleConfiguration("t_code_flow", "master.t_code_flow_$->{0..1000}");
         codeFlowTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeFlowShardingAlgorithm()));
 
         // 配置分片规则
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
-        shardingRuleConfig.getTableRuleConfigs().add(orderTableRuleConfig);
         shardingRuleConfig.getTableRuleConfigs().add(codeTableRuleConfig);
         shardingRuleConfig.getTableRuleConfigs().add(codeFlowTableRuleConfig);
         // 获取数据源对象
