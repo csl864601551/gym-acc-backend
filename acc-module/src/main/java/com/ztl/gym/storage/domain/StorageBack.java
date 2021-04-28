@@ -1,10 +1,13 @@
 package com.ztl.gym.storage.domain;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
+import com.ztl.gym.storage.domain.vo.ProductBackVo;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -33,15 +36,6 @@ public class StorageBack extends BaseEntity {
      * 状态-已删除
      */
     public final static int STATUS_DELETE = 9;
-
-    /**
-     * 退货类型-正常（经销商退企业）
-     */
-    public final static int BACK_TYPE_COMMON = 1;
-    /**
-     * 退货类型-调拨（经销商退经销商）
-     */
-    public final static int BACK_TYPE_TRANSFER = 2;
 
     /**
      * 主键ID
@@ -136,9 +130,20 @@ public class StorageBack extends BaseEntity {
     private Long toStorageId;
 
     /*------------------------------ 冗余字段 ------------------------------*/
+    /**
+     * 流水号范围
+     */
+    private String codeIndex;
+    /**
+     * 产品编号
+     */
+    private String productNo;
+    /**
+     * 产品名称
+     */
     private String productName;
     /**
-     * 货码【可能是该次退货对应的出库单号，也可能是箱码或单码】
+     * 货码【可能是箱码或单码】
      */
     private String codeStr;
     /**
@@ -153,11 +158,14 @@ public class StorageBack extends BaseEntity {
      * 退货单位名称
      */
     private String storageFromName;
-    ;
     /**
      * 货码 【码或者调拨单号】
      */
     private String value;
+    /**
+     * 产品信息
+     */
+    private List<ProductBackVo> productBackVoList;
 
 
     public void setId(Long id) {
@@ -334,6 +342,30 @@ public class StorageBack extends BaseEntity {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getCodeIndex() {
+        return codeIndex;
+    }
+
+    public void setCodeIndex(String codeIndex) {
+        this.codeIndex = codeIndex;
+    }
+
+    public List<ProductBackVo> getProductBackVoList() {
+        return productBackVoList;
+    }
+
+    public void setProductBackVoList(List<ProductBackVo> productBackVoList) {
+        this.productBackVoList = productBackVoList;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     @Override

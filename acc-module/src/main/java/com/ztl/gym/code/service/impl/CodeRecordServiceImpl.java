@@ -265,6 +265,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     private long saveCodeAttr(long companyId, long codeRecordId, long codeNo, long num) {
         CodeAttr codeAttr = new CodeAttr();
         codeAttr.setCompanyId(companyId);
+        codeAttr.setTenantId(companyId);
         codeAttr.setRecordId(codeRecordId);
         codeAttr.setIndexStart(codeNo + 1);
         codeAttr.setIndexEnd(codeNo + 1 + num);

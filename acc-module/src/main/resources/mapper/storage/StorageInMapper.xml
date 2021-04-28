@@ -4,51 +4,72 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageInMapper">
     <resultMap type="StorageIn" id="StorageInResult">
-        <result property="id"    column="id"    />
-        <result property="companyId"    column="company_id"    />
-        <result property="tenantId"    column="tenant_id"    />
-        <result property="status"    column="status"    />
-        <result property="inNo"    column="in_no"    />
-        <result property="extraNo"    column="extra_no"    />
-        <result property="productId"    column="product_id"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="inNum"    column="in_num"    />
-        <result property="actInNum"    column="act_in_num"    />
-        <result property="storageFrom"    column="storage_from"    />
-        <result property="storageTo"    column="storage_to"    />
-        <result property="fromStorageId"    column="from_storage_id"    />
-        <result property="toStorageId"    column="to_storage_id"    />
-        <result property="remark"    column="remark"    />
-        <result property="createUser"    column="create_user"    />
-        <result property="createUserName"    column="create_user_name"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="inTime"    column="in_time"    />
-        <result property="updateUser"    column="update_user"    />
-        <result property="updateUserName"    column="update_user_name"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="storageFromName"    column="storage_from_name"    />
-        <result property="toStorageIdName"    column="to_storage_id_name"    />
-        <result property="productName"    column="product_name"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="status" column="status"/>
+        <result property="inNo" column="in_no"/>
+        <result property="extraNo" column="extra_no"/>
+        <result property="productId" column="product_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="inNum" column="in_num"/>
+        <result property="actInNum" column="act_in_num"/>
+        <result property="storageFrom" column="storage_from"/>
+        <result property="storageTo" column="storage_to"/>
+        <result property="fromStorageId" column="from_storage_id"/>
+        <result property="toStorageId" column="to_storage_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="inTime" column="in_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="storageFromName" column="storage_from_name"/>
+        <result property="toStorageIdName" column="to_storage_id_name"/>
+        <result property="productName" column="product_name"/>
+        <result property="productNo" column="product_no"/>
     </resultMap>
 
     <resultMap type="HashMap" id="map">
-        <result property="code"    column="code"    />
-        <result property="productNo"    column="product_no"    />
-        <result property="productName"    column="product_name"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="num"    column="num"    />
+        <result property="code" column="code"/>
+        <result property="productNo" column="product_no"/>
+        <result property="productName" column="product_name"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="num" column="num"/>
     </resultMap>
 
     <sql id="selectStorageInVo">
-        select id, company_id, tenant_id, status, in_no,extra_no, product_id, batch_no, in_num, act_in_num, storage_from, storage_to,
-        from_storage_id, to_storage_id, remark, create_user, create_time, in_time, update_user, update_time
-        from t_storage_in where status=0
+        select id,
+        company_id,
+        tenant_id,
+        status,
+        in_no,
+        extra_no,
+        product_id,
+        batch_no,
+        in_num,
+        act_in_num,
+        storage_from,
+        storage_to,
+        from_storage_id,
+        to_storage_id,
+        remark,
+        create_user,
+        create_time,
+        in_time,
+        update_user,
+        update_time
+        from t_storage_in
     </sql>
 
     <select id="selectStorageInList" parameterType="StorageIn" resultMap="StorageInResult">
-        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        SELECT
+        si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,si.create_time,si.in_time,si.update_time
-        ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,sd.dept_name as storage_from_name,s.storage_name as to_storage_id_name
+        ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,sd.dept_name as
+        storage_from_name,s.storage_name as to_storage_id_name
         FROM
         t_storage_in AS si
         left join sys_dept sd on sd.dept_id=si.storage_from
@@ -56,21 +77,21 @@
         LEFT JOIN sys_user suc ON suc.user_id = si.create_user
         LEFT JOIN sys_user suu ON suu.user_id = si.update_user
 
-        <where>  si.status!=9
-            <if test="companyId != null "> and si.company_id = #{companyId}</if>
-            <if test="tenantId != null "> and si.tenant_id = #{tenantId}</if>
-            <if test="status != null "> and si.status = #{status}</if>
-            <if test="inNo != null  and inNo != ''"> and si.in_no = #{inNo}</if>
-            <if test="extraNo != null  and extraNo != ''"> and si.extra_no = #{extraNo}</if>
-            <if test="productId != null "> and si.product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and si.batch_no = #{batchNo}</if>
-            <if test="inNum != null "> and si.in_num = #{inNum}</if>
-            <if test="actInNum != null "> and si.act_in_num = #{actInNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''"> and si.storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''"> and si.storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null "> and si.from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null "> and si.to_storage_id = #{toStorageId}</if>
-            <if test="inTime != null "> and si.in_time = #{inTime}</if>
+        <where>si.status!=9
+            <if test="companyId != null ">and si.company_id = #{companyId}</if>
+            <if test="tenantId != null ">and si.tenant_id = #{tenantId}</if>
+            <if test="status != null ">and si.status = #{status}</if>
+            <if test="inNo != null  and inNo != ''">and si.in_no = #{inNo}</if>
+            <if test="extraNo != null  and extraNo != ''">and si.extra_no = #{extraNo}</if>
+            <if test="productId != null ">and si.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''">and si.batch_no = #{batchNo}</if>
+            <if test="inNum != null ">and si.in_num = #{inNum}</if>
+            <if test="actInNum != null ">and si.act_in_num = #{actInNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''">and si.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''">and si.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null ">and si.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null ">and si.to_storage_id = #{toStorageId}</if>
+            <if test="inTime != null ">and si.in_time = #{inTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and si.tenant_id ')}
         order by create_time
@@ -78,9 +99,9 @@
     </select>
 
     <select id="selectStorageInById" parameterType="Long" resultMap="StorageInResult">
-        SELECT      si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
+        SELECT  si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,suc.nick_name as create_user_name,si.create_time,si.in_time,suu.nick_name as update_user_name,si.update_time
-        ,p.product_name,sd.dept_name as storage_from_name,s.storage_name as to_storage_id_name
+        ,p.product_name,p.product_no,sd.dept_name as storage_from_name,s.storage_name as to_storage_id_name
         FROM
         t_storage_in AS si
         left join sys_dept sd on sd.dept_id=si.storage_from
@@ -112,12 +133,12 @@
         left join t_product p on p.id=cr.product_id
 
         <where>
-            <if test="companyId != null "> and c.company_id = #{companyId}</if>
-            <if test="code != null  and code != ''"> and c.code = #{code}</if>
-            <if test="codeAcc != null  and codeAcc != ''"> and c.code_acc = #{codeAcc}</if>
-            <if test="codeType != null  and codeType != ''"> and c.code_type = #{codeType}</if>
-            <if test="pCode != null  and pCode != ''"> and c.p_code = #{pCode}</if>
-            <if test="codeAttrId != null "> and c.code_attr_id = #{codeAttrId}</if>
+            <if test="companyId != null ">and c.company_id = #{companyId}</if>
+            <if test="code != null  and code != ''">and c.code = #{code}</if>
+            <if test="codeAcc != null  and codeAcc != ''">and c.code_acc = #{codeAcc}</if>
+            <if test="codeType != null  and codeType != ''">and c.code_type = #{codeType}</if>
+            <if test="pCode != null  and pCode != ''">and c.p_code = #{pCode}</if>
+            <if test="codeAttrId != null ">and c.code_attr_id = #{codeAttrId}</if>
         </where>
     </select>
     <select id="getCodeDetail" resultMap="map">
@@ -136,12 +157,18 @@
         where si.id=#{id} and cf.company_id = #{companyId}
     </select>
 
+    <select id="selectStorageInByExtraNo" parameterType="String">
+        <include refid="selectStorageInVo"/>
+        where extra_no=#{value}
+    </select>
+
     <insert id="insertStorageIn" parameterType="Map" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into t_storage_in
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="status != null">status,</if>
+            <if test="inType != null">in_type,</if>
             <if test="inNo != null">in_no,</if>
             <if test="extraNo != null">extra_no,</if>
             <if test="productId != null">product_id,</if>
@@ -163,6 +190,7 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="status != null">#{status},</if>
+            <if test="inType != null">#{inType},</if>
             <if test="inNo != null">#{inNo},</if>
             <if test="extraNo != null">#{extraNo},</if>
             <if test="productId != null">#{productId},</if>
@@ -181,6 +209,54 @@
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
+    <insert id="insertStorageInV2" parameterType="com.ztl.gym.storage.domain.StorageIn" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into t_storage_in
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="status != null">status,</if>
+            <if test="inType != null">in_type,</if>
+            <if test="inNo != null">in_no,</if>
+            <if test="extraNo != null">extra_no,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="batchNo != null">batch_no,</if>
+            <if test="inNum != null">in_num,</if>
+            <if test="actInNum != null">act_in_num,</if>
+            <if test="storageFrom != null">storage_from,</if>
+            <if test="storageTo != null">storage_to,</if>
+            <if test="fromStorageId != null">from_storage_id,</if>
+            <if test="toStorageId != null">to_storage_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="inTime != null">in_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="inType != null">#{inType},</if>
+            <if test="inNo != null">#{inNo},</if>
+            <if test="extraNo != null">#{extraNo},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="batchNo != null">#{batchNo},</if>
+            <if test="inNum != null">#{inNum},</if>
+            <if test="actInNum != null">#{actInNum},</if>
+            <if test="storageFrom != null">#{storageFrom},</if>
+            <if test="storageTo != null">#{storageTo},</if>
+            <if test="fromStorageId != null">#{fromStorageId},</if>
+            <if test="toStorageId != null">#{toStorageId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="inTime != null">#{inTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
     <insert id="insertPcodeFlow">
         INSERT INTO `gym-acc`.`t_pcode_flow`( `company_id`,  `code`, `record_id`, `create_user`, `create_time`)
         VALUES ( #{company_id}, #{tenant_id}, #{code}, #{record_id}, #{create_user}, #{create_time});
@@ -223,7 +299,7 @@
         <if test="sale_num != null">sale_num = #{sale_num},</if>
         <if test="remain_num != null">remain_num = #{remain_num},</if>
         update_time = #{update_time}
-        WHERE company_id = #{update_time} and  product_id = #{product_id};
+        WHERE company_id = #{update_time} and product_id = #{product_id};
 
     </update>
     <update id="updateInStatusByCode" parameterType="Map">
@@ -240,7 +316,7 @@
         where in_no = #{extraNo}
     </update>
 
-    <update id="updateTenantIn"  parameterType="Map">
+    <update id="updateTenantIn" parameterType="Map">
         update t_storage_in set status=#{status}
         <if test="actInNum != null">,act_in_num = #{actInNum}</if>
         <if test="toStorageId != null">,to_storage_id = #{toStorageId}</if>

@@ -40,6 +40,7 @@ public interface StorageInMapper
      * @return 结果
      */
     public int insertStorageIn(Map<String, Object> storageIn);
+    public int insertStorageInV2(StorageIn storageIn);
 
     /**
      * 修改入库
@@ -88,4 +89,6 @@ public interface StorageInMapper
     void updateInStatusByOut(StorageOut storageOut);
 
     List<Map<String, Object>> getCodeDetailById(@Param("companyId")Long companyId, @Param("id")Integer id);
+
+    StorageIn selectStorageInByExtraNo(String extraNo);
 }

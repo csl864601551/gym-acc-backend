@@ -3,6 +3,7 @@ package com.ztl.gym.storage.service;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.vo.StorageVo;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author ruoyi
  * @date 2021-04-09
  */
-public interface IStorageInService
-{
+public interface IStorageInService {
     /**
      * 查询入库
      *
@@ -63,11 +63,53 @@ public interface IStorageInService
      */
     public int deleteStorageInById(Long id);
 
-    Map<String,Object> getCodeInfo(String id);
+    /**
+     * 获取相关码产品信息
+     *
+     * @param id
+     * @return
+     */
+    Map<String, Object> getCodeInfo(String id);
 
+    /**
+     * 企业确认入库
+     *
+     * @param map
+     * @return
+     */
     int updateInStatusByCode(Map<String, Object> map);
 
+    /**
+     * PC经销商确认入库
+     *
+     * @param map
+     * @return 确认收货
+     * 与上面的区别是否存在码信息
+     */
     int updateTenantIn(Map<String, Object> map);
 
-    List<Map<String,Object>> getCodeDetailById(Long companyId,Integer id);
+    /**
+     * 查询入库单中的码明细
+     *
+     * @param companyId
+     * @param id
+     * @return
+     */
+    List<Map<String, Object>> getCodeDetailById(Long companyId, Integer id);
+
+    /**
+     * 根据相关单号查询入库单
+     *
+     * @param extraNo
+     * @return
+     */
+    StorageIn selectStorageInByExtraNo(String extraNo);
+
+    /**
+     * 退货入库
+     *
+     * @param storageBack
+     * @return
+     */
+    int insertStorageInForBack(StorageBack storageBack);
 }

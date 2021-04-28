@@ -70,7 +70,7 @@ public class StorageIn extends BaseEntity {
      * 状态
      */
     @Excel(name = "状态")
-    private Long status;
+    private int status;
 
     /**
      * 入库类型
@@ -174,6 +174,13 @@ public class StorageIn extends BaseEntity {
     private String toStorageIdName;
 
     /*-------------------------------- 冗余 --------------------------------*/
+    /**
+     * 产品编号
+     */
+    private String productNo;
+    /**
+     * 产品名称
+     */
     private String productName;
 
     /**
@@ -215,12 +222,12 @@ public class StorageIn extends BaseEntity {
         return tenantId;
     }
 
-    public void setStatus(Long status) {
-        this.status = status;
+    public int getStatus() {
+        return status;
     }
 
-    public Long getStatus() {
-        return status;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void setInNo(String inNo) {
@@ -365,6 +372,14 @@ public class StorageIn extends BaseEntity {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     @Override
