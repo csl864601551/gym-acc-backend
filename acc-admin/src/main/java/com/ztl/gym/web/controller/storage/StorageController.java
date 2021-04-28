@@ -2,10 +2,12 @@ package com.ztl.gym.web.controller.storage;
 
 import java.util.List;
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.StorageBack;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -148,5 +150,29 @@ public class StorageController extends BaseController {
         }
         return AjaxResult.error();
 
+    }
+
+    /**
+     * 查询流转单的码明细
+     *
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('storage:storage:listCode')")
+    @GetMapping("/listCode")
+    public TableDataInfo listCode(int storageType, long storageRecordId) {
+        startPage();
+        List<Code> codeList = commonService.selectCodeByStorage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
+        for (Code code : codeList) {
+            String typeName = "";
+            if (code.getCode().startsWith("P")) {
+                typeName = "箱码";
+            } else {
+                typeName = "单码";
+            }
+            code.setCodeTypeName(typeName);
+        }
+        return getDataTable(codeList);
     }
 }
