@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.mix.mapper.MixRecordMapper">
+    
+    <resultMap type="MixRecord" id="MixRecordResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="code"    column="code"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="provinceOld"    column="province_old"    />
+        <result property="cityOld"    column="city_old"    />
+        <result property="areaOld"    column="area_old"    />
+        <result property="provinceMix"    column="province_mix"    />
+        <result property="cityMix"    column="city_mix"    />
+        <result property="areaMix"    column="area_mix"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectMixRecordVo">
+        select id, company_id, code, tenant_id, product_id, batch_id, province_old, city_old, area_old, province_mix, city_mix, area_mix, create_user, create_time, update_user, update_time from t_mix_record
+    </sql>
+
+    <select id="selectMixRecordList" parameterType="MixRecord" resultMap="MixRecordResult">
+        <include refid="selectMixRecordVo"/>
+        <where>  
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="provinceOld != null  and provinceOld != ''"> and province_old = #{provinceOld}</if>
+            <if test="cityOld != null  and cityOld != ''"> and city_old = #{cityOld}</if>
+            <if test="areaOld != null  and areaOld != ''"> and area_old = #{areaOld}</if>
+            <if test="provinceMix != null  and provinceMix != ''"> and province_mix = #{provinceMix}</if>
+            <if test="cityMix != null  and cityMix != ''"> and city_mix = #{cityMix}</if>
+            <if test="areaMix != null  and areaMix != ''"> and area_mix = #{areaMix}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectMixRecordById" parameterType="Long" resultMap="MixRecordResult">
+        <include refid="selectMixRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMixRecord" parameterType="MixRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into t_mix_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="code != null">code,</if>
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="batchId != null">batch_id,</if>
+            <if test="provinceOld != null">province_old,</if>
+            <if test="cityOld != null">city_old,</if>
+            <if test="areaOld != null">area_old,</if>
+            <if test="provinceMix != null">province_mix,</if>
+            <if test="cityMix != null">city_mix,</if>
+            <if test="areaMix != null">area_mix,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="code != null">#{code},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="batchId != null">#{batchId},</if>
+            <if test="provinceOld != null">#{provinceOld},</if>
+            <if test="cityOld != null">#{cityOld},</if>
+            <if test="areaOld != null">#{areaOld},</if>
+            <if test="provinceMix != null">#{provinceMix},</if>
+            <if test="cityMix != null">#{cityMix},</if>
+            <if test="areaMix != null">#{areaMix},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMixRecord" parameterType="MixRecord">
+        update t_mix_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="provinceOld != null">province_old = #{provinceOld},</if>
+            <if test="cityOld != null">city_old = #{cityOld},</if>
+            <if test="areaOld != null">area_old = #{areaOld},</if>
+            <if test="provinceMix != null">province_mix = #{provinceMix},</if>
+            <if test="cityMix != null">city_mix = #{cityMix},</if>
+            <if test="areaMix != null">area_mix = #{areaMix},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMixRecordById" parameterType="Long">
+        delete from t_mix_record where id = #{id}
+    </delete>
+
+    <delete id="deleteMixRecordByIds" parameterType="String">
+        delete from t_mix_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

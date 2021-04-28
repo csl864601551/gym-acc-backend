@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.storage.mapper.ScanRecordMapper">
+    
+    <resultMap type="ScanRecord" id="ScanRecordResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="code"    column="code"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="terminal"    column="terminal"    />
+        <result property="ip"    column="ip"    />
+        <result property="address"    column="address"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="area"    column="area"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectScanRecordVo">
+        select id, company_id, code, longitude, latitude, terminal, ip, address, province, city, area, create_user, create_time, update_user, update_time from t_scan_record
+    </sql>
+
+    <select id="selectScanRecordList" parameterType="ScanRecord" resultMap="ScanRecordResult">
+        <include refid="selectScanRecordVo"/>
+        <where>  
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="terminal != null  and terminal != ''"> and terminal = #{terminal}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="area != null  and area != ''"> and area = #{area}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectScanRecordById" parameterType="Long" resultMap="ScanRecordResult">
+        <include refid="selectScanRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertScanRecord" parameterType="ScanRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into t_scan_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="code != null">code,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="terminal != null">terminal,</if>
+            <if test="ip != null">ip,</if>
+            <if test="address != null">address,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="area != null">area,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="code != null">#{code},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="terminal != null">#{terminal},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="address != null">#{address},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="area != null">#{area},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateScanRecord" parameterType="ScanRecord">
+        update t_scan_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="terminal != null">terminal = #{terminal},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteScanRecordById" parameterType="Long">
+        delete from t_scan_record where id = #{id}
+    </delete>
+
+    <delete id="deleteScanRecordByIds" parameterType="String">
+        delete from t_scan_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
