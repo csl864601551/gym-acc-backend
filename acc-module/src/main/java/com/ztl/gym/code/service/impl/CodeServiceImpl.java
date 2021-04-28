@@ -242,6 +242,14 @@ public class CodeServiceImpl implements ICodeService {
         return list;
     }
 
+    /**
+     * 根据物流流转信息查询码集合 【关联查询】
+     *
+     * @param companyId
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
     @Override
     @DataSource(DataSourceType.SHARDING)
     public List<CodeVo> selectCodeByStorageForComplex(long companyId, int storageType, long storageRecordId) {

@@ -149,5 +149,11 @@ public interface CodeMapper {
      */
     List<String> selectCodeByStorage(Map<String, Object> params);
 
+    /**
+     * 根据物流流转信息查询单码
+     *
+     * @param params
+     * @return
+     */
     List<CodeVo> selectCodeByStorageForComplex(Map<String, Object> params );
 }
