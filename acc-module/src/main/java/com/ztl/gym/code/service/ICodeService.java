@@ -93,7 +93,7 @@ public interface ICodeService {
     int updateStatusByAttrId(Long companyId, Long codeAttrId, int status);
 
     /**
-     * 批量新增单码流转明细 【insertProvider形式】
+     * 批量新增码流转明细 【insertProvider形式】
      *
      * @param companyId 企业id
      * @param storageType 流转类型

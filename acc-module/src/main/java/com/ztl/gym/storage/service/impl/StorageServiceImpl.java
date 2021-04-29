@@ -328,7 +328,7 @@ public class StorageServiceImpl implements IStorageService {
         } else if (isSingle && StringUtils.isNotBlank(code)) {
             insertList.add(buildFlowParam(companyId, code, storageType, storageRecordId));
         }
-        codeService.insertCodeFlowForBatchSingle(companyId, storageType, insertList);
+        insertRes = codeService.insertCodeFlowForBatchSingle(companyId, storageType, insertList);
 
         //更新码属性最新物流节点
         int updRes = 0;
