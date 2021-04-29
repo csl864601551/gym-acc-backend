@@ -113,8 +113,8 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
         List<Map<String,Object>> flowList=scanRecordMapper.selectFlowList(companyId,codeVal);//查询物流记录
 
-//        returnMap.put("codeEntity",codeEntity);
-//        returnMap.put("scanList",scanList);
+        returnMap.put("codeEntity",codeEntity);
+        returnMap.put("scanList",scanList);
         returnMap.put("flowList",flowList);
         return returnMap;
     }
