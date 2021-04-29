@@ -83,8 +83,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getCodeDetailById" resultMap="map">
         select cf.code,p.product_no,p.product_name,si.batch_no,1 as num from t_product p
         left join t_storage_out si on si.product_id=p.id
-        left join t_code_flow cf on cf.storage_record_id=si.id
+        left join t_out_code_flow cf on cf.storage_record_id=si.id
         where si.id=#{id} and cf.company_id = #{companyId}
+        order by code
     </select>
 
     <insert id="insertStorageOut" parameterType="map" useGeneratedKeys="true" keyProperty="id">
