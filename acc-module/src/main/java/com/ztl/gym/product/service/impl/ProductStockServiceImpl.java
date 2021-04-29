@@ -89,9 +89,9 @@ public class ProductStockServiceImpl implements IProductStockService {
 
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
-            if (SecurityUtils.getLoginUserCompany().getDeptId() != companyId) {
-                tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
-            }
+            tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
+        } else {
+            throw new CustomException("平台无库存操作需要");
         }
         if (companyId > 0) {
             //判断当前仓库 当前产品是否存在库存信息
@@ -103,7 +103,7 @@ public class ProductStockServiceImpl implements IProductStockService {
                 stockInfo = new ProductStock();
                 stockInfo.setCompanyId(companyId);
                 stockInfo.setTenantId(tenantId);
-                if (tenantId == null) {
+                if (companyId == tenantId) {
                     stockInfo.setStockLevel(AccConstants.STOCK_LEVEL_COMPANY);
                 } else {
                     stockInfo.setStockLevel(AccConstants.STOCK_LEVEL_TENANT);
@@ -111,7 +111,7 @@ public class ProductStockServiceImpl implements IProductStockService {
                 stockInfo.setStorageId(storageId);
                 stockInfo.setProductId(productId);
                 //该仓库新建该产品库存信息
-                if (storageType == AccConstants.STORAGE_TYPE_IN || storageType == AccConstants.STORAGE_TYPE_BACK) {
+                if (storageType == AccConstants.STORAGE_TYPE_IN) {
                     flowBefore = 0;
                     flowAfter = flowNum;
                     stockInfo.setInNum(flowNum);
@@ -124,11 +124,14 @@ public class ProductStockServiceImpl implements IProductStockService {
             } else {
                 flowBefore = stockInfo.getRemainNum();
                 //该仓库更新该产品库存信息
-                if (storageType == AccConstants.STORAGE_TYPE_IN || storageType == AccConstants.STORAGE_TYPE_BACK) {
+                if (storageType == AccConstants.STORAGE_TYPE_IN) {
                     stockInfo.setInNum(stockInfo.getInNum() + flowNum);
                     stockInfo.setRemainNum(stockInfo.getRemainNum() + flowNum);
-                } else {
+                } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
                     stockInfo.setOutNum(stockInfo.getOutNum() + flowNum);
+                    stockInfo.setRemainNum(stockInfo.getRemainNum() - flowNum);
+                } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+                    stockInfo.setBackNum(stockInfo.getBackNum() + flowNum);
                     stockInfo.setRemainNum(stockInfo.getRemainNum() - flowNum);
                 }
                 flowAfter = stockInfo.getRemainNum();
@@ -142,9 +145,9 @@ public class ProductStockServiceImpl implements IProductStockService {
                 long stockId = stockInfo.getId();
                 stockFlow.setCompanyId(companyId);
                 stockFlow.setStockId(stockId);
-                if (storageType == AccConstants.STORAGE_TYPE_IN || storageType == AccConstants.STORAGE_TYPE_BACK) {
+                if (storageType == AccConstants.STORAGE_TYPE_IN) {
                     stockFlow.setFlowType(AccConstants.STOCK_TYPE_ADD);
-                } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+                } else if (storageType == AccConstants.STORAGE_TYPE_OUT || storageType == AccConstants.STORAGE_TYPE_BACK) {
                     stockFlow.setFlowType(AccConstants.STOCK_TYPE_REDUCE);
                 }
                 stockFlow.setStorageType(storageType);

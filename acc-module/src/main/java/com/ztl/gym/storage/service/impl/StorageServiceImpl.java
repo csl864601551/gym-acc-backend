@@ -10,11 +10,13 @@ import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.*;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.domain.vo.StorageVo;
@@ -22,7 +24,6 @@ import com.ztl.gym.storage.mapper.StorageMapper;
 import com.ztl.gym.storage.service.*;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +57,8 @@ public class StorageServiceImpl implements IStorageService {
     private IStorageBackService storageBackService;
     @Autowired
     private ISysDeptService deptService;
+    @Autowired
+    private IProductStockService productStockService;
 
     /**
      * 查询仓库
@@ -137,9 +140,9 @@ public class StorageServiceImpl implements IStorageService {
             Long companyId = SecurityUtils.getLoginUserTopCompanyId();
             storage.setCompanyId(companyId);
             Long tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
+            storage.setTenantId(tenantId);
             if (!tenantId.equals(companyId)) {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
-                storage.setTenantId(tenantId);
             } else {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             }
@@ -333,6 +336,7 @@ public class StorageServiceImpl implements IStorageService {
         //更新码属性最新物流节点
         int updRes = 0;
         if (insertRes > 0) {
+            //更新码属性中的最新流转节点信息
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(codeRes.getCodeAttrId());
             //入库或退货入库时需更新码所属企业/经销商
@@ -342,8 +346,62 @@ public class StorageServiceImpl implements IStorageService {
             codeAttr.setStorageType(storageType);
             codeAttr.setStorageRecordId(storageRecordId);
             updRes = codeAttrService.updateCodeAttr(codeAttr);
+
+            //产品库存更新
+            if (updRes > 0) {
+                updateProductStock(storageType, storageRecordId);
+            }
         }
         return updRes;
+    }
+
+    /**
+     * 更新产品库存信息
+     *
+     * @param storageType
+     * @param storageRecordId
+     * @return
+     */
+    private void updateProductStock(int storageType, long storageRecordId) {
+        Long storageId = null;
+        Long productId = null;
+        Integer flowNum = null;
+        if (storageType == AccConstants.STORAGE_TYPE_IN) {
+            StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
+            if (storageIn == null) {
+                throw new CustomException("更新产品库存时未查询到最新入库单");
+            }
+            storageId = storageIn.getToStorageId();
+            productId = storageIn.getProductId();
+            flowNum = Integer.parseInt(String.valueOf(storageIn.getActInNum()));
+
+        } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+            StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
+            if (storageOut == null) {
+                throw new CustomException("更新产品库存时未查询到最新出库单");
+            }
+            storageId = storageOut.getFromStorageId();
+            productId = storageOut.getProductId();
+            flowNum = Integer.parseInt(String.valueOf(storageOut.getActOutNum()));
+
+        } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+            StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
+            if (storageBack == null) {
+                throw new CustomException("更新产品库存时未查询到最新退货单");
+            }
+            storageId = storageBack.getFromStorageId();
+            productId = storageBack.getProductId();
+            flowNum = Integer.parseInt(String.valueOf(storageBack.getActBackNum()));
+
+        } else {
+            throw new CustomException("流转类型异常，无法更新产品库存");
+        }
+
+        if (storageId == null || storageId == 0 || productId == null || productId == 0 || flowNum == null || flowNum == 0) {
+            throw new CustomException("更新产品库存缺少参数!");
+        } else {
+            productStockService.insertProductStock(storageId, productId, storageType, storageRecordId, flowNum);
+        }
     }
 
     /**

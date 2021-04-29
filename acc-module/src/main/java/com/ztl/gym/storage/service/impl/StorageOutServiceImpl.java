@@ -155,8 +155,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
     public int updateOutStatusByCode(Map<String, Object> map) {
         map.put("updateTime", DateUtils.getNowDate());
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
+        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         //查询出库单需要的相关信息
         StorageOut storageOut=storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
         //判断是否调拨,执行更新调拨单
@@ -170,8 +170,6 @@ public class StorageOutServiceImpl implements IStorageOutService {
                 storageTransferService.updateStorageTransfer(storageTransfer);
             }
         }
-        //更新t_product_stock库存统计表
-        productStockService.insertProductStock(storageOut.getFromStorageId(),storageOut.getProductId(),AccConstants.STORAGE_TYPE_OUT,storageOut.getId(),storageOut.getActOutNum().intValue());
 
         //查询插入入库单需要的相关信息
         Map<String, Object> inMap = new HashMap<>();

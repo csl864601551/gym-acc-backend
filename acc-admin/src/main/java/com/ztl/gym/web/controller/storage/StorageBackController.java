@@ -118,6 +118,7 @@ public class StorageBackController extends BaseController {
             storageBack.setBackNum(1L);
             storageBack.setActBackNum(1L);
         }
+        storageBack.setFromStorageId(storageIn.getToStorageId());
         storageBack.setProductId(storageIn.getProductId());
         storageBack.setProductNo(storageIn.getProductNo());
         storageBack.setProductName(storageIn.getProductName());
