@@ -93,14 +93,6 @@ public interface ICodeService {
     int updateStatusByAttrId(Long companyId, Long codeAttrId, int status);
 
     /**
-     * 新增单码流转明细
-     *
-     * @param flowVo
-     * @return
-     */
-    int insertCodeFlowForSingle(FlowVo flowVo);
-
-    /**
      * 批量新增单码流转明细 【insertProvider形式】
      *
      * @param companyId 企业id
@@ -109,14 +101,6 @@ public interface ICodeService {
      * @return
      */
     int insertCodeFlowForBatchSingle(long companyId, int storageType, List<FlowVo> list);
-
-    /**
-     * 新增箱码流转明细
-     *
-     * @param flowVo
-     * @return
-     */
-    int insertCodeFlowForBox(FlowVo flowVo);
 
     /**
      * 根据物流流转信息查询码集合 【分批查询】
@@ -128,13 +112,4 @@ public interface ICodeService {
      */
     List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
 
-    /**
-     * 根据物流流转信息查询码集合 【关联查询】
-     *
-     * @param companyId
-     * @param storageType
-     * @param storageRecordId
-     * @return
-     */
-    List<CodeVo> selectCodeByStorageForComplex(long companyId, int storageType, long storageRecordId);
 }

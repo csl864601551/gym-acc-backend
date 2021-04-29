@@ -195,18 +195,6 @@ public class CodeServiceImpl implements ICodeService {
     }
 
     /**
-     * 新增单码流转明细
-     *
-     * @param flowVo
-     * @return
-     */
-    @Override
-    @DataSource(DataSourceType.SHARDING)
-    public int insertCodeFlowForSingle(FlowVo flowVo) {
-        return codeMapper.insertCodeFlowForSingle(flowVo);
-    }
-
-    /**
      * 批量新增单码流转明细 【insertProvider形式】
      *
      * @param companyId   企业id
@@ -229,17 +217,6 @@ public class CodeServiceImpl implements ICodeService {
         } else {
             throw new CustomException("未知的流转类型");
         }
-    }
-
-    /**
-     * 新增箱码流转明细
-     *
-     * @param flowVo
-     * @return
-     */
-    @Override
-    public int insertCodeFlowForBox(FlowVo flowVo) {
-        return codeMapper.insertCodeFlowForBox(flowVo);
     }
 
     /**
@@ -269,25 +246,6 @@ public class CodeServiceImpl implements ICodeService {
             list = codeMapper.selectBackCodeByStorage(params);
         }
         return list;
-    }
-
-    /**
-     * 根据物流流转信息查询码集合 【关联查询】
-     *
-     * @param companyId
-     * @param storageType
-     * @param storageRecordId
-     * @return
-     */
-    @Override
-    @DataSource(DataSourceType.SHARDING)
-    public List<CodeVo> selectCodeByStorageForComplex(long companyId, int storageType, long storageRecordId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("companyId", companyId);
-        params.put("storageType", storageType);
-        params.put("storageRecordId", storageRecordId);
-        List<CodeVo> code = codeMapper.selectCodeByStorageForComplex(params);
-        return code;
     }
 
     /**
