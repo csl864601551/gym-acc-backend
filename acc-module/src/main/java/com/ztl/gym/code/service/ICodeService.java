@@ -103,10 +103,12 @@ public interface ICodeService {
     /**
      * 批量新增单码流转明细 【insertProvider形式】
      *
-     * @param list
+     * @param companyId 企业id
+     * @param storageType 流转类型
+     * @param list 流转码集合
      * @return
      */
-    int insertCodeFlowForBatchSingle(long companyId, List<FlowVo> list);
+    int insertCodeFlowForBatchSingle(long companyId, int storageType, List<FlowVo> list);
 
     /**
      * 新增箱码流转明细

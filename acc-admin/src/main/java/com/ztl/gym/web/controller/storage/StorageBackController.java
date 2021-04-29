@@ -97,7 +97,7 @@ public class StorageBackController extends BaseController {
         //判断是否可以退货入库
         Code codeRes = judgeCodeCompanyCorrect(storageBack);
 
-        //生成退货单号登记处信息
+        //生成退货单号基础信息
         String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
         storageBack.setBackNo(backNo);
         storageBack.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());

@@ -81,7 +81,7 @@ public class StorageBackServiceImpl implements IStorageBackService {
         storageBack.setStatus(StorageBack.STATUS_NORMAL);
         storageBack.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         int res = storageBackMapper.insertStorageBack(storageBack);
-        //退货 新增码明细
+        //退货、新增码明细 FIXME 单码退货时，码流转明细会把整套给加进去
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), storageBack.getCodeStr());
 
         if (res > 0) {

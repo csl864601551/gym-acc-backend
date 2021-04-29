@@ -313,19 +313,18 @@ public class StorageServiceImpl implements IStorageService {
         }
         //批量插入码明细
         if (isBox && StringUtils.isNotBlank(boxCode)) {
+            List<FlowVo> insertList = new ArrayList<>();
             //箱码
-            insertRes = codeService.insertCodeFlowForBox(buildFlowParam(companyId, boxCode, storageType, storageRecordId));
-
-            //批量插入单码明细
+            insertList.add(buildFlowParam(companyId, boxCode, storageType, storageRecordId));
+            //单码
             Code codeParam = new Code();
             codeParam.setCompanyId(companyId);
             codeParam.setpCode(boxCode);
             List<Code> sonList = codeService.selectCodeList(codeParam);
-            List<FlowVo> insertList = new ArrayList<>();
             for (Code sonCode : sonList) {
                 insertList.add(buildFlowParam(companyId, sonCode.getCode(), storageType, storageRecordId));
             }
-            codeService.insertCodeFlowForBatchSingle(companyId, insertList);
+            codeService.insertCodeFlowForBatchSingle(companyId, storageType, insertList);
         }
 
         //更新码属性最新物流节点

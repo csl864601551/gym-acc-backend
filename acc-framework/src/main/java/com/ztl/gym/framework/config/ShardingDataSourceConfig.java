@@ -34,13 +34,26 @@ public class ShardingDataSourceConfig {
         codeTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeShardingAlgorithm()));
 
         //t_code_flow 表规则配置
-        TableRuleConfiguration codeFlowTableRuleConfig = new TableRuleConfiguration("t_code_flow", "master.t_code_flow_$->{0..1000}");
-        codeFlowTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeFlowShardingAlgorithm()));
+        TableRuleConfiguration codeFlowTableRuleConfig1 = new TableRuleConfiguration("t_in_code_flow", "master.t_in_code_flow_$->{0..1000}");
+        codeFlowTableRuleConfig1.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeFlowShardingAlgorithm()));
+
+        TableRuleConfiguration codeFlowTableRuleConfig2 = new TableRuleConfiguration("t_out_code_flow", "master.t_out_code_flow_$->{0..1000}");
+        codeFlowTableRuleConfig2.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeFlowShardingAlgorithm()));
+
+        TableRuleConfiguration codeFlowTableRuleConfig3 = new TableRuleConfiguration("t_back_code_flow", "master.t_back_code_flow_$->{0..1000}");
+        codeFlowTableRuleConfig3.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeFlowShardingAlgorithm()));
+
+        TableRuleConfiguration codeFlowTableRuleConfig4 = new TableRuleConfiguration("t_transfer_code_flow", "master.t_transfer_code_flow_$->{0..1000}");
+        codeFlowTableRuleConfig4.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration("company_id", new CodeFlowShardingAlgorithm()));
 
         // 配置分片规则
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
         shardingRuleConfig.getTableRuleConfigs().add(codeTableRuleConfig);
-        shardingRuleConfig.getTableRuleConfigs().add(codeFlowTableRuleConfig);
+        shardingRuleConfig.getTableRuleConfigs().add(codeFlowTableRuleConfig1);
+        shardingRuleConfig.getTableRuleConfigs().add(codeFlowTableRuleConfig2);
+        shardingRuleConfig.getTableRuleConfigs().add(codeFlowTableRuleConfig3);
+        shardingRuleConfig.getTableRuleConfigs().add(codeFlowTableRuleConfig4);
+
         // 获取数据源对象
         DataSource dataSource = ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfig, getProperties());
         return dataSource;

@@ -239,8 +239,6 @@ public class SysDeptController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dept:listStock')")
     @GetMapping("/listStock")
     public TableDataInfo listStock(SysDept dept) {
-        SysDept sysDept = deptService.selectDeptById(dept.getDeptId());
-
         startPage();
         ProductStock productStock = new ProductStock();
         productStock.setTenantId(dept.getDeptId());
