@@ -1,16 +1,14 @@
 package com.ztl.gym.web.controller.storage;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -28,18 +26,18 @@ import com.ztl.gym.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/storage/record")
-public class ScanRecordController extends BaseController
-{
+public class ScanRecordController extends BaseController {
     @Autowired
     private IScanRecordService scanRecordService;
+    @Autowired
+    private IStorageService storageService;
 
     /**
      * 查询扫码记录列表
      */
     @PreAuthorize("@ss.hasPermi('storage:record:list')")
     @GetMapping("/list")
-    public TableDataInfo list(ScanRecord scanRecord)
-    {
+    public TableDataInfo list(ScanRecord scanRecord) {
         startPage();
         List<ScanRecord> list = scanRecordService.selectScanRecordList(scanRecord);
         return getDataTable(list);
@@ -50,8 +48,7 @@ public class ScanRecordController extends BaseController
      */
     @Log(title = "扫码记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(ScanRecord scanRecord)
-    {
+    public AjaxResult export(ScanRecord scanRecord) {
         List<ScanRecord> list = scanRecordService.selectScanRecordList(scanRecord);
         ExcelUtil<ScanRecord> util = new ExcelUtil<ScanRecord>(ScanRecord.class);
         return util.exportExcel(list, "record");
@@ -62,8 +59,7 @@ public class ScanRecordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:record:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(scanRecordService.selectScanRecordById(id));
     }
 
@@ -72,8 +68,7 @@ public class ScanRecordController extends BaseController
      */
     @Log(title = "扫码记录", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ScanRecord scanRecord)
-    {
+    public AjaxResult add(@RequestBody ScanRecord scanRecord) {
         return toAjax(scanRecordService.insertScanRecord(scanRecord));
     }
 
@@ -82,8 +77,7 @@ public class ScanRecordController extends BaseController
      */
     @Log(title = "扫码记录", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody ScanRecord scanRecord)
-    {
+    public AjaxResult edit(@RequestBody ScanRecord scanRecord) {
         return toAjax(scanRecordService.updateScanRecord(scanRecord));
     }
 
@@ -91,9 +85,16 @@ public class ScanRecordController extends BaseController
      * 删除扫码记录
      */
     @Log(title = "扫码记录", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(scanRecordService.deleteScanRecordByIds(ids));
+    }
+
+    /**
+     * 根据码号查询相关产品和码信息
+     */
+    @GetMapping(value = "/getScanRecordByCode")
+    public AjaxResult getScanRecordByCode(@RequestParam("code") String code) {
+        return AjaxResult.success(scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(code), code));
     }
 }

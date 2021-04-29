@@ -116,4 +116,70 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <resultMap type="HashMap" id="map">
+    </resultMap>
+
+    <select id="selectFlowList" resultMap="map">
+<!--        SELECT  "入库" as title_name,cf.create_time,-->
+<!--        si.in_no as no_number,cf.code,p.product_name,-->
+<!--        s.storage_name,-->
+<!--        sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,-->
+<!--        suc.nick_name as create_user_name-->
+<!--        FROM-->
+<!--        t_in_code_flow as cf-->
+<!--        left join t_storage_in si on si.id=cf.storage_record_id-->
+<!--        left join sys_dept sd on sd.dept_id=si.storage_from-->
+<!--        left join sys_dept sd2 on sd2.dept_id=si.storage_to-->
+<!--        LEFT JOIN sys_user suc ON suc.user_id = cf.create_user-->
+<!--        left join t_storage s on s.id=si.to_storage_id-->
+<!--        left join t_product p on p.id=si.product_id-->
+<!--        where cf.company_id = #{companyId} and cf.code=#{code}-->
+
+<!--        union all-->
+<!--        select "出库" as title_name,cf.create_time,-->
+<!--        so.out_no as no_number,cf.code,p.product_name,-->
+<!--        s.storage_name,-->
+<!--        sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,-->
+<!--        suc.nick_name as create_user_name-->
+<!--        from  t_out_code_flow as cf-->
+<!--        left join t_storage_out so on so.id=cf.storage_record_id-->
+<!--        left join t_storage s on s.id=so.from_storage_id-->
+<!--        left join sys_dept sd on sd.dept_id=so.storage_from-->
+<!--        left join sys_dept sd2 on sd2.dept_id=so.storage_to-->
+<!--        LEFT JOIN sys_user suc ON suc.user_id = cf.create_user-->
+<!--        left join t_product p on p.id=so.product_id-->
+<!--        where cf.company_id = #{companyId} and cf.code=#{code}-->
+
+<!--        union all-->
+<!--        select "退货" as title_name,cf.create_time,-->
+<!--        so.back_no as no_number,cf.code,p.product_name,-->
+<!--        s.storage_name,-->
+<!--        sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,-->
+<!--        suc.nick_name as create_user_name-->
+<!--        from  t_back_code_flow as cf-->
+<!--        left join t_storage_back so on so.id=cf.storage_record_id-->
+<!--        left join t_storage s on s.id=so.to_storage_id-->
+<!--        left join sys_dept sd on sd.dept_id=so.storage_from-->
+<!--        left join sys_dept sd2 on sd2.dept_id=so.storage_to-->
+<!--        LEFT JOIN sys_user suc ON suc.user_id = cf.create_user-->
+<!--        left join t_product p on p.id=so.product_id-->
+<!--        where cf.company_id = #{companyId} and cf.code=#{code}-->
+
+<!--        union all-->
+<!--        select "调拨" as title_name,cf.create_time,-->
+<!--        so.transfer_no as no_number,cf.code,p.product_name,-->
+<!--        s.storage_name,-->
+<!--        sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,-->
+<!--        suc.nick_name as create_user_name-->
+<!--        from  t_transfer_code_flow as cf-->
+<!--        left join t_storage_transfer so on so.id=cf.storage_record_id-->
+<!--        left join t_storage s on s.id=so.from_storage_id-->
+<!--        left join sys_dept sd on sd.dept_id=so.storage_from-->
+<!--        left join sys_dept sd2 on sd2.dept_id=so.storage_to-->
+<!--        LEFT JOIN sys_user suc ON suc.user_id = cf.create_user-->
+<!--        left join t_product p on p.id=so.product_id-->
+<!--        where cf.company_id = #{companyId} and cf.code=#{code}-->
+        select * from t_in_code_flow where company_id = #{companyId}
+    </select>
 </mapper>

@@ -1,6 +1,14 @@
 package com.ztl.gym.storage.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
+import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +23,11 @@ import com.ztl.gym.storage.service.IScanRecordService;
  * @date 2021-04-28
  */
 @Service
-public class ScanRecordServiceImpl implements IScanRecordService
-{
+public class ScanRecordServiceImpl implements IScanRecordService {
     @Autowired
     private ScanRecordMapper scanRecordMapper;
+    @Autowired
+    private ICodeService codeService;
 
     /**
      * 查询扫码记录
@@ -27,8 +36,7 @@ public class ScanRecordServiceImpl implements IScanRecordService
      * @return 扫码记录
      */
     @Override
-    public ScanRecord selectScanRecordById(Long id)
-    {
+    public ScanRecord selectScanRecordById(Long id) {
         return scanRecordMapper.selectScanRecordById(id);
     }
 
@@ -39,8 +47,7 @@ public class ScanRecordServiceImpl implements IScanRecordService
      * @return 扫码记录
      */
     @Override
-    public List<ScanRecord> selectScanRecordList(ScanRecord scanRecord)
-    {
+    public List<ScanRecord> selectScanRecordList(ScanRecord scanRecord) {
         return scanRecordMapper.selectScanRecordList(scanRecord);
     }
 
@@ -51,8 +58,7 @@ public class ScanRecordServiceImpl implements IScanRecordService
      * @return 结果
      */
     @Override
-    public int insertScanRecord(ScanRecord scanRecord)
-    {
+    public int insertScanRecord(ScanRecord scanRecord) {
         scanRecord.setCreateTime(DateUtils.getNowDate());
         return scanRecordMapper.insertScanRecord(scanRecord);
     }
@@ -64,8 +70,7 @@ public class ScanRecordServiceImpl implements IScanRecordService
      * @return 结果
      */
     @Override
-    public int updateScanRecord(ScanRecord scanRecord)
-    {
+    public int updateScanRecord(ScanRecord scanRecord) {
         scanRecord.setUpdateTime(DateUtils.getNowDate());
         return scanRecordMapper.updateScanRecord(scanRecord);
     }
@@ -77,8 +82,7 @@ public class ScanRecordServiceImpl implements IScanRecordService
      * @return 结果
      */
     @Override
-    public int deleteScanRecordByIds(Long[] ids)
-    {
+    public int deleteScanRecordByIds(Long[] ids) {
         return scanRecordMapper.deleteScanRecordByIds(ids);
     }
 
@@ -89,8 +93,31 @@ public class ScanRecordServiceImpl implements IScanRecordService
      * @return 结果
      */
     @Override
-    public int deleteScanRecordById(Long id)
-    {
+    public int deleteScanRecordById(Long id) {
         return scanRecordMapper.deleteScanRecordById(id);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Map<String, Object> getScanRecordByCode(Long companyId,String codeVal) {
+        Map<String, Object> returnMap = new HashMap<>();//返回数据
+        Code code = new Code();//码产品信息
+        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        code.setCode(codeVal);
+        scanRecord.setCode(codeVal);
+        if (companyId > 0) {
+            code.setCompanyId(companyId);
+            scanRecord.setCompanyId(companyId);
+        }
+        Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
+        List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
+        List<Map<String,Object>> flowList=scanRecordMapper.selectFlowList(companyId,codeVal);//查询物流记录
+
+//        returnMap.put("codeEntity",codeEntity);
+//        returnMap.put("scanList",scanList);
+        returnMap.put("flowList",flowList);
+        return returnMap;
+    }
+
+
 }
