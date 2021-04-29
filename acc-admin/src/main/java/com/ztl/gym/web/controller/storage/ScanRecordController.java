@@ -36,7 +36,7 @@ public class ScanRecordController extends BaseController
     /**
      * 查询扫码记录列表
      */
-    @PreAuthorize("@ss.hasPermi('product:record:list')")
+    @PreAuthorize("@ss.hasPermi('storage:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(ScanRecord scanRecord)
     {
@@ -60,7 +60,7 @@ public class ScanRecordController extends BaseController
     /**
      * 获取扫码记录详细信息
      */
-    @PreAuthorize("@ss.hasPermi('product:record:query')")
+    @PreAuthorize("@ss.hasPermi('storage:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

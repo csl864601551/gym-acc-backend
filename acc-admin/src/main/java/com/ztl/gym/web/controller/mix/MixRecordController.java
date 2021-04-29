@@ -36,7 +36,7 @@ public class MixRecordController extends BaseController
     /**
      * 查询窜货记录列表
      */
-    @PreAuthorize("@ss.hasPermi('product:record:list')")
+    @PreAuthorize("@ss.hasPermi('mix:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(MixRecord mixRecord)
     {
@@ -60,7 +60,7 @@ public class MixRecordController extends BaseController
     /**
      * 获取窜货记录详细信息
      */
-    @PreAuthorize("@ss.hasPermi('product:record:query')")
+    @PreAuthorize("@ss.hasPermi('mix:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
