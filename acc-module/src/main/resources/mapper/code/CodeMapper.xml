@@ -129,20 +129,6 @@
         where code_attr_id = #{codeAttrId} and company_id = #{companyId}
     </update>
 
-    <insert id="insertCodeFlowForSingle" parameterType="FlowVo">
-        insert into t_code_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
-        values(#{companyId},#{code},#{storageType},#{storageRecordId},#{createUser},#{createTime} )
-    </insert>
-
-    <insert id="insertCodeFlowForBatchSingleV2">
-        insert into t_code_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
-        values
-        <foreach collection="list" item="code" separator=",">
-            (#{companyId}, #{code.code}, #{code.storageType}, #{code.storageRecordId}, #{code.createUser},
-            #{code.createTime})
-        </foreach>
-    </insert>
-
     <insert id="insertInCodeFlowForBatchSingleV2">
         insert into t_in_code_flow(company_id, code, storage_record_id, create_user, create_time)
         values
@@ -178,23 +164,6 @@
             #{code.createTime})
         </foreach>
     </insert>
-
-    <insert id="insertCodeFlowForBox" parameterType="FlowVo">
-        insert into t_pcode_flow(company_id, code, storage_type, storage_record_id, create_user, create_time)
-        values(#{companyId},#{code},#{storageType},#{storageRecordId},#{createUser},#{createTime} )
-    </insert>
-
-    <select id="selectPcodeByStorage" parameterType="Map" resultType="String">
-        select code from t_pcode_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
-    </select>
-
-    <select id="selectCodeByStorage" parameterType="Map" resultType="String">
-        select code from t_code_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
-    </select>
-
-    <select id="selectCodeByStorageForComplex" parameterType="Map" resultMap="CodeComplex">
-        select code from t_code_flow where company_id = #{companyId} and storage_type = #{storageType} and storage_record_id = #{storageRecordId}
-    </select>
 
     <select id="selectInCodeByStorage" parameterType="Map" resultType="String">
         select code from t_in_code_flow where company_id = #{companyId} and storage_record_id = #{storageRecordId}

@@ -127,7 +127,7 @@ public class SysDeptController extends BaseController {
         }
         dept.setCreateBy(SecurityUtils.getUsername());
 
-        int addres = (int)deptService.insertDept(dept);
+        int addres = (int) deptService.insertDept(dept);
         if (addres > 0) {
             //判断新增dept是不是企业级别
             if (dept.getParentId() == AccConstants.ADMIN_DEPT_ID) {
@@ -151,13 +151,48 @@ public class SysDeptController extends BaseController {
                     res = createTableByCompany(sql);
                 }
 
-                //2.t_code_flow_
-                if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_code_move_")) {
-                    String sql = "CREATE TABLE t_code_flow_" + companyId + "(\n" +
+                //2.码流转明细表
+                if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_in_code_flow_")) {
+                    String sql = "CREATE TABLE t_in_code_flow_" + companyId + "(\n" +
                             "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
                             "    company_id BIGINT    COMMENT '企业ID' ,\n" +
                             "    code VARCHAR(64)    COMMENT '单码' ,\n" +
-                            "    storage_type INT    COMMENT '流转类型' ,\n" +
+                            "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                            "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                            "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                            "    PRIMARY KEY (id)\n" +
+                            ") COMMENT = '单码流转记录表 ';";
+                    res = createTableByCompany(sql);
+                }
+                if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_out_code_flow_")) {
+                    String sql = "CREATE TABLE t_out_code_flow_" + companyId + "(\n" +
+                            "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                            "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                            "    code VARCHAR(64)    COMMENT '单码' ,\n" +
+                            "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                            "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                            "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                            "    PRIMARY KEY (id)\n" +
+                            ") COMMENT = '单码流转记录表 ';";
+                    res = createTableByCompany(sql);
+                }
+                if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_transfer_code_flow_")) {
+                    String sql = "CREATE TABLE t_transfer_code_flow_" + companyId + "(\n" +
+                            "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                            "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                            "    code VARCHAR(64)    COMMENT '单码' ,\n" +
+                            "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                            "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                            "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                            "    PRIMARY KEY (id)\n" +
+                            ") COMMENT = '单码流转记录表 ';";
+                    res = createTableByCompany(sql);
+                }
+                if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_back_code_flow_")) {
+                    String sql = "CREATE TABLE t_back_code_flow_" + companyId + "(\n" +
+                            "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                            "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                            "    code VARCHAR(64)    COMMENT '单码' ,\n" +
                             "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
                             "    create_user BIGINT    COMMENT '创建人' ,\n" +
                             "    create_time DATETIME    COMMENT '创建时间' ,\n" +

@@ -223,19 +223,19 @@ public class StorageServiceImpl implements IStorageService {
             if (codeEntity != null) {
                 storageVo.setCode(codeVal);//区分前端是否查询到码相关信息
                 storageVo.setCompanyId(companyId);
-                if(codeEntity.getCodeType().toString().equals("single")){//判断单码是属于单码or箱码
-                    if(codeEntity.getpCode().equals("")||codeEntity.getpCode().equals(null)){
+                if (codeEntity.getCodeType().toString().equals("single")) {//判断单码是属于单码or箱码
+                    if (codeEntity.getpCode().equals("") || codeEntity.getpCode().equals(null)) {
                         storageVo.setCodeTypeName("单码");
-                    }else{
+                    } else {
                         storageVo.setCodeTypeName("箱码");
                         storageVo.setpCode(codeEntity.getpCode());
                     }
-                }else if(codeEntity.getCodeType().toString().equals("box")){
+                } else if (codeEntity.getCodeType().toString().equals("box")) {
                     storageVo.setpCode(codeEntity.getCode());
                     storageVo.setCodeTypeName("箱码");
                 }
                 //判断是否码是否绑定了产品
-                if(codeEntity.getCodeAttr().getProductId()!=null){
+                if (codeEntity.getCodeAttr().getProductId() != null) {
                     storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
                     storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
                     storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
@@ -297,6 +297,7 @@ public class StorageServiceImpl implements IStorageService {
 
         //判断该单码有无箱码，如果有则更新整箱
         boolean isBox = false;
+        boolean isSingle = false;
         String boxCode = null;
         int insertRes = 0;
         if (codeType.equals(AccConstants.CODE_TYPE_SINGLE)) {
@@ -305,15 +306,15 @@ public class StorageServiceImpl implements IStorageService {
                 boxCode = codeRes.getpCode();
             } else {
                 //只更新单码
-                insertRes = codeService.insertCodeFlowForSingle(buildFlowParam(companyId, code, storageType, storageRecordId));
+                isSingle = true;
             }
         } else if (codeType.equals(AccConstants.CODE_TYPE_BOX)) {
             isBox = true;
             boxCode = code;
         }
         //批量插入码明细
+        List<FlowVo> insertList = new ArrayList<>();
         if (isBox && StringUtils.isNotBlank(boxCode)) {
-            List<FlowVo> insertList = new ArrayList<>();
             //箱码
             insertList.add(buildFlowParam(companyId, boxCode, storageType, storageRecordId));
             //单码
@@ -324,8 +325,10 @@ public class StorageServiceImpl implements IStorageService {
             for (Code sonCode : sonList) {
                 insertList.add(buildFlowParam(companyId, sonCode.getCode(), storageType, storageRecordId));
             }
-            codeService.insertCodeFlowForBatchSingle(companyId, storageType, insertList);
+        } else if (isSingle && StringUtils.isNotBlank(code)) {
+            insertList.add(buildFlowParam(companyId, code, storageType, storageRecordId));
         }
+        codeService.insertCodeFlowForBatchSingle(companyId, storageType, insertList);
 
         //更新码属性最新物流节点
         int updRes = 0;
@@ -365,8 +368,9 @@ public class StorageServiceImpl implements IStorageService {
 
     /**
      * 查询自己和所有下级经销商
-     *  ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and tenant_id ')}
+     * ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getAllChildId('and tenant_id ')}
      * 查询权限控制，关联到mapper.xml
+     *
      * @param sql
      * @return
      */
@@ -375,10 +379,12 @@ public class StorageServiceImpl implements IStorageService {
         String concat = sql.concat("in ( select ").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(" union select dept_id from sys_dept where status = 0 and del_flag = '0' and dept_type=2 and find_in_set(").concat(String.valueOf(loginUser.getUser().getDeptId())).concat(", ancestors))");
         return concat;
     }
+
     /**
      * 查询自己
-     *  ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and tenant_id ')}
+     * ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and tenant_id ')}
      * 查询权限控制，关联到mapper.xml
+     *
      * @param sql
      * @return
      */

@@ -101,39 +101,6 @@ public interface CodeMapper {
     int updateStatusByAttrId(Map<String, Object> params);
 
     /**
-     * 新增单码流转明细
-     *
-     * @param flowVo
-     * @return
-     */
-    int insertCodeFlowForSingle(FlowVo flowVo);
-
-    /**
-     * 新增箱码流转明细
-     *
-     * @param flowVo
-     * @return
-     */
-    int insertCodeFlowForBox(FlowVo flowVo);
-
-    /**
-     * 批量新增单码流转明细 【insertProvider形式】
-     *
-     * @param list
-     * @return
-     */
-    @InsertProvider(type = CodeServiceImpl.class, method = "buildInsertBatchCodeFlowSql")
-    int insertCodeFlowForBatchSingle(long companyId, List<FlowVo> list);
-
-    /**
-     * 批量新增单码流转明细 【xml形式】
-     *
-     * @param list
-     * @return
-     */
-    int insertCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
-
-    /**
      * 批量新增单码流转明细-入库 【xml形式】
      *
      * @param list
@@ -164,30 +131,6 @@ public interface CodeMapper {
      * @return
      */
     int insertBackCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
-
-    /**
-     * 根据物流流转信息查询箱码
-     *
-     * @param params
-     * @return
-     */
-    String selectPcodeByStorage(Map<String, Object> params);
-
-    /**
-     * 根据物流流转信息查询单码
-     *
-     * @param params
-     * @return
-     */
-    List<String> selectCodeByStorage(Map<String, Object> params);
-
-    /**
-     * 根据物流流转信息查询单码
-     *
-     * @param params
-     * @return
-     */
-    List<CodeVo> selectCodeByStorageForComplex(Map<String, Object> params);
 
     /**
      * 根据入库流转信息查询单码
