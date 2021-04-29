@@ -134,6 +134,38 @@ public interface CodeMapper {
     int insertCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
 
     /**
+     * 批量新增单码流转明细-入库 【xml形式】
+     *
+     * @param list
+     * @return
+     */
+    int insertInCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
+
+    /**
+     * 批量新增单码流转明细-出库 【xml形式】
+     *
+     * @param list
+     * @return
+     */
+    int insertOutCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
+
+    /**
+     * 批量新增单码流转明细-调拨 【xml形式】
+     *
+     * @param list
+     * @return
+     */
+    int insertTransferCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
+
+    /**
+     * 批量新增单码流转明细-退货 【xml形式】
+     *
+     * @param list
+     * @return
+     */
+    int insertBackCodeFlowForBatchSingleV2(@Param("companyId") long companyId, @Param("list") List<FlowVo> list);
+
+    /**
      * 根据物流流转信息查询箱码
      *
      * @param params
@@ -155,5 +187,37 @@ public interface CodeMapper {
      * @param params
      * @return
      */
-    List<CodeVo> selectCodeByStorageForComplex(Map<String, Object> params );
+    List<CodeVo> selectCodeByStorageForComplex(Map<String, Object> params);
+
+    /**
+     * 根据入库流转信息查询单码
+     *
+     * @param params
+     * @return
+     */
+    List<String> selectInCodeByStorage(Map<String, Object> params);
+
+    /**
+     * 根据出库流转信息查询单码
+     *
+     * @param params
+     * @return
+     */
+    List<String> selectOutCodeByStorage(Map<String, Object> params);
+
+    /**
+     * 根据调拨流转信息查询单码
+     *
+     * @param params
+     * @return
+     */
+    List<String> selectTransferCodeByStorage(Map<String, Object> params);
+
+    /**
+     * 根据退货流转信息查询单码
+     *
+     * @param params
+     * @return
+     */
+    List<String> selectBackCodeByStorage(Map<String, Object> params);
 }

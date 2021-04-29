@@ -8,6 +8,7 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.StringUtils;
@@ -115,6 +116,16 @@ public class CodeServiceImpl implements ICodeService {
         return codeMapper.deleteCodeById(codeIndex);
     }
 
+    /**
+     * 生码-普通单码
+     *
+     * @param companyId    企业id
+     * @param codeRecordId 生码记录id
+     * @param codeTotalNum 生码总数
+     * @param pCode        箱码
+     * @param codeAttrId   生码属性id
+     * @return
+     */
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
@@ -198,14 +209,26 @@ public class CodeServiceImpl implements ICodeService {
     /**
      * 批量新增单码流转明细 【insertProvider形式】
      *
-     * @param list
+     * @param companyId   企业id
+     * @param storageType 流转类型
+     * @param list        流转码集合
      * @return
      */
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public int insertCodeFlowForBatchSingle(long companyId, List<FlowVo> list) {
-//        return codeMapper.insertCodeFlowForBatchSingle(companyId, list);
-        return codeMapper.insertCodeFlowForBatchSingleV2(companyId, list);
+    public int insertCodeFlowForBatchSingle(long companyId, int storageType, List<FlowVo> list) {
+        //        return codeMapper.insertCodeFlowForBatchSingle(companyId, list);
+        if (storageType == AccConstants.STORAGE_TYPE_IN) {
+            return codeMapper.insertInCodeFlowForBatchSingleV2(companyId, list);
+        } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+            return codeMapper.insertOutCodeFlowForBatchSingleV2(companyId, list);
+        } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
+            return codeMapper.insertTransferCodeFlowForBatchSingleV2(companyId, list);
+        } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+            return codeMapper.insertBackCodeFlowForBatchSingleV2(companyId, list);
+        } else {
+            throw new CustomException("未知的流转类型");
+        }
     }
 
     /**
@@ -230,15 +253,21 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     public List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId) {
-        List<String> list = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
         params.put("storageType", storageType);
         params.put("storageRecordId", storageRecordId);
-        String pCode = codeMapper.selectPcodeByStorage(params);
-        list.add(pCode);
-        List<String> code = codeMapper.selectCodeByStorage(params);
-        list.addAll(code);
+
+        List<String> list = null;
+        if (storageType == AccConstants.STORAGE_TYPE_IN) {
+            list = codeMapper.selectInCodeByStorage(params);
+        } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
+            list = codeMapper.selectOutCodeByStorage(params);
+        } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
+            list = codeMapper.selectTransferCodeByStorage(params);
+        } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
+            list = codeMapper.selectBackCodeByStorage(params);
+        }
         return list;
     }
 
