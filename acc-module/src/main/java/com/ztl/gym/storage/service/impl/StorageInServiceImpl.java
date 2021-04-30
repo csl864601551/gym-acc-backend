@@ -92,8 +92,6 @@ public class StorageInServiceImpl implements IStorageInService {
         map.put("createTime", DateUtils.getNowDate());
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
         int result = storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
-        Long id = Long.valueOf(map.get("id").toString());
-        //storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, id ,map.get("code").toString());//转移到PDA执行
 
         return result;
     }
@@ -174,8 +172,6 @@ public class StorageInServiceImpl implements IStorageInService {
                 storageTransferService.updateStorageTransfer(storageTransfer);//更新调拨表
             }
         }
-        //更新t_product_stock库存统计表
-        productStockService.insertProductStock(storageIn.getToStorageId(), storageIn.getProductId(), AccConstants.STORAGE_TYPE_IN, storageIn.getId(), storageIn.getActInNum().intValue());
         return res;
     }
 
@@ -209,8 +205,6 @@ public class StorageInServiceImpl implements IStorageInService {
             storageTransfer.setToStorageId(storageIn.getToStorageId());
             storageTransferService.updateStorageTransfer(storageTransfer);//更新调拨表
         }
-        //更新t_product_stock库存统计表
-        productStockService.insertProductStock(storageIn.getToStorageId(), storageIn.getProductId(), AccConstants.STORAGE_TYPE_IN, storageIn.getId(), storageIn.getActInNum().intValue());
         return res;
     }
 

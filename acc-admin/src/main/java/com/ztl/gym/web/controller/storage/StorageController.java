@@ -99,7 +99,6 @@ public class StorageController extends BaseController {
         return toAjax(storageService.deleteStorageByIds(ids));
     }
 
-
     /**
      * 获取用户仓库信息
      */
@@ -113,10 +112,10 @@ public class StorageController extends BaseController {
             String[] ancestors = SecurityUtils.getLoginUserCompany().getAncestors().split(",");
             if (ancestors.length > 2) {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
-                storage.setTenantId(SecurityUtils.getLoginUser().getUser().getUserId());
+                storage.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
             } else {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
-                storage.setCompanyId(SecurityUtils.getLoginUser().getUser().getUserId());
+                storage.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
             }
         }
         List<Storage> list = storageService.selectStorageByUser(storage);

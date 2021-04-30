@@ -44,9 +44,9 @@ public class ProductStockController extends BaseController {
         startPage();
         if (!SecurityUtils.getLoginUserCompany().getDeptId().equals(AccConstants.ADMIN_DEPT_ID)) {
             productStock.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            productStock.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
             productStock.setStockLevel(AccConstants.STOCK_LEVEL_COMPANY);
             if (SecurityUtils.getLoginUserTopCompanyId() != SecurityUtils.getLoginUserCompany().getDeptId()) {
-                productStock.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
                 productStock.setStockLevel(AccConstants.STOCK_LEVEL_TENANT);
             }
         }
