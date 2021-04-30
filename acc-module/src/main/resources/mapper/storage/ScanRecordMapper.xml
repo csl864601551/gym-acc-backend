@@ -121,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <select id="selectFlowList" resultMap="map">
-        SELECT  "入库" as title_name,cf.create_time,
+        SELECT  "入库" as title_name,date_format(cf.create_time,'%Y-%m-%d %T')as create_time,
         si.in_no as no_number,cf.code,p.product_name,
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,
@@ -137,7 +137,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where cf.company_id = #{companyId} and cf.code=#{code}
 
         union all
-        select "出库" as title_name,cf.create_time,
+        select "出库" as title_name,date_format(cf.create_time,'%Y-%m-%d %T')as create_time,
         so.out_no as no_number,cf.code,p.product_name,
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,
@@ -152,7 +152,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where cf.company_id = #{companyId} and cf.code=#{code}
 
         union all
-        select "退货" as title_name,cf.create_time,
+        select "退货" as title_name,date_format(cf.create_time,'%Y-%m-%d %T')as create_time,
         so.back_no as no_number,cf.code,p.product_name,
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,
@@ -167,7 +167,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where cf.company_id = #{companyId} and cf.code=#{code}
 
         union all
-        select "调拨" as title_name,cf.create_time,
+        select "调拨" as title_name,date_format(cf.create_time,'%Y-%m-%d %T')as create_time,
         so.transfer_no as no_number,cf.code,p.product_name,
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,
@@ -180,5 +180,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT JOIN sys_user suc ON suc.user_id = cf.create_user
         left join t_product p on p.id=so.product_id
         where cf.company_id = #{companyId} and cf.code=#{code}
+        order by create_time desc
     </select>
 </mapper>
