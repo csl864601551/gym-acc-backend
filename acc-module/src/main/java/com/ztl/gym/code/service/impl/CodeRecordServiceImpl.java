@@ -136,16 +136,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Transactional(rollbackFor = Exception.class)
     public int createCodeRecord(long companyId, long num, String remark) {
         //TODO 判断企业是否生码中
-        //TODO 生码数量不能为0
         //TODO 生码回显
-        //TODO 生码规则工具类集成
-        //TODO 出异常自增数bug,异步生码上一个事物未提交，导致生码时主键重复
-        //TODO insertProvider形式修改
-        //TODO 企业经销商区域设置
         //TODO 数据源切换效率
-        //TODO 企业经销商列表新增查看库存页面
-
-
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
