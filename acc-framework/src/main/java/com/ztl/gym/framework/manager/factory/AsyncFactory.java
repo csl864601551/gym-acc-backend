@@ -54,7 +54,13 @@ public class AsyncFactory
                 // 打印信息到日志
                 sys_user_logger.info(s.toString(), args);
                 // 获取客户端操作系统
-                String os = userAgent.getOperatingSystem().getName();
+                String os ="";
+                if(message.contains("WEB")){
+                    os=userAgent.getOperatingSystem().getName();
+                }else{
+                    String[] array= message.split("\\|");
+                    os=array[0];
+                }
                 // 获取客户端浏览器
                 String browser = userAgent.getBrowser().getName();
                 // 封装对象

@@ -27,6 +27,12 @@ public class LoginBody
      */
     private String uuid = "";
 
+    /**
+     * 除web的其他client端，如Android、IOS
+     * @return
+     */
+    private String thirdPartyFlag="";
+
     public String getUsername()
     {
         return username;
@@ -65,5 +71,13 @@ public class LoginBody
     public void setUuid(String uuid)
     {
         this.uuid = uuid;
+    }
+
+    public String getThirdPartyFlag() {
+        return thirdPartyFlag;
+    }
+
+    public void setThirdPartyFlag(String thirdPartyFlag) {
+        this.thirdPartyFlag = thirdPartyFlag;
     }
 }
