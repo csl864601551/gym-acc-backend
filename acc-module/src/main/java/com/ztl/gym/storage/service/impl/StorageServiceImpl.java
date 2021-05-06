@@ -110,6 +110,9 @@ public class StorageServiceImpl implements IStorageService {
      * @return 仓库
      */
     public Integer countStorage(Storage storage) {
+        if (storage.getTenantId() == null || storage.getTenantId().toString().equals("0")) {
+            storage.setTenantId(commonService.getTenantId());
+        }
         return storageMapper.countStorage(storage);
     }
 

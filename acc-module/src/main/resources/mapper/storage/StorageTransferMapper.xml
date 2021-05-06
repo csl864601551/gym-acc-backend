@@ -78,6 +78,8 @@
             <if test="toStorageId != null ">and st.to_storage_id = #{toStorageId}</if>
             <if test="outTime != null ">and st.out_time = #{outTime}</if>
         </where>
+        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and st.tenant_id ')}
+        order by create_time
     </select>
 
     <select id="selectStorageTransferById" parameterType="Long" resultMap="StorageTransferResult">

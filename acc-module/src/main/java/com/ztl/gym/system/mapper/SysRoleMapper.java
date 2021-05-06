@@ -3,6 +3,7 @@ package com.ztl.gym.system.mapper;
 import java.util.List;
 
 import com.ztl.gym.common.core.domain.entity.SysRole;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 角色表 数据层
@@ -63,7 +64,7 @@ public interface SysRoleMapper {
      * @param roleName 角色名称
      * @return 角色信息
      */
-    public SysRole checkRoleNameUnique(String roleName);
+    public SysRole checkRoleNameUnique(@Param(value="roleName")String roleName,@Param(value="createBy")String createBy);
 
     /**
      * 校验角色权限是否唯一
@@ -71,7 +72,7 @@ public interface SysRoleMapper {
      * @param roleKey 角色权限
      * @return 角色信息
      */
-    public SysRole checkRoleKeyUnique(String roleKey);
+    public SysRole checkRoleKeyUnique(@Param(value="roleKey")String roleKey,@Param(value="createBy") String createBy);
 
     /**
      * 修改角色信息

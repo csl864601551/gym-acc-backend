@@ -161,7 +161,6 @@ public class StorageController extends BaseController {
      * @param storageRecordId
      * @return
      */
-    @PreAuthorize("@ss.hasPermi('storage:storage:listCode')")
     @GetMapping("/listCode")
     public TableDataInfo listCode(int storageType, long storageRecordId) {
         Code codeParam = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);

@@ -99,12 +99,12 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysRole role) {
+        role.setCreateBy(SecurityUtils.getUsername());
         if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleNameUnique(role))) {
             return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role))) {
             return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
-        role.setCreateBy(SecurityUtils.getUsername());
         return toAjax(roleService.insertRole(role));
 
     }
