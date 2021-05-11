@@ -70,6 +70,31 @@ public class MixRecord extends BaseEntity
     @Excel(name = "更新人")
     private Long updateUser;
 
+    /* ****** 冗余字段 *******/
+    /** 产品名称 */
+    @Excel(name = "产品名称")
+    private String productName;
+
+    /** 产品编号 */
+    @Excel(name = "产品编号")
+    private String productNo;
+
+    /** 批次编号 */
+    @Excel(name = "批次编号")
+    private String batchNo;
+
+    /** 经销商名称 */
+    @Excel(name = "经销商名称")
+    private String tenantName;
+
+    /** 上级名称 */
+    @Excel(name = "上级名称")
+    private String companyName;
+
+    /** 创建人 */
+    @Excel(name = "创建人")
+    private String createUserName;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -195,6 +220,58 @@ public class MixRecord extends BaseEntity
     public Long getUpdateUser()
     {
         return updateUser;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
+    }
+
+    public String getTenantName() {
+        return tenantName;
+    }
+
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
     }
 
     @Override

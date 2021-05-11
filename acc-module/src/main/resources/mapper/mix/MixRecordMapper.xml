@@ -18,37 +18,59 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="cityMix"    column="city_mix"    />
         <result property="areaMix"    column="area_mix"    />
         <result property="createUser"    column="create_user"    />
+        <result property="createUserName"    column="create_user_name"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateUser"    column="update_user"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productNo"    column="product_no"    />
+        <result property="batchNo"    column="batch_no"    />
+        <result property="tenantName"    column="tenant_name"    />
+        <result property="companyName"    column="company_name"    />
     </resultMap>
 
     <sql id="selectMixRecordVo">
-        select id, company_id, code, tenant_id, product_id, batch_id, province_old, city_old, area_old, province_mix, city_mix, area_mix, create_user, create_time, update_user, update_time from t_mix_record
+        select mr.id,mr.company_id,mr.code,mr.tenant_id,mr.product_id,mr.batch_id,mr.province_old,mr.city_old,mr.area_old,
+        mr.province_mix,mr.city_mix,mr.area_mix,mr.create_user,mr.create_time,mr.update_user,mr.update_time
+        ,p.product_name,p.product_no,pb.batch_no,sd.dept_name as tenant_name,sd2.dept_name as company_name,su.nick_name as create_user_name
+        from t_mix_record mr
+        left join t_product p on p.id=mr.product_id
+        left join t_product_batch pb on pb.id=mr.batch_id
+        left join sys_dept sd on sd.dept_id=mr.tenant_id
+        left join sys_dept sd2 on sd2.dept_id=sd.parent_id
+        left join sys_user su on su.user_id=mr.create_user
     </sql>
 
     <select id="selectMixRecordList" parameterType="MixRecord" resultMap="MixRecordResult">
         <include refid="selectMixRecordVo"/>
         <where>  
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="code != null  and code != ''"> and code = #{code}</if>
-            <if test="tenantId != null "> and tenant_id = #{tenantId}</if>
-            <if test="productId != null "> and product_id = #{productId}</if>
-            <if test="batchId != null "> and batch_id = #{batchId}</if>
-            <if test="provinceOld != null  and provinceOld != ''"> and province_old = #{provinceOld}</if>
-            <if test="cityOld != null  and cityOld != ''"> and city_old = #{cityOld}</if>
-            <if test="areaOld != null  and areaOld != ''"> and area_old = #{areaOld}</if>
-            <if test="provinceMix != null  and provinceMix != ''"> and province_mix = #{provinceMix}</if>
-            <if test="cityMix != null  and cityMix != ''"> and city_mix = #{cityMix}</if>
-            <if test="areaMix != null  and areaMix != ''"> and area_mix = #{areaMix}</if>
-            <if test="createUser != null "> and create_user = #{createUser}</if>
-            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+            <if test="companyId != null "> and mr.company_id = #{companyId}</if>
+            <if test="code != null  and code != ''"> and mr.code = #{code}</if>
+            <if test="tenantId != null "> and mr.tenant_id = #{tenantId}</if>
+            <if test="productId != null "> and mr.product_id = #{productId}</if>
+            <if test="batchId != null "> and mr.batch_id = #{batchId}</if>
+            <if test="provinceOld != null  and provinceOld != ''"> and mr.province_old = #{provinceOld}</if>
+            <if test="cityOld != null  and cityOld != ''"> and mr.city_old = #{cityOld}</if>
+            <if test="areaOld != null  and areaOld != ''"> and mr.area_old = #{areaOld}</if>
+            <if test="provinceMix != null  and provinceMix != ''"> and mr.province_mix = #{provinceMix}</if>
+            <if test="cityMix != null  and cityMix != ''"> and mr.city_mix = #{cityMix}</if>
+            <if test="areaMix != null  and areaMix != ''"> and mr.area_mix = #{areaMix}</if>
+            <if test="createUser != null "> and mr.create_user = #{createUser}</if>
+            <if test="updateUser != null "> and mr.update_user = #{updateUser}</if>
+            <if test='productName != null and productName != ""'>
+                <bind name="productNameLike" value="'%'+productName+'%'"/>
+                and p.product_name like #{productNameLike}
+            </if>
+            <if test='productNo != null and productNo != ""'>
+                <bind name="product_noLike" value="'%'+productNo+'%'"/>
+                and p.product_no like #{product_noLike}
+            </if>
         </where>
     </select>
     
     <select id="selectMixRecordById" parameterType="Long" resultMap="MixRecordResult">
         <include refid="selectMixRecordVo"/>
-        where id = #{id}
+        where mr.id = #{id}
     </select>
         
     <insert id="insertMixRecord" parameterType="MixRecord" useGeneratedKeys="true" keyProperty="id">

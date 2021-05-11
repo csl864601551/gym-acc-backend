@@ -7,9 +7,11 @@ import java.util.Map;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.storage.mapper.ScanRecordMapper;
@@ -59,7 +61,12 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      */
     @Override
     public int insertScanRecord(ScanRecord scanRecord) {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         scanRecord.setCreateTime(DateUtils.getNowDate());
+        scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return scanRecordMapper.insertScanRecord(scanRecord);
     }
 
