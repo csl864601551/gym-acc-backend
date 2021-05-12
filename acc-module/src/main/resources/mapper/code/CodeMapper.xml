@@ -180,4 +180,16 @@
     <select id="selectBackCodeByStorage" parameterType="Map" resultType="String">
         select code from t_back_code_flow where company_id = #{companyId} and storage_record_id = #{storageRecordId}
     </select>
+
+    <select id="selectCodeListByCodeOrIndex" parameterType="Map" resultMap="CodeResult">
+        select code_index,company_id,status,code,code_acc,code_type,p_code from t_code
+        <where>
+            <if test="companyId != null ">and company_id = #{companyId}</if>
+            <if test="code != null  and code != ''">and( code = #{code} or p_code=#{code})</if>
+            <if test="indexBegin != null  and indexBegin != ''">and code_index &gt;= #{indexBegin}</if>
+            <if test="indexEnd != null  and indexEnd != ''">and code_index &lt;= #{indexEnd}</if>
+        </where>
+        order by code_index
+    </select>
+
 </mapper>

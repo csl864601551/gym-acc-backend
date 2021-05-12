@@ -1,7 +1,10 @@
 package com.ztl.gym.mix.service.impl;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.mix.mapper.MixRecordMapper;
@@ -53,7 +56,12 @@ public class MixRecordServiceImpl implements IMixRecordService
     @Override
     public int insertMixRecord(MixRecord mixRecord)
     {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            mixRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         mixRecord.setCreateTime(DateUtils.getNowDate());
+        mixRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return mixRecordMapper.insertMixRecord(mixRecord);
     }
 

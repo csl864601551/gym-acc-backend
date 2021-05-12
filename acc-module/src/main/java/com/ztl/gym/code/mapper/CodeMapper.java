@@ -163,4 +163,6 @@ public interface CodeMapper {
      * @return
      */
     List<String> selectBackCodeByStorage(Map<String, Object> params);
+
+    List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
 }

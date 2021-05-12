@@ -6,6 +6,7 @@ import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 码 Service接口
@@ -112,4 +113,5 @@ public interface ICodeService {
      */
     List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
 
+    List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
 }

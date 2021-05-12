@@ -274,4 +274,20 @@ public class CodeServiceImpl implements ICodeService {
         System.out.println("sql: " + sqlList.toString());
         return sqlList.toString();
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map) {
+        Code code=new Code();
+        code.setCode(map.get("code").toString());
+        code.setCompanyId(Long.valueOf(map.get("companyId").toString()));
+        Code temp=codeMapper.selectCode(code);
+        if(temp.getCodeType().equals("box")){
+            return codeMapper.selectCodeListByCodeOrIndex(map);
+        }else{
+            map.put("code",temp.getpCode());
+            return codeMapper.selectCodeListByCodeOrIndex(map);
+        }
+
+    }
 }
