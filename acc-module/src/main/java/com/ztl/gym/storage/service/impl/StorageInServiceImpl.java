@@ -92,7 +92,9 @@ public class StorageInServiceImpl implements IStorageInService {
         map.put("createTime", DateUtils.getNowDate());
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
         int result = storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
-
+        if(map.get("thirdPartyFlag")!=null||map.get("thirdPartyFlag")!=""){
+            updateInStatusByCode(map);
+        }
         return result;
     }
 

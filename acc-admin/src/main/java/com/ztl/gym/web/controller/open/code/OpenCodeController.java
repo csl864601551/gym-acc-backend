@@ -6,10 +6,7 @@ import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +22,7 @@ public class OpenCodeController {
      *
      * @return 获取所有码
      */
-    @GetMapping("getCodes")
+    @PostMapping("getCodes")
     public AjaxResult getCodes(@RequestBody Map<String,Object> map) {
         map.put("companyId",Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
         List<Code> codeList = codeService.selectCodeListByCodeOrIndex(map);

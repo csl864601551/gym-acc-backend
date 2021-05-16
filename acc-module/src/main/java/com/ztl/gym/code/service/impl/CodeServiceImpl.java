@@ -279,7 +279,11 @@ public class CodeServiceImpl implements ICodeService {
     @DataSource(DataSourceType.SHARDING)
     public List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map) {
         Code code=new Code();
-        code.setCode(map.get("code").toString());
+        if(map.get("code")==null){
+            code.setCode("");
+        }else{
+            code.setCode(map.get("code").toString());
+        }
         code.setCompanyId(Long.valueOf(map.get("companyId").toString()));
         Code temp=codeMapper.selectCode(code);
         if(temp.getCodeType().equals("box")){
