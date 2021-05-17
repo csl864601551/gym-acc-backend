@@ -173,6 +173,30 @@ public class StorageIn extends BaseEntity {
     @TableField(exist = false)
     private String toStorageIdName;
 
+
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
     /*-------------------------------- 冗余 --------------------------------*/
     /**
      * 产品编号

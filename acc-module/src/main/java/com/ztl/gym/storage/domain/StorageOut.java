@@ -165,6 +165,35 @@ public class StorageOut extends BaseEntity {
     @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd hh:mm:ss")
     private Date outTime;
 
+    @TableField(exist = false)
+    private String thirdPartyFlag;
+
+    @TableField(exist = false)
+    private String code;
+
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -340,6 +369,22 @@ public class StorageOut extends BaseEntity {
 
     public void setStorageToName(String storageToName) {
         this.storageToName = storageToName;
+    }
+
+    public String getThirdPartyFlag() {
+        return thirdPartyFlag;
+    }
+
+    public void setThirdPartyFlag(String thirdPartyFlag) {
+        this.thirdPartyFlag = thirdPartyFlag;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override

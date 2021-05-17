@@ -2,6 +2,7 @@ package com.ztl.gym.storage.domain;
 
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
@@ -142,6 +143,28 @@ public class StorageTransfer extends BaseEntity {
     private Date outTime;
 
 
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
     /*------------------------ 冗余字段 ------------------------*/
     /**
      * 产品名称

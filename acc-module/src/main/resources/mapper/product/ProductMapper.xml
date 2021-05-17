@@ -13,6 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="barCode"    column="bar_code"    />
         <result property="categoryOne"    column="category_one"    />
         <result property="categoryTwo"    column="category_two"    />
+        <result property="categoryName"    column="category_name"    />
         <result property="salePrice"    column="sale_price"    />
         <result property="marketPrice"    column="market_price"    />
         <result property="productIntroduce"    column="product_introduce"    />
@@ -42,6 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="barCode"    column="bar_code"    />
         <result property="categoryOne"    column="category_one"    />
         <result property="categoryTwo"    column="category_two"    />
+        <result property="categoryName"    column="category_name"    />
         <result property="salePrice"    column="sale_price"    />
         <result property="marketPrice"    column="market_price"    />
         <result property="productIntroduce"    column="product_introduce"    />
@@ -64,41 +66,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTProductVo">
-        select id, company_id, product_no, status, product_name, bar_code, category_one, category_two, sale_price, market_price, product_introduce, product_detail_pc, product_detail_mobile, storage_id, stock, stock_limit, unit, sort, sales_num, create_user, create_time, update_user, update_time from t_product
+        select p.id, p.company_id, p.product_no, p.status, p.product_name, p.bar_code, p.category_one, p.category_two,pc.category_name,
+        p.sale_price, p.market_price, p.product_introduce, p.product_detail_pc, p.product_detail_mobile, p.storage_id,
+        p.stock, p.stock_limit, p.unit, p.sort, p.sales_num, p.create_user, p.create_time, p.update_user, p.update_time
+        from t_product p
+        left join t_product_category pc on pc.id=p.category_two
+
     </sql>
 
     <select id="selectTProductList" parameterType="Product" resultMap="TProductResult">
         <include refid="selectTProductVo"/>
         <where>
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="productNo != null  and productNo != ''"> and product_no = #{productNo}</if>
-            <if test="status != null"> and status = #{status}</if>
-            <if test="status == null "> and status != 1</if>
-            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
-            <if test="barCode != null  and barCode != ''"> and bar_code = #{barCode}</if>
-            <if test="categoryOne != null  and categoryOne != ''"> and category_one = #{categoryOne}</if>
-            <if test="categoryTwo != null  and categoryTwo != ''"> and category_two = #{categoryTwo}</if>
+            <if test="companyId != null "> and p.company_id = #{companyId}</if>
+            <if test="productNo != null  and productNo != ''"> and p.product_no = #{productNo}</if>
+            <if test="status != null"> and p.status = #{status}</if>
+            <if test="status == null "> and p.status != 1</if>
+            <if test="productName != null  and productName != ''"> and p.product_name like concat('%', #{productName}, '%')</if>
+            <if test="barCode != null  and barCode != ''"> and p.bar_code = #{barCode}</if>
+            <if test="categoryOne != null  and categoryOne != ''"> and p.category_one = #{categoryOne}</if>
+            <if test="categoryTwo != null  and categoryTwo != ''"> and p.category_two = #{categoryTwo}</if>
             <if test="proaductCategory != null  and proaductCategory != ''"> and( category_two = #{proaductCategory} or category_one=#{proaductCategory})</if>
-            <if test="salePrice != null "> and sale_price = #{salePrice}</if>
-            <if test="marketPrice != null "> and market_price = #{marketPrice}</if>
-            <if test="productIntroduce != null  and productIntroduce != ''"> and product_introduce = #{productIntroduce}</if>
-            <if test="productDetailPc != null  and productDetailPc != ''"> and product_detail_pc = #{productDetailPc}</if>
-            <if test="productDetailMobile != null  and productDetailMobile != ''"> and product_detail_mobile = #{productDetailMobile}</if>
-            <if test="storageId != null "> and storage_id = #{storageId}</if>
-            <if test="stock != null "> and stock = #{stock}</if>
-            <if test="stockLimit != null "> and stock_limit = #{stockLimit}</if>
-            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
-            <if test="sort != null "> and sort = #{sort}</if>
-            <if test="salesNum != null "> and sales_num = #{salesNum}</if>
-            <if test="createUser != null "> and create_user = #{createUser}</if>
-            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+            <if test="salePrice != null "> and p.sale_price = #{salePrice}</if>
+            <if test="marketPrice != null "> and p.market_price = #{marketPrice}</if>
+            <if test="productIntroduce != null  and productIntroduce != ''"> and p.product_introduce = #{productIntroduce}</if>
+            <if test="productDetailPc != null  and productDetailPc != ''"> and p.product_detail_pc = #{productDetailPc}</if>
+            <if test="productDetailMobile != null  and productDetailMobile != ''"> and p.product_detail_mobile = #{productDetailMobile}</if>
+            <if test="storageId != null "> and p.storage_id = #{storageId}</if>
+            <if test="stock != null "> and p.stock = #{stock}</if>
+            <if test="stockLimit != null "> and p.stock_limit = #{stockLimit}</if>
+            <if test="unit != null  and unit != ''"> and p.unit = #{unit}</if>
+            <if test="sort != null "> and p.sort = #{sort}</if>
+            <if test="salesNum != null "> and p.sales_num = #{salesNum}</if>
+            <if test="createUser != null "> and p.create_user = #{createUser}</if>
+            <if test="updateUser != null "> and p.update_user = #{updateUser}</if>
         </where>
         order by sort
     </select>
 
     <select id="selectTProductById" parameterType="Long" resultMap="TProductResult">
         <include refid="selectTProductVo"/>
-        where id = #{id}
+        where p.id = #{id}
     </select>
 
     <select id="getAttributeList" resultMap="map">

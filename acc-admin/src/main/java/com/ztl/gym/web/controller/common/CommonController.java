@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.Constants;
+import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.StringUtils;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ import com.ztl.gym.framework.config.ServerConfig;
  * @author ruoyi
  */
 @RestController
-public class CommonController {
+public class CommonController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
     @Autowired
@@ -114,8 +115,10 @@ public class CommonController {
     }
 
     @GetMapping("/common/getStorageNo/{i}")
-    public String getStorageNo(@PathVariable int i) {
-        return commonService.getStorageNo(i);
+    public AjaxResult getStorageNo(@PathVariable int i) {
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("data", commonService.getStorageNo(i));
+        return ajax;
     }
 
 }

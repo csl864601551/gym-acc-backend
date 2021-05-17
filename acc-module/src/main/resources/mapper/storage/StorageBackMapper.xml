@@ -80,6 +80,8 @@
             <if test="storageTo != null  and storageTo != ''">and b.storage_to = #{storageTo}</if>
             <if test="fromStorageId != null ">and b.from_storage_id = #{fromStorageId}</if>
             <if test="toStorageId != null ">and b.to_storage_id = #{toStorageId}</if>
+            <if test="beginTime != null ">and b.create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null ">and b.create_time &lt;= #{endTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and b.tenant_id ')}
         order by create_time

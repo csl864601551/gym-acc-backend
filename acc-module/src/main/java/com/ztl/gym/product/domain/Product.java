@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -49,6 +50,11 @@ public class Product extends BaseEntity
     /** 产品二级分类 */
     @Excel(name = "产品二级分类")
     private Long categoryTwo;
+
+    /** 产品二级分类名称 */
+    @Excel(name = "产品二级分类名称")
+    @TableField(exist = false)
+    private String categoryName;
 
     /** 售价 */
     @Excel(name = "售价")
@@ -311,6 +317,14 @@ public class Product extends BaseEntity
 
     public void setAttributeList(List<Map<String, Object>> attributeList) {
         this.attributeList = attributeList;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     @Override

@@ -70,6 +70,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fromStorageId != null "> and so.from_storage_id = #{fromStorageId}</if>
             <if test="toStorageId != null "> and so.to_storage_id = #{toStorageId}</if>
             <if test="outTime != null "> and so.out_time = #{outTime}</if>
+            <if test="beginTime != null ">and so.create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null ">and so.create_time &lt;= #{endTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and so.tenant_id ')}
         order by so.create_time
