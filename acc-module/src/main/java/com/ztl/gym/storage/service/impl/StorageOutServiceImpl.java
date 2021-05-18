@@ -91,11 +91,11 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateTime(new Date());
         storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
         int res=storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
-        if(storageOut.getThirdPartyFlag()!=null||storageOut.getThirdPartyFlag()!=""){
+        if(storageOut.getThirdPartyFlag()!=null){
             Map<String,Object> map =new HashMap<>();
             map.put("id",storageOut.getId());
             map.put("code",storageOut.getCode());
-            updateOutStatusByCode(map);
+            updateOutStatusByCode(map);//PDA端使用
         }
 //        long storageRecordId=storageInMapper.selectInIdByExtraNo(storageOut.getExtraNo());//最新入库单号
 //        List<String> codes=codeService.selectCodeByStorage( storageOut.getCompanyId(),AccConstants.STORAGE_TYPE_IN,storageRecordId);

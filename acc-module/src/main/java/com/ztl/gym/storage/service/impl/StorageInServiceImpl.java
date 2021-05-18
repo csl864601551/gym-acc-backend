@@ -9,6 +9,7 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -92,8 +93,8 @@ public class StorageInServiceImpl implements IStorageInService {
         map.put("createTime", DateUtils.getNowDate());
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
         int result = storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
-        if(map.get("thirdPartyFlag")!=null||map.get("thirdPartyFlag")!=""){
-            updateInStatusByCode(map);
+        if(map.get("thirdPartyFlag")!=null){
+            updateInStatusByCode(map);//PDA端使用
         }
         return result;
     }
@@ -197,7 +198,12 @@ public class StorageInServiceImpl implements IStorageInService {
         String extraNo = storageIn.getExtraNo();//相关单号
         Long companyId = storageIn.getCompanyId();//顶级企业ID
 
-        long storageRecordId = storageInMapper.selectOutIdByExtraNo(extraNo);//最新入库单号
+        long storageRecordId = 0;
+        try {
+            storageRecordId = storageInMapper.selectOutIdByExtraNo(extraNo);//最新入库单号
+        }catch (Exception e){
+            throw new CustomException("未查询到相关单号,请检查入库单来源");
+        }
         List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
         storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(0));//插入码流转明细，转移到PDA执行
         //判断是否调拨,执行更新调拨单
