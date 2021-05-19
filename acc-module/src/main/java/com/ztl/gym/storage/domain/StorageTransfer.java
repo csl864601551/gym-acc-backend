@@ -179,6 +179,21 @@ public class StorageTransfer extends BaseEntity {
      */
     private String storageToName;
 
+    /**
+     * 创建人
+     */
+    @Excel(name = "创建人")
+    @TableField(exist = false)
+    private String createUserName;
+
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

@@ -22,6 +22,7 @@
         <result property="toStorageId" column="to_storage_id"/>
         <result property="remark" column="remark"/>
         <result property="createUser" column="create_user"/>
+        <result property="createUserName" column="create_user_name"/>
         <result property="createTime" column="create_time"/>
         <result property="updateUser" column="update_user"/>
         <result property="updateTime" column="update_time"/>
@@ -54,10 +55,12 @@
         p.product_name,
         d1.dept_name as storage_from_name,
         d2.dept_name as storage_to_name
+        ,suc.nick_name as create_user_name
         from t_storage_transfer st
         left join t_product p  on st.product_id = p.id
         left join sys_dept d1  on st.storage_from = d1.dept_id
         left join sys_dept d2  on st.storage_to = d2.dept_id
+        LEFT JOIN sys_user suc ON suc.user_id = st.create_user
     </sql>
 
     <select id="selectStorageTransferList" parameterType="StorageTransfer" resultMap="StorageTransferResult">

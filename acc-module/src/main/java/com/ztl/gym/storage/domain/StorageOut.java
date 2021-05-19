@@ -178,6 +178,32 @@ public class StorageOut extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
+    /*-------------------------------- 冗余 --------------------------------*/
+    /**
+     * 产品编号
+     */
+    private String productNo;
+    /**
+     * 产品名称
+     */
+    private String productName;
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     public Date getBeginTime() {
         return beginTime;
     }

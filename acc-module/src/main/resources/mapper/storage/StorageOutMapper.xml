@@ -30,6 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="storageFromName"    column="storage_from_name"    />
         <result property="storageToName"    column="storage_to_name"    />
         <result property="fromStorageIdName"    column="from_storage_id_name"    />
+        <result property="productName" column="product_name"/>
+        <result property="productNo" column="product_no"/>
     </resultMap>
 
     <resultMap type="HashMap" id="map">
@@ -45,12 +47,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         so.from_storage_id,so.to_storage_id,so.remark,so.create_user,so.create_time,so.out_time,so.update_user,so.update_time
         ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,s.storage_name as from_storage_id_name
+        ,p.product_name,p.product_no
         from t_storage_out so
         left join sys_dept sd on sd.dept_id=so.storage_from
         left join sys_dept sd2 on sd2.dept_id=so.storage_to
         left join t_storage s on s.id=so.from_storage_id
         LEFT JOIN sys_user suc ON suc.user_id = so.create_user
         LEFT JOIN sys_user suu ON suu.user_id = so.update_user
+        left join t_product p on p.id=so.product_id
     </sql>
 
     <select id="selectStorageOutList" parameterType="StorageOut" resultMap="StorageOutResult">
