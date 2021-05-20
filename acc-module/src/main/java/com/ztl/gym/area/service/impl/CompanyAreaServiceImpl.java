@@ -1,7 +1,12 @@
 package com.ztl.gym.area.service.impl;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.area.mapper.CompanyAreaMapper;
@@ -53,6 +58,12 @@ public class CompanyAreaServiceImpl implements ICompanyAreaService
     @Override
     public int insertCompanyArea(CompanyArea companyArea)
     {
+        Long deptId = SecurityUtils.getLoginUser().getUser().getDept().getDeptId();
+        //判断是否为平台
+        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+        }
         companyArea.setCreateTime(DateUtils.getNowDate());
         return companyAreaMapper.insertCompanyArea(companyArea);
     }

@@ -2,9 +2,11 @@ package com.ztl.gym.web.controller.storage;
 
 import java.util.List;
 
+import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,5 +98,15 @@ public class ScanRecordController extends BaseController {
     @GetMapping(value = "/getScanRecordByCode")
     public AjaxResult getScanRecordByCode(@RequestParam("code") String code) {
         return AjaxResult.success(scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(code), code));
+    }
+
+
+    /**
+     * 判断是否窜货
+     */
+    @GetMapping("/getIsMixInfo")
+    public AjaxResult getIsMixInfo(CompanyArea area) {
+        CompanyArea res = scanRecordService.getIsMixInfo(area);
+        return AjaxResult.success(res);
     }
 }

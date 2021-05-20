@@ -3,6 +3,7 @@ package com.ztl.gym.storage.service;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.storage.domain.ScanRecord;
 
 /**
@@ -62,4 +63,6 @@ public interface IScanRecordService
     public int deleteScanRecordById(Long id);
 
     Map<String,Object> getScanRecordByCode(Long companyId, String code);
+
+    CompanyArea getIsMixInfo(CompanyArea area);
 }

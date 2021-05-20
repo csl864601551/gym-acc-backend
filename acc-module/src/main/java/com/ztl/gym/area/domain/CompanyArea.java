@@ -1,5 +1,6 @@
 package com.ztl.gym.area.domain;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -42,6 +43,30 @@ public class CompanyArea extends BaseEntity
     /** 创建人 */
     @Excel(name = "创建人")
     private String creatorName;
+
+    /** 是否窜货 */
+    @TableField(exist = false)
+    private boolean isMix;
+
+    /** 销售地区 */
+    @Excel(name = "销售地区")
+    private String salesArea;
+
+    public String getSalesArea() {
+        return salesArea;
+    }
+
+    public void setSalesArea(String salesArea) {
+        this.salesArea = salesArea;
+    }
+
+    public boolean isMix() {
+        return isMix;
+    }
+
+    public void setMix(boolean mix) {
+        isMix = mix;
+    }
 
     public void setId(Long id)
     {
