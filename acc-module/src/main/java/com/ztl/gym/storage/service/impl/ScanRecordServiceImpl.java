@@ -146,6 +146,8 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
         returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
 
+        //TODO 判定是否窜货
+
         return returnMap;
     }
 

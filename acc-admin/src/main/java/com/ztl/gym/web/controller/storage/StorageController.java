@@ -6,6 +6,7 @@ import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.StorageBack;
@@ -163,18 +164,23 @@ public class StorageController extends BaseController {
      */
     @GetMapping("/listCode")
     public TableDataInfo listCode(int storageType, long storageRecordId) {
-        Code codeParam = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
-        startPage();
-        List<Code> codeList = codeService.selectCodeList(codeParam);
-        for (Code code : codeList) {
-            String typeName = "未知";
-            if (code.getCode().startsWith("P")) {
-                typeName = "箱码";
-            } else {
-                typeName = "单码";
+        try {
+            Code codeParam = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
+            startPage();
+            List<Code> codeList = codeService.selectCodeList(codeParam);
+            for (Code code : codeList) {
+                String typeName = "未知";
+                if (code.getCode().startsWith("P")) {
+                    typeName = "箱码";
+                } else {
+                    typeName = "单码";
+                }
+                code.setCodeTypeName(typeName);
             }
-            code.setCodeTypeName(typeName);
+            return getDataTable(codeList);
+        }catch (Exception e){
+            throw new BaseException("未查询到相关码信息或未扫码确认物流状态");
         }
-        return getDataTable(codeList);
+
     }
 }

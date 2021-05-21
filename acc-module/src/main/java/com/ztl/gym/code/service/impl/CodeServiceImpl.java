@@ -286,11 +286,15 @@ public class CodeServiceImpl implements ICodeService {
         }
         code.setCompanyId(Long.valueOf(map.get("companyId").toString()));
         Code temp=codeMapper.selectCode(code);
-        if(temp.getCodeType().equals("box")){
-            return codeMapper.selectCodeListByCodeOrIndex(map);
+        if(temp==null){
+            throw new CustomException("未查询到相关码信息，请检查码最新流转状态");
         }else{
-            map.put("code",temp.getpCode());
-            return codeMapper.selectCodeListByCodeOrIndex(map);
+            if(temp.getCodeType().equals("box")){
+                return codeMapper.selectCodeListByCodeOrIndex(map);
+            }else{
+                map.put("code",temp.getpCode());
+                return codeMapper.selectCodeListByCodeOrIndex(map);
+            }
         }
 
     }
