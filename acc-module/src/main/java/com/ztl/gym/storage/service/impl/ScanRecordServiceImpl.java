@@ -156,37 +156,41 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         LoginUser user = SecurityUtils.getLoginUser();
         SysDept dept = user.getUser().getDept();
         Long deptId = dept.getDeptId();
-        CompanyArea temp=new CompanyArea();
+        CompanyArea temp = new CompanyArea();
         //判断是否为平台
         if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
             temp.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
             temp.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
         }
-        List<CompanyArea> list=companyAreaService.selectCompanyAreaList(temp);
-        for (int i = 0; i < list.size(); i++) {
-            if(list.get(i).getProvince().equals("全部")){//第一步判断销售地区是否未所有省；是则返回false,未窜货
-                temp.setMix(false);
-                break;
-            }else if(list.get(i).getProvince().equals(area.getProvince())){//否则判断是否有包含的省；有则往下判断
-                if(list.get(i).getCity().equals("全部")){//第二步判断销售地区是否未所有市；是则返回false,未窜货
-                    temp.setMix(false);
+        List<CompanyArea> list = companyAreaService.selectCompanyAreaList(temp);
+        if (area.getProvince() == null) {
+            temp.setIsMix(2);
+        } else{
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getProvince().equals("全部")) {//第一步判断销售地区是否未所有省；是则返回false,未窜货
+                    temp.setIsMix(0);
                     break;
-                }else if (list.get(i).getCity().equals(area.getCity())) {//否则判断是否有包含的市；有则往下判断
-                    if (list.get(i).getArea().equals("全部")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
-                        temp.setMix(false);
+                } else if (list.get(i).getProvince().equals(area.getProvince())) {//否则判断是否有包含的省；有则往下判断
+                    if (list.get(i).getCity().equals("全部")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
+                        temp.setIsMix(0);
                         break;
-                    }else if(list.get(i).getArea().equals(area.getArea())){//否则判断是否有包含的区；有则返回false,未窜货
-                        temp.setMix(false);
-                        break;
-                    }else {
-                        temp.setMix(true);//区 没有返回true窜货
+                    } else if (list.get(i).getCity().equals(area.getCity())) {//否则判断是否有包含的市；有则往下判断
+                        if (list.get(i).getArea().equals("全部")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
+                            temp.setIsMix(0);
+                            break;
+                        } else if (list.get(i).getArea().equals(area.getArea())) {//否则判断是否有包含的区；有则返回false,未窜货
+                            temp.setIsMix(0);
+                            break;
+                        } else {
+                            temp.setIsMix(1);//区 没有返回true窜货
+                        }
+                    } else {
+                        temp.setIsMix(1);//市 没有返回true窜货
                     }
-                }else {
-                    temp.setMix(true);//市 没有返回true窜货
-                }
 
-            }else {
-                temp.setMix(true);//省 没有返回true窜货
+                } else {
+                    temp.setIsMix(1);//省 没有返回true窜货
+                }
             }
         }
         String salesArea="";

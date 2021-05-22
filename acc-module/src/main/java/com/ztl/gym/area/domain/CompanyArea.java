@@ -44,9 +44,8 @@ public class CompanyArea extends BaseEntity
     @Excel(name = "创建人")
     private String creatorName;
 
-    /** 是否窜货 */
-    @TableField(exist = false)
-    private boolean isMix;
+    /** 是否窜货 0未窜货 1窜货  2未接收到数据 */
+    private int isMix;
 
     /** 销售地区 */
     @Excel(name = "销售地区")
@@ -60,12 +59,12 @@ public class CompanyArea extends BaseEntity
         this.salesArea = salesArea;
     }
 
-    public boolean isMix() {
+    public int getIsMix() {
         return isMix;
     }
 
-    public void setMix(boolean mix) {
-        isMix = mix;
+    public void setIsMix(int isMix) {
+        this.isMix = isMix;
     }
 
     public void setId(Long id)
