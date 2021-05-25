@@ -7,12 +7,15 @@ import java.util.Map;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
+import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -36,6 +39,8 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     private ICodeService codeService;
     @Autowired
     private ICompanyAreaService companyAreaService;
+    @Autowired
+    private ICodeAttrService codeAttrService;
 
 
     /**
@@ -145,6 +150,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         }
         returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
         returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
+        returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
 
         //TODO 判定是否窜货
 
@@ -157,12 +163,16 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         SysDept dept = user.getUser().getDept();
         Long deptId = dept.getDeptId();
         CompanyArea temp = new CompanyArea();
-        //判断是否为平台
-        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            temp.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-            temp.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+
+        if(area.getCodeAttrId()==null){
+            throw new BaseException("未查询到相关销售区域");
+        }else{
+            //根据码属性ID获取对应的companyID和tenantID
+            CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());
+            temp.setCompanyId(codeAttr.getCompanyId());
+            temp.setTenantId(codeAttr.getTenantId());
         }
-        List<CompanyArea> list = companyAreaService.selectCompanyAreaList(temp);
+        List<CompanyArea> list = companyAreaService.selectCompanyAreaListV2(temp);
         if (area.getProvince() == null) {
             temp.setIsMix(2);
         } else{

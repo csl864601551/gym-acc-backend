@@ -6,6 +6,7 @@ import java.util.List;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,15 +90,12 @@ public class CompanyAreaController extends BaseController {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
             companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-            String[] ancestors = loginUser.getDept().getAncestors().split(",");
-            if (ancestors.length > 2) {
-                companyArea.setTenantId(companyId);
-            }
+            companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
         }
         companyArea.setCreateUser(loginUser.getUserId());
-        companyArea.setCreateTime(new Date());
+        companyArea.setCreateTime(DateUtils.getNowDate());
         companyArea.setUpdateUser(loginUser.getUserId());
-        companyArea.setUpdateTime(new Date());
+        companyArea.setUpdateTime(DateUtils.getNowDate());
         return toAjax(companyAreaService.insertCompanyArea(companyArea));
     }
 

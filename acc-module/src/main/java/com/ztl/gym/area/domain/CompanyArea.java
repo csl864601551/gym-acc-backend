@@ -47,9 +47,20 @@ public class CompanyArea extends BaseEntity
     /** 是否窜货 0未窜货 1窜货  2未接收到数据 */
     private int isMix;
 
+    /** codeAttrID*/
+    private Long codeAttrId;
+
     /** 销售地区 */
     @Excel(name = "销售地区")
     private String salesArea;
+
+    public Long getCodeAttrId() {
+        return codeAttrId;
+    }
+
+    public void setCodeAttrId(Long codeAttrId) {
+        this.codeAttrId = codeAttrId;
+    }
 
     public String getSalesArea() {
         return salesArea;

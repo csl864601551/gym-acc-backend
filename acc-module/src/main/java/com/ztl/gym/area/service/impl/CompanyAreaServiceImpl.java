@@ -48,6 +48,11 @@ public class CompanyAreaServiceImpl implements ICompanyAreaService
     {
         return companyAreaMapper.selectCompanyAreaList(companyArea);
     }
+    @Override
+    public List<CompanyArea> selectCompanyAreaListV2(CompanyArea companyArea)
+    {
+        return companyAreaMapper.selectCompanyAreaListV2(companyArea);
+    }
 
     /**
      * 新增经销商销售区域 
@@ -58,13 +63,6 @@ public class CompanyAreaServiceImpl implements ICompanyAreaService
     @Override
     public int insertCompanyArea(CompanyArea companyArea)
     {
-        Long deptId = SecurityUtils.getLoginUser().getUser().getDept().getDeptId();
-        //判断是否为平台
-        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-            companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
-        }
-        companyArea.setCreateTime(DateUtils.getNowDate());
         return companyAreaMapper.insertCompanyArea(companyArea);
     }
 

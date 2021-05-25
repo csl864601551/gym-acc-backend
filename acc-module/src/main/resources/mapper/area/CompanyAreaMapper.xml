@@ -48,6 +48,20 @@
             <if test="createUser != null ">and create_user = #{createUser}</if>
             <if test="updateUser != null ">and update_user = #{updateUser}</if>
         </where>
+        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and tenant_id ')}
+    </select>
+
+    <select id="selectCompanyAreaListV2" parameterType="CompanyArea" resultMap="CompanyAreaResult">
+        <include refid="selectCompanyAreaExtraVo"/>
+        <where>
+            <if test="companyId != null ">and company_id = #{companyId}</if>
+            <if test="tenantId != null ">and tenant_id = #{tenantId}</if>
+            <if test="province != null  and province != ''">and province = #{province}</if>
+            <if test="city != null  and city != ''">and city = #{city}</if>
+            <if test="area != null  and area != ''">and area = #{area}</if>
+            <if test="createUser != null ">and create_user = #{createUser}</if>
+            <if test="updateUser != null ">and update_user = #{updateUser}</if>
+        </where>
     </select>
 
     <select id="selectCompanyAreaById" parameterType="Long" resultMap="CompanyAreaResult">

@@ -27,6 +27,8 @@ public interface ICompanyAreaService
      */
     public List<CompanyArea> selectCompanyAreaList(CompanyArea companyArea);
 
+    public List<CompanyArea> selectCompanyAreaListV2(CompanyArea companyArea);
+
     /**
      * 新增经销商销售区域 
      * 
