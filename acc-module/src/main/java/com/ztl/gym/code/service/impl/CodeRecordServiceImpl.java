@@ -27,6 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 
 /**
  * 生码记录Service业务层处理
@@ -152,9 +156,16 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
             //生码属性
             long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
-
+            //获取IP
+            String localIp="";
+            try {
+                InetAddress ip4 = Inet4Address.getLocalHost();
+                localIp=ip4.getHostAddress();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
             //异步生码
-            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num;
+            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + localIp ;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
@@ -191,8 +202,17 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             //箱码
             //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
             String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow() + pCodeIndex;
+            //获取IP
+            String localIp="";
+            try {
+                InetAddress ip4 = Inet4Address.getLocalHost();
+                localIp=ip4.getHostAddress();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
             //异步生码
-            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + pCode;
+            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + localIp + "-" + pCode ;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
@@ -204,6 +224,15 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @param codeGenMessage
      */
     public void onPublishCode(String codeGenMessage) {
+        //获取IP
+        String localIp="";
+        try {
+            InetAddress ip4 = Inet4Address.getLocalHost();
+            localIp=ip4.getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         System.out.println(codeGenMessage);
         log.info("onPublishCode {}", codeGenMessage);
         String[] codeGenMsgs = codeGenMessage.split("-");
@@ -215,12 +244,16 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         long companyId = Long.parseLong(codeGenMsgs[2]);
         //生码总数
         long codeTotalNum = Long.parseLong(codeGenMsgs[3]);
+        //ip
+        String ip=codeGenMsgs[4];
         //箱码
         String pCode = null;
-        if (codeGenMsgs.length == 5) {
-            pCode = codeGenMsgs[4];
+        if (codeGenMsgs.length == 6) {
+            pCode = codeGenMsgs[5];
         }
-        codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
+        if(localIp.equals(ip)){
+            codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
+        }
     }
 
     /**
