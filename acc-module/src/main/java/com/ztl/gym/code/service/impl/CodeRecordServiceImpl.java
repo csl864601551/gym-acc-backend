@@ -10,7 +10,9 @@ import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -235,25 +237,30 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
         System.out.println(codeGenMessage);
         log.info("onPublishCode {}", codeGenMessage);
-        String[] codeGenMsgs = codeGenMessage.split("-");
-        //生码属性id
-        long codeAttrId = Long.parseLong(codeGenMsgs[0]);
-        //生码记录id
-        long codeRecordId = Long.parseLong(codeGenMsgs[1]);
-        //企业id
-        long companyId = Long.parseLong(codeGenMsgs[2]);
-        //生码总数
-        long codeTotalNum = Long.parseLong(codeGenMsgs[3]);
-        //ip
-        String ip=codeGenMsgs[4];
-        //箱码
-        String pCode = null;
-        if (codeGenMsgs.length == 6) {
-            pCode = codeGenMsgs[5];
+        try {
+            String[] codeGenMsgs = codeGenMessage.split("-");
+            //生码属性id
+            long codeAttrId = Long.parseLong(codeGenMsgs[0]);
+            //生码记录id
+            long codeRecordId = Long.parseLong(codeGenMsgs[1]);
+            //企业id
+            long companyId = Long.parseLong(codeGenMsgs[2]);
+            //生码总数
+            long codeTotalNum = Long.parseLong(codeGenMsgs[3]);
+            //ip
+            String ip=codeGenMsgs[4];
+            //箱码
+            String pCode = null;
+            if (codeGenMsgs.length == 6) {
+                pCode = codeGenMsgs[5];
+            }
+            if(localIp.equals(ip)){
+                codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
+            }
+        }catch (Exception e){
+            throw new CustomException("接收数据异常，请检查码数据格式！", HttpStatus.ERROR);
         }
-        if(localIp.equals(ip)){
-            codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
-        }
+
     }
 
     /**
