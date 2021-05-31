@@ -72,6 +72,7 @@ public class StorageTransferServiceImpl implements IStorageTransferService {
         storageTransfer.setStatus(StorageTransfer.STATUS_WAIT);
         storageTransfer.setEnable(StorageTransfer.ENABLE_NO);
         storageTransfer.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        storageTransfer.setTenantId(SecurityUtils.getLoginUserTopCompanyId());
         storageTransfer.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageTransfer.setCreateTime(DateUtils.getNowDate());
         return storageTransferMapper.insertStorageTransfer(storageTransfer);

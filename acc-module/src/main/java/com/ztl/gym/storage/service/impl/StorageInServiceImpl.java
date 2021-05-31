@@ -85,7 +85,7 @@ public class StorageInServiceImpl implements IStorageInService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map) {
-        if (map.get("tenantId").toString().equals("") || map.get("tenantId") == null || map.get("tenantId").toString().equals("0")) {
+        if (map.get("tenantId") == null) {
             map.put("tenantId", commonService.getTenantId());
         }
         map.put("inType", StorageIn.IN_TYPE_COMMON);

@@ -218,7 +218,7 @@ public class StorageServiceImpl implements IStorageService {
      */
     @Override
     public StorageVo selectLastStorageByCode(String codeVal) {
-        StorageVo storageVo = new StorageVo(); //TODO 查询码的最新物流信息
+        StorageVo storageVo = new StorageVo(); // 查询码的最新物流信息
 
         Code code = new Code();
         code.setCode(codeVal);
@@ -256,7 +256,6 @@ public class StorageServiceImpl implements IStorageService {
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
-                        //TODO
                         storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
                         storageVo.setExtraNo(storageIn.getInNo());
                         storageVo.setNum(storageIn.getActInNum());
@@ -267,10 +266,8 @@ public class StorageServiceImpl implements IStorageService {
                         storageVo.setOutTime(storageOut.getOutTime());
                     } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
                         StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
-                        //TODO
                     } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
-                        //TODO
                     }
                 } else {
                     storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品数量
@@ -377,6 +374,22 @@ public class StorageServiceImpl implements IStorageService {
             storageId = storageIn.getToStorageId();
             productId = storageIn.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageIn.getActInNum()));
+            // 无仓库，第一步查询是否有仓库，没有直接新建仓库
+            if(storageId == null ){
+                Storage temp=new Storage();
+                List<Storage> list=selectStorageList(temp);
+                if(list.size()>0){
+                    storageId=list.get(0).getId();
+                }else{
+                    Storage storage=new Storage();
+                    storage.setStorageName("默认仓库");
+                    storage.setStorageNo("1");
+                    insertStorage(storage);
+                    storageId=storage.getId();
+                }
+                storageIn.setToStorageId(storageId);
+                storageInService.updateStorageIn(storageIn);
+            }
 
         } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
             StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
