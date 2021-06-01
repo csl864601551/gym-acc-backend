@@ -1,6 +1,7 @@
 package com.ztl.gym.code.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ztl.gym.code.domain.CodeAttr;
 import org.springframework.stereotype.Repository;
@@ -68,5 +69,12 @@ public interface CodeAttrMapper {
      * @return 结果
      */
     public int deleteCodeAttrByIds(Long[] ids);
+    /**
+     * 更新生码记录起始、终止流水号
+     *
+     * @param params
+     * @return
+     */
+    int updateCodeIndex(Map<String, Object> params);
 
 }

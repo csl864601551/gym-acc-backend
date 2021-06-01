@@ -3,12 +3,14 @@ package com.ztl.gym.web.controller.open.system;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.Constants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysMenu;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.LoginBody;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.ServletUtils;
@@ -18,6 +20,7 @@ import com.ztl.gym.framework.web.service.TokenService;
 import com.ztl.gym.system.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -45,12 +48,17 @@ public class OpenSystemController {
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody)
     {
-        AjaxResult ajax = AjaxResult.success();
-        // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-                loginBody.getUuid(),loginBody.getThirdPartyFlag());
-        ajax.put("data", token);
-        return ajax;
+        try {
+
+            AjaxResult ajax = AjaxResult.success();
+            // 生成令牌
+            String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+                    loginBody.getUuid(),loginBody.getThirdPartyFlag());
+            ajax.put("data", token);
+            return ajax;
+        }catch (Exception e){
+            throw new CustomException("登录超时，请检查网络连接！", HttpStatus.ERROR);
+        }
     }
 
     /**

@@ -14,6 +14,7 @@ import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
@@ -33,6 +34,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/code/record")
 public class CodeRecordController extends BaseController {
+    @Autowired
+    private CommonService commonService;
     @Autowired
     private ICodeRecordService codeRecordService;
     @Autowired
@@ -226,14 +229,27 @@ public class CodeRecordController extends BaseController {
     @Log(title = "生码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CodeRecord codeRecord) {
+        int res=0;
+        Long companyId=SecurityUtils.getLoginUserCompany().getDeptId();
+        long codeNo=commonService.selectCurrentVal(companyId);
+        long indexStart=codeNo+ 1;
+        long indexEnd=codeNo+codeRecord.getBoxCount()*codeRecord.getCount()+codeRecord.getBoxCount();
+
+
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
-            return toAjax(codeRecordService.createCodeRecord(SecurityUtils.getLoginUserCompany().getDeptId(), codeRecord.getCount(), codeRecord.getRemark()));
+            return toAjax(codeRecordService.createCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark()));
         } else {
-            long tayCount=1;
-            if(codeRecord.getpType()==1){
-                tayCount=codeRecord.getTrayCount();
+            for (int i = 0; i < codeRecord.getBoxCount(); i++) {
+                if(i==0){
+                    indexStart=codeNo+ i+1;
+                }else {
+                    indexStart=codeNo+i*codeRecord.getCount()+i+1;
+                }
+                indexEnd=codeNo+(i+1)*codeRecord.getCount()+(i+1);
+
+                res=codeRecordService.createPCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark(),indexStart,indexEnd);
             }
-            return toAjax(codeRecordService.createPCodeRecord(SecurityUtils.getLoginUserCompany().getDeptId(),codeRecord.getpType() , tayCount, codeRecord.getBoxCount(),codeRecord.getCount(), codeRecord.getRemark()));
+            return toAjax(res);
         }
     }
 

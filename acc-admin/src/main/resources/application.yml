@@ -125,3 +125,17 @@ xss:
   excludes: /system/notice/*
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+#微信相关配置
+wx:
+  #appId （到时候换成自己公众号的）
+  appId: wx6c72ab692fc249f8
+  #appSecret（到时候换成自己公众号的）
+  appSecret: cee330ed0dda7ee65d5aa988ddd3c54b
+  #Token（到时候换成自己公众号的）
+  token: asfadfasdasd
+  #参考以下文档获取access_token（有效期7200秒，开发者必须在自己的服务全局缓存access_token）
+  jssdk_accesstoken_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+  #用第一步拿到的access_token 采用http GET方式请求获得jsapi_ticket（有效期7200秒，开发者必须在自己的服务全局缓存jsapi_ticket）
+  jssdk_getticket_url: https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi
+

@@ -9,6 +9,9 @@
         <result property="companyId" column="company_id"/>
         <result property="status" column="status"/>
         <result property="type" column="type"/>
+        <result property="pType" column="p_type"/>
+        <result property="trayCount" column="tray_count"/>
+        <result property="boxCount" column="box_count"/>
         <result property="count" column="count"/>
         <result property="indexStart" column="index_start"/>
         <result property="indexEnd" column="index_end"/>
@@ -26,14 +29,14 @@
     </resultMap>
 
     <sql id="selectCodeRecordVo">
-        select id, company_id, status, type, count, index_start, index_end, product_id, batch_id, remark, create_user, create_time, update_user, update_time from t_code_record
+        select id, company_id, status, type,p_type,tray_count,box_count, count, index_start, index_end, product_id, batch_id, remark, create_user, create_time, update_user, update_time from t_code_record
     </sql>
 
     <sql id="selectCodeRecordExtraVo">
         select r.id,
         r.company_id,
         r.status,
-        r.type,
+        r.type,r.p_type,r.tray_count,r.box_count,
         r.count,
         r.index_start,
         r.index_end,
@@ -61,6 +64,9 @@
             <if test="companyId != null ">and r.company_id = #{companyId}</if>
             <if test="status != null ">and r.status = #{status}</if>
             <if test="type != null ">and r.type = #{type}</if>
+            <if test="pType != null ">and r.p_type = #{pType}</if>
+            <if test="trayCount != null ">and r.tray_count = #{trayCount}</if>
+            <if test="boxCount != null ">and r.box_count = #{boxCount}</if>
             <if test="count != null ">and r.count = #{count}</if>
             <if test="indexStart != null ">and r.index_start = #{indexStart}</if>
             <if test="indexEnd != null ">and r.index_end = #{indexEnd}</if>
@@ -86,6 +92,9 @@
             <if test="companyId != null">company_id,</if>
             <if test="status != null">status,</if>
             <if test="type != null">type,</if>
+            <if test="pType != null">p_type,</if>
+            <if test="trayCount != null">tray_count,</if>
+            <if test="boxCount != null">box_count,</if>
             <if test="count != null">count,</if>
             <if test="indexStart != null">index_start,</if>
             <if test="indexEnd != null">index_end,</if>
@@ -101,6 +110,9 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="status != null">#{status},</if>
             <if test="type != null">#{type},</if>
+            <if test="pType != null">#{pType},</if>
+            <if test="trayCount != null">#{trayCount},</if>
+            <if test="boxCount != null">#{boxCount},</if>
             <if test="count != null">#{count},</if>
             <if test="indexStart != null">#{indexStart},</if>
             <if test="indexEnd != null">#{indexEnd},</if>
@@ -120,6 +132,9 @@
             <if test="companyId != null">company_id = #{companyId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="type != null">type = #{type},</if>
+            <if test="pType != null">p_type = #{pType},</if>
+            <if test="trayCount != null">tray_count = #{trayCount},</if>
+            <if test="boxCount != null">box_count = #{boxCount},</if>
             <if test="count != null">count = #{count},</if>
             <if test="indexStart != null">index_start = #{indexStart},</if>
             <if test="indexEnd != null">index_end = #{indexEnd},</if>
