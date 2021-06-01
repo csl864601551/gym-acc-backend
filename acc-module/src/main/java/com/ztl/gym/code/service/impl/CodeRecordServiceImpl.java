@@ -3,6 +3,7 @@ package com.ztl.gym.code.service.impl;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
+import com.ztl.gym.code.mapper.CodeAttrMapper;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
@@ -52,6 +53,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
     @Autowired
     private CodeRecordMapper codeRecordMapper;
+
+    @Autowired
+    private CodeAttrMapper codeAttrMapper;
 
     @Autowired
     private CodeMapper codeMapper;
@@ -184,38 +188,52 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     @DataSource(DataSourceType.SHARDING)
-    public int createPCodeRecord(long companyId, long num, String remark) {
+    public int createPCodeRecord(long companyId, int pType,long trayNum,long boxNum, long num, String remark) {
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX, num, remark);
+        codeRecord.setpType(pType);
+        codeRecord.setTrayCount(trayNum);
+        codeRecord.setBoxCount(boxNum);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             long codeRecordId = codeRecord.getId();
-            //更新生码记录流水号
-            long codeNo = commonService.selectCurrentVal(companyId);
-            long pCodeIndex = codeNo + 1;
+            //生码属性
+            long codeAttrId = saveCodeAttr(companyId, codeRecordId, 0, num);//codeNo循环完成更新
+            long beginIndex=0;
+            long endIndex=0;
+            for (int i = 0; i < trayNum*boxNum; i++) {//箱托循环
+                //更新生码记录流水号
+                long codeNo = commonService.selectCurrentVal(companyId);
+                long pCodeIndex = codeNo + 1;
+                if(i==0){
+                    beginIndex=codeNo + 1;
+                }
+                if(i==(trayNum*boxNum-1)){
+                    endIndex=codeNo + 1 + num;
+                }
+
+                //箱码
+                //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
+                String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow() + pCodeIndex;
+                //获取IP
+                String localIp="";
+                try {
+                    InetAddress ip4 = Inet4Address.getLocalHost();
+                    localIp=ip4.getHostAddress();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+
+                //异步生码
+                String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + localIp + "-" + pCode ;
+                stringRedisTemplate.convertAndSend("code.gen", message);
+            }
+            //循环外更新index
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecord.getId());
-            params.put("indexStart", codeNo + 1);
-            params.put("indexEnd", codeNo + 1 + num);
+            params.put("indexStart", beginIndex);//codeNo + 1
+            params.put("indexEnd", endIndex);//codeNo + 1 + num
             codeRecordMapper.updateCodeIndex(params);
-
-            //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
-
-            //箱码
-            //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
-            String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow() + pCodeIndex;
-            //获取IP
-            String localIp="";
-            try {
-                InetAddress ip4 = Inet4Address.getLocalHost();
-                localIp=ip4.getHostAddress();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-
-            //异步生码
-            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + localIp + "-" + pCode ;
-            stringRedisTemplate.convertAndSend("code.gen", message);
+            codeAttrMapper.updateCodeIndex(params);
         }
         return res;
     }

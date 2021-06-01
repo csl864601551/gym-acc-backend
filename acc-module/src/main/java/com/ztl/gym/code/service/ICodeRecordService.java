@@ -79,5 +79,5 @@ public interface ICodeRecordService {
      * @param remark    备注详情
      * @return
      */
-    int createPCodeRecord(long companyId, long num, String remark);
+    int createPCodeRecord(long companyId, int pType,long trayNum,long boxNum,long num, String remark);
 }

@@ -229,7 +229,11 @@ public class CodeRecordController extends BaseController {
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
             return toAjax(codeRecordService.createCodeRecord(SecurityUtils.getLoginUserCompany().getDeptId(), codeRecord.getCount(), codeRecord.getRemark()));
         } else {
-            return toAjax(codeRecordService.createPCodeRecord(SecurityUtils.getLoginUserCompany().getDeptId(), codeRecord.getCount(), codeRecord.getRemark()));
+            long tayCount=1;
+            if(codeRecord.getpType()==1){
+                tayCount=codeRecord.getTrayCount();
+            }
+            return toAjax(codeRecordService.createPCodeRecord(SecurityUtils.getLoginUserCompany().getDeptId(),codeRecord.getpType() , tayCount, codeRecord.getBoxCount(),codeRecord.getCount(), codeRecord.getRemark()));
         }
     }
 
