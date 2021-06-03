@@ -84,7 +84,10 @@ public class StorageInController extends BaseController {
     @Log(title = "入库", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Map<String, Object> map) {
-        return toAjax(storageInService.insertStorageIn(map));
+        storageInService.insertStorageIn(map);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("data", map.get("id").toString());
+        return ajax;
     }
 
     /**

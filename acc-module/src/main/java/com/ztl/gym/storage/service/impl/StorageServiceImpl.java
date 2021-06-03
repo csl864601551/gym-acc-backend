@@ -230,7 +230,7 @@ public class StorageServiceImpl implements IStorageService {
                 storageVo.setCode(codeVal);//区分前端是否查询到码相关信息
                 storageVo.setCompanyId(companyId);
                 if (codeEntity.getCodeType().toString().equals("single")) {//判断单码是属于单码or箱码
-                    if (codeEntity.getpCode().equals("") || codeEntity.getpCode().equals(null)) {
+                    if (codeEntity.getpCode()==null) {
                         storageVo.setCodeTypeName("单码");
                     } else {
                         storageVo.setCodeTypeName("箱码");

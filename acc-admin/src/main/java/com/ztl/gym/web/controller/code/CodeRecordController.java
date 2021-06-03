@@ -232,8 +232,8 @@ public class CodeRecordController extends BaseController {
         int res=0;
         Long companyId=SecurityUtils.getLoginUserCompany().getDeptId();
         long codeNo=commonService.selectCurrentVal(companyId);
-        long indexStart=codeNo+ 1;
-        long indexEnd=codeNo+codeRecord.getBoxCount()*codeRecord.getCount()+codeRecord.getBoxCount();
+        long indexStart=0;
+        long indexEnd=0;
 
 
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {

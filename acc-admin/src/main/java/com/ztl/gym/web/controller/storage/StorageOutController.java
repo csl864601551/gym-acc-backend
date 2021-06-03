@@ -78,7 +78,10 @@ public class StorageOutController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody StorageOut storageOut)
     {
-        return toAjax(storageOutService.insertStorageOut(storageOut));
+        storageOutService.insertStorageOut(storageOut);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("data", storageOut.getId());
+        return ajax;
     }
 
     /**
