@@ -87,6 +87,8 @@ public class StorageInServiceImpl implements IStorageInService {
     public int insertStorageIn(Map<String, Object> map) {
         if (map.get("tenantId") == null) {
             map.put("tenantId", commonService.getTenantId());
+        }else if(map.get("tenantId").toString() .equals("0")){
+            map.put("tenantId", commonService.getTenantId());
         }
         map.put("inType", StorageIn.IN_TYPE_COMMON);
         map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
