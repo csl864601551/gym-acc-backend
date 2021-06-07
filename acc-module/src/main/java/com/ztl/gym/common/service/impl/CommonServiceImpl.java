@@ -24,6 +24,12 @@ import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -300,5 +306,35 @@ public class CommonServiceImpl implements CommonService {
             return codeParam;
         }
         return null;
+    }
+    /**
+     * 实现txt下载
+     * @param response
+     */
+    public void downloadTXT(String fileName,String content,HttpServletResponse response) {
+
+        //String fileName = "fileName" + ".txt";
+        //String content = "写入txt的内容";
+        response.setContentType("text/plain");
+
+        try {
+            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        ServletOutputStream outputStream = null;
+        BufferedOutputStream buffer = null;
+
+        try {
+            outputStream = response.getOutputStream();
+            buffer = new BufferedOutputStream(outputStream);
+            buffer.write(content.getBytes("UTF-8"));
+            buffer.flush();
+            buffer.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

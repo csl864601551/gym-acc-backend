@@ -3,6 +3,7 @@ package com.ztl.gym.common.service;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface CommonService {
@@ -86,4 +87,6 @@ public interface CommonService {
      * @return
      */
     Code selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
+
+    void downloadTXT(String fileName, String content, HttpServletResponse response);
 }
