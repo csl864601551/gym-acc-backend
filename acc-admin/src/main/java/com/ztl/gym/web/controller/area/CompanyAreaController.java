@@ -1,13 +1,14 @@
 package com.ztl.gym.web.controller.area;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.html.EscapeUtil;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -82,7 +83,7 @@ public class CompanyAreaController extends BaseController {
     /**
      * 新增经销商销售区域
      */
-    @PreAuthorize("@ss.hasPermi('system:area:add')")
+    //@PreAuthorize("@ss.hasPermi('system:area:add')")
     @Log(title = "经销商销售区域 ", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CompanyArea companyArea) {
@@ -118,4 +119,41 @@ public class CompanyAreaController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(companyAreaService.deleteCompanyAreaByIds(ids));
     }
+
+
+    /**
+     * 查询经销商可选择的区域
+     */
+    @Log(title = "查询经销商可选择的区域 ")
+    @GetMapping(value = "/selectkxzqy")
+    public AjaxResult selectkxzqy() {
+        //SysUser loginUser = SecurityUtils.getLoginUser().getUser();
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        List<CompanyArea> list = companyAreaService.selectkyjxsdqList(companyId);
+        List<Map<String, String>> QYlist = new ArrayList<Map<String, String>>();
+        if(list.size()>0){
+            for(CompanyArea companyArea :list ){
+                Map<String, String> map = new HashMap<>();
+                String value = null;
+                if(StrUtil.isNotBlank(companyArea.getProvince())){
+                    value = companyArea.getProvince();
+                }
+                if(StrUtil.isNotBlank(companyArea.getCity())){
+                    value = value+"/"+companyArea.getCity();
+                }
+                if(StrUtil.isNotBlank(companyArea.getArea())){
+                    value = value+"/"+companyArea.getArea();
+                }
+                map.put("value",value);
+                map.put("label",value);
+                QYlist.add(map);
+            }
+            System.out.println("QYlist=="+QYlist);
+        }
+//        companyAreaService.selectCompanyAreaById(id);
+        return AjaxResult.success(QYlist);
+    }
+
+
+
 }

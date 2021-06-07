@@ -31,6 +31,15 @@ public interface CompanyAreaMapper
 
     public List<CompanyArea> selectCompanyAreaListV2(CompanyArea companyArea);
 
+
+    /**
+     * 查询经销商可选区域列表列表
+     *
+     * @param companyId 部门id
+     * @return 经销商销售区域 集合
+     */
+    public List<CompanyArea> selectkyjxsdqList(Long companyId);
+
     /**
      * 新增经销商销售区域
      *

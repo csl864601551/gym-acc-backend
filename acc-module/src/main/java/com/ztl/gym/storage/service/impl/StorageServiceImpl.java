@@ -256,10 +256,12 @@ public class StorageServiceImpl implements IStorageService {
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
-                        storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
-                        storageVo.setExtraNo(storageIn.getInNo());
-                        storageVo.setNum(storageIn.getActInNum());
-                        storageVo.setFromStorageId(storageIn.getToStorageId());
+                        if(storageIn!=null){
+                            storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
+                            storageVo.setExtraNo(storageIn.getInNo());
+                            storageVo.setNum(storageIn.getActInNum());
+                            storageVo.setFromStorageId(storageIn.getToStorageId());
+                        }
                     } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
                         StorageOut storageOut = storageOutService.selectStorageOutById(storageRecordId);
                         storageVo.setOutNo(storageOut.getOutNo());
