@@ -95,6 +95,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateTime(new Date());
         if(storageOut.getThirdPartyFlag()!=null){
             storageOut.setUpdateTime(DateUtils.getNowDate());
+            storageOut.setOutTime(DateUtils.getNowDate());
             long codeBoxCount=codeService.getCodeCount(storageOut.getCode());
             storageOut.setActOutNum(codeBoxCount);
             storageOut.setOutNum(codeBoxCount);

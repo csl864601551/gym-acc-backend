@@ -96,6 +96,7 @@ public class StorageInServiceImpl implements IStorageInService {
         map.put("createTime", DateUtils.getNowDate());
         if(map.get("thirdPartyFlag")!=null){
             map.put("updateTime", DateUtils.getNowDate());
+            map.put("inTime", DateUtils.getNowDate());
             long codeBoxCount=codeService.getCodeCount(map.get("code").toString());
             map.put("inNum", codeBoxCount);
             map.put("actInNum", codeBoxCount);
