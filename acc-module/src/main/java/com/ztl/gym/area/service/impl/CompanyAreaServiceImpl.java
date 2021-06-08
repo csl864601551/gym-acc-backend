@@ -54,6 +54,19 @@ public class CompanyAreaServiceImpl implements ICompanyAreaService
         return companyAreaMapper.selectCompanyAreaListV2(companyArea);
     }
 
+
+    /**
+     * 查询经销商可选区域列表
+     *
+     * @param companyId 部门id
+     * @return 经销商销售区域
+     */
+    @Override
+    public List<CompanyArea> selectkyjxsdqList(Long companyId)
+    {
+        return companyAreaMapper.selectkyjxsdqList(companyId);
+    }
+
     /**
      * 新增经销商销售区域 
      *

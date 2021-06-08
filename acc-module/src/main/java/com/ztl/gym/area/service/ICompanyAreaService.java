@@ -27,6 +27,17 @@ public interface ICompanyAreaService
      */
     public List<CompanyArea> selectCompanyAreaList(CompanyArea companyArea);
 
+
+
+    /**
+     * 查询经销商可选区域
+     *
+     * @param companyId 部门id
+     * @return 经销商销售区域 集合
+     */
+    public List<CompanyArea> selectkyjxsdqList(Long companyId);
+
+
     public List<CompanyArea> selectCompanyAreaListV2(CompanyArea companyArea);
 
     /**

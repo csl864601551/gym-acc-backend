@@ -1,10 +1,16 @@
 package com.ztl.gym.weixin.service;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ztl.gym.weixin.utils.WxUtil;
-import jdk.nashorn.internal.objects.annotations.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.Resource;
 import java.security.MessageDigest;
 
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +21,9 @@ import java.util.UUID;
 
 @Service
 public class WxService {
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     private static String AppId;
     @Value("${wx.appId}")
@@ -27,6 +36,19 @@ public class WxService {
     public void setToken(String token) {
         Token = token;
     }
+
+    protected static String AppSecret;
+    @Value("${wx.appSecret}")
+    public void setAppSecret(String appSecret) {
+        AppSecret = appSecret;
+    }
+
+    private static final String GETWEIXINUSERINFO_AUTHORIZE="https://open.weixin.qq.com/connect/oauth2/authorize";
+    private static final String GETWEIXINUSERINFO_GETACCESSTOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";
+    private static final String GETWEIXINUSERINFO_GETUSERINFO = "https://api.weixin.qq.com/sns/userinfo";
+    private static final String JSSDK_ACCESSTOKEN = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+    private static final String JSSDK_GETTICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi";
+
 
     /**
      *@Author: hdx
@@ -92,6 +114,123 @@ public class WxService {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    /**
+     * 拼接用户授权重定向的URL
+     * @param url
+     * @return
+     */
+    public String buildAuthorizeURL(String url){
+
+        return concatAuthorizeURL(url);
+    }
+
+
+    /**
+     * 拼接引导用户授权重定向的URL
+     * snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid）
+     * snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且， 即使在未关注的情况下，只要用户授权，也能获取其信息 ）
+     * @param url
+     * @return
+     */
+    private String concatAuthorizeURL(String url) {
+        StringBuilder authorizeUrl = new StringBuilder(GETWEIXINUSERINFO_AUTHORIZE);
+        authorizeUrl.append("?appid=").append(AppId);
+        authorizeUrl.append("&redirect_uri=").append(url);
+        authorizeUrl.append("&response_type=code");
+        authorizeUrl.append("&scope=snsapi_userinfo");
+        authorizeUrl.append("&state=").append("STATE");
+        authorizeUrl.append("#wechat_redirect");
+        return authorizeUrl.toString();
+    }
+
+
+    /**
+     * 获取微信用户的 accesstoken 和 openid
+     * @param code
+     * @return
+     */
+    public Map<String,Object> getACCESSTOKEN(String code){
+
+        String getAccessTokenUrl = concatGetAccessTokenInfoURL(code);
+        String json = postRequestForWeiXinService(getAccessTokenUrl);
+        //String json = null;
+        Map<String,Object> map = jsonToMap(json);
+
+        return map;
+    }
+
+
+    /**
+     * 拼接调用微信服务获取  accesstoken 和 openid URL
+     * @param code
+     * @return
+     */
+    private String concatGetAccessTokenInfoURL(String code) {
+        StringBuilder getAccessTokenUrl = new StringBuilder(GETWEIXINUSERINFO_GETACCESSTOKEN);
+        getAccessTokenUrl.append("?appid=").append(AppId);
+        getAccessTokenUrl.append("&secret=").append(AppSecret);
+        getAccessTokenUrl.append("&code=").append(code);
+        getAccessTokenUrl.append("&grant_type=authorization_code");
+        return getAccessTokenUrl.toString();
+    }
+
+
+    /**
+     * 获取微信用户信息
+     * @param map
+     * @return
+     */
+    public Map getWeiXinUserInfo(Map<String, Object> map) {
+
+        String getUserInfoUrl = concatGetWeiXinUserInfoURL(map);
+        String json = getRequestForWeiXinService(getUserInfoUrl);
+//        String json = null;
+        Map userInfoMap = jsonToMap(json);
+
+        return userInfoMap;
+    }
+    /**
+     * 拼接调用微信服务获取用户信息的URL
+     * @param map
+     * @return
+     */
+    private String concatGetWeiXinUserInfoURL(Map<String, Object> map) {
+        String openId = (String) map.get("openid");
+        String access_token = (String) map.get("access_token");
+        // 检验授权凭证（access_token）是否有效
+        StringBuilder getUserInfoUrl = new StringBuilder(GETWEIXINUSERINFO_GETUSERINFO);
+        getUserInfoUrl.append("?access_token=").append(access_token);
+        getUserInfoUrl.append("&openId=").append(openId);
+        getUserInfoUrl.append("&lang=zh_CN");
+
+        return getUserInfoUrl.toString();
+    }
+
+
+    public String mapToJson(Map map){
+        Gson gson = new Gson();
+        String json = gson.toJson(map);
+        return json;
+    }
+    private Map jsonToMap(String json) {
+        Gson gons = new Gson();
+        Map map = gons.fromJson(json, new TypeToken<Map>(){}.getType());
+        return map;
+    }
+
+    private String postRequestForWeiXinService(String getAccessTokenUrl) {
+        ResponseEntity<String> postForEntity = restTemplate.postForEntity(getAccessTokenUrl, null, String.class);
+        String json = postForEntity.getBody();
+        return json;
+    }
+
+    private String getRequestForWeiXinService(String getUserInfoUrl) {
+        ResponseEntity<String> postForEntity = restTemplate.getForEntity(getUserInfoUrl.toString(), String.class);
+        String json = postForEntity.getBody();
+        return json;
     }
 
 }

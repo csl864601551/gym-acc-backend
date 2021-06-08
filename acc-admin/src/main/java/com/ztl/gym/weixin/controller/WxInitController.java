@@ -1,20 +1,23 @@
 package com.ztl.gym.weixin.controller;
 
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.weixin.common.AjaxJson;
 import com.ztl.gym.weixin.service.WxService;
 import com.ztl.gym.weixin.utils.WxUtil;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -25,6 +28,25 @@ public class WxInitController {
 
     @Autowired
     private WxService wxService;
+
+
+    private static String AppId;
+    @Value("${wx.appId}")
+    public void setAppId(String appId) {
+        AppId = appId;
+    }
+
+    protected static String AppSecret;
+    @Value("${wx.appSecret}")
+    public void setAppSecret(String appSecret) {
+        AppSecret = appSecret;
+    }
+
+//    @Bean
+//    @LoadBalanced
+//    RestTemplate restTemplate(){
+//        return new RestTemplate();
+//    }
 
     /**
      *@Author: shenz
@@ -80,4 +102,98 @@ public class WxInitController {
             System.out.println("接入失败");
         }
     }
+
+
+
+    /**
+     * 获取微信用户信息
+     * @param code
+     * @param request
+     * @param response
+     * @param session
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping("/getWeiXinUserInfo")
+    public String getWeiXinUserInfo(String code, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException{
+        //第一步：用户同意授权，获取code
+        if (code == null) {
+            String url = URLEncoder.encode(request.getRequestURL().toString());
+            String authorizeUrl = wxService.buildAuthorizeURL(url);
+            response.sendRedirect(authorizeUrl);
+            return null;
+        }
+        //第二步：通过code换取网页授权access_token
+        String htmlInfo = "";
+        Map<String, Object> accesstokenInfo = wxService.getACCESSTOKEN(code);
+        String errcode = (String)accesstokenInfo.get("errcode");
+        if(StringUtils.isEmpty(errcode)){
+            //第四步：拉取用户信息(需scope为 snsapi_userinfo)
+            Map<String, Object> weiXinUserInfo = wxService.getWeiXinUserInfo(accesstokenInfo);
+            String userInfohtml = createUserInfoHtml(weiXinUserInfo);
+            return userInfohtml;
+        }
+        return htmlInfo;
+    }
+
+
+
+    @RequestMapping("getuserInfo")
+    @ResponseBody
+    @CrossOrigin
+    public Map<String,Object> getuserInfo(HttpServletRequest request, HttpServletResponse response)  throws Exception   {
+        String result="";
+        Map<String,Object> resMap = new HashMap<String, Object>();
+        String page = request.getParameter("page");
+        try {
+            //获取code
+            String code = request.getParameter("code");
+//			String
+            //换取accesstoken的地址
+            String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+            url = url.replace("APPID", AppId).replace("SECRET", AppSecret)
+                    .replace("CODE", code);
+            result = WxUtil.get(url);
+            System.out.println(result);
+            String at = JSONObject.fromObject(result).getString("access_token");
+            String openid = JSONObject.fromObject(result).getString("openid");
+            //拉取用户的基本信息  看看是否已关注
+//			url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+//			url = url.replace("ACCESS_TOKEN",wxService.getAccessToken() ).replace("OPENID", openid);
+//			result = WxUtil.get(url);
+//			System.out.println(result);
+            //拉取用户的基本信息
+            url = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+            url = url.replace("ACCESS_TOKEN", at).replace("OPENID", openid);
+            result = WxUtil.get(url);
+//			final String resultString = result;
+//			pool.execute(new Runnable() {
+//				public void run() {
+            if(StringUtils.isNotEmpty(result)) {
+                System.out.println("result:"+result);
+                JSONObject object = JSONObject.fromObject(result) ;
+                System.out.println("user:"+object);
+                System.out.println("openid:"+object.getString("openid"));
+            }
+//				}
+//			});
+
+        } catch (Exception e) {
+            System.out.println("getuserInfo is error"+e.getMessage());
+            e.printStackTrace();
+        }
+//		finally {
+//			pool.shutdown();
+//		}
+        System.out.println(result);
+
+        resMap.put("page",page);
+        return resMap;
+    }
+
+
+    private String createUserInfoHtml(Map<String, Object> weiXinUserInfo) {
+        return  null;
+    }
+
 }

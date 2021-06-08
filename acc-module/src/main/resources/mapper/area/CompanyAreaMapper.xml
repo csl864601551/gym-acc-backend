@@ -69,6 +69,11 @@
         where id = #{id}
     </select>
 
+    <select id="selectkyjxsdqList" parameterType="Long" resultType="com.ztl.gym.area.domain.CompanyArea">
+        <include refid="selectCompanyAreaVo"/>
+        where tenant_id IN (select parent_id from  sys_dept  where dept_id = #{companyId})
+    </select>
+
     <insert id="insertCompanyArea" parameterType="CompanyArea" useGeneratedKeys="true" keyProperty="id">
         insert into t_company_area
         <trim prefix="(" suffix=")" suffixOverrides=",">
