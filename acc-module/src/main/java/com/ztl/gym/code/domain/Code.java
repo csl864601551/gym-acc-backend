@@ -65,10 +65,20 @@ public class Code extends BaseEntity {
     private String statusName;
     @Excel(name = "码类型")
     private String codeTypeName;
+
+    private long codeBoxCount;
     /**
      * 码属性
      */
     private CodeAttr codeAttr;
+
+    public long getCodeBoxCount() {
+        return codeBoxCount;
+    }
+
+    public void setCodeBoxCount(long codeBoxCount) {
+        this.codeBoxCount = codeBoxCount;
+    }
 
     public void setCodeIndex(Long codeIndex) {
         this.codeIndex = codeIndex;

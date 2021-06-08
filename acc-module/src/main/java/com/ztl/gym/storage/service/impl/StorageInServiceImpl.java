@@ -85,6 +85,7 @@ public class StorageInServiceImpl implements IStorageInService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map) {
+        map.put("companyId", SecurityUtils.getLoginUserTopCompanyId());
         if (map.get("tenantId") == null) {
             map.put("tenantId", commonService.getTenantId());
         }else if(map.get("tenantId").toString() .equals("0")){
@@ -93,6 +94,12 @@ public class StorageInServiceImpl implements IStorageInService {
         map.put("inType", StorageIn.IN_TYPE_COMMON);
         map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
         map.put("createTime", DateUtils.getNowDate());
+        if(map.get("thirdPartyFlag")!=null){
+            map.put("updateTime", DateUtils.getNowDate());
+            long codeBoxCount=codeService.getCodeCount(map.get("code").toString());
+            map.put("inNum", codeBoxCount);
+            map.put("actInNum", codeBoxCount);
+        }
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
         int result = storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
         if(map.get("thirdPartyFlag")!=null){

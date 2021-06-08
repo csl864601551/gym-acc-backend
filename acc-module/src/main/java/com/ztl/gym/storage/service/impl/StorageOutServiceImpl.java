@@ -87,11 +87,18 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageOut(StorageOut storageOut) {
+        storageOut.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         storageOut.setStatus(StorageOut.STATUS_WAIT);
         storageOut.setTenantId(commonService.getTenantId());
         storageOut.setStorageFrom(commonService.getTenantId());
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
+        if(storageOut.getThirdPartyFlag()!=null){
+            storageOut.setUpdateTime(DateUtils.getNowDate());
+            long codeBoxCount=codeService.getCodeCount(storageOut.getCode());
+            storageOut.setActOutNum(codeBoxCount);
+            storageOut.setOutNum(codeBoxCount);
+        }
         storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
         int res=storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
         if(storageOut.getThirdPartyFlag()!=null){

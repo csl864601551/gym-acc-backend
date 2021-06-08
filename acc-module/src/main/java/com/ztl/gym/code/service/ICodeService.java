@@ -114,4 +114,6 @@ public interface ICodeService {
     List<String> selectCodeByStorage(long companyId, int storageType, long storageRecordId);
 
     List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
+
+    long getCodeCount(String code);
 }

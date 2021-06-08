@@ -11,6 +11,7 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.slf4j.Logger;
@@ -292,10 +293,31 @@ public class CodeServiceImpl implements ICodeService {
             if(temp.getCodeType().equals("box")){
                 return codeMapper.selectCodeListByCodeOrIndex(map);
             }else{
+                if(temp.getpCode()==null){
+                    return codeMapper.selectCodeListByCodeOrIndex(map);
+                }
                 map.put("code",temp.getpCode());
                 return codeMapper.selectCodeListByCodeOrIndex(map);
             }
         }
 
+    }
+
+    @Override
+    public long getCodeCount(String codeStr) {
+        Map<String,Object> map=new HashMap<>();
+        map.put("code",codeStr);
+        map.put("companyId",Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        List<Code> codeList = selectCodeListByCodeOrIndex(map);
+        boolean flag=false;
+        for (Code code : codeList) {
+            if (code.getCodeType().startsWith("P")) {
+                flag=true;
+            }
+        }
+        if(flag){
+            return codeList.size()-1;
+        }
+        return 1;
     }
 }

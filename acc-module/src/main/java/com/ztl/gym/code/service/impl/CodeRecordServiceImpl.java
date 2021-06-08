@@ -191,7 +191,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             long codeRecordId = codeRecord.getId();
             //更新生码记录流水号
             long codeNo = commonService.selectCurrentVal(companyId);
-            long pCodeIndex = codeNo + 1;
+            long pCodeIndex = indexStart ;
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecord.getId());
             params.put("indexStart", indexStart);
