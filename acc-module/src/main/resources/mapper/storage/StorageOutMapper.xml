@@ -62,7 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  so.status!=9
             <if test="companyId != null "> and so.company_id = #{companyId}</if>
             <if test="tenantId != null "> and so.tenant_id = #{tenantId}</if>
-            <if test="status != null and status != ''"> and so.status = #{status}</if>
+            <if test="status != null "> and so.status = #{status}</if>
             <if test="outNo != null  and outNo != ''"> and so.out_no = #{outNo}</if>
             <if test="extraNo != null  and extraNo != ''"> and so.extra_no = #{extraNo}</if>
             <if test="productId != null "> and so.product_id = #{productId}</if>
