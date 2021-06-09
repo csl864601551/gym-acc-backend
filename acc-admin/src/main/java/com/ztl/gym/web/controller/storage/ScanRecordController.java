@@ -97,7 +97,7 @@ public class ScanRecordController extends BaseController {
      */
     @GetMapping(value = "/getScanRecordByCode")
     public AjaxResult getScanRecordByCode(@RequestParam("code") String code) {
-        return AjaxResult.success(scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(code), code));
+        return AjaxResult.success(scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(code.trim()), code.trim()));
     }
 
 

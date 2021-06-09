@@ -12,10 +12,12 @@ import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -127,6 +129,8 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         if (companyId > 0) {
             code.setCompanyId(companyId);
             scanRecord.setCompanyId(companyId);
+        }else{
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
         List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
