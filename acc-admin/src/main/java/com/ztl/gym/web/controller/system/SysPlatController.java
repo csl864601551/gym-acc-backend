@@ -76,11 +76,12 @@ public class SysPlatController extends BaseController
     /**
      * 修改平台
      */
-    @PreAuthorize("@ss.hasPermi('system:plat:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:plat:edit')")
     @Log(title = "平台", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SysPlat sysPlat)
     {
+
         return toAjax(sysPlatService.updateSysPlat(sysPlat));
     }
 

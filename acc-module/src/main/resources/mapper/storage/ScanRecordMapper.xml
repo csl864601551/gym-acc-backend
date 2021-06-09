@@ -127,7 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,si.storage_to,
         suc.nick_name as create_user_name
         FROM
-        t_in_code_flow_#{companyId} as cf
+        t_in_code_flow_${companyId} as cf
         left join t_storage_in si on si.id=cf.storage_record_id
         left join sys_dept sd on sd.dept_id=si.storage_from
         left join sys_dept sd2 on sd2.dept_id=si.storage_to
@@ -142,7 +142,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,so.storage_to,
         suc.nick_name as create_user_name
-        from  t_out_code_flow_#{companyId} as cf
+        from  t_out_code_flow_${companyId} as cf
         left join t_storage_out so on so.id=cf.storage_record_id
         left join t_storage s on s.id=so.from_storage_id
         left join sys_dept sd on sd.dept_id=so.storage_from
@@ -157,7 +157,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,so.storage_to,
         suc.nick_name as create_user_name
-        from  t_back_code_flow_#{companyId} as cf
+        from  t_back_code_flow_${companyId} as cf
         left join t_storage_back so on so.id=cf.storage_record_id
         left join t_storage s on s.id=so.to_storage_id
         left join sys_dept sd on sd.dept_id=so.storage_from
@@ -172,7 +172,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         s.storage_name,
         sd.dept_name as storage_from_name,sd2.dept_name as storage_to_name,so.storage_to,
         suc.nick_name as create_user_name
-        from  t_transfer_code_flow_#{companyId} as cf
+        from  t_transfer_code_flow_${companyId} as cf
         left join t_storage_transfer so on so.id=cf.storage_record_id
         left join t_storage s on s.id=so.from_storage_id
         left join sys_dept sd on sd.dept_id=so.storage_from

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.pagehelper.util.StringUtil;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -71,8 +72,13 @@ public class StorageTransferServiceImpl implements IStorageTransferService {
     public int insertStorageTransfer(StorageTransfer storageTransfer) {
         storageTransfer.setStatus(StorageTransfer.STATUS_WAIT);
         storageTransfer.setEnable(StorageTransfer.ENABLE_NO);
+//        if(SecurityUtils.getLoginUserTopCompanyId()>0){
         storageTransfer.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         storageTransfer.setTenantId(SecurityUtils.getLoginUserTopCompanyId());
+//        }else{
+//            storageTransfer.setCompanyId(SecurityUtils.getLoginUser().getUser().getDeptId());
+//            storageTransfer.setTenantId(SecurityUtils.getLoginUser().getUser().getDeptId());
+//        }
         storageTransfer.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageTransfer.setCreateTime(DateUtils.getNowDate());
         return storageTransferMapper.insertStorageTransfer(storageTransfer);

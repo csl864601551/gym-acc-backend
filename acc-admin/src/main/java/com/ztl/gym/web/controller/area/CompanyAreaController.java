@@ -87,17 +87,27 @@ public class CompanyAreaController extends BaseController {
     @Log(title = "经销商销售区域 ", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CompanyArea companyArea) {
-        SysUser loginUser = SecurityUtils.getLoginUser().getUser();
-        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-            companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+
+        CompanyArea companyAreas = new CompanyArea();
+        companyAreas.setProvince(companyArea.getProvince());
+        companyAreas.setCity(companyArea.getCity());
+        companyAreas.setArea(companyArea.getArea());
+        List<CompanyArea> list = companyAreaService.selectCompanyAreaList(companyAreas);
+        if(list.size()>0){
+            return error("该区域已经在区域管理中！！！");
+        }else{
+            SysUser loginUser = SecurityUtils.getLoginUser().getUser();
+            Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+                companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+                companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+            }
+            companyArea.setCreateUser(loginUser.getUserId());
+            companyArea.setCreateTime(DateUtils.getNowDate());
+            companyArea.setUpdateUser(loginUser.getUserId());
+            companyArea.setUpdateTime(DateUtils.getNowDate());
+            return toAjax(companyAreaService.insertCompanyArea(companyArea));
         }
-        companyArea.setCreateUser(loginUser.getUserId());
-        companyArea.setCreateTime(DateUtils.getNowDate());
-        companyArea.setUpdateUser(loginUser.getUserId());
-        companyArea.setUpdateTime(DateUtils.getNowDate());
-        return toAjax(companyAreaService.insertCompanyArea(companyArea));
     }
 
     /**
