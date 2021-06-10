@@ -281,7 +281,7 @@ public class CodeRecordController extends BaseController {
             }
         }
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
-        return util.exportExcel(list, "Code");
+        return util.exportExcel(list, "码");
     }
 
     /**

@@ -61,7 +61,7 @@ public class Code extends BaseEntity {
     private Long codeAttrId;
 
     /*---------------------- 冗余字段 ----------------------*/
-    @Excel(name = "码状态")
+//    @Excel(name = "码状态")
     private String statusName;
     @Excel(name = "码类型")
     private String codeTypeName;
