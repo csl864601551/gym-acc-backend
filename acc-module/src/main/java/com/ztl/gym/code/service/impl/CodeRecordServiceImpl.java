@@ -262,6 +262,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         //基础属性
         codeRecord.setCompanyId(companyId);
         codeRecord.setBoxCount(boxCount);
+        codeRecord.setSingleCount(num);
         long totalNum = num;
         if (boxCount > 0) {
             totalNum = boxCount * totalNum + boxCount;

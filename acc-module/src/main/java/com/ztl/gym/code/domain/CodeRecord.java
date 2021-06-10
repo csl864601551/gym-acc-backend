@@ -28,9 +28,13 @@ public class CodeRecord extends BaseEntity
     /** 生码类型 */
     private Integer type;
 
-    /** 拖码数量 */
-    @Excel(name = "码数量", sort = 6)
+    /** 箱数量 */
+    @Excel(name = "箱数量", sort = 6)
     private Long boxCount;
+
+    /** 每箱码数量 */
+    @Excel(name = "每箱码数量", sort = 6)
+    private Long singleCount;
 
     /** 码数量 */
     @Excel(name = "码数量", sort = 6)
@@ -111,6 +115,14 @@ public class CodeRecord extends BaseEntity
 
     public void setBoxCount(Long boxCount) {
         this.boxCount = boxCount;
+    }
+
+    public Long getSingleCount() {
+        return singleCount;
+    }
+
+    public void setSingleCount(Long singleCount) {
+        this.singleCount = singleCount;
     }
 
     public Long getCount()
