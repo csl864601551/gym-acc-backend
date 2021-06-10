@@ -359,4 +359,23 @@ public class CodeRecordController extends BaseController {
         }
         return toAjax(res);
     }
+
+    /**
+     * 查询该企业是否有状态为创建中的生码记录【用于前端生码记录页面自动刷新】
+     *
+     * @return
+     */
+    @GetMapping("/checkCodeStatus")
+    public AjaxResult checkCodeStatus() {
+        int res = 0;
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        CodeRecord codeRecord = new CodeRecord();
+        codeRecord.setCompanyId(companyId);
+        codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
+        List<CodeRecord> codeRecords = codeRecordService.selectCodeRecordList(codeRecord);
+        if (codeRecords.size() > 0) {
+            res = 1;
+        }
+        return AjaxResult.success(res);
+    }
 }

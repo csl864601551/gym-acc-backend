@@ -120,7 +120,7 @@ public class CodeRuleUtils {
      * @param companyId      企业id
      * @param increment      需要增长的数量
      * @param codeTypePrefix 码类型
-     * @return 返回其实流水号-结束流水号
+     * @return 返回起始流水号-结束流水号
      */
     public static String getCodeIndex(long companyId, long increment, String codeTypePrefix) {
         List<String> keys = new ArrayList<>();

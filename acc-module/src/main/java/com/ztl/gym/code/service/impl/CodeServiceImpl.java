@@ -120,7 +120,7 @@ public class CodeServiceImpl implements ICodeService {
     }
 
     /**
-     * 生码-普通单码
+     * 生码
      *
      * @param companyId    企业id
      * @param codeRecordId 生码记录id
@@ -145,7 +145,6 @@ public class CodeServiceImpl implements ICodeService {
             code.setCodeIndex(codeIndex);
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_BOX);
-            //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
             code.setCode(pCode);
             code.setCodeAttrId(codeAttrId);
             codeList.add(code);
@@ -168,7 +167,7 @@ public class CodeServiceImpl implements ICodeService {
 
             //更新自增数
             if (i + 1 == codeTotalNum) {
-                commonService.updateVal(companyId, codeIndex);
+                commonService.updateVal(companyId, codeIndex + i);
             }
         }
 

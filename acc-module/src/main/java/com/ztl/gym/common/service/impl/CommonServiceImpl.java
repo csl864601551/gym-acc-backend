@@ -53,24 +53,30 @@ public class CommonServiceImpl implements CommonService {
 
     @Override
     public synchronized long selectCurrentVal(long companyId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("companyId", companyId);
-        int num = commonMapper.selectIsExist(params);
-        if (num <= 0) {
-            commonMapper.insertCompany(params);
-        }
-        return commonMapper.selectCurrentVal(params);
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("companyId", companyId);
+//        params.put("val", 1);
+//        int num = commonMapper.selectIsExist(params);
+//        if (num <= 0) {
+//            commonMapper.insertCompany(params);
+//        }
+//        return commonMapper.selectCurrentVal(params);
+
+        return 0L;
     }
 
     @Override
     public synchronized long selectNextVal(long companyId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("companyId", companyId);
-        int num = commonMapper.selectIsExist(params);
-        if (num <= 0) {
-            commonMapper.insertCompany(params);
-        }
-        return commonMapper.selectNextVal(params);
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("companyId", companyId);
+//        params.put("val", 1);
+//        int num = commonMapper.selectIsExist(params);
+//        if (num <= 0) {
+//            commonMapper.insertCompany(params);
+//        }
+//        return commonMapper.selectNextVal(params);
+
+        return 0L;
     }
 
     @Override
@@ -78,7 +84,12 @@ public class CommonServiceImpl implements CommonService {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
         params.put("val", val);
-        return commonMapper.updateVal(params);
+        int num = commonMapper.selectIsExist(params);
+        if (num <= 0) {
+            return commonMapper.insertCompany(params);
+        } else {
+            return commonMapper.updateVal(params);
+        }
     }
 
     @Override
@@ -306,11 +317,13 @@ public class CommonServiceImpl implements CommonService {
         }
         return null;
     }
+
     /**
      * 实现txt下载
+     *
      * @param response
      */
-    public void downloadTXT(String fileName,String content,HttpServletResponse response) {
+    public void downloadTXT(String fileName, String content, HttpServletResponse response) {
 
         //String fileName = "fileName" + ".txt";
         //String content = "写入txt的内容";

@@ -37,7 +37,7 @@ public interface CommonMapper {
      *
      * @param params
      */
-    void insertCompany(Map<String, Object> params);
+    int insertCompany(Map<String, Object> params);
 
     /**
      * 更新企业自增数

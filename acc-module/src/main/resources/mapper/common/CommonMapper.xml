@@ -59,7 +59,7 @@
     </select>
 
     <insert id="insertCompany" parameterType="Map">
-        INSERT INTO t_code_sequence(company_id, current_value, increment) VALUES (#{companyId}, 1, 1);
+        INSERT INTO t_code_sequence(company_id, current_value, increment) VALUES (#{companyId}, #{val}, 1);
     </insert>
 
     <update id="updateVal" parameterType="Map">
