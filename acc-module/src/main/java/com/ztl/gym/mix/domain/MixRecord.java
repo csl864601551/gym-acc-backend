@@ -22,13 +22,19 @@ public class MixRecord extends BaseEntity
     @Excel(name = "企业ID")
     private Long companyId;
 
+    /** 窜货经销商id */
+    @Excel(name = "窜货经销商id")
+    private Long tenantId;
+
     /** 码 */
     @Excel(name = "码")
     private String code;
 
-    /** 窜货经销商id */
-    @Excel(name = "窜货经销商id")
-    private Long tenantId;
+    /** 窜货类型 */
+    private Integer mixType;
+
+    /** 数据来源 */
+    private Integer mixFrom;
 
     /** 产品id */
     @Excel(name = "产品id")
@@ -71,6 +77,10 @@ public class MixRecord extends BaseEntity
     private Long updateUser;
 
     /* ****** 冗余字段 *******/
+    /** 窜货类型 */
+    @Excel(name = "窜货类型")
+    private String mixTypeName;
+
     /** 产品名称 */
     @Excel(name = "产品名称")
     private String productName;
@@ -94,6 +104,30 @@ public class MixRecord extends BaseEntity
     /** 创建人 */
     @Excel(name = "创建人")
     private String createUserName;
+
+    public Integer getMixFrom() {
+        return mixFrom;
+    }
+
+    public void setMixFrom(Integer mixFrom) {
+        this.mixFrom = mixFrom;
+    }
+
+    public Integer getMixType() {
+        return mixType;
+    }
+
+    public void setMixType(Integer mixType) {
+        this.mixType = mixType;
+    }
+
+    public String getMixTypeName() {
+        return mixTypeName;
+    }
+
+    public void setMixTypeName(String mixTypeName) {
+        this.mixTypeName = mixTypeName;
+    }
 
     public void setId(Long id)
     {

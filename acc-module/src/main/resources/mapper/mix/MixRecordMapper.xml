@@ -7,8 +7,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="MixRecord" id="MixRecordResult">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
-        <result property="code"    column="code"    />
         <result property="tenantId"    column="tenant_id"    />
+        <result property="code"    column="code"    />
+        <result property="mixType"    column="mix_type"    />
+        <result property="mixFrom"    column="mix_from"    />
+        <result property="mixTypeName"    column="mix_type_name"    />
         <result property="productId"    column="product_id"    />
         <result property="batchId"    column="batch_id"    />
         <result property="provinceOld"    column="province_old"    />
@@ -30,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMixRecordVo">
-        select mr.id,mr.company_id,mr.code,mr.tenant_id,mr.product_id,mr.batch_id,mr.province_old,mr.city_old,mr.area_old,
+        select mr.id,mr.company_id,mr.code,mr.mix_type,mr.mix_from,mr.tenant_id,mr.product_id,mr.batch_id,mr.province_old,mr.city_old,mr.area_old,
         mr.province_mix,mr.city_mix,mr.area_mix,mr.create_user,mr.create_time,mr.update_user,mr.update_time
         ,p.product_name,p.product_no,pb.batch_no,sd.dept_name as tenant_name,sd2.dept_name as company_name,su.nick_name as create_user_name
         from t_mix_record mr
@@ -45,8 +48,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectMixRecordVo"/>
         <where>  
             <if test="companyId != null "> and mr.company_id = #{companyId}</if>
-            <if test="code != null  and code != ''"> and mr.code = #{code}</if>
             <if test="tenantId != null "> and mr.tenant_id = #{tenantId}</if>
+            <if test="code != null  and code != ''"> and mr.code = #{code}</if>
+            <if test="mixType != null  "> and mr.mix_type = #{mixType}</if>
+            <if test="mixFrom != null  "> and mr.mix_from = #{mixFrom}</if>
             <if test="productId != null "> and mr.product_id = #{productId}</if>
             <if test="batchId != null "> and mr.batch_id = #{batchId}</if>
             <if test="provinceOld != null  and provinceOld != ''"> and mr.province_old = #{provinceOld}</if>
@@ -77,8 +82,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into t_mix_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
-            <if test="code != null">code,</if>
             <if test="tenantId != null">tenant_id,</if>
+            <if test="code != null">code,</if>
+            <if test="mixType != null">mix_type,</if>
+            <if test="mixFrom != null">mix_from,</if>
             <if test="productId != null">product_id,</if>
             <if test="batchId != null">batch_id,</if>
             <if test="provinceOld != null">province_old,</if>
@@ -94,8 +101,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
-            <if test="code != null">#{code},</if>
             <if test="tenantId != null">#{tenantId},</if>
+            <if test="code != null">#{code},</if>
+            <if test="mixType != null">#{mixType},</if>
+            <if test="mixFrom != null">#{mixFrom},</if>
             <if test="productId != null">#{productId},</if>
             <if test="batchId != null">#{batchId},</if>
             <if test="provinceOld != null">#{provinceOld},</if>
@@ -115,8 +124,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update t_mix_record
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>
-            <if test="code != null">code = #{code},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="mixType != null">mix_type = #{mixType},</if>
+            <if test="mixFrom != null">mix_from = #{mixFrom},</if>
             <if test="productId != null">product_id = #{productId},</if>
             <if test="batchId != null">batch_id = #{batchId},</if>
             <if test="provinceOld != null">province_old = #{provinceOld},</if>

@@ -44,6 +44,10 @@ public class MixRecordServiceImpl implements IMixRecordService
     @Override
     public List<MixRecord> selectMixRecordList(MixRecord mixRecord)
     {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            mixRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         return mixRecordMapper.selectMixRecordList(mixRecord);
     }
 

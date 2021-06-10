@@ -281,7 +281,7 @@ public class CodeRecordController extends BaseController {
         codeParam.setCodeAttrId(codeAttr.getId());
         codeParam.setCompanyId(codeAttr.getCompanyId());
         List<Code> list = codeService.selectCodeList(codeParam);
-        String temp = "码" + "                                        " + "所属箱码" + "                              " + "码状态" + "    " + "码类型\r\n";
+        String temp = "码" + "                                        " + "\r\n";
         for (Code code : list) {
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
                 code.setStatusName("待赋值");
@@ -291,10 +291,11 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
+                temp += "        " + code.getCode()  + "\r\n";
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
+                temp += (code.getpCode() == null ? code.getCode() : code.getpCode())  + "\r\n";
             }
-            temp += code.getCode() + "    " + (code.getpCode() == null ? code.getCode() : code.getpCode()) + "    " + code.getStatusName() + "    " + code.getCodeTypeName() + "\r\n";
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);
