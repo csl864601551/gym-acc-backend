@@ -77,11 +77,11 @@ public interface ICodeService {
      * @param companyId    企业id
      * @param codeRecordId 生码记录id
      * @param codeTotalNum 生码总数
-     * @param pCode        箱码
+     * @param boxCount     箱数
      * @param codeAttrId   生码属性id
      * @return
      */
-    int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, String pCode, Long codeAttrId);
+    int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long codeAttrId);
 
     /**
      * 根据属性id修改码状态
@@ -96,9 +96,9 @@ public interface ICodeService {
     /**
      * 批量新增码流转明细 【insertProvider形式】
      *
-     * @param companyId 企业id
+     * @param companyId   企业id
      * @param storageType 流转类型
-     * @param list 流转码集合
+     * @param list        流转码集合
      * @return
      */
     int insertCodeFlowForBatchSingle(long companyId, int storageType, List<FlowVo> list);

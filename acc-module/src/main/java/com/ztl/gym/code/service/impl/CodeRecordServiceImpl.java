@@ -140,24 +140,12 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int createCodeRecord(long companyId, long num, String remark) {
-        //TODO 判断企业是否生码中
-        //TODO 生码回显
-        //TODO 数据源切换效率
-        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, num, remark);
+        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, 0, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
-            long codeRecordId = codeRecord.getId();
-            //更新生码记录流水号
-            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, num, CodeRuleUtils.CODE_PREFIX_S);
-            String[] codeIndexs = codeNoStr.split("-");
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", codeRecord.getId());
-            params.put("indexStart", Long.parseLong(codeIndexs[0]) + 1);
-            params.put("indexEnd", Long.parseLong(codeIndexs[1]));
-            codeRecordMapper.updateCodeIndex(params);
-
             //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecordId, Long.parseLong(codeIndexs[0]), num);
+            long codeAttrId = saveCodeAttr(companyId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+
             //获取IP
             String localIp = "";
             try {
@@ -167,42 +155,28 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 e.printStackTrace();
             }
             //异步生码
-            String message = codeAttrId + "^" + codeRecordId + "^" + companyId + "^" + num + "^" + localIp;
+            String message = codeAttrId + "^" + codeRecord.getId() + "^" + companyId + "^" + num + "^" + localIp;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
     }
 
     /**
-     * 生码-套标
+     * 生码 【多箱】
      *
      * @param companyId 企业id
+     * @param boxCount  箱数
      * @param num       每箱码数
      * @param remark    备注详情
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    @DataSource(DataSourceType.SHARDING)
-    public int createPCodeRecord(long companyId, long num, String remark, long indexStart, long indexEnd) {
-        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX, num, remark);
+    public int createPCodeRecord(long companyId, long boxCount, long num, String remark) {
+        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX, boxCount, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
-            long codeRecordId = codeRecord.getId();
-            //更新生码记录流水号
-            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, num, CodeRuleUtils.CODE_PREFIX_P);
-            String[] codeIndexs = codeNoStr.split("-");
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", codeRecord.getId());
-            params.put("indexStart", Long.parseLong(codeIndexs[0]) + 1);
-            params.put("indexEnd", Long.parseLong(codeIndexs[1]));
-            codeRecordMapper.updateCodeIndex(params);
-
             //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecordId, Long.parseLong(codeIndexs[0]), num);
-
-            //箱码
-            String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_P, Long.parseLong(codeIndexs[0]) + 1);
+            long codeAttrId = saveCodeAttr(companyId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
 
             //获取IP
             String localIp = "";
@@ -214,7 +188,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             }
 
             //异步生码
-            String message = codeAttrId + "^" + codeRecordId + "^" + companyId + "^" + num + "^" + localIp + "^" + pCode;
+            String message = codeAttrId + "^" + codeRecord.getId() + "^" + companyId + "^" + num + "^" + localIp + "^" + boxCount;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
@@ -250,12 +224,12 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             //ip
             String ip = codeGenMsgs[4];
             //箱码
-            String pCode = null;
+            long boxCount = 0;
             if (codeGenMsgs.length == 6) {
-                pCode = codeGenMsgs[5];
+                boxCount = Long.parseLong(codeGenMsgs[5]);
             }
             if (localIp.equals(ip)) {
-                codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
+                codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, codeAttrId);
             }
         } catch (Exception e) {
             throw new CustomException("接收数据异常，请检查码数据格式！", HttpStatus.ERROR);
@@ -272,10 +246,27 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @param remark
      * @return
      */
-    public static CodeRecord buildCodeRecord(long companyId, int type, long num, String remark) {
+    public static CodeRecord buildCodeRecord(long companyId, int type, long boxCount, long num, String remark) {
         CodeRecord codeRecord = new CodeRecord();
+        //获取并更新生码记录流水号
+        String codePrefix = null;
+        if (type == AccConstants.GEN_CODE_TYPE_SINGLE) {
+            codePrefix = CodeRuleUtils.CODE_PREFIX_S;
+        } else if (type == AccConstants.GEN_CODE_TYPE_BOX) {
+            codePrefix = CodeRuleUtils.CODE_PREFIX_B;
+        }
+        String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, boxCount, num, codePrefix);
+        String[] codeIndexs = codeNoStr.split("-");
+        codeRecord.setIndexStart(Long.parseLong(codeIndexs[0]) + 1);
+        codeRecord.setIndexEnd(Long.parseLong(codeIndexs[1]));
+        //基础属性
         codeRecord.setCompanyId(companyId);
-        codeRecord.setCount(num);
+        codeRecord.setBoxCount(boxCount);
+        long totalNum = num;
+        if (boxCount > 0) {
+            totalNum = boxCount * totalNum + boxCount;
+        }
+        codeRecord.setCount(totalNum);
         codeRecord.setType(type);
         codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
         codeRecord.setRemark(remark);
@@ -291,16 +282,16 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      *
      * @param companyId
      * @param codeRecordId
-     * @param codeNo
-     * @param num
+     * @param indexStart
+     * @param indexEnd
      */
-    private long saveCodeAttr(long companyId, long codeRecordId, long codeNo, long num) {
+    private long saveCodeAttr(long companyId, long codeRecordId, long indexStart, long indexEnd) {
         CodeAttr codeAttr = new CodeAttr();
         codeAttr.setCompanyId(companyId);
         codeAttr.setTenantId(companyId);
         codeAttr.setRecordId(codeRecordId);
-        codeAttr.setIndexStart(codeNo + 1);
-        codeAttr.setIndexEnd(codeNo + 1 + num);
+        codeAttr.setIndexStart(indexStart);
+        codeAttr.setIndexEnd(indexEnd);
         codeAttr.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         codeAttr.setCreateTime(new Date());
         codeAttr.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());

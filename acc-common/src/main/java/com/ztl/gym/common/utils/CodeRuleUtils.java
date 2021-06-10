@@ -26,13 +26,9 @@ public class CodeRuleUtils {
     public final static String COMPANY_CODE_INDEX_PREFIX = "code_index_";
 
     /**
-     * 托码前缀
-     */
-    public final static String CODE_PREFIX_T = "T";
-    /**
      * 箱码前缀
      */
-    public final static String CODE_PREFIX_P = "P";
+    public final static String CODE_PREFIX_B = "B";
     /**
      * 单码前缀
      */
@@ -47,7 +43,7 @@ public class CodeRuleUtils {
         //托码
         CODE_PREFIX_MAP.put("T", 10);
         //箱码
-        CODE_PREFIX_MAP.put("P", 20);
+        CODE_PREFIX_MAP.put("B", 20);
         //单码
         CODE_PREFIX_MAP.put("S", 30);
     }
@@ -122,7 +118,7 @@ public class CodeRuleUtils {
      * @param codeTypePrefix 码类型
      * @return 返回起始流水号-结束流水号
      */
-    public static String getCodeIndex(long companyId, long increment, String codeTypePrefix) {
+    public static String getCodeIndex(long companyId, long boxCount, long increment, String codeTypePrefix) {
         List<String> keys = new ArrayList<>();
         keys.add(COMPANY_CODE_INDEX_PREFIX + companyId);
         DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
@@ -130,12 +126,10 @@ public class CodeRuleUtils {
         redisScript.setResultType(String.class);
 
         int codeType = 0;
-        if (codeTypePrefix.equals(CODE_PREFIX_P)) {
+        if (codeTypePrefix.equals(CODE_PREFIX_B)) {
             codeType = 1;
-        } else if (codeTypePrefix.equals(CODE_PREFIX_T)) {
-            codeType = 2;
         }
-        return myRedisTemplate.execute(redisScript, keys, String.valueOf(increment), String.valueOf(codeType));
+        return myRedisTemplate.execute(redisScript, keys, String.valueOf(boxCount), String.valueOf(increment), String.valueOf(codeType));
     }
 
 

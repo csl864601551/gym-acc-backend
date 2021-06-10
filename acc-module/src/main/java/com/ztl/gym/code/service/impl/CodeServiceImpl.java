@@ -125,61 +125,78 @@ public class CodeServiceImpl implements ICodeService {
      * @param companyId    企业id
      * @param codeRecordId 生码记录id
      * @param codeTotalNum 生码总数
-     * @param pCode        箱码
+     * @param boxCount     箱数
      * @param codeAttrId   生码属性id
      * @return
      */
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, String pCode, Long codeAttrId) {
+    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long codeAttrId) {
         int correct = 0;
         List<Code> codeList = new ArrayList<>();
         //企业自增数
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
-        long codeVal = codeRecord.getIndexStart();
-        long codeIndex = codeVal;
-        if (StringUtils.isNotBlank(pCode)) {
-            //箱码
-            Code code = new Code();
-            code.setCodeIndex(codeIndex);
-            code.setCompanyId(companyId);
-            code.setCodeType(AccConstants.CODE_TYPE_BOX);
-            code.setCode(pCode);
-            code.setCodeAttrId(codeAttrId);
-            codeList.add(code);
-            //单码流水号+1
-            codeIndex += 1;
-        }
-        for (int i = 0; i < codeTotalNum; i++) {
-            Code code = new Code();
-            code.setCodeIndex(codeIndex + i);
-            if (StringUtils.isNotBlank(pCode)) {
-                code.setpCode(pCode);
-            }
-            code.setCompanyId(companyId);
-            code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
-            code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
-            if (codeAttrId != null && codeAttrId > 0) {
-                code.setCodeAttrId(codeAttrId);
-            }
-            codeList.add(code);
+        long codeIndex = codeRecord.getIndexStart();
+        if (boxCount > 0) {
+            for (int i = 0; i < boxCount; i++) {
+                //箱码
+                String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
+                Code boxCode = new Code();
+                boxCode.setCodeIndex(codeIndex);
+                boxCode.setCompanyId(companyId);
+                boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
+                boxCode.setCode(pCode);
+                boxCode.setCodeAttrId(codeAttrId);
+                codeList.add(boxCode);
+                //单码流水号+1
+                codeIndex += 1;
 
-            //更新自增数
-            if (i + 1 == codeTotalNum) {
-                commonService.updateVal(companyId, codeIndex + i);
+                //单码
+                for (int j = 0; j < codeTotalNum; j++) {
+                    Code singleCode = new Code();
+                    singleCode.setCodeIndex(codeIndex);
+                    singleCode.setpCode(pCode);
+                    singleCode.setCompanyId(companyId);
+                    singleCode.setCodeType(AccConstants.CODE_TYPE_SINGLE);
+                    singleCode.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, singleCode.getCodeIndex()));
+                    singleCode.setCodeAttrId(codeAttrId);
+                    codeList.add(singleCode);
+                    codeIndex += 1;
+                }
+
+                //更新自增数
+                if (i + 1 == boxCount) {
+                    commonService.updateVal(companyId, codeRecord.getIndexEnd());
+                }
+            }
+        } else {
+            for (int i = 0; i < codeTotalNum; i++) {
+                Code code = new Code();
+                code.setCodeIndex(codeIndex + i);
+                code.setpCode(null);
+                code.setCompanyId(companyId);
+                code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
+                code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
+                code.setCodeAttrId(codeAttrId);
+                codeList.add(code);
+
+                //更新自增数
+                if (i + 1 == codeTotalNum) {
+                    commonService.updateVal(companyId, codeRecord.getIndexEnd());
+                }
             }
         }
 
         int res = codeMapper.insertCodeForBatch(codeList);
         if (res > 0) {
-            logger.info("生码记录ID：" + codeRecordId + "生码成功，总数：" + codeTotalNum);
+            logger.info("生码记录ID：" + codeRecordId + "生码成功");
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecordId);
             params.put("status", AccConstants.CODE_RECORD_STATUS_FINISH);
             codeRecordMapper.insertCodeRecordStatus(params);
         } else {
-            logger.error("生码记录ID：" + codeRecordId + "生码异常，总数：" + codeTotalNum + "，生码数：" + correct);
+            logger.error("生码记录ID：" + codeRecordId + "生码异常");
         }
         return correct;
     }

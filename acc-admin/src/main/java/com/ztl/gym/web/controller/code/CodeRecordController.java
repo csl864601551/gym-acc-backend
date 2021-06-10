@@ -232,26 +232,11 @@ public class CodeRecordController extends BaseController {
     @Log(title = "生码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CodeRecord codeRecord) {
-        int res = 0;
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        long codeNo = commonService.selectCurrentVal(companyId);
-        long indexStart = 0;
-        long indexEnd = 0;
-
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
             return toAjax(codeRecordService.createCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark()));
         } else {
-            for (int i = 0; i < codeRecord.getBoxCount(); i++) {
-                if (i == 0) {
-                    indexStart = codeNo + i + 1;
-                } else {
-                    indexStart = codeNo + i * codeRecord.getCount() + i + 1;
-                }
-                indexEnd = codeNo + (i + 1) * codeRecord.getCount() + (i + 1);
-
-                res = codeRecordService.createPCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark(), indexStart, indexEnd);
-            }
-            return toAjax(res);
+            return toAjax(codeRecordService.createPCodeRecord(companyId, codeRecord.getBoxCount(), codeRecord.getCount(), codeRecord.getRemark()));
         }
     }
 

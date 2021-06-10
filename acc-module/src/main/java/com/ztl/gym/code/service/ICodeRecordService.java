@@ -72,12 +72,13 @@ public interface ICodeRecordService {
     int createCodeRecord(long companyId, long num, String remark);
 
     /**
-     * 生码-套标
+     * 生码-套标 【箱码与单码 1：n】
      *
      * @param companyId 企业id
+     * @param boxCount  箱数
      * @param num       每箱码数
      * @param remark    备注详情
      * @return
      */
-    int createPCodeRecord(long companyId, long num, String remark,long indexStart,long indexEnd);
+    int createPCodeRecord(long companyId, long boxCount, long num, String remark);
 }
