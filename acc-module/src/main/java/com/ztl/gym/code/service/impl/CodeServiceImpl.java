@@ -1,6 +1,7 @@
 package com.ztl.gym.code.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
@@ -10,6 +11,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
@@ -134,10 +136,10 @@ public class CodeServiceImpl implements ICodeService {
         int correct = 0;
         List<Code> codeList = new ArrayList<>();
         //企业自增数
-        long codeVal = commonService.selectCurrentVal(companyId);
+        CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
+        long codeVal = codeRecord.getIndexStart();
         long codeIndex = codeVal;
         if (StringUtils.isNotBlank(pCode)) {
-            codeIndex += 1;
             //箱码
             Code code = new Code();
             code.setCodeIndex(codeIndex);
@@ -147,27 +149,25 @@ public class CodeServiceImpl implements ICodeService {
             code.setCode(pCode);
             code.setCodeAttrId(codeAttrId);
             codeList.add(code);
-        }
-        for (int i = 1; i <= codeTotalNum; i++) {
-            //流水号
+            //单码流水号+1
             codeIndex += 1;
+        }
+        for (int i = 0; i < codeTotalNum; i++) {
             Code code = new Code();
-            code.setCodeIndex(codeIndex);
+            code.setCodeIndex(codeIndex + i);
             if (StringUtils.isNotBlank(pCode)) {
                 code.setpCode(pCode);
             }
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
-            //生码规则 企业id+日期+流水
-            String codeStr = "S" + companyId + "/" + DateUtils.dateTimeNow() + codeIndex;
-            code.setCode(codeStr);
+            code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
             if (codeAttrId != null && codeAttrId > 0) {
                 code.setCodeAttrId(codeAttrId);
             }
             codeList.add(code);
 
             //更新自增数
-            if (i == codeTotalNum) {
+            if (i + 1 == codeTotalNum) {
                 commonService.updateVal(companyId, codeIndex);
             }
         }
@@ -279,24 +279,24 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     public List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map) {
-        Code code=new Code();
-        if(map.get("code")==null){
+        Code code = new Code();
+        if (map.get("code") == null) {
             code.setCode("");
-        }else{
+        } else {
             code.setCode(map.get("code").toString());
         }
         code.setCompanyId(Long.valueOf(map.get("companyId").toString()));
-        Code temp=codeMapper.selectCode(code);
-        if(temp==null){
+        Code temp = codeMapper.selectCode(code);
+        if (temp == null) {
             throw new CustomException("未查询到相关码信息，请检查码最新流转状态");
-        }else{
-            if(temp.getCodeType().equals("box")){
+        } else {
+            if (temp.getCodeType().equals("box")) {
                 return codeMapper.selectCodeListByCodeOrIndex(map);
-            }else{
-                if(temp.getpCode()==null){
+            } else {
+                if (temp.getpCode() == null) {
                     return codeMapper.selectCodeListByCodeOrIndex(map);
                 }
-                map.put("code",temp.getpCode());
+                map.put("code", temp.getpCode());
                 return codeMapper.selectCodeListByCodeOrIndex(map);
             }
         }
@@ -305,18 +305,18 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     public long getCodeCount(String codeStr) {
-        Map<String,Object> map=new HashMap<>();
-        map.put("code",codeStr);
-        map.put("companyId",Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", codeStr);
+        map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
         List<Code> codeList = selectCodeListByCodeOrIndex(map);
-        boolean flag=false;
+        boolean flag = false;
         for (Code code : codeList) {
             if (code.getCode().startsWith("P")) {
-                flag=true;
+                flag = true;
             }
         }
-        if(flag){
-            return codeList.size()-1;
+        if (flag) {
+            return codeList.size() - 1;
         }
         return 1;
     }

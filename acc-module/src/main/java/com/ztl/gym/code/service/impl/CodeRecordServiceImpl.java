@@ -1,6 +1,5 @@
 package com.ztl.gym.code.service.impl;
 
-import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.mapper.CodeMapper;
@@ -14,6 +13,7 @@ import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.slf4j.Logger;
@@ -24,14 +24,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 
 /**
@@ -149,25 +148,26 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         if (res > 0) {
             long codeRecordId = codeRecord.getId();
             //更新生码记录流水号
-            long codeNo = commonService.selectCurrentVal(companyId);
+            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, num, CodeRuleUtils.CODE_PREFIX_S);
+            String[] codeIndexs = codeNoStr.split("-");
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecord.getId());
-            params.put("indexStart", codeNo + 1);
-            params.put("indexEnd", codeNo + num);
+            params.put("indexStart", Long.parseLong(codeIndexs[0]) + 1);
+            params.put("indexEnd", Long.parseLong(codeIndexs[1]));
             codeRecordMapper.updateCodeIndex(params);
 
             //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
+            long codeAttrId = saveCodeAttr(companyId, codeRecordId, Long.parseLong(codeIndexs[0]), num);
             //获取IP
-            String localIp="";
+            String localIp = "";
             try {
                 InetAddress ip4 = Inet4Address.getLocalHost();
-                localIp=ip4.getHostAddress();
+                localIp = ip4.getHostAddress();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
             //异步生码
-            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + localIp ;
+            String message = codeAttrId + "^" + codeRecordId + "^" + companyId + "^" + num + "^" + localIp;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
@@ -184,37 +184,37 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     @DataSource(DataSourceType.SHARDING)
-    public int createPCodeRecord(long companyId, long num, String remark,long indexStart,long indexEnd) {
+    public int createPCodeRecord(long companyId, long num, String remark, long indexStart, long indexEnd) {
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             long codeRecordId = codeRecord.getId();
             //更新生码记录流水号
-            long codeNo = commonService.selectCurrentVal(companyId);
-            long pCodeIndex = indexStart ;
+            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, num, CodeRuleUtils.CODE_PREFIX_P);
+            String[] codeIndexs = codeNoStr.split("-");
             Map<String, Object> params = new HashMap<>();
             params.put("id", codeRecord.getId());
-            params.put("indexStart", indexStart);
-            params.put("indexEnd", indexEnd);
+            params.put("indexStart", Long.parseLong(codeIndexs[0]) + 1);
+            params.put("indexEnd", Long.parseLong(codeIndexs[1]));
             codeRecordMapper.updateCodeIndex(params);
 
             //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecordId, codeNo, num);
+            long codeAttrId = saveCodeAttr(companyId, codeRecordId, Long.parseLong(codeIndexs[0]), num);
 
             //箱码
-            //生码规则 企业id+日期+流水 【注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去】
-            String pCode = "P" + companyId + "/" + DateUtils.dateTimeNow() + pCodeIndex;
+            String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_P, Long.parseLong(codeIndexs[0]) + 1);
+
             //获取IP
-            String localIp="";
+            String localIp = "";
             try {
                 InetAddress ip4 = Inet4Address.getLocalHost();
-                localIp=ip4.getHostAddress();
+                localIp = ip4.getHostAddress();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
 
             //异步生码
-            String message = codeAttrId + "-" + codeRecordId + "-" + companyId + "-" + num + "-" + localIp + "-" + pCode ;
+            String message = codeAttrId + "^" + codeRecordId + "^" + companyId + "^" + num + "^" + localIp + "^" + pCode;
             stringRedisTemplate.convertAndSend("code.gen", message);
         }
         return res;
@@ -227,10 +227,10 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      */
     public void onPublishCode(String codeGenMessage) {
         //获取IP
-        String localIp="";
+        String localIp = "";
         try {
             InetAddress ip4 = Inet4Address.getLocalHost();
-            localIp=ip4.getHostAddress();
+            localIp = ip4.getHostAddress();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -238,7 +238,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         System.out.println(codeGenMessage);
         log.info("onPublishCode {}", codeGenMessage);
         try {
-            String[] codeGenMsgs = codeGenMessage.split("-");
+            String[] codeGenMsgs = codeGenMessage.split("\\^");
             //生码属性id
             long codeAttrId = Long.parseLong(codeGenMsgs[0]);
             //生码记录id
@@ -248,16 +248,16 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             //生码总数
             long codeTotalNum = Long.parseLong(codeGenMsgs[3]);
             //ip
-            String ip=codeGenMsgs[4];
+            String ip = codeGenMsgs[4];
             //箱码
             String pCode = null;
             if (codeGenMsgs.length == 6) {
                 pCode = codeGenMsgs[5];
             }
-            if(localIp.equals(ip)){
+            if (localIp.equals(ip)) {
                 codeService.createCode(companyId, codeRecordId, codeTotalNum, pCode, codeAttrId);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException("接收数据异常，请检查码数据格式！", HttpStatus.ERROR);
         }
 

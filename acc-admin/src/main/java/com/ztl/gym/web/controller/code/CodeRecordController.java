@@ -232,25 +232,24 @@ public class CodeRecordController extends BaseController {
     @Log(title = "生码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CodeRecord codeRecord) {
-        int res=0;
-        Long companyId=SecurityUtils.getLoginUserCompany().getDeptId();
-        long codeNo=commonService.selectCurrentVal(companyId);
-        long indexStart=0;
-        long indexEnd=0;
-
+        int res = 0;
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        long codeNo = commonService.selectCurrentVal(companyId);
+        long indexStart = 0;
+        long indexEnd = 0;
 
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
             return toAjax(codeRecordService.createCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark()));
         } else {
             for (int i = 0; i < codeRecord.getBoxCount(); i++) {
-                if(i==0){
-                    indexStart=codeNo+ i+1;
-                }else {
-                    indexStart=codeNo+i*codeRecord.getCount()+i+1;
+                if (i == 0) {
+                    indexStart = codeNo + i + 1;
+                } else {
+                    indexStart = codeNo + i * codeRecord.getCount() + i + 1;
                 }
-                indexEnd=codeNo+(i+1)*codeRecord.getCount()+(i+1);
+                indexEnd = codeNo + (i + 1) * codeRecord.getCount() + (i + 1);
 
-                res=codeRecordService.createPCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark(),indexStart,indexEnd);
+                res = codeRecordService.createPCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark(), indexStart, indexEnd);
             }
             return toAjax(res);
         }
@@ -284,19 +283,20 @@ public class CodeRecordController extends BaseController {
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
         return util.exportExcel(list, "Code");
     }
+
     /**
      * 码下载TXT
      */
     @PreAuthorize("@ss.hasPermi('code:record:download')")
     @Log(title = "生码记录", businessType = BusinessType.EXPORT)
     @GetMapping("/downloadTxt")
-    public AjaxResult downloadTxt(CodeRecord codeRecord,HttpServletResponse response) {
+    public AjaxResult downloadTxt(CodeRecord codeRecord, HttpServletResponse response) {
         CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(codeRecord.getId());
         Code codeParam = new Code();
         codeParam.setCodeAttrId(codeAttr.getId());
         codeParam.setCompanyId(codeAttr.getCompanyId());
         List<Code> list = codeService.selectCodeList(codeParam);
-        String temp="码"+"                                        "+"所属箱码"+"                              "+"码状态"+"    "+"码类型\r\n";
+        String temp = "码" + "                                        " + "所属箱码" + "                              " + "码状态" + "    " + "码类型\r\n";
         for (Code code : list) {
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
                 code.setStatusName("待赋值");
@@ -309,10 +309,10 @@ public class CodeRecordController extends BaseController {
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
             }
-            temp+=code.getCode()+"    "+(code.getpCode()==null?code.getCode():code.getpCode())+"    "+code.getStatusName()+"    "+code.getCodeTypeName()+"\r\n";
+            temp += code.getCode() + "    " + (code.getpCode() == null ? code.getCode() : code.getpCode()) + "    " + code.getStatusName() + "    " + code.getCodeTypeName() + "\r\n";
         }
-        AjaxResult ajax=AjaxResult.success();
-        ajax.put("data",temp);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("data", temp);
         return ajax;
     }
 
