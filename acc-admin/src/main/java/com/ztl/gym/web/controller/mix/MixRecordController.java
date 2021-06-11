@@ -117,9 +117,13 @@ public class MixRecordController extends BaseController
             MixRecord mixRecord=new MixRecord();
             scanRecord.setCode(map.get("code").toString());
             scanRecord.setIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
-            scanRecord.setProvince(map.get("province").toString());
-            scanRecord.setCity(map.get("city").toString());
-            scanRecord.setArea(map.get("area").toString());
+            if(map.get("province")!=null){
+                scanRecord.setProvince(map.get("province").toString());
+                scanRecord.setCity(map.get("city").toString());
+                scanRecord.setArea(map.get("area").toString());
+                scanRecord.setAddress(map.get("address").toString());
+                mixRecord.setAreaMix(map.get("province").toString()+map.get("city").toString()+map.get("area").toString());
+            }
             scanRecordService.insertScanRecord(scanRecord);
             mixRecord.setTenantId(Long.valueOf(map.get("tenantId").toString()));
             mixRecord.setCode(map.get("code").toString());
@@ -128,7 +132,6 @@ public class MixRecordController extends BaseController
             mixRecord.setProductId(Long.valueOf(map.get("productId").toString()));
             mixRecord.setBatchId(Long.valueOf(map.get("batchId").toString()));
             mixRecord.setAreaOld(map.get("areaOld").toString());
-            mixRecord.setAreaMix(map.get("province").toString()+map.get("city").toString()+map.get("area").toString());
             return toAjax(mixRecordService.insertMixRecord(mixRecord));
         }catch (Exception e){
             return toAjax(0);

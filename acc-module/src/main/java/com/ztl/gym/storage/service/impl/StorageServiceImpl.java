@@ -272,7 +272,7 @@ public class StorageServiceImpl implements IStorageService {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
                     }
                 } else {
-                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getCount());//产品数量
+                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getSingleCount());//产品数量
                 }
             }
         }
