@@ -1,10 +1,12 @@
 package com.ztl.gym.code.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
+import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
@@ -22,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 码 Service业务层处理
@@ -45,6 +44,9 @@ public class CodeServiceImpl implements ICodeService {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private ICodeAttrService codeAttrService;
 
     @Override
     @DataSource(DataSourceType.SHARDING)
@@ -126,13 +128,13 @@ public class CodeServiceImpl implements ICodeService {
      * @param codeRecordId 生码记录id
      * @param codeTotalNum 生码总数
      * @param boxCount     箱数
-     * @param codeAttrId   生码属性id
+     * @param userId       用户id
      * @return
      */
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long codeAttrId) {
+    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId) {
         int correct = 0;
         List<Code> codeList = new ArrayList<>();
         //企业自增数
@@ -140,6 +142,9 @@ public class CodeServiceImpl implements ICodeService {
         long codeIndex = codeRecord.getIndexStart();
         if (boxCount > 0) {
             for (int i = 0; i < boxCount; i++) {
+                //按箱来创建码属性
+                long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+
                 //箱码
                 String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
                 Code boxCode = new Code();
@@ -147,7 +152,7 @@ public class CodeServiceImpl implements ICodeService {
                 boxCode.setCompanyId(companyId);
                 boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
                 boxCode.setCode(pCode);
-                boxCode.setCodeAttrId(codeAttrId);
+                boxCode.setCodeAttrId(boxAttrId);
                 codeList.add(boxCode);
                 //单码流水号+1
                 codeIndex += 1;
@@ -160,7 +165,7 @@ public class CodeServiceImpl implements ICodeService {
                     singleCode.setCompanyId(companyId);
                     singleCode.setCodeType(AccConstants.CODE_TYPE_SINGLE);
                     singleCode.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, singleCode.getCodeIndex()));
-                    singleCode.setCodeAttrId(codeAttrId);
+                    singleCode.setCodeAttrId(boxAttrId);
                     codeList.add(singleCode);
                     codeIndex += 1;
                 }
@@ -171,6 +176,7 @@ public class CodeServiceImpl implements ICodeService {
                 }
             }
         } else {
+            long attrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
             for (int i = 0; i < codeTotalNum; i++) {
                 Code code = new Code();
                 code.setCodeIndex(codeIndex + i);
@@ -178,7 +184,7 @@ public class CodeServiceImpl implements ICodeService {
                 code.setCompanyId(companyId);
                 code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
                 code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
-                code.setCodeAttrId(codeAttrId);
+                code.setCodeAttrId(attrId);
                 codeList.add(code);
 
                 //更新自增数
@@ -316,7 +322,6 @@ public class CodeServiceImpl implements ICodeService {
                 return codeMapper.selectCodeListByCodeOrIndex(map);
             }
         }
-
     }
 
     @Override
@@ -336,5 +341,43 @@ public class CodeServiceImpl implements ICodeService {
             return codeList.size() - 1;
         }
         return 1;
+    }
+
+    /**
+     * 根据生码记录id查询码集合
+     *
+     * @param recordId
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeListByRecord(Long companyId, Long recordId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("recordId", recordId);
+        return codeMapper.selectCodeListByRecord(companyId, recordId);
+    }
+
+    /**
+     * 保存生码属性
+     *
+     * @param companyId
+     * @param codeRecordId
+     * @param indexStart
+     * @param indexEnd
+     */
+    private long saveCodeAttr(long companyId, long userId, long codeRecordId, long indexStart, long indexEnd) {
+        CodeAttr codeAttr = new CodeAttr();
+        codeAttr.setCompanyId(companyId);
+        codeAttr.setTenantId(companyId);
+        codeAttr.setRecordId(codeRecordId);
+        codeAttr.setIndexStart(indexStart);
+        codeAttr.setIndexEnd(indexEnd);
+        codeAttr.setCreateUser(userId);
+        codeAttr.setCreateTime(new Date());
+        codeAttr.setUpdateUser(userId);
+        codeAttr.setUpdateTime(new Date());
+        codeAttrService.insertCodeAttr(codeAttr);
+        return codeAttr.getId();
     }
 }

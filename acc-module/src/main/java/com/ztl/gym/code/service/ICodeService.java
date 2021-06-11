@@ -78,10 +78,10 @@ public interface ICodeService {
      * @param codeRecordId 生码记录id
      * @param codeTotalNum 生码总数
      * @param boxCount     箱数
-     * @param codeAttrId   生码属性id
+     * @param userId       用户id
      * @return
      */
-    int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long codeAttrId);
+    int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId);
 
     /**
      * 根据属性id修改码状态
@@ -116,4 +116,12 @@ public interface ICodeService {
     List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
 
     long getCodeCount(String code);
+
+    /**
+     * 根据生码记录id查询码集合
+     *
+     * @param recordId
+     * @return
+     */
+    List<Code> selectCodeListByRecord(Long companyId, Long recordId);
 }

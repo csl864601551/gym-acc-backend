@@ -192,4 +192,11 @@
         order by code_index
     </select>
 
+
+    <select id="selectCodeListByRecord" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where company_id = #{companyId} and  code_attr_id in
+        (select id from t_code_attr where record_id = #{recordId} and company_id = #{companyId})
+        order by code_index  asc
+    </select>
 </mapper>

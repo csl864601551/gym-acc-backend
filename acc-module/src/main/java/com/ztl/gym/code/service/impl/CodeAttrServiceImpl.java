@@ -39,7 +39,7 @@ public class CodeAttrServiceImpl implements ICodeAttrService
      * @return
      */
     @Override
-    public CodeAttr selectCodeAttrByRecordId(Long recordId) {
+    public List<CodeAttr> selectCodeAttrByRecordId(Long recordId) {
         return codeAttrMapper.selectCodeAttrByRecordId(recordId);
     }
 
