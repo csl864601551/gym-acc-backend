@@ -1,6 +1,10 @@
 package com.ztl.gym.web.controller.mix;
 
 import java.util.List;
+import java.util.Map;
+
+import com.ztl.gym.storage.domain.ScanRecord;
+import com.ztl.gym.storage.service.IScanRecordService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +36,8 @@ public class MixRecordController extends BaseController
 {
     @Autowired
     private IMixRecordService mixRecordService;
+    @Autowired
+    private IScanRecordService scanRecordService;
 
     /**
      * 查询窜货记录列表
@@ -95,5 +101,34 @@ public class MixRecordController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(mixRecordService.deleteMixRecordByIds(ids));
+    }
+
+    /**
+     * 合并新增窜货记录和扫码记录
+     */
+    @Log(title = "新增窜货记录和扫码记录", businessType = BusinessType.INSERT)
+    @PostMapping("/addRecord")
+    public AjaxResult addRecord(@RequestBody Map<String,Object> map)
+    {
+        try {
+            ScanRecord scanRecord=new ScanRecord();
+            MixRecord mixRecord=new MixRecord();
+            scanRecord.setCode(map.get("code").toString());
+            scanRecord.setIp(map.get("ip").toString());
+            scanRecordService.insertScanRecord(scanRecord);
+            mixRecord.setTenantId(Long.valueOf(map.get("tenantId").toString()));
+            mixRecord.setCode(map.get("code").toString());
+            mixRecord.setMixType(Integer.valueOf(map.get("mixType").toString()));
+            mixRecord.setMixFrom(Integer.valueOf(map.get("mixFrom").toString()));
+            mixRecord.setProductId(Long.valueOf(map.get("productId").toString()));
+            mixRecord.setBatchId(Long.valueOf(map.get("batchId").toString()));
+            mixRecord.setAreaOld(map.get("areaOld").toString());
+            mixRecord.setAreaMix(map.get("areaMix").toString());
+            return toAjax(mixRecordService.insertMixRecord(mixRecord));
+        }catch (Exception e){
+            return toAjax(0);
+        }
+
+
     }
 }
