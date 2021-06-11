@@ -82,13 +82,12 @@ public class CodeRuleUtils {
      * @return
      */
     public static String getCodeType(String code) {
-        String[] codes = code.split("/");
+        String[] codes = code.split("-");
         if (codes.length > 1) {
             String prefix = codes[0];
-            String prefixStr = prefix.substring(0, 1);
-            if (prefixStr.equals("P")) {
+            if (prefix.equals("20")) {
                 return AccConstants.CODE_TYPE_BOX;
-            } else if (prefixStr.equals("S")) {
+            } else if (prefix.equals("30")) {
                 return AccConstants.CODE_TYPE_SINGLE;
             }
         }
@@ -134,7 +133,7 @@ public class CodeRuleUtils {
 
 
     public static void main(String[] args) {
-        String code = buildCode(286L, "P", 1L);
+        String code = buildCode(286L, "B", 1L);
         System.out.println(code);
         System.out.println("companyId : " + getCompanyIdByCode(code));
     }

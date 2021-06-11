@@ -327,7 +327,8 @@ public class CodeServiceImpl implements ICodeService {
         List<Code> codeList = selectCodeListByCodeOrIndex(map);
         boolean flag = false;
         for (Code code : codeList) {
-            if (code.getCode().startsWith("P")) {
+//            if (code.getCode().startsWith("P")) {
+            if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
                 flag = true;
             }
         }

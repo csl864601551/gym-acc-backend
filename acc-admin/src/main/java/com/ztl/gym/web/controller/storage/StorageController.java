@@ -8,6 +8,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.StorageBack;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -170,7 +171,8 @@ public class StorageController extends BaseController {
             List<Code> codeList = codeService.selectCodeList(codeParam);
             for (Code code : codeList) {
                 String typeName = "未知";
-                if (code.getCode().startsWith("P")) {
+//                if (code.getCode().startsWith("P")) {
+                if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
                     typeName = "箱码";
                 } else {
                     typeName = "单码";

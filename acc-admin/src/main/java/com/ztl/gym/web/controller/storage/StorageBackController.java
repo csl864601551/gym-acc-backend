@@ -109,7 +109,8 @@ public class StorageBackController extends BaseController {
         storageBack.setCreateTime(new Date());
 
         StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
-        if (storageBack.getCodeStr().startsWith("P")) {
+//        if (storageBack.getCodeStr().startsWith("P")) {
+        if (CodeRuleUtils.getCodeType(storageBack.getCodeStr()).equals(AccConstants.CODE_TYPE_BOX)) {
             storageBack.setCodeIndex(codeRes.getCodeAttr().getCodeRecord().getIndexStart() + "~" + codeRes.getCodeAttr().getCodeRecord().getIndexEnd());
             storageBack.setBackNum(storageIn.getActInNum());
             storageBack.setActBackNum(storageIn.getActInNum());
