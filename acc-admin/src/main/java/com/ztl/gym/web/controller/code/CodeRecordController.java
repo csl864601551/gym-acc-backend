@@ -143,12 +143,8 @@ public class CodeRecordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('code:record:listSon')")
     @GetMapping("/listSon")
     public TableDataInfo listSon(CodeRecord codeRecord) {
-        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(codeRecord.getId());
         startPage();
-        Code code = new Code();
-        code.setCodeAttrId(codeAttr.getId());
-        code.setCompanyId(codeAttr.getCompanyId());
-        List<Code> list = codeService.selectCodeList(code);
+        List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
         return getDataTable(list);
     }
 
@@ -247,11 +243,7 @@ public class CodeRecordController extends BaseController {
     @Log(title = "生码记录", businessType = BusinessType.EXPORT)
     @GetMapping("/download")
     public AjaxResult download(CodeRecord codeRecord) {
-        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(codeRecord.getId());
-        Code codeParam = new Code();
-        codeParam.setCodeAttrId(codeAttr.getId());
-        codeParam.setCompanyId(codeAttr.getCompanyId());
-        List<Code> list = codeService.selectCodeList(codeParam);
+        List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
         for (Code code : list) {
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
                 code.setStatusName("待赋值");
@@ -276,11 +268,7 @@ public class CodeRecordController extends BaseController {
     @Log(title = "生码记录", businessType = BusinessType.EXPORT)
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeRecord codeRecord, HttpServletResponse response) {
-        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(codeRecord.getId());
-        Code codeParam = new Code();
-        codeParam.setCodeAttrId(codeAttr.getId());
-        codeParam.setCompanyId(codeAttr.getCompanyId());
-        List<Code> list = codeService.selectCodeList(codeParam);
+        List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
         String temp = "码" + "                                        " + "\r\n";
         for (Code code : list) {
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -291,10 +279,10 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                temp += "        " + code.getCode()  + "\r\n";
+                temp += "        " + code.getCode() + "\r\n";
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                temp += (code.getpCode() == null ? code.getCode() : code.getpCode())  + "\r\n";
+                temp += (code.getpCode() == null ? code.getCode() : code.getpCode()) + "\r\n";
             }
         }
         AjaxResult ajax = AjaxResult.success();
@@ -312,37 +300,40 @@ public class CodeRecordController extends BaseController {
     @PostMapping("/fuzhi")
     public AjaxResult fuzhi(@RequestBody FuzhiVo fuzhiVo) {
         int res = 0;
-        CodeAttr codeAttr = codeAttrService.selectCodeAttrByRecordId(fuzhiVo.getRecordId());
+        List<CodeAttr> codeAttrs = codeAttrService.selectCodeAttrByRecordId(fuzhiVo.getRecordId());
         Product product = productService.selectTProductById(fuzhiVo.getProductId());
         ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
 
-        CodeAttr attrParam = new CodeAttr();
-        attrParam.setId(codeAttr.getId());
-        attrParam.setProductId(product.getId());
-        attrParam.setProductName(product.getProductName());
-        attrParam.setProductNo(product.getProductNo());
-        attrParam.setBarCode(product.getBarCode());
-        ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
-        ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
-        attrParam.setProductCategory(category1.getCategoryName() + "-" + category2.getCategoryName());
-        attrParam.setProductUnit(product.getUnit());
-        attrParam.setProductIntroduce(product.getProductIntroduce());
-        attrParam.setBatchId(fuzhiVo.getBatchId());
-        attrParam.setBatchNo(productBatch.getBatchNo());
-        attrParam.setRemark(fuzhiVo.getRemark());
-        attrParam.setInputBy(SecurityUtils.getLoginUser().getUser().getUserId());
-        attrParam.setInputTime(new Date());
+        for (CodeAttr codeAttr : codeAttrs) {
+            CodeAttr attrParam = new CodeAttr();
+            attrParam.setId(codeAttr.getId());
+            attrParam.setProductId(product.getId());
+            attrParam.setProductName(product.getProductName());
+            attrParam.setProductNo(product.getProductNo());
+            attrParam.setBarCode(product.getBarCode());
+            ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
+            ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
+            attrParam.setProductCategory(category1.getCategoryName() + "-" + category2.getCategoryName());
+            attrParam.setProductUnit(product.getUnit());
+            attrParam.setProductIntroduce(product.getProductIntroduce());
+            attrParam.setBatchId(fuzhiVo.getBatchId());
+            attrParam.setBatchNo(productBatch.getBatchNo());
+            attrParam.setRemark(fuzhiVo.getRemark());
+            attrParam.setInputBy(SecurityUtils.getLoginUser().getUser().getUserId());
+            attrParam.setInputTime(new Date());
+            codeAttrService.updateCodeAttr(attrParam);
 
-        int updres = codeAttrService.updateCodeAttr(attrParam);
-        if (updres > 0) {
-            CodeRecord codeRecord = new CodeRecord();
-            codeRecord.setId(fuzhiVo.getRecordId());
-            codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
-            codeRecord.setProductId(fuzhiVo.getProductId());
-            codeRecord.setBatchId(fuzhiVo.getBatchId());
-            codeRecordService.updateCodeRecord(codeRecord);
-            res = codeService.updateStatusByAttrId(codeAttr.getCompanyId(), codeAttr.getId(), AccConstants.CODE_STATUS_FINISH);
+            //更新对应码的状态
+            codeService.updateStatusByAttrId(codeAttr.getCompanyId(), codeAttr.getId(), AccConstants.CODE_STATUS_FINISH);
         }
+
+        CodeRecord codeRecord = new CodeRecord();
+        codeRecord.setId(fuzhiVo.getRecordId());
+        codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+        codeRecord.setProductId(fuzhiVo.getProductId());
+        codeRecord.setBatchId(fuzhiVo.getBatchId());
+        //更新生码记录赋值信息
+        res = codeRecordService.updateCodeRecord(codeRecord);
         return toAjax(res);
     }
 

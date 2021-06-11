@@ -6,7 +6,9 @@ import com.ztl.gym.common.core.domain.entity.SysUser;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-public interface CommonService {
+public interface
+
+CommonService {
     /**
      * 根据企业查询当前最新自增数
      *

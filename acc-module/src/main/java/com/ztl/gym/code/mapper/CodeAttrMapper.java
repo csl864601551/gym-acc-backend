@@ -28,7 +28,7 @@ public interface CodeAttrMapper {
      * @param recordId
      * @return
      */
-    CodeAttr selectCodeAttrByRecordId(Long recordId);
+    List<CodeAttr> selectCodeAttrByRecordId(Long recordId);
 
     /**
      * 查询码属性列表

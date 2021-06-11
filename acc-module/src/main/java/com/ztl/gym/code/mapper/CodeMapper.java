@@ -165,4 +165,13 @@ public interface CodeMapper {
     List<String> selectBackCodeByStorage(Map<String, Object> params);
 
     List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
+
+    /**
+     * 根据生码记录查询码
+     *
+     * @param companyId
+     * @param recordId
+     * @return
+     */
+    List<Code> selectCodeListByRecord(@Param("companyId") long companyId, @Param("recordId") long recordId);
 }

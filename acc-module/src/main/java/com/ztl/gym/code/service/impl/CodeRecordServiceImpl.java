@@ -144,7 +144,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+//            long codeAttrId = saveCodeAttr(companyId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+            long userId = SecurityUtils.getLoginUser().getUser().getUserId();
 
             //获取IP
             String localIp = "";
@@ -155,8 +156,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 e.printStackTrace();
             }
             //异步生码
-            String message = codeAttrId + "^" + codeRecord.getId() + "^" + companyId + "^" + num + "^" + localIp;
-            stringRedisTemplate.convertAndSend("code.gen", message);
+            String message = userId + "^" + codeRecord.getId() + "^" + companyId + "^" + num + "^" + localIp;
+            stringRedisTemplate.convertAndSend("acc.code.gen", message);
         }
         return res;
     }
@@ -176,7 +177,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             //生码属性
-            long codeAttrId = saveCodeAttr(companyId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+//            long codeAttrId = saveCodeAttr(companyId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+            long userId = SecurityUtils.getLoginUser().getUser().getUserId();
 
             //获取IP
             String localIp = "";
@@ -188,8 +190,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
             }
 
             //异步生码
-            String message = codeAttrId + "^" + codeRecord.getId() + "^" + companyId + "^" + num + "^" + localIp + "^" + boxCount;
-            stringRedisTemplate.convertAndSend("code.gen", message);
+            String message = userId + "^" + codeRecord.getId() + "^" + companyId + "^" + num + "^" + localIp + "^" + boxCount;
+            stringRedisTemplate.convertAndSend("acc.code.gen", message);
         }
         return res;
     }
@@ -214,7 +216,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         try {
             String[] codeGenMsgs = codeGenMessage.split("\\^");
             //生码属性id
-            long codeAttrId = Long.parseLong(codeGenMsgs[0]);
+            long userId = Long.parseLong(codeGenMsgs[0]);
             //生码记录id
             long codeRecordId = Long.parseLong(codeGenMsgs[1]);
             //企业id
@@ -229,7 +231,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 boxCount = Long.parseLong(codeGenMsgs[5]);
             }
             if (localIp.equals(ip)) {
-                codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, codeAttrId);
+                codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId);
             }
         } catch (Exception e) {
             throw new CustomException("接收数据异常，请检查码数据格式！", HttpStatus.ERROR);
@@ -276,28 +278,5 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         codeRecord.setCreateTime(new Date());
         codeRecord.setUpdateTime(new Date());
         return codeRecord;
-    }
-
-    /**
-     * 保存生码属性
-     *
-     * @param companyId
-     * @param codeRecordId
-     * @param indexStart
-     * @param indexEnd
-     */
-    private long saveCodeAttr(long companyId, long codeRecordId, long indexStart, long indexEnd) {
-        CodeAttr codeAttr = new CodeAttr();
-        codeAttr.setCompanyId(companyId);
-        codeAttr.setTenantId(companyId);
-        codeAttr.setRecordId(codeRecordId);
-        codeAttr.setIndexStart(indexStart);
-        codeAttr.setIndexEnd(indexEnd);
-        codeAttr.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
-        codeAttr.setCreateTime(new Date());
-        codeAttr.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
-        codeAttr.setUpdateTime(new Date());
-        codeAttrService.insertCodeAttr(codeAttr);
-        return codeAttr.getId();
     }
 }

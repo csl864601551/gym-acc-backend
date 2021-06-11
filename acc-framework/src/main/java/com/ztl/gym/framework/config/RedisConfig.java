@@ -59,14 +59,14 @@ public class RedisConfig extends CachingConfigurerSupport {
             MessageListenerAdapter codeGenerationMessageListenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(codeGenerationMessageListenerAdapter, new PatternTopic("code.gen"));
+        container.addMessageListener(codeGenerationMessageListenerAdapter, new PatternTopic("acc.code.gen"));
         return container;
     }
 
     /**
      * redis监听
      *
-     * @param codeService
+     * @param codeRecordService
      * @return
      */
     @Bean

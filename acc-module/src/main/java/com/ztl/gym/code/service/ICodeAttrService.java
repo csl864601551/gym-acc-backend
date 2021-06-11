@@ -25,7 +25,7 @@ public interface ICodeAttrService {
      * @param recordId
      * @return
      */
-    public CodeAttr selectCodeAttrByRecordId(Long recordId);
+    public List<CodeAttr> selectCodeAttrByRecordId(Long recordId);
 
     /**
      * 查询码属性列表
