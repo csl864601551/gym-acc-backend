@@ -97,16 +97,21 @@ public class StorageInServiceImpl implements IStorageInService {
         if(map.get("thirdPartyFlag")!=null){
             map.put("updateTime", DateUtils.getNowDate());
             map.put("inTime", DateUtils.getNowDate());
-            long codeBoxCount=codeService.getCodeCount(map.get("code").toString());
-            map.put("inNum", codeBoxCount);
-            map.put("actInNum", codeBoxCount);
+            long codeBoxCount=codeService.getCodeCount(((List)map.get("code")).get(0).toString());
+            long count=codeBoxCount*(((List)map.get("code")).size());
+            map.put("inNum", count);
+            map.put("actInNum", count);
         }
         map.put("createUser", SecurityUtils.getLoginUser().getUser().getUserId());
         int result = storageInMapper.insertStorageIn(map);//新增t_storage_in入库表
 //        String id = map.get("id").toString();
 //        System.out.println("id=="+id);
         if(map.get("thirdPartyFlag")!=null){
-            updateInStatusByCode(map);//PDA端使用
+            List list=(List)map.get("code");
+            for (int i = 0; i < list.size(); i++) {
+                map.put("code",list.get(i));
+                updateInStatusByCode(map);//PDA端使用
+            }
         }
         return result;
     }

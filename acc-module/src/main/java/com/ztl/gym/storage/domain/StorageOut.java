@@ -1,6 +1,7 @@
 package com.ztl.gym.storage.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -169,7 +170,7 @@ public class StorageOut extends BaseEntity {
     private String thirdPartyFlag;
 
     @TableField(exist = false)
-    private String code;
+    private List<String> code;
 
     @TableField(exist = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -405,11 +406,11 @@ public class StorageOut extends BaseEntity {
         this.thirdPartyFlag = thirdPartyFlag;
     }
 
-    public String getCode() {
+    public List<String> getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(List<String> code) {
         this.code = code;
     }
 
