@@ -189,18 +189,8 @@ public class StorageController extends BaseController {
                 }
                 lists.addAll(codeList);
             }
-            PageDomain pageDomain = TableSupport.buildPageRequest();
-            Integer pageNum = pageDomain.getPageNum();
-            Integer pageSize = pageDomain.getPageSize();
 
-            List pageList =PageUtil.startPage(lists,pageNum,pageSize);
-
-            TableDataInfo rspData = new TableDataInfo();
-            rspData.setCode(HttpStatus.SUCCESS);
-            rspData.setMsg("查询成功");
-            rspData.setTotal(lists.size());
-            rspData.setRows(pageList);
-            return rspData;
+            return PageUtil.startPage(lists);
 
         }catch (Exception e){
             throw new BaseException("未查询到相关码信息或未扫码确认物流状态");

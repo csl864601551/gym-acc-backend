@@ -1,5 +1,10 @@
 package com.ztl.gym.common.utils;
 
+import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.core.page.PageDomain;
+import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.core.page.TableSupport;
+
 import java.util.List;
 
 /**
@@ -13,12 +18,13 @@ public class PageUtil {
      * 开始分页
      *
      * @param list
-     * @param pageNum  页码
-     * @param pageSize 每页多少条数据
      * @return
      */
-    public static List startPage(List list, Integer pageNum,
-                                 Integer pageSize) {
+    public static TableDataInfo startPage(List list) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();//pageNum  页码
+        Integer pageSize = pageDomain.getPageSize();//pageSize 每页多少条数据
+
         if (list == null) {
             return null;
         }
@@ -45,14 +51,21 @@ public class PageUtil {
             toIndex = count;
         }
 
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(HttpStatus.SUCCESS);
+        rspData.setMsg("查询成功");
+        rspData.setTotal(list.size());
+
+
         // 如果toIndex大于List的总条数 会出现 java.lang.IndexOutOfBoundsException:错误
         if (toIndex > list.size()) {
             List pageList = list.subList(fromIndex, list.size());
-            return pageList;
+            rspData.setRows(pageList);
+            return rspData;
         }
 
         List pageList = list.subList(fromIndex, toIndex);
-
-        return pageList;
+        rspData.setRows(pageList);
+        return rspData;
     }
 }
