@@ -28,9 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +49,8 @@ public class CodeRecordController extends BaseController {
     private IProductBatchService productBatchService;
     @Autowired
     private IProductCategoryService productCategoryService;
+    @Autowired
+    private IProductService tProductService;
 
     /**
      * 查询生码记录列表
@@ -355,4 +355,8 @@ public class CodeRecordController extends BaseController {
         }
         return AjaxResult.success(res);
     }
+
+
+
+
 }
