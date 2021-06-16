@@ -17,6 +17,13 @@ ruoyi:
   #码下载前缀地址
   preFixUrl: https://acc.asun.cloud/c?c=
 
+# OBS配置
+obs:
+  endPoint: obs.cn-east-2.myhuaweicloud.com
+  ak: KFZVCZNTUUNWX9ZU7QKX
+  sk: XnPq0E64aYc2DUob6Ms9WSqcNOQ57TcP9JTpuhJX
+  bucketName: ztl-admin-gongyema-com
+
 
 # 开发环境配置
 server:
