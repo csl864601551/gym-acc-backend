@@ -14,6 +14,9 @@ ruoyi:
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
+  #码下载前缀地址
+  preFixUrl: https://acc.asun.cloud/c?c=
+
 
 # 开发环境配置
 server:
@@ -66,9 +69,9 @@ spring:
     port: 6379
     # 数据库索引
     #database: 0
-    #主数据源
+    #主测试数据源
     database: 15
-    #防窜系统-万务通数据源
+    #防窜系统-万务通南京数据源
     #database: 10
     # 密码
     #password:
@@ -142,4 +145,6 @@ wx:
   jssdk_accesstoken_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
   #用第一步拿到的access_token 采用http GET方式请求获得jsapi_ticket（有效期7200秒，开发者必须在自己的服务全局缓存jsapi_ticket）
   jssdk_getticket_url: https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi
+
+
 

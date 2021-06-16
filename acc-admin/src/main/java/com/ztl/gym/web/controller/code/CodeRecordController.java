@@ -9,6 +9,7 @@ import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -25,6 +26,7 @@ import com.ztl.gym.product.service.IProductBatchService;
 import com.ztl.gym.product.service.IProductCategoryService;
 import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +54,8 @@ public class CodeRecordController extends BaseController {
     @Autowired
     private IProductService tProductService;
 
+    @Value("${ruoyi.preFixUrl}")
+    private String preFixUrl;
     /**
      * 查询生码记录列表
      */
@@ -245,6 +249,7 @@ public class CodeRecordController extends BaseController {
     public AjaxResult download(CodeRecord codeRecord) {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
         for (Code code : list) {
+            code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
                 code.setStatusName("待赋值");
             } else if (code.getStatus() == AccConstants.CODE_STATUS_FINISH) {
@@ -253,6 +258,7 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
+                code.setpCode(preFixUrl + code.getpCode());
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
             }
@@ -270,6 +276,7 @@ public class CodeRecordController extends BaseController {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
         String temp = "码" + "                                        " + "\r\n";
         for (Code code : list) {
+            code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
                 code.setStatusName("待赋值");
             } else if (code.getStatus() == AccConstants.CODE_STATUS_FINISH) {
