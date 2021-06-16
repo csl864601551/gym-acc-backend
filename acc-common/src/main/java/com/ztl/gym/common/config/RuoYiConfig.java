@@ -30,6 +30,9 @@ public class RuoYiConfig
     /** 获取地址开关 */
     private static boolean addressEnabled;
 
+    /** 上传路径 */
+    private String preFixUrl;
+
     public String getName()
     {
         return name;
@@ -88,6 +91,14 @@ public class RuoYiConfig
     public void setAddressEnabled(boolean addressEnabled)
     {
         RuoYiConfig.addressEnabled = addressEnabled;
+    }
+
+    public String getPreFixUrl() {
+        return preFixUrl;
+    }
+
+    public void setPreFixUrl(String preFixUrl) {
+        this.preFixUrl = preFixUrl;
     }
 
     /**
