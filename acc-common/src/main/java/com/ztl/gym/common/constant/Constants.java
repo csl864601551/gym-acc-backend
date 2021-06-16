@@ -126,4 +126,12 @@ public class Constants
      * 资源映射路径 前缀
      */
     public static final String RESOURCE_PREFIX = "/profile";
+
+    /**
+     * 上传文件类型
+     */
+    public static final String IMG = "image"; // 图片
+    public static final String PDF = "pdf"; // pdf
+    public static final String APK = "apk"; // apk
+    public static final String FILE = "file"; // file
 }

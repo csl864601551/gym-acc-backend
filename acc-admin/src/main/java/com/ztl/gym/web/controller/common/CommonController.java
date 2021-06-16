@@ -8,6 +8,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.Constants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CommonUtil;
 import com.ztl.gym.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,13 +68,15 @@ public class CommonController extends BaseController {
     @PostMapping("/common/upload")
     public AjaxResult uploadFile(MultipartFile file) throws Exception {
         try {
-            // 上传文件路径
+            /*// 上传文件路径
             String filePath = RuoYiConfig.getUploadPath();
             // 上传并返回新文件名称
             String fileName = FileUploadUtils.upload(filePath, file);
-            String url = serverConfig.getUrl() + fileName;
+            String url = serverConfig.getUrl() + fileName;*/
+
+            String url = CommonUtil.uploadPic(file, Constants.IMG);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("fileName", fileName);
+            ajax.put("fileName", file.getName());
             ajax.put("url", url);
             return ajax;
         } catch (Exception e) {
