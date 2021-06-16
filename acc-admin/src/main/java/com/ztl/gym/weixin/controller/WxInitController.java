@@ -192,6 +192,9 @@ public class WxInitController {
     }
 
 
+
+
+
     private String createUserInfoHtml(Map<String, Object> weiXinUserInfo) {
         return  null;
     }

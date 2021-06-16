@@ -1,16 +1,13 @@
 package com.ztl.gym.code.service.impl;
 
-import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
-import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
-import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
@@ -28,9 +25,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -70,6 +65,18 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     @Override
     public CodeRecord selectCodeRecordById(Long id) {
         return codeRecordMapper.selectCodeRecordById(id);
+    }
+
+
+    /**
+     * 查询生码记录
+     *
+     * @param codeIndex 生码记录ID
+     * @return 生码记录
+     */
+    @Override
+    public CodeRecord selectCodeRecordByIndex(Long codeIndex) {
+        return codeRecordMapper.selectCodeRecordByIndex(codeIndex);
     }
 
     /**

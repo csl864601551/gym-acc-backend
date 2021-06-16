@@ -81,4 +81,12 @@ public interface ICodeRecordService {
      * @return
      */
     int createPCodeRecord(long companyId, long boxCount, long num, String remark);
+
+    /**
+     * 查询生码记录
+     *
+     * @param codeIndex 生码记录ID
+     * @return 生码记录
+     */
+    public CodeRecord selectCodeRecordByIndex(Long codeIndex);
 }

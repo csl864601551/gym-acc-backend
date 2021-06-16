@@ -78,4 +78,12 @@ public interface CodeRecordMapper {
      * @return
      */
     int insertCodeRecordStatus(Map<String, Object> params);
+
+    /**
+     * 查询生码记录
+     *
+     * @param codeIndex 生码记录ID
+     * @return 生码记录
+     */
+    public CodeRecord selectCodeRecordByIndex(Long codeIndex);
 }

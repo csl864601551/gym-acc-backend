@@ -86,6 +86,11 @@
         where r.id = #{id}
     </select>
 
+    <select id="selectCodeRecordByIndex" parameterType="Long" resultMap="CodeRecordResult">
+        <include refid="selectCodeRecordVo"/>
+        where index_start &lt;= #{codeIndex} and index_end &gt;= #{codeIndex}
+    </select>
+
     <insert id="insertCodeRecord" parameterType="CodeRecord" useGeneratedKeys="true" keyProperty="id">
         insert into t_code_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
