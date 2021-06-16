@@ -14,8 +14,12 @@ ruoyi:
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
-  #码下载前缀地址
+  #测试项目 码下载前缀地址
   preFixUrl: https://acc.asun.cloud/c?c=
+  #南京项目 码下载前缀地址
+  #preFixUrl: http://122.112.243.253/c?c=
+  #正式项目 码下载前缀地址
+  #preFixUrl: https://acs.gongyema.com/c?c=
 
 # OBS配置
 obs:
@@ -68,21 +72,28 @@ spring:
       enabled: true
   # redis 配置
   redis:
-    # 本地地址
-    #host: 127.0.0.1
-    #主数据源
-    host: 10.70.150.14
     # 端口，默认为6379
     port: 6379
+
+    # 本地地址
+    #host: 127.0.0.1
     # 数据库索引
     #database: 0
-    #主测试数据源
+    # 密码
+    #password:
+
+    #测试数据源15+南京10
+    host: 10.70.150.14
+    #南通数据源15
+    #host: 10.70.150.69
+
+    #测试数据源
     database: 15
     #防窜系统-万务通南京数据源
     #database: 10
-    # 密码
-    #password:
     password: Ztt12345
+
+
 
 
     # 连接超时时间
