@@ -1,14 +1,20 @@
 package com.ztl.gym.web.controller.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.github.pagehelper.PageInfo;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.core.page.PageDomain;
+import com.ztl.gym.common.core.page.TableSupport;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.PageUtil;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.StorageBack;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -166,20 +172,26 @@ public class StorageController extends BaseController {
     @GetMapping("/listCode")
     public TableDataInfo listCode(int storageType, long storageRecordId) {
         try {
-            Code codeParam = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
-            startPage();
-            List<Code> codeList = codeService.selectCodeList(codeParam);
-            for (Code code : codeList) {
-                String typeName = "未知";
+            List<Code> codeParams = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
+
+            List<Code> lists=new ArrayList<>();
+            for(Code codeParam:codeParams){
+                List<Code> codeList = codeService.selectCodeList(codeParam);
+                for (Code code : codeList) {
+                    String typeName = "未知";
 //                if (code.getCode().startsWith("P")) {
-                if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
-                    typeName = "箱码";
-                } else {
-                    typeName = "单码";
+                    if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
+                        typeName = "箱码";
+                    } else {
+                        typeName = "单码";
+                    }
+                    code.setCodeTypeName(typeName);
                 }
-                code.setCodeTypeName(typeName);
+                lists.addAll(codeList);
             }
-            return getDataTable(codeList);
+
+            return PageUtil.startPage(lists);
+
         }catch (Exception e){
             throw new BaseException("未查询到相关码信息或未扫码确认物流状态");
         }

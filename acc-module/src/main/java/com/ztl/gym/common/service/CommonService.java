@@ -88,7 +88,7 @@ CommonService {
      * @param storageRecordId
      * @return
      */
-    Code selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
+    List<Code> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
 
     void downloadTXT(String fileName, String content, HttpServletResponse response);
 }

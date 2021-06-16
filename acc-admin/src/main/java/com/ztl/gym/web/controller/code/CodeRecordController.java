@@ -265,7 +265,6 @@ public class CodeRecordController extends BaseController {
      * 码下载TXT
      */
     @PreAuthorize("@ss.hasPermi('code:record:download')")
-    @Log(title = "生码记录", businessType = BusinessType.EXPORT)
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeRecord codeRecord, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());

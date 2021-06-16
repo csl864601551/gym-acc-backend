@@ -96,17 +96,21 @@ public class StorageOutServiceImpl implements IStorageOutService {
         if(storageOut.getThirdPartyFlag()!=null){
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
-            long codeBoxCount=codeService.getCodeCount(storageOut.getCode());
-            storageOut.setActOutNum(codeBoxCount);
-            storageOut.setOutNum(codeBoxCount);
+            long codeBoxCount=codeService.getCodeCount(storageOut.getCode().get(0));
+            long count=codeBoxCount*storageOut.getCode().size();
+            storageOut.setActOutNum(count);
+            storageOut.setOutNum(count);
         }
         storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
         int res=storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
         if(storageOut.getThirdPartyFlag()!=null){
             Map<String,Object> map =new HashMap<>();
             map.put("id",storageOut.getId());
-            map.put("code",storageOut.getCode());
-            updateOutStatusByCode(map);//PDA端使用
+            List list=storageOut.getCode();
+            for (int i = 0; i < list.size(); i++) {
+                map.put("code",list.get(i));
+                updateOutStatusByCode(map);//PDA端使用
+            }
         }
 //        long storageRecordId=storageInMapper.selectInIdByExtraNo(storageOut.getExtraNo());//最新入库单号
 //        List<String> codes=codeService.selectCodeByStorage( storageOut.getCompanyId(),AccConstants.STORAGE_TYPE_IN,storageRecordId);
