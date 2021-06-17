@@ -42,6 +42,7 @@ public class CommonController extends BaseController {
      * @param fileName 文件名称
      * @param delete   是否删除
      */
+    @CrossOrigin
     @GetMapping("common/download")
     public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request) {
         try {
@@ -77,7 +78,7 @@ public class CommonController extends BaseController {
             String url = CommonUtil.uploadPic(file, Constants.IMG);
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileName", file.getName());
-            ajax.put("url", url);
+            ajax.put("url", "https://images.weserv.nl/?url="+url);
             return ajax;
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -87,6 +88,7 @@ public class CommonController extends BaseController {
     /**
      * 本地资源通用下载
      */
+    @CrossOrigin
     @GetMapping("/common/download/resource")
     public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
             throws Exception {

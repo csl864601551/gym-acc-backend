@@ -89,7 +89,7 @@ public class CommonUtil {
         if (fileName != null && !"".equals(fileName)) {
             String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
             ObsClient obsClient = new ObsClient(ak, sk, endPoint);
-            String imagePath = folder + "/" + DateUtil.format(new Date(), "yyyyMM") + "/";
+            String imagePath = "acc/"+folder + "/" + DateUtil.format(new Date(), "yyyyMM") + "/";
             Snowflake snowflake = IdUtil.createSnowflake(1, 1);
             fileName = Convert.toStr(snowflake.nextId());
             String saveUrl = imagePath + fileName + fileSuffix;
@@ -148,7 +148,7 @@ public class CommonUtil {
     public static String uploadPic(InputStream inputStream, String folder) {
 
         ObsClient obsClient = new ObsClient(ak, sk, endPoint);
-        String imagePath = folder + "/" + DateUtil.format(new Date(), "yyyyMM") + "/";
+        String imagePath = "acc/"+folder + "/" + DateUtil.format(new Date(), "yyyyMM") + "/";
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
         String fileName = Convert.toStr(snowflake.nextId());
         String saveUrl = imagePath + fileName + ".png";
