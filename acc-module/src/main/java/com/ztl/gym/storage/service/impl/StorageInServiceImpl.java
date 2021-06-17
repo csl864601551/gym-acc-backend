@@ -97,8 +97,8 @@ public class StorageInServiceImpl implements IStorageInService {
         if(map.get("thirdPartyFlag")!=null){
             map.put("updateTime", DateUtils.getNowDate());
             map.put("inTime", DateUtils.getNowDate());
-            long codeBoxCount=codeService.getCodeCount(((List)map.get("code")).get(0).toString());
-            long count=codeBoxCount*(((List)map.get("code")).size());
+            long codeBoxCount=codeService.getCodeCount(((List)map.get("codes")).get(0).toString());
+            long count=codeBoxCount*(((List)map.get("codes")).size());
             map.put("inNum", count);
             map.put("actInNum", count);
         }
@@ -107,7 +107,7 @@ public class StorageInServiceImpl implements IStorageInService {
 //        String id = map.get("id").toString();
 //        System.out.println("id=="+id);
         if(map.get("thirdPartyFlag")!=null){
-            List list=(List)map.get("code");
+            List list=(List)map.get("codes");
             for (int i = 0; i < list.size(); i++) {
                 map.put("code",list.get(i));
                 updateInStatusByCode(map);//PDA端使用
@@ -222,7 +222,9 @@ public class StorageInServiceImpl implements IStorageInService {
             throw new CustomException("未查询到相关单号,请检查入库单来源");
         }
         List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(0));//插入码流转明细，转移到PDA执行
+        for (int i = 0; i < codes.size(); i++) {
+            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+        }
         //判断是否调拨,执行更新调拨单
         if (extraNo.substring(0, 2).equals("DB")) {
             StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(extraNo);

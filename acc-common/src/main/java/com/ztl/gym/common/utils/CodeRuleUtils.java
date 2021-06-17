@@ -69,7 +69,7 @@ public class CodeRuleUtils {
             //注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去
             //企业id转换
             long companyIdComplex = companyId * 5;
-            code = CODE_PREFIX_MAP.get(codePrefix) + "-" + companyIdComplex + "-" + DateUtils.dateTimeNow() + codeIndex;
+            code = CODE_PREFIX_MAP.get(codePrefix) + "-" + companyIdComplex + "-"  + codeIndex;
         }
         return code;
     }

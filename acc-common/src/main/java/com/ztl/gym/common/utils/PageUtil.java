@@ -24,6 +24,12 @@ public class PageUtil {
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();//pageNum  页码
         Integer pageSize = pageDomain.getPageSize();//pageSize 每页多少条数据
+        if(pageNum==null){
+            pageNum=1;
+        }
+        if(pageSize==null){
+            pageSize=5000000;
+        }
 
         if (list == null) {
             return null;

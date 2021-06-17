@@ -170,7 +170,10 @@ public class StorageOut extends BaseEntity {
     private String thirdPartyFlag;
 
     @TableField(exist = false)
-    private List<String> code;
+    private String code;
+
+    @TableField(exist = false)
+    private List<String> codes;
 
     @TableField(exist = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -406,12 +409,20 @@ public class StorageOut extends BaseEntity {
         this.thirdPartyFlag = thirdPartyFlag;
     }
 
-    public List<String> getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(List<String> code) {
+    public void setCode(String code) {
         this.code = code;
+    }
+
+    public List<String> getCodes() {
+        return codes;
+    }
+
+    public void setCodes(List<String> codes) {
+        this.codes = codes;
     }
 
     @Override

@@ -313,6 +313,14 @@
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
     </update>
+
+    <select id="selectInIdByCode" resultType="java.lang.Long">
+        select storage_record_id from t_in_code_flow where company_id= #{companyId} and code= #{code}
+    </select>
+    <update id="updateInStatusById" parameterType="Map">
+        update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_OUT}
+        where id = #{id}
+    </update>
     <update id="updateInStatusByOut" parameterType="StorageOut">
         update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_OUT}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
