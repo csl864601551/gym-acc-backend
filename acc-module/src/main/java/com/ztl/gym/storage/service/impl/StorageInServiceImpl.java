@@ -222,8 +222,18 @@ public class StorageInServiceImpl implements IStorageInService {
             throw new CustomException("未查询到相关单号,请检查入库单来源");
         }
         List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
+        boolean flag=true;
         for (int i = 0; i < codes.size(); i++) {
-            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+            if(codes.get(i).startsWith("20")){
+                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                flag=false;
+            }
+        }
+        if(flag){
+            for (int i = 0; i < codes.size(); i++) {
+                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+            }
+
         }
         //判断是否调拨,执行更新调拨单
         if (extraNo.substring(0, 2).equals("DB")) {

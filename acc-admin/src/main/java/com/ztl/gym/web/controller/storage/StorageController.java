@@ -12,6 +12,7 @@ import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.core.page.PageDomain;
 import com.ztl.gym.common.core.page.TableSupport;
 import com.ztl.gym.common.exception.BaseException;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.PageUtil;
@@ -189,11 +190,13 @@ public class StorageController extends BaseController {
                 }
                 lists.addAll(codeList);
             }
-
+            if(lists.size()==0){
+                throw new CustomException("请扫码确认物流状态！");
+            }
             return PageUtil.startPage(lists);
 
         }catch (Exception e){
-            throw new BaseException("未查询到相关码信息或未扫码确认物流状态");
+            throw new CustomException("未查询到相关码信息或未扫码确认物流状态");
         }
 
     }
