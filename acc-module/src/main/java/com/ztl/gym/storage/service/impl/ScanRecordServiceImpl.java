@@ -185,11 +185,11 @@ public class ScanRecordServiceImpl implements IScanRecordService {
                     temp.setIsMix(0);
                     break;
                 } else if (list.get(i).getProvince().equals(area.getProvince())) {//否则判断是否有包含的省；有则往下判断
-                    if (list.get(i).getCity().equals("全部")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
+                    if (list.get(i).getCity().equals("全部")||list.get(i).getArea().equals("市辖区")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
                         temp.setIsMix(0);
                         break;
                     } else if (list.get(i).getCity().equals(area.getCity())) {//否则判断是否有包含的市；有则往下判断
-                        if (list.get(i).getArea().equals("全部")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
+                        if (list.get(i).getArea().equals("全部")||list.get(i).getArea().equals("市辖区")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
                             temp.setIsMix(0);
                             break;
                         } else if (list.get(i).getArea().equals(area.getArea())) {//否则判断是否有包含的区；有则返回false,未窜货
