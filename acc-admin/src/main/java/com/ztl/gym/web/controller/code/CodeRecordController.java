@@ -120,7 +120,7 @@ public class CodeRecordController extends BaseController {
             vo.setSizeNum(String.valueOf(codeRecord.getCount()));
         } else {
             vo.setType("套标");
-            vo.setSizeNum(codeRecord.getBoxCount() + "拖" + codeRecord.getSingleCount());
+            vo.setSizeNum(codeRecord.getTrayCount() + "拖"+codeRecord.getBoxCount()/codeRecord.getTrayCount() + "拖" + codeRecord.getSingleCount());
         }
         vo.setProductName(codeRecord.getProductName());
         vo.setBatchNo(codeRecord.getBatchNo());

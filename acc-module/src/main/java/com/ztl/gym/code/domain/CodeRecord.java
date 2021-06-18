@@ -28,6 +28,10 @@ public class CodeRecord extends BaseEntity
     /** 生码类型 */
     private Integer type;
 
+    /** 套标数量 */
+    @Excel(name = "套标数量", sort = 6)
+    private Long trayCount;
+
     /** 箱数量 */
     @Excel(name = "箱数量", sort = 6)
     private Long boxCount;
@@ -107,6 +111,14 @@ public class CodeRecord extends BaseEntity
     public void setCount(Long count)
     {
         this.count = count;
+    }
+
+    public Long getTrayCount() {
+        return trayCount;
+    }
+
+    public void setTrayCount(Long trayCount) {
+        this.trayCount = trayCount;
     }
 
     public Long getBoxCount() {
