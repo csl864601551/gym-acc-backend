@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.system.mapper.TWeixinConfigMapper">
+    
+    <resultMap type="TWeixinConfig" id="TWeixinConfigResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="status"    column="status"    />
+        <result property="ip"    column="ip"    />
+        <result property="port"    column="port"    />
+        <result property="domain"    column="domain"    />
+        <result property="weixinName"    column="weixin_name"    />
+        <result property="appid"    column="appId"    />
+        <result property="appsecret"    column="appSecret"    />
+        <result property="token"    column="token"    />
+        <result property="aeskey"    column="aeskey"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createUserName"    column="create_user_name"    />
+        <result property="updateUserName"    column="update_user_name"    />
+    </resultMap>
+
+    <sql id="selectTWeixinConfigVo">
+        select id, company_id, company_name, status, ip, port, domain, weixin_name, appId, appSecret, token, aeskey, remark, create_user, create_time, update_user, update_time,create_user_name,update_user_name from t_weixin_config
+    </sql>
+
+    <select id="selectTWeixinConfigList" parameterType="TWeixinConfig" resultMap="TWeixinConfigResult">
+        <include refid="selectTWeixinConfigVo"/>
+        <where>  
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="port != null  and port != ''"> and port = #{port}</if>
+            <if test="domain != null  and domain != ''"> and domain = #{domain}</if>
+            <if test="weixinName != null  and weixinName != ''"> and weixin_name like concat('%', #{weixinName}, '%')</if>
+            <if test="appid != null  and appid != ''"> and appId = #{appid}</if>
+            <if test="appsecret != null  and appsecret != ''"> and appSecret = #{appsecret}</if>
+            <if test="token != null  and token != ''"> and token = #{token}</if>
+            <if test="aeskey != null  and aeskey != ''"> and aeskey = #{aeskey}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+            <if test="updateUser != null  and updateUser != ''"> and update_user = #{updateUser}</if>
+            <if test="createUserName != null  and createUserName != ''"> and create_user_name = #{createUserName}</if>
+            <if test="updateUserName != null  and updateUserName != ''"> and update_user_name = #{updateUserName}</if>
+        </where>
+    </select>
+    
+    <select id="selectTWeixinConfigById" parameterType="String" resultMap="TWeixinConfigResult">
+        <include refid="selectTWeixinConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTWeixinConfig" parameterType="TWeixinConfig">
+        insert into t_weixin_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="companyName != null">company_name,</if>
+            <if test="status != null">status,</if>
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="domain != null">domain,</if>
+            <if test="weixinName != null">weixin_name,</if>
+            <if test="appid != null">appId,</if>
+            <if test="appsecret != null">appSecret,</if>
+            <if test="token != null">token,</if>
+            <if test="aeskey != null">aeskey,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createUserName != null">create_user_name,</if>
+            <if test="updateUserName != null">update_user_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="companyName != null">#{companyName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="domain != null">#{domain},</if>
+            <if test="weixinName != null">#{weixinName},</if>
+            <if test="appid != null">#{appid},</if>
+            <if test="appsecret != null">#{appsecret},</if>
+            <if test="token != null">#{token},</if>
+            <if test="aeskey != null">#{aeskey},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createUserName != null">#{createUserName},</if>
+            <if test="updateUserName != null">#{updateUserName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTWeixinConfig" parameterType="TWeixinConfig">
+        update t_weixin_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="domain != null">domain = #{domain},</if>
+            <if test="weixinName != null">weixin_name = #{weixinName},</if>
+            <if test="appid != null">appId = #{appid},</if>
+            <if test="appsecret != null">appSecret = #{appsecret},</if>
+            <if test="token != null">token = #{token},</if>
+            <if test="aeskey != null">aeskey = #{aeskey},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createUserName != null">create_user_name = #{createUserName},</if>
+            <if test="updateUserName != null">update_user_name = #{updateUserName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTWeixinConfigById" parameterType="String">
+        delete from t_weixin_config where id = #{id}
+    </delete>
+
+    <delete id="deleteTWeixinConfigByIds" parameterType="String">
+        delete from t_weixin_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
