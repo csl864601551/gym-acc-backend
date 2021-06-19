@@ -118,8 +118,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 //微信接口
                 .antMatchers("/weixin/**").anonymous()
                 //扫码详情
-                .antMatchers("/storage/record/cxspxqBycode").anonymous()
-
 //                .antMatchers("/c").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
