@@ -9,7 +9,9 @@ import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -185,12 +187,21 @@ public class StorageOutServiceImpl implements IStorageOutService {
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
         if(map.get("outsFlag")==null){
-            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+            if (commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), 2, map.get("code").toString())) {
+                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+            }else {
+                throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
+            }
         }else{
             List list=(List)map.get("codes");
             for (int i = 0; i < list.size(); i++) {
-                map.put("code",list.get(i));
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+                if (commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), 2, list.get(i).toString())) {
+                    map.put("code",list.get(i));
+                    storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+                }else {
+                    throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
+                }
+
             }
         }
 

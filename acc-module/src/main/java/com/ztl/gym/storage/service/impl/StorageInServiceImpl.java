@@ -8,6 +8,7 @@ import java.util.Map;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
@@ -182,7 +183,11 @@ public class StorageInServiceImpl implements IStorageInService {
         int res = storageInMapper.updateInStatusByCode(map);//更新企业入库信息
         StorageIn storageIn = storageInMapper.selectStorageInById(Long.valueOf(map.get("id").toString()));//查询入库单信息
         String extraNo = storageIn.getExtraNo();//相关单号
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+        if (commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), 1, map.get("code").toString())) {
+            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+        }else {
+            throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
+        }
         if (extraNo != null) {//判断非空
             //判断是否调拨,执行更新调拨单
             if (extraNo.substring(0, 2).equals("DB")) {
