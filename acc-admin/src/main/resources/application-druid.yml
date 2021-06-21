@@ -5,20 +5,20 @@ spring:
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             # 测试主库数据源
-#            master:
-#                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: tchina1234
-#                password: TChina1234
+            master:
+                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: tchina1234
+                password: TChina1234
             # 正式南通数据源
 #            master:
 #                url: jdbc:mysql://10.70.150.100:3306/acs_prod?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
 #                username: acsprod
 #                password: acs+prod
             # 防窜系统-万务通南京数据源
-            master:
-                url: jdbc:mysql://10.70.150.4:3306/acc_china12345?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: acc_china12345
-                password: Acc+China12345
+#            master:
+#                url: jdbc:mysql://10.70.150.4:3306/acc_china12345?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#                username: acc_china12345
+#                password: Acc+China12345
 
 # 本地数据库
 #            master:
