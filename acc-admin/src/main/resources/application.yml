@@ -15,9 +15,9 @@ ruoyi:
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
   #测试项目 码下载前缀地址
-  preFixUrl: https://acc.asun.cloud/c?c=
+  #preFixUrl: https://acc.asun.cloud/c?c=
   #南京项目 码下载前缀地址
-  #preFixUrl: http://122.112.243.253/c?c=
+  preFixUrl: http://fch.china-12365.com/c?c=
   #正式项目 码下载前缀地址
   #preFixUrl: https://acs.gongyema.com/c?c=
 
@@ -88,9 +88,9 @@ spring:
     #host: 10.70.150.69
 
     #测试数据源
-    database: 15
+    #database: 15
     #防窜系统-万务通南京数据源
-    #database: 10
+    database: 10
     password: Ztt12345
 
 
