@@ -86,9 +86,9 @@
         where r.id = #{id}
     </select>
 
-    <select id="selectCodeRecordByIndex" parameterType="Long" resultMap="CodeRecordResult">
+    <select id="selectCodeRecordByIndex" parameterType="long" resultMap="CodeRecordResult">
         <include refid="selectCodeRecordVo"/>
-        where index_start &lt;= #{codeIndex} and index_end &gt;= #{codeIndex}
+        where index_start &lt;= #{codeIndex} and index_end &gt;= #{codeIndex} and company_id  = #{companyId}
     </select>
 
     <insert id="insertCodeRecord" parameterType="CodeRecord" useGeneratedKeys="true" keyProperty="id">

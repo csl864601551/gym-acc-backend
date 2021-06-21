@@ -224,6 +224,8 @@ public class WxInitController {
     public AjaxResult cxspxqBycode(HttpServletRequest request, HttpServletResponse response) {
         String code = request.getParameter("code");
         System.out.println("扫码详情进入成功  code=="+code);
+//        String compant_id = WxUtil.splitData(code,"-","-");
+//        long  companyId = Integer.parseInt(compant_id)/5;
         String temp ="";
         if(StrUtil.isNotEmpty(code)){
             long companyId = CodeRuleUtils.getCompanyIdByCode(code.trim());
@@ -233,7 +235,7 @@ public class WxInitController {
             Code codeEntity = codeService.selectCode(codequery);
             if(codeEntity!=null){
                 long codeIndex = codeEntity.getCodeIndex();
-                CodeRecord codeRecord = codeRecordService.selectCodeRecordByIndex(codeIndex);
+                CodeRecord codeRecord = codeRecordService.selectCodeRecordByIndex(codeIndex,companyId);
                 if(codeRecord!=null){
                     long productId = codeRecord.getProductId();
                     Product product = tProductService.selectTProductById(productId);

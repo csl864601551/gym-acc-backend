@@ -3,6 +3,7 @@ package com.ztl.gym.code.mapper;
 
 import com.ztl.gym.code.domain.CodeRecord;
 import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -85,5 +86,5 @@ public interface CodeRecordMapper {
      * @param codeIndex 生码记录ID
      * @return 生码记录
      */
-    public CodeRecord selectCodeRecordByIndex(Long codeIndex);
+    public CodeRecord selectCodeRecordByIndex(@Param("codeIndex")  long codeIndex, @Param("companyId") long companyId);
 }

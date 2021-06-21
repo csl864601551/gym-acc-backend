@@ -75,8 +75,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @return 生码记录
      */
     @Override
-    public CodeRecord selectCodeRecordByIndex(Long codeIndex) {
-        return codeRecordMapper.selectCodeRecordByIndex(codeIndex);
+    public CodeRecord selectCodeRecordByIndex(long codeIndex,long companyId) {
+        return codeRecordMapper.selectCodeRecordByIndex(codeIndex,companyId);
     }
 
     /**
