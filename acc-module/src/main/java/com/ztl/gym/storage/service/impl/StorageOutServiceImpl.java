@@ -187,21 +187,12 @@ public class StorageOutServiceImpl implements IStorageOutService {
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
         if(map.get("outsFlag")==null){
-            if (commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), 2, map.get("code").toString())) {
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
-            }else {
-                throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
-            }
+            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         }else{
             List list=(List)map.get("codes");
             for (int i = 0; i < list.size(); i++) {
-                if (commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), 2, list.get(i).toString())) {
-                    map.put("code",list.get(i));
-                    storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
-                }else {
-                    throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
-                }
-
+                map.put("code",list.get(i));
+                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
             }
         }
 
