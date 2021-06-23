@@ -145,7 +145,6 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public int createCodeRecord(long companyId, long num, String remark) {
         CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, 0, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
