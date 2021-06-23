@@ -117,6 +117,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/druid/**").anonymous()
                 //微信接口
                 .antMatchers("/weixin/**").permitAll()
+                .antMatchers("/storage/record/getScanRecordByCode").permitAll()
+                .antMatchers("/storage/record/getIsMixInfo").permitAll()
+                .antMatchers("/mix/record").permitAll()
+                .antMatchers("/storage/record").permitAll()
+                .antMatchers("/mix/record/addRecord").permitAll()
+
                 //扫码详情
 //                .antMatchers("/c").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
