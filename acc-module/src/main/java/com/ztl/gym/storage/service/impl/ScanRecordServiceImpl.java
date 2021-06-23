@@ -163,9 +163,6 @@ public class ScanRecordServiceImpl implements IScanRecordService {
 
     @Override
     public CompanyArea getIsMixInfo(CompanyArea area) {
-        LoginUser user = SecurityUtils.getLoginUser();
-        SysDept dept = user.getUser().getDept();
-        Long deptId = dept.getDeptId();
         CompanyArea temp = new CompanyArea();
 
         if(area.getCodeAttrId()==null){
