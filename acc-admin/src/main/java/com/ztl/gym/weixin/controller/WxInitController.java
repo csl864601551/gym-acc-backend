@@ -241,6 +241,7 @@ public class WxInitController {
                     Product product = tProductService.selectTProductById(productId);
                     if(product!=null){
                         String productDetailPc = product.getProductDetailPc();
+                        //System.out.println("扫码详情进入成功  productDetailPc=="+productDetailPc);
                         if(StrUtil.isNotEmpty(productDetailPc)){
                             temp = productDetailPc;
                         }

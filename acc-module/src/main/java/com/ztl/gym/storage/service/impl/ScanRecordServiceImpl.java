@@ -1,9 +1,6 @@
 package com.ztl.gym.storage.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.code.domain.Code;
@@ -13,19 +10,20 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
-import com.ztl.gym.common.core.domain.entity.SysDept;
-import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.exception.CustomException;
-import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.ScanRecord;
+import com.ztl.gym.storage.mapper.ScanRecordMapper;
+import com.ztl.gym.storage.service.IScanRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.storage.mapper.ScanRecordMapper;
-import com.ztl.gym.storage.domain.ScanRecord;
-import com.ztl.gym.storage.service.IScanRecordService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 扫码记录Service业务层处理
@@ -75,12 +73,24 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      */
     @Override
     public int insertScanRecord(ScanRecord scanRecord) {
-        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
-            scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        if(StrUtil.isNotEmpty(scanRecord.getFromType())){
+            if(scanRecord.getFromType().equals("0")){
+                Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+                if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                    scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+                }
+                scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+            }else{
+                scanRecord.setCreateUser(AccConstants.WEIXIN_ADMIN_ID);
+            }
+        }else{
+            Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            }
+            scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         }
         scanRecord.setCreateTime(DateUtils.getNowDate());
-        scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return scanRecordMapper.insertScanRecord(scanRecord);
     }
 

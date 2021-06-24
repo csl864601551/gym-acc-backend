@@ -46,6 +46,11 @@ public class AccConstants {
      */
     public final static int NO_TYPE_STORAGE_TRANSFER = 6;
 
+    /**
+     * 扫码用户
+     */
+    public final static Long WEIXIN_ADMIN_ID = 2L;
+
 
     /*---------------------------- 生码常量 ----------------------------*/
     /**
