@@ -37,16 +37,19 @@ public class OpenCodeController {
             if (!commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), Integer.valueOf(map.get("storageType").toString()), code)) {
                 throw new CustomException("该码不在当前流转节点！", HttpStatus.NOT_IMPLEMENTED);
             }
-        }
-        for (Code code : codeList) {
-            String typeName = "未知";
-            if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
-                typeName = "箱码";
-            } else {
-                typeName = "单码";
+            for (Code codes : codeList) {
+                String typeName = "未知";
+                if (CodeRuleUtils.getCodeType(codes.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
+                    typeName = "箱码";
+                } else {
+                    typeName = "单码";
+                }
+                codes.setCodeTypeName(typeName);
             }
-            code.setCodeTypeName(typeName);
+            return AjaxResult.success(codeList);
+        }else{
+            throw new CustomException("未查询到码数据！", HttpStatus.ERROR);
         }
-        return AjaxResult.success(codeList);
+
     }
 }
