@@ -32,7 +32,6 @@ public class ScanRecordController extends BaseController {
     /**
      * 查询扫码记录列表
      */
-    @PreAuthorize("@ss.hasPermi('storage:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(ScanRecord scanRecord) {
         startPage();
