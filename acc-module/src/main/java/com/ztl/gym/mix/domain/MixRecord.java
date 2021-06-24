@@ -105,6 +105,10 @@ public class MixRecord extends BaseEntity
     @Excel(name = "创建人")
     private String createUserName;
 
+    /** 来源类型 */
+    private String fromType;
+
+
     public Integer getMixFrom() {
         return mixFrom;
     }
@@ -306,6 +310,14 @@ public class MixRecord extends BaseEntity
 
     public void setCreateUserName(String createUserName) {
         this.createUserName = createUserName;
+    }
+
+    public String getFromType() {
+        return fromType;
+    }
+
+    public void setFromType(String fromType) {
+        this.fromType = fromType;
     }
 
     @Override

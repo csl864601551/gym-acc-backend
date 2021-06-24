@@ -66,6 +66,9 @@ public class ScanRecord extends BaseEntity
     @Excel(name = "更新人")
     private Long updateUser;
 
+    /** 来源 */
+    private String fromType;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -182,6 +185,14 @@ public class ScanRecord extends BaseEntity
     public Long getUpdateUser()
     {
         return updateUser;
+    }
+
+    public String getFromType() {
+        return fromType;
+    }
+
+    public void setFromType(String fromType) {
+        this.fromType = fromType;
     }
 
     @Override
