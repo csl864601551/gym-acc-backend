@@ -5,6 +5,7 @@ import com.ztl.gym.common.core.domain.entity.SysUser;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 public interface
 
@@ -36,7 +37,7 @@ CommonService {
     /**
      * 查询下级经销商用户列表 【自营】
      */
-    List<SysUser> getTenantByParent();
+    List<SysUser> getTenantByParent(Map<String, Object> params);
 
     /**
      * 查询上级部门id

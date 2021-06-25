@@ -56,6 +56,7 @@
     </select>
     <select id="getTenantByParent" parameterType="Map" resultMap="SysDeptResult">
        SELECT * FROM `sys_dept` where parent_id=#{companyId} and dept_type = 2 and status = 0
+        <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
     </select>
 
     <insert id="insertCompany" parameterType="Map">
