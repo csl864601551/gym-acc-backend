@@ -46,7 +46,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMixRecordList" parameterType="MixRecord" resultMap="MixRecordResult">
         <include refid="selectMixRecordVo"/>
-        <where>  
+        <where>
+            <if test="id != null "> and mr.id = #{id}</if>
             <if test="companyId != null "> and mr.company_id = #{companyId}</if>
             <if test="tenantId != null "> and mr.tenant_id = #{tenantId}</if>
             <if test="code != null  and code != ''"> and mr.code = #{code}</if>
