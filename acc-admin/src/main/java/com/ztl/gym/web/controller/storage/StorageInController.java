@@ -1,24 +1,28 @@
 package com.ztl.gym.web.controller.storage;
 
-import java.util.List;
-import java.util.Map;
-
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.service.CommonService;
-import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.storage.service.IStorageService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
-import com.ztl.gym.common.enums.BusinessType;
-import com.ztl.gym.storage.domain.StorageIn;
-import com.ztl.gym.storage.service.IStorageInService;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.vo.StorageVo;
+import com.ztl.gym.storage.service.IStorageInService;
+import com.ztl.gym.storage.service.IStorageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 入库Controller
@@ -129,5 +133,49 @@ public class StorageInController extends BaseController {
     public AjaxResult updateTenantIn(@RequestBody Map<String, Object> map)
     {
         return toAjax(storageInService.updateTenantIn(map));
+    }
+
+    @Log(title = "入库管理", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, Long storageId) throws Exception {
+        List<String> list = new ArrayList<String>();
+        Map<String, Object> map = new HashMap<String,Object>();
+        String codeone = null;
+        ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
+        List<Code> codeList = util.importExcel(file.getInputStream());
+        if(codeList.size()>0){
+            for(Code codeinfo : codeList){
+                if(codeinfo.getCodeTypeName().equals("箱码")){
+                    String code = codeinfo.getCode();
+                    String str1=code.substring(0, code.indexOf("="));
+                    String str2=code.substring(str1.length()+1, code.length());
+                    codeone = str2;
+                    list.add(str2);
+                }
+            }
+        }
+        //根据code 获取信息
+        long companyId = 0;
+        Integer storageType = 1;
+        if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
+            companyId = SecurityUtils.getLoginUserTopCompanyId();
+        }
+        StorageVo storageVo = new StorageVo();
+        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, codeone)) {
+
+            storageVo = storageService.selectLastStorageByCode(codeone);
+        }
+        if(storageVo!=null){
+            map.put("inNo",storageVo.getInNo());
+            map.put("productId",storageVo.getProductId());
+            map.put("batchNo",storageVo.getBackNo());
+            map.put("inNum",codeList.size()-list.size());
+            map.put("actInNum",codeList.size()-list.size());
+            map.put("toStorageId",storageId);
+            map.put("remark","");
+            map.put("thirdPartyFlag","1");
+        }
+        map.put("codes",list);
+        return AjaxResult.success(storageInService.insertStorageIn(map));
     }
 }
