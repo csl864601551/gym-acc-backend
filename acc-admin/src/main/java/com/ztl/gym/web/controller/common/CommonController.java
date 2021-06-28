@@ -117,8 +117,8 @@ public class CommonController extends BaseController {
      */
 
     @GetMapping("/common/getTenantByParent")
-    public AjaxResult getTenantByParent(@RequestBody Map<String, Object> params) {
-        return AjaxResult.success(commonService.getTenantByParent(params));
+    public AjaxResult getTenantByParent() {
+        return AjaxResult.success(commonService.getTenantByParent());
     }
 
     @GetMapping("/common/getStorageNo/{i}")

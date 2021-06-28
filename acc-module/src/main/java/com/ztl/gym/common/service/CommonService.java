@@ -37,7 +37,7 @@ CommonService {
     /**
      * 查询下级经销商用户列表 【自营】
      */
-    List<SysUser> getTenantByParent(Map<String, Object> params);
+    List<SysUser> getTenantByParent();
 
     /**
      * 查询上级部门id

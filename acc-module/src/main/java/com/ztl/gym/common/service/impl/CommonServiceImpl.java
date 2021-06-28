@@ -94,7 +94,8 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public List<SysUser> getTenantByParent(Map<String, Object> params) {
+    public List<SysUser> getTenantByParent() {
+        Map<String, Object> params = new HashMap<>();
         params.put("companyId", SecurityUtils.getLoginUserCompany().getDeptId());
         return commonMapper.getTenantByParent(params);
     }
