@@ -62,6 +62,10 @@ public class ProductCategory extends BaseEntity
     @Excel(name = "创建人")
     private Long createUser;
 
+    /** 创建人 */
+    @Excel(name = "创建姓名")
+    private String createUserName;
+
     /** 更新人 */
     @Excel(name = "更新人")
     private Long updateUser;
@@ -196,6 +200,14 @@ public class ProductCategory extends BaseEntity
         this.status = status;
     }
 
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -214,6 +226,7 @@ public class ProductCategory extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateUser", getUpdateUser())
             .append("updateTime", getUpdateTime())
+                .append("createUserName", getCreateUserName())
             .toString();
     }
 }

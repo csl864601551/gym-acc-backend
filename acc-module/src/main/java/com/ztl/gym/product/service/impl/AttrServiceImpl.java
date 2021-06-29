@@ -1,18 +1,18 @@
 package com.ztl.gym.product.service.impl;
 
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.product.domain.Attr;
+import com.ztl.gym.product.mapper.AttrMapper;
+import com.ztl.gym.product.service.IAttrService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.utils.DateUtils;
-import com.ztl.gym.common.utils.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.ztl.gym.product.mapper.AttrMapper;
-import com.ztl.gym.product.domain.Attr;
-import com.ztl.gym.product.service.IAttrService;
 
 /**
  * 规格属性Service业务层处理
@@ -123,5 +123,15 @@ public class AttrServiceImpl implements IAttrService
             list.add(temp);
         }
         return list;
+    }
+
+    /**
+     * 查询规格名称是否存在
+     * @return 规格属性
+     */
+    @Override
+    public Attr selectAttrBySome(Long companyId,String attrNameCn)
+    {
+        return attrMapper.selectAttrBySome(companyId,attrNameCn);
     }
 }

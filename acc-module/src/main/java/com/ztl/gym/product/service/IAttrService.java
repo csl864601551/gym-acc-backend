@@ -1,9 +1,9 @@
 package com.ztl.gym.product.service;
 
+import com.ztl.gym.product.domain.Attr;
+
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.product.domain.Attr;
 
 /**
  * 规格属性Service接口
@@ -62,4 +62,11 @@ public interface IAttrService
     public int deleteAttrById(Long id);
 
     List<Map<String,Object>> getAttrValuesById(Long id);
+
+    /**
+     * 根据名称查询有没有重复的
+     *
+     * @return 规格属性
+     */
+    public Attr selectAttrBySome(Long companyId,String attrNameCn);
 }

@@ -119,4 +119,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
+    <select id="selectAttrBySome" resultMap="AttrResult">
+        <include refid="selectAttrVo"/>
+        where company_id = #{companyId} and attr_name_cn = #{attrNameCn}
+    </select>
 </mapper>
