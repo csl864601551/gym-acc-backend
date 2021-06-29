@@ -380,29 +380,44 @@ public class CodeRecordController extends BaseController {
         List<String> list=(List)map.get("codes");
         if(list.size()>0){
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-            Code temp = new Code();
-            temp.setCode(list.get(0));
-            temp.setCompanyId(companyId);
-            Code code=codeService.selectCode(temp);//查询单码数据
             /**
              * 插入箱码，更新单码PCode
              */
             //获取并更新生码记录流水号
-            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 0, 1, CodeRuleUtils.CODE_PREFIX_B);
+            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
             String[] codeIndexs = codeNoStr.split("-");
             long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
 
             String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+
+            Code temp = null;
+            long codeAttrId=0;
+
+            for (int i = 0; i < list.size(); i++) {
+                temp = new Code();
+                temp.setCode(list.get(i));
+                temp.setCompanyId(companyId);
+                Code code=codeService.selectCode(temp);//查询单码数据
+                codeAttrId=code.getCodeAttrId();
+                if(code.getpCode()!=null){
+                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
+                }
+                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+            }//更新单码
+
+
             Code boxCode = new Code();
             boxCode.setCodeIndex(codeIndex);
             boxCode.setCompanyId(companyId);
             boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
             boxCode.setCode(pCode);
-            boxCode.setCodeAttrId(code.getCodeAttrId());
+            boxCode.setCodeAttrId(codeAttrId);
             codeService.insertCode(boxCode);//插入箱码
-            for (int i = 0; i < list.size(); i++) {
-                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
-            }
+
+
+            commonService.updateVal(companyId, codeIndex);
+
+
             ajax.put("data", pCode);
             return ajax;
         }else{
