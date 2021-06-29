@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -398,6 +399,9 @@ public class CodeRecordController extends BaseController {
                 temp.setCode(list.get(i));
                 temp.setCompanyId(companyId);
                 Code code=codeService.selectCode(temp);//查询单码数据
+                if(code==null){
+                    throw new CustomException("未查询到相关码数据！");
+                }
                 codeAttrId=code.getCodeAttrId();
                 if(code.getpCode()!=null){
                     throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
@@ -415,8 +419,12 @@ public class CodeRecordController extends BaseController {
             codeService.insertCode(boxCode);//插入箱码
 
 
-            commonService.updateVal(companyId, codeIndex);
-
+            commonService.updateVal(companyId, codeIndex);//更新code_index
+            Map<String,Object> mapTemp = new HashMap<>();
+            mapTemp.put("companyId",companyId);
+            mapTemp.put("boxCode",pCode);
+            mapTemp.put("codeIndex",codeIndex);
+            commonService.insertPrintData(mapTemp);//插入打印数据
 
             ajax.put("data", pCode);
             return ajax;

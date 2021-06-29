@@ -66,4 +66,9 @@
     <update id="updateVal" parameterType="Map">
         UPDATE t_code_sequence SET current_value = #{val} WHERE company_id = #{companyId}
     </update>
+
+    <insert id="insertPrintData" parameterType="Map">
+        INSERT INTO t_print_data( company_id,box_code, code_index) VALUES (#{companyId},#{boxCode}, #{codeIndex});
+    </insert>
+
 </mapper>

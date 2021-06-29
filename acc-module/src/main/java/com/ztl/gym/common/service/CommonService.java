@@ -92,4 +92,6 @@ CommonService {
     List<Code> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
 
     void downloadTXT(String fileName, String content, HttpServletResponse response);
+
+    void insertPrintData(Map<String, Object> mapTemp);
 }

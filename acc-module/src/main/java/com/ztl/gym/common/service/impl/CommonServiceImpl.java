@@ -355,4 +355,9 @@ public class CommonServiceImpl implements CommonService {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void insertPrintData(Map<String, Object> mapTemp) {
+        commonMapper.insertPrintData(mapTemp);
+    }
 }
