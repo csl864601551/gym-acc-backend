@@ -29,6 +29,7 @@ import com.ztl.gym.storage.mapper.StorageOutMapper;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.service.IStorageOutService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * 出库Service业务层处理
@@ -112,6 +113,12 @@ public class StorageOutServiceImpl implements IStorageOutService {
             }
         }else{
             storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
+        }
+        StorageOut temp=new StorageOut();
+        temp.setOutNo(storageOut.getOutNo());
+        List list=storageOutMapper.selectStorageOutList(temp);
+        if(list.size()>0){
+            throw new CustomException("该批次码已出库,请退出页面重试！");
         }
         int res=storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
         if(storageOut.getThirdPartyFlag()!=null){
