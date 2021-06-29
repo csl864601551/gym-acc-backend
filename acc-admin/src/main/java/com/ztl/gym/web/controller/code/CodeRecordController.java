@@ -8,6 +8,7 @@ import com.ztl.gym.code.domain.vo.FuzhiVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
@@ -15,7 +16,10 @@ import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
@@ -28,11 +32,13 @@ import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/code/record")
@@ -362,7 +368,48 @@ public class CodeRecordController extends BaseController {
         return AjaxResult.success(res);
     }
 
+    /**
+     * 普通生码，单码List装箱
+     */
+    @PostMapping("/packageCode")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult packageCode(@RequestBody Map<String,Object> map) {
+        AjaxResult ajax = AjaxResult.success();
 
+        List<String> list=(List)map.get("codes");
+        if(list.size()>0){
+            Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+            Code temp = new Code();
+            temp.setCode(list.get(0));
+            temp.setCompanyId(companyId);
+            Code code=codeService.selectCode(temp);//查询单码数据
+            /**
+             * 插入箱码，更新单码PCode
+             */
+            //获取并更新生码记录流水号
+            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 0, 1, CodeRuleUtils.CODE_PREFIX_B);
+            String[] codeIndexs = codeNoStr.split("-");
+            long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
+
+            String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+            Code boxCode = new Code();
+            boxCode.setCodeIndex(codeIndex);
+            boxCode.setCompanyId(companyId);
+            boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
+            boxCode.setCode(pCode);
+            boxCode.setCodeAttrId(code.getCodeAttrId());
+            codeService.insertCode(boxCode);//插入箱码
+            for (int i = 0; i < list.size(); i++) {
+                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+            }
+            ajax.put("data", pCode);
+            return ajax;
+        }else{
+            throw new CustomException("未接收到单码数据！");
+        }
+
+    }
 
 
 }

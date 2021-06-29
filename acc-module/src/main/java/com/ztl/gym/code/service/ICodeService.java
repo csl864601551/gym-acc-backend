@@ -124,4 +124,6 @@ public interface ICodeService {
      * @return
      */
     List<Code> selectCodeListByRecord(Long companyId, Long recordId);
+
+    void updatePCodeByCode(Long companyId,String pCode, String s);
 }

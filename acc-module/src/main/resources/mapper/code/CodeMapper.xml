@@ -186,7 +186,7 @@
         <where>
             <if test="companyId != null ">and company_id = #{companyId}</if>
             <if test="code != null  and code != ''">and( code = #{code} or p_code=#{code})</if>
-            <if test="indexBegin != null  and indexBegin != ''">and code_index &gt;= #{indexBegin}</if>
+            <if test="indexBegin != null  and indexBegin != ''">and code_index &gt;= #{indexBegin}</if>storage
             <if test="indexEnd != null  and indexEnd != ''">and code_index &lt;= #{indexEnd}</if>
         </where>
         order by code_index
@@ -199,4 +199,8 @@
         (select id from t_code_attr where record_id = #{recordId} and company_id = #{companyId})
         order by code_index  asc
     </select>
+
+    <update id="updatePCodeByCode" parameterType="Map" >
+        update t_code set p_code = #{pCode}  where company_id=#{companyId} and code = #{code}
+    </update>
 </mapper>

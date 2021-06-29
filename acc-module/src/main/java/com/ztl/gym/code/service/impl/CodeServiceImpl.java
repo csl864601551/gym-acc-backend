@@ -84,6 +84,7 @@ public class CodeServiceImpl implements ICodeService {
      * @return 结果
      */
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public int insertCode(Code code) {
         return codeMapper.insertCode(code);
     }
@@ -358,6 +359,7 @@ public class CodeServiceImpl implements ICodeService {
         return codeMapper.selectCodeListByRecord(companyId, recordId);
     }
 
+
     /**
      * 保存生码属性
      *
@@ -379,5 +381,14 @@ public class CodeServiceImpl implements ICodeService {
         codeAttr.setUpdateTime(new Date());
         codeAttrService.insertCodeAttr(codeAttr);
         return codeAttr.getId();
+    }
+
+    @Override
+    public void updatePCodeByCode(Long companyId,String pCode, String code) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("pCode", pCode);
+        params.put("code", code);
+        codeMapper.updatePCodeByCode(params);
     }
 }
