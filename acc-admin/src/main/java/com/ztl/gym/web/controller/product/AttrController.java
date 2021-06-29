@@ -113,6 +113,9 @@ public class AttrController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody Attr attr)
     {
+        if(attr.getInputType()==1){
+            attr.setAttrValue("");
+        }
         return toAjax(attrService.updateAttr(attr));
     }
 
