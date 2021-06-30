@@ -1,16 +1,14 @@
 package com.ztl.gym.code.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.vo.CodeVo;
-import com.ztl.gym.code.service.impl.CodeServiceImpl;
+import com.ztl.gym.common.annotation.DataSource;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.storage.domain.vo.FlowVo;
-import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 码 Mapper接口
@@ -138,6 +136,7 @@ public interface CodeMapper {
      * @param params
      * @return
      */
+    @DataSource(DataSourceType.SHARDING)
     List<String> selectInCodeByStorage(Map<String, Object> params);
 
     /**
@@ -146,6 +145,7 @@ public interface CodeMapper {
      * @param params
      * @return
      */
+    @DataSource(DataSourceType.SHARDING)
     List<String> selectOutCodeByStorage(Map<String, Object> params);
 
     /**
@@ -154,6 +154,7 @@ public interface CodeMapper {
      * @param params
      * @return
      */
+    @DataSource(DataSourceType.SHARDING)
     List<String> selectTransferCodeByStorage(Map<String, Object> params);
 
     /**
@@ -162,6 +163,7 @@ public interface CodeMapper {
      * @param params
      * @return
      */
+    @DataSource(DataSourceType.SHARDING)
     List<String> selectBackCodeByStorage(Map<String, Object> params);
 
     List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
