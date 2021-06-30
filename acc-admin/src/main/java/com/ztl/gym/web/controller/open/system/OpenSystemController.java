@@ -57,7 +57,7 @@ public class OpenSystemController {
             ajax.put("data", token);
             return ajax;
         }catch (Exception e){
-            throw new CustomException("登录超时，请检查网络连接！", HttpStatus.ERROR);
+            throw new CustomException("用户名密码错误！", HttpStatus.ERROR);
         }
     }
 
@@ -111,5 +111,30 @@ public class OpenSystemController {
             }
         }
         return AjaxResult.success(list);
+    }
+    /**
+     * PDA更新方法
+     *
+     * @return 结果
+     */
+    @PostMapping("/pdaUpdate")
+    public AjaxResult pdaUpdate(@RequestBody Map<String,Object> temp)
+    {
+        try {
+            String currentVersion=temp.get("currentVersion").toString();//当前版本号
+            String clientType=temp.get("clientType").toString();//终端类型 dayi
+
+            Map<String,Object> map=new HashMap<>();
+            map.put("versionName","1.5.5");
+            map.put("updateDescription",1);// 1.bug修复； 2.新功能
+            map.put("apkUrl","http://10.88.11.110:8080/examples/1.apk");
+            map.put("fileSize",20480);
+            map.put("forceUpdate",false);
+            map.put("isUpdate",false);
+
+            return AjaxResult.success(map);
+        }catch (Exception e){
+            throw new CustomException("登录超时，请检查网络连接！", HttpStatus.ERROR);
+        }
     }
 }
