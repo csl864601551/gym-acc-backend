@@ -78,7 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTProductVo"/>
         <where>
             <if test="companyId != null "> and p.company_id = #{companyId}</if>
-            <if test="productNo != null  and productNo != ''"> and p.product_no = #{productNo}</if>
+            <if test="productNo != null  and productNo != ''"> and p.product_no like concat('%', #{productNo}, '%')</if>
             <if test="status != null"> and p.status = #{status}</if>
             <if test="status == null "> and p.status != 1</if>
             <if test="productName != null  and productName != ''"> and p.product_name like concat('%', #{productName}, '%')</if>

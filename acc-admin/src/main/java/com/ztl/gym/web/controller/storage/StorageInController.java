@@ -168,9 +168,9 @@ public class StorageInController extends BaseController {
         if(storageVo!=null){
             map.put("inNo",storageVo.getInNo());
             map.put("productId",storageVo.getProductId());
-            map.put("batchNo",storageVo.getBackNo());
-            map.put("inNum",codeList.size()-list.size());
-            map.put("actInNum",codeList.size()-list.size());
+            map.put("batchNo",storageVo.getBatchNo());
+//            map.put("inNum",codeList.size()-list.size());
+//            map.put("actInNum",codeList.size()-list.size());
             map.put("toStorageId",storageId);
             map.put("remark","");
             map.put("thirdPartyFlag","1");
