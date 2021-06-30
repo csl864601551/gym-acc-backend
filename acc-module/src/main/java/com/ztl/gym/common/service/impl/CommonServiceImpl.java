@@ -1,6 +1,7 @@
 package com.ztl.gym.common.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
@@ -39,6 +40,8 @@ import java.util.Map;
 public class CommonServiceImpl implements CommonService {
     @Autowired
     private CommonMapper commonMapper;
+    @Autowired
+    private CodeMapper codeMapper;
     @Autowired
     private ISysDeptService deptService;
     @Autowired
@@ -158,7 +161,7 @@ public class CommonServiceImpl implements CommonService {
     public boolean judgeStorageIsIllegalByValue(long companyId, Integer storageType, String queryValue) {
         //判断是否是平台
         if (companyId == AccConstants.ADMIN_DEPT_ID || companyId == 0) {
-            throw new CustomException("平台无需进行码操作！", HttpStatus.NOT_IMPLEMENTED);
+            throw new CustomException("平台无需进行码操作！", HttpStatus.ERROR);
         }
 
         //查询当前用户信息
@@ -172,23 +175,23 @@ public class CommonServiceImpl implements CommonService {
         Long codeCompanyId = CodeRuleUtils.getCompanyIdByCode(queryValue);
         //判断码
         if (codeCompanyId == null || codeCompanyId == 0) {
-            throw new CustomException("码格式错误！", HttpStatus.NOT_IMPLEMENTED);
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         //判断码企业
         if (codeCompanyId != companyId) {
-            throw new CustomException("该码不属于当前用户企业！", HttpStatus.NOT_IMPLEMENTED);
+            throw new CustomException("该码不属于当前用户企业！", HttpStatus.ERROR);
         }
 
         codeParam.setCompanyId(codeCompanyId);
         codeResult = codeService.selectCode(codeParam);
         if (codeResult == null) {
-            throw new CustomException("码不存在！", HttpStatus.NOT_IMPLEMENTED);
+            throw new CustomException("码不存在！", HttpStatus.ERROR);
         }
 
         //除入库以外的流转都需要有状态 【所有产品必须先入库，所以其他流转状态时需判断是否已入库或是否有其他状态】
         if (storageType != AccConstants.STORAGE_TYPE_IN) {
             if (codeResult.getCodeAttr().getStorageType() == null) {
-                throw new CustomException("该码当前未入库！", HttpStatus.NOT_IMPLEMENTED);
+                throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
             }
         }
 
@@ -199,7 +202,7 @@ public class CommonServiceImpl implements CommonService {
                     //第一次入库只有企业才有权限
                     long userCompanyId = SecurityUtils.getLoginUserTopCompanyId();
                     if (userCompanyId != currentUserDeptId) {
-                        throw new CustomException("首次入库需要企业权限！", HttpStatus.NOT_IMPLEMENTED);
+                        throw new CustomException("首次入库需要企业权限！", HttpStatus.ERROR);
                     }
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
                     //查询当前码状态是否是入库
@@ -208,11 +211,11 @@ public class CommonServiceImpl implements CommonService {
                     //判断出货数据是否正常
                     StorageOut storageOut = storageOutService.selectStorageOutById(codeResult.getCodeAttr().getStorageRecordId());
                     if (storageOut == null) {
-                        throw new CustomException("该码当前出库数据异常", HttpStatus.NOT_IMPLEMENTED);
+                        throw new CustomException("该码当前出库数据异常", HttpStatus.ERROR);
                     } else {
                         //判断出货的接收人是否是当前用户
                         if (storageOut.getStorageTo() != currentUserDeptId) {
-                            throw new CustomException("该码当前出库接收人与当前登录用户不一致", HttpStatus.NOT_IMPLEMENTED);
+                            throw new CustomException("该码当前出库接收人与当前登录用户不一致", HttpStatus.ERROR);
                         }
                     }
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_BACK) {
@@ -220,30 +223,30 @@ public class CommonServiceImpl implements CommonService {
                     throw new CustomException("该码当前流转状态为退货入库中，无法重复入库", HttpStatus.NOT_IMPLEMENTED);
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_TRANSFER) {
                     //判断调拨状态
-                    throw new CustomException("该码当前为调拨中状态，无法入库！", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码当前为调拨中状态，无法入库！", HttpStatus.ERROR);
                 }
                 break;
             case AccConstants.STORAGE_TYPE_OUT:
                 if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
                     if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
-                        throw new CustomException("该码不属于当前部门！", HttpStatus.NOT_IMPLEMENTED);
+                        throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                     }
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_OUT) {
                     throw new CustomException("该码当前已出库！", HttpStatus.NOT_IMPLEMENTED);
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_BACK) {
-                    throw new CustomException("该码当前流转状态为退货中，无法出库", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码当前流转状态为退货中，无法出库", HttpStatus.ERROR);
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_TRANSFER) {
                     //判断调拨状态
                     StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(codeResult.getCodeAttr().getStorageRecordId());
                     if (storageTransfer == null) {
-                        throw new CustomException("该码当前调拨数据异常", HttpStatus.NOT_IMPLEMENTED);
+                        throw new CustomException("该码当前调拨数据异常", HttpStatus.ERROR);
                     } else {
                         if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
-                            throw new CustomException("该码不属于当前部门！", HttpStatus.NOT_IMPLEMENTED);
+                            throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                         }
                     }
                 } else {
-                    throw new CustomException("该码当前未入库！", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
                 }
                 break;
             case AccConstants.STORAGE_TYPE_TRANSFER:
@@ -251,17 +254,17 @@ public class CommonServiceImpl implements CommonService {
             case AccConstants.STORAGE_TYPE_BACK:
                 if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_IN) {
                     if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
-                        throw new CustomException("该码不属于当前部门！", HttpStatus.NOT_IMPLEMENTED);
+                        throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                     }
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_OUT) {
-                    throw new CustomException("该码状态当前为出库中，无法退货！", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码状态当前为出库中，无法退货！", HttpStatus.ERROR);
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_BACK) {
                     //查询当前码状态是否是入库
-                    throw new CustomException("该码当前流转状态为退货中，无法重复退货", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码当前流转状态为退货中，无法重复退货", HttpStatus.ERROR);
                 } else if (codeResult.getCodeAttr().getStorageType() == AccConstants.STORAGE_TYPE_TRANSFER) {
-                    throw new CustomException("该码状态当前为调拨中，无法退货！", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码状态当前为调拨中，无法退货！", HttpStatus.ERROR);
                 } else {
-                    throw new CustomException("该码当前未入库！", HttpStatus.NOT_IMPLEMENTED);
+                    throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
                 }
                 break;
         }
@@ -304,23 +307,9 @@ public class CommonServiceImpl implements CommonService {
      */
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public List<Code> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId) {
+    public List<String> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId) {
         List<String> codeStrs = codeService.selectCodeByStorage(companyId, storageType, storageRecordId);
-
-        List<Code> codelist=new ArrayList<>();
-        Code codeParam = new Code();
-        for(String codeStr : codeStrs) {
-            if(CodeRuleUtils.getCodeType(codeStr).equals(AccConstants.CODE_TYPE_BOX)){
-                codeParam = new Code();
-                codeParam.setCompanyId(companyId);
-                codeParam.setCode(codeStr);
-                Code code = codeService.selectCode(codeParam);
-                codeParam.setCode(null);
-                codeParam.setCodeAttrId(code.getCodeAttrId());
-                codelist.add(codeParam);
-            }
-        }
-        return codelist;
+        return codeStrs;
         
     }
 

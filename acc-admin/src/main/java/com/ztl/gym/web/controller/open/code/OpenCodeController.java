@@ -35,7 +35,7 @@ public class OpenCodeController {
         if(codeList.size()>0){
             String code=codeList.get(0).getCode();
             if (!commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), Integer.valueOf(map.get("storageType").toString()), code)) {
-                throw new CustomException("该码不在当前流转节点！", HttpStatus.NOT_IMPLEMENTED);
+                throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
             }
             for (Code codes : codeList) {
                 String typeName = "未知";

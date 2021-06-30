@@ -13,6 +13,7 @@
         <result property="codeType" column="code_type"/>
         <result property="pCode" column="p_code"/>
         <result property="codeAttrId" column="code_attr_id"/>
+        <result property="codeTypeName" column="code_type_name"/>
         <association property="codeAttr" column="code_attr_id"
                      select="com.ztl.gym.code.mapper.CodeAttrMapper.selectCodeAttrById">
         </association>
@@ -26,7 +27,7 @@
     </resultMap>
 
     <sql id="selectCodeVo">
-        select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id from t_code
+        select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id,case when code_type='box' then '箱码' else '单码' end as code_type_name from t_code
     </sql>
 
     <select id="selectCode" parameterType="Code" resultMap="CodeResult">
@@ -36,6 +37,18 @@
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
         </where>
         limit 1
+    </select>
+
+    <select id="selectCodes" parameterType="Map" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="codes != null  and codes != ''">and code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>)
+            </if>
+        </where>
     </select>
 
     <select id="selectCodeList" parameterType="Code" resultMap="CodeResult">

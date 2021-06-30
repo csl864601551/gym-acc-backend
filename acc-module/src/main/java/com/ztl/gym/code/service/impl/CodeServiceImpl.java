@@ -391,4 +391,10 @@ public class CodeServiceImpl implements ICodeService {
         params.put("code", code);
         codeMapper.updatePCodeByCode(params);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodes(Map<String, Object> codeParam) {
+        return codeMapper.selectCodes(codeParam);
+    }
 }
