@@ -29,6 +29,15 @@ public interface IAttrService
      */
     public List<Attr> selectAttrList(Attr attr);
 
+
+    /**
+     * 查询规格属性列表
+     *
+     * @param attr 规格属性
+     * @return 规格属性集合
+     */
+    public int selectcountAttrList(Attr attr);
+
     /**
      * 新增规格属性
      * 

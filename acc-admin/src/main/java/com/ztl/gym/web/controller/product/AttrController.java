@@ -44,7 +44,30 @@ public class AttrController extends BaseController
     public TableDataInfo list(Attr attr)
     {
         List<Attr> lists = new ArrayList<Attr>();
+        int total = attrService.selectcountAttrList(attr);
         startPage();
+        List<Attr> list = attrService.selectAttrList(attr);
+        if(list.size()>0){
+            for(Attr attrinfo : list){
+                SysUser user = userService.selectUserById(attrinfo.getCreateUser());
+                if(user!=null){
+                    attrinfo.setCreateUserName(user.getNickName());
+                    lists.add(attrinfo);
+                }
+            }
+        }
+        return getDataTables(lists,total);
+    }
+
+
+
+    /**
+     * 查询所有的规格属性列表
+     */
+    @GetMapping("/alllist")
+    public TableDataInfo alllist(Attr attr)
+    {
+        List<Attr> lists = new ArrayList<Attr>();
         List<Attr> list = attrService.selectAttrList(attr);
         if(list.size()>0){
             for(Attr attrinfo : list){
