@@ -1,7 +1,5 @@
 package com.ztl.gym.code.domain;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
@@ -9,6 +7,8 @@ import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.domain.ProductBatch;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
 
 /**
  * 码属性对象 t_code_attr
@@ -125,8 +125,8 @@ public class CodeAttr extends BaseEntity {
     /**
      * 赋值时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "赋值时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "赋值时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date inputTime;
 
     /**

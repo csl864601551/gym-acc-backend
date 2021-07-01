@@ -86,4 +86,9 @@ public class HttpStatus
      * 接口未实现
      */
     public static final int NOT_IMPLEMENTED = 501;
+
+    /**
+     * DPA解决错误信息语音播报
+     */
+    public static final int  ERROR_PDA= 502;
 }

@@ -1,7 +1,9 @@
 package com.ztl.gym.web.controller.storage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 import com.ztl.gym.code.domain.Code;
@@ -173,28 +175,18 @@ public class StorageController extends BaseController {
     @GetMapping("/listCode")
     public TableDataInfo listCode(int storageType, long storageRecordId) {
         try {
-            List<Code> codeParams = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
 
-            List<Code> lists=new ArrayList<>();
-            for(Code codeParam:codeParams){
-                List<Code> codeList = codeService.selectCodeList(codeParam);
-                for (Code code : codeList) {
-                    String typeName = "未知";
-//                if (code.getCode().startsWith("P")) {
-                    if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
-                        typeName = "箱码";
-                    } else {
-                        typeName = "单码";
-                    }
-                    code.setCodeTypeName(typeName);
-                }
-                lists.addAll(codeList);
-            }
+            List<String> codeStrs = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
+            Map<String,Object> codeParam = new HashMap<>();
+            codeParam.put("companyId",SecurityUtils.getLoginUserTopCompanyId());
+            codeParam.put("codes",codeStrs);
+
+            startPage();
+            List<Code> lists= codeService.selectCodes(codeParam);
             if(lists.size()==0){
                 throw new CustomException("请扫码确认物流状态！");
             }
-            return PageUtil.startPage(lists);
-
+            return getDataTable(lists);
         }catch (Exception e){
             throw new CustomException("未查询到相关码信息或未扫码确认物流状态");
         }
