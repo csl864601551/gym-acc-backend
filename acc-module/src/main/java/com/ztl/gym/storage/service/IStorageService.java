@@ -84,4 +84,5 @@ public interface IStorageService {
      */
     int addCodeFlow(int storageType, long storageRecordId, String code);
 
+    void updateProductStock(int storageType, long storageRecordId);
 }

@@ -20,9 +20,9 @@
         <result property="fromStorageId" column="from_storage_id"/>
         <result property="toStorageId" column="to_storage_id"/>
         <result property="remark" column="remark"/>
-        <result property="createBy" column="create_by"/>
+        <result property="createUser" column="create_user"/>
         <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
+        <result property="updateUser" column="update_user"/>
         <result property="updateTime" column="update_time"/>
         <result property="toStorageName" column="storage_name"/>
         <result property="nickName" column="nick_name"/>
@@ -109,9 +109,9 @@
             <if test="fromStorageId != null">from_storage_id,</if>
             <if test="toStorageId != null">to_storage_id,</if>
             <if test="remark != null">remark,</if>
-            <if test="createBy != null">create_by,</if>
+            <if test="createUser != null">create_user,</if>
             <if test="createTime != null">create_time,</if>
-            <if test="updateBy != null">update_by,</if>
+            <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -129,9 +129,9 @@
             <if test="fromStorageId != null">#{fromStorageId},</if>
             <if test="toStorageId != null">#{toStorageId},</if>
             <if test="remark != null">#{remark},</if>
-            <if test="createBy != null">#{createBy},</if>
+            <if test="createUser != null">#{createUser},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
@@ -152,9 +152,9 @@
             <if test="fromStorageId != null">from_storage_id = #{fromStorageId},</if>
             <if test="toStorageId != null">to_storage_id = #{toStorageId},</if>
             <if test="remark != null">remark = #{remark},</if>
-            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}

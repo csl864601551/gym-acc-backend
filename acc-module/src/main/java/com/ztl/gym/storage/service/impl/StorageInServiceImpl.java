@@ -178,14 +178,20 @@ public class StorageInServiceImpl implements IStorageInService {
         int res = storageInMapper.updateInStatusByCode(map);//更新企业入库信息
         StorageIn storageIn = storageInMapper.selectStorageInById(Long.valueOf(map.get("id").toString()));//查询入库单信息
         String extraNo = storageIn.getExtraNo();//相关单号
+        int updRes=0;
         if(map.get("insFlag")==null){
-            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+            updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+
         }else{
             List list=(List)map.get("codes");
             for (int i = 0; i < list.size(); i++) {
                 map.put("code",list.get(i));
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
             }
+        }
+        //产品库存更新
+        if (updRes > 0) {
+            storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()));
         }
 
         if (extraNo != null) {//判断非空
@@ -228,17 +234,21 @@ public class StorageInServiceImpl implements IStorageInService {
         }
         List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
         boolean flag=true;
+        int updRes=0;
         for (int i = 0; i < codes.size(); i++) {
             if(codes.get(i).startsWith("20")){
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
                 flag=false;
             }
         }
         if(flag){
             for (int i = 0; i < codes.size(); i++) {
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
             }
-
+        }
+        //产品库存更新
+        if (updRes > 0) {
+            storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()));
         }
         //判断是否调拨,执行更新调拨单
         if (extraNo.substring(0, 2).equals("DB")) {
@@ -302,6 +312,7 @@ public class StorageInServiceImpl implements IStorageInService {
         storageIn.setRemark(storageBack.getRemark());
         storageIn.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageIn.setCreateTime(new Date());
+        storageIn.setInTime(new Date());
         storageIn.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageIn.setUpdateTime(new Date());
         int inres = storageInMapper.insertStorageInV2(storageIn);

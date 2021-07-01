@@ -191,16 +191,22 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @DataSource(DataSourceType.SHARDING)
     public int updateOutStatusByCode(Map<String, Object> map) {
         map.put("updateTime", DateUtils.getNowDate());
+        map.put("outTime", DateUtils.getNowDate());
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
         storageOutMapper.updateOutStatusByCode(map);//更新出库数量
+        int updRes=0;
         if(map.get("outsFlag")==null){
-            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+            updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         }else{
             List list=(List)map.get("codes");
             for (int i = 0; i < list.size(); i++) {
                 map.put("code",list.get(i));
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
             }
+        }
+        //产品库存更新
+        if (updRes > 0) {
+            storageService.updateProductStock(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()));
         }
 
         //查询出库单需要的相关信息

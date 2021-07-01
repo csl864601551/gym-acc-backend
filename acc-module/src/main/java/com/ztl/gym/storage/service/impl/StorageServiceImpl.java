@@ -349,10 +349,7 @@ public class StorageServiceImpl implements IStorageService {
             codeAttr.setStorageRecordId(storageRecordId);
             updRes = codeAttrService.updateCodeAttr(codeAttr);
 
-            //产品库存更新
-            if (updRes > 0) {
-                updateProductStock(storageType, storageRecordId);
-            }
+
         }
         return updRes;
     }
@@ -364,7 +361,7 @@ public class StorageServiceImpl implements IStorageService {
      * @param storageRecordId
      * @return
      */
-    private void updateProductStock(int storageType, long storageRecordId) {
+    public void updateProductStock(int storageType, long storageRecordId) {
         Long storageId = null;
         Long productId = null;
         Integer flowNum = null;
