@@ -54,6 +54,24 @@ public class AttrServiceImpl implements IAttrService
         return attrMapper.selectAttrList(attr);
     }
 
+
+
+    /**
+     * 查询规格属性列表
+     *
+     * @param attr 规格属性
+     * @return 规格属性
+     */
+    @Override
+    public int selectcountAttrList(Attr attr)
+    {
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        return attrMapper.selectcountAttrList(attr);
+    }
+
     /**
      * 新增规格属性
      *

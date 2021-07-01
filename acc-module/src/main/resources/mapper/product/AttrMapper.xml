@@ -53,6 +53,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by sort
     </select>
+
+
+    <select id="selectcountAttrList" parameterType="Attr" resultType="java.lang.Integer">
+        select count(id) from t_attr
+        <where>
+            status=0
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test='attrNo != null and attrNo != ""'>
+                <bind name="attrNoLike" value="'%'+attrNo+'%'"/>
+                and attr_no like #{attrNoLike}
+            </if>
+            <if test='attrNameCn != null and attrNameCn != ""'>
+                <bind name="attrNameCnLike" value="'%'+attrNameCn+'%'"/>
+                and attr_name_cn like #{attrNameCnLike}
+            </if>
+
+            <if test="attrNameEn != null  and attrNameEn != ''"> and attr_name_en = #{attrNameEn}</if>
+            <if test="attrValue != null  and attrValue != ''"> and attr_value = #{attrValue}</if>
+            <if test="inputType != null "> and input_type = #{inputType}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+        order by sort
+    </select>
     
     <select id="selectAttrById" parameterType="Long" resultMap="AttrResult">
         <include refid="selectAttrVo"/>
@@ -123,6 +148,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectAttrBySome" resultMap="AttrResult">
         <include refid="selectAttrVo"/>
-        where company_id = #{companyId} and attr_name_cn = #{attrNameCn}
+        where status = 0 and  company_id = #{companyId} and attr_name_cn = #{attrNameCn}
     </select>
 </mapper>
