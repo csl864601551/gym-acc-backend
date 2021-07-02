@@ -126,6 +126,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 where r.role_key=#{roleKey} and r.create_by=#{createBy} and r.del_flag = '0'  limit 1
 	</select>
 
+	<select id="checkRoleSortUnique" parameterType="String" resultMap="SysRoleResult">
+		<include refid="selectRoleVo"/>
+		where r.role_sort=#{roleSort} and r.create_by=#{createBy} and r.del_flag = '0'  limit 1
+	</select>
+
  	<insert id="insertRole" parameterType="SysRole" useGeneratedKeys="true" keyProperty="roleId">
  		insert into sys_role(
  			<if test="roleId != null and roleId != 0">role_id,</if>

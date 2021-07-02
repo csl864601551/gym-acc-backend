@@ -1,9 +1,9 @@
 package com.ztl.gym.product.service;
 
+import com.ztl.gym.product.domain.ProductCategory;
+
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.product.domain.ProductCategory;
 
 /**
  * 产品分类Service接口
@@ -28,6 +28,14 @@ public interface IProductCategoryService
      * @return 产品分类集合
      */
     public List<ProductCategory> selectProductCategoryList(ProductCategory productCategory);
+
+    /**
+     * 查询产品分类列表
+     *
+     * @param productCategory 产品分类
+     * @return 产品分类集合
+     */
+    public List<ProductCategory> selectProductCategoryOneList(ProductCategory productCategory);
 
     /**
      * 新增产品分类
