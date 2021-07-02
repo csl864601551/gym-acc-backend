@@ -132,6 +132,7 @@ public class StorageServiceImpl implements IStorageService {
             throw new BaseException("仓库编号不能为空！");
         }
         Storage queryStorage = new Storage();
+        queryStorage.setTenantId(storage.getTenantId());
         queryStorage.setStorageNo(storage.getStorageNo());
         queryStorage.setStatus(AccConstants.STORAGE_DELETE_NO);
         Integer storageCount = this.countStorage(queryStorage);
@@ -164,6 +165,7 @@ public class StorageServiceImpl implements IStorageService {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             }
         }
+        storage.setStatus(0L);
         storage.setCreateTime(DateUtils.getNowDate());
         storage.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return storageMapper.insertStorage(storage);
@@ -286,7 +288,11 @@ public class StorageServiceImpl implements IStorageService {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
                     }
                 } else {
-                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getSingleCount());//产品数量
+                    if(storageVo.getCodeTypeName().equals("箱码")){
+                        storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getSingleCount());//产品数量
+                    }else{
+                        storageVo.setNum(1L);
+                    }
                 }
             }
         }
