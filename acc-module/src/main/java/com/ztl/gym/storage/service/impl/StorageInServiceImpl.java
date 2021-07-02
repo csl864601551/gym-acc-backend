@@ -91,7 +91,9 @@ public class StorageInServiceImpl implements IStorageInService {
             map.put("tenantId", commonService.getTenantId());
         }
         map.put("inType", StorageIn.IN_TYPE_COMMON);
-        map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
+        if(map.get("storageTo")==null){
+            map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
+        }
         map.put("createTime", DateUtils.getNowDate());
         if(map.get("thirdPartyFlag")!=null){
             map.put("updateTime", DateUtils.getNowDate());

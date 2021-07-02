@@ -90,13 +90,13 @@ public class StorageServiceImpl implements IStorageService {
                 if(storage.getCompanyId()==null){
                     storage.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
                 }
-                storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
-            } else {
-                if(storage.getTenantId()==null){
-                    storage.setTenantId(deptId);
-                }
-                storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
+                //storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             }
+            if(storage.getTenantId()==null){
+                storage.setTenantId(deptId);
+            }
+                //storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
+
 
             //FIXME
 //            Map<String, Object> params = new HashMap<>();
@@ -357,7 +357,8 @@ public class StorageServiceImpl implements IStorageService {
             codeAttr.setId(codeRes.getCodeAttrId());
             //入库或退货入库时需更新码所属企业/经销商
             if (storageType == AccConstants.STORAGE_TYPE_IN) {
-                codeAttr.setTenantId(commonService.getTenantId());
+                StorageIn storageIn=storageInService.selectStorageInById(storageRecordId);
+                codeAttr.setTenantId(storageIn.getTenantId());
             }
             codeAttr.setStorageType(storageType);
             codeAttr.setStorageRecordId(storageRecordId);
@@ -390,6 +391,7 @@ public class StorageServiceImpl implements IStorageService {
             // 无仓库，第一步查询是否有仓库，没有直接新建仓库
             if (storageId == null) {
                 Storage temp = new Storage();
+                temp.setTenantId(storageIn.getTenantId());
                 List<Storage> list = selectStorageList(temp);
                 if (list.size() > 0) {
                     storageId = list.get(0).getId();
@@ -397,6 +399,7 @@ public class StorageServiceImpl implements IStorageService {
                     Storage storage = new Storage();
                     storage.setStorageName("默认仓库");
                     storage.setStorageNo("1");
+                    storage.setTenantId(storageIn.getTenantId());
                     insertStorage(storage);
                     storageId = storage.getId();
                 }

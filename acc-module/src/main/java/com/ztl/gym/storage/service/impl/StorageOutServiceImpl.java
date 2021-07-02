@@ -231,6 +231,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         inMap.put("batchNo", storageOut.getBatchNo());
         inMap.put("inNum", storageOut.getOutNum());
         inMap.put("storageFrom", commonService.getTenantId());
+        inMap.put("storageTo", storageOut.getStorageTo());
         inMap.put("code", map.get("code").toString());//新增插入物流码所需要的码信息
         storageInService.insertStorageIn(inMap);//插入入库
 
@@ -246,15 +247,17 @@ public class StorageOutServiceImpl implements IStorageOutService {
             Storage storage = new Storage();
             storage.setStorageName("默认仓库");
             storage.setStorageNo("1");
+            storage.setTenantId(storageOut.getStorageTo());
             storageService.insertStorage(storage);
             storageId = storage.getId();
         }
         //2、执行经销商入库动作
         Map<String, Object> outMap = new HashMap<>();
+        outMap.put("tenantId", storageOut.getStorageTo());
         outMap.put("actInNum", storageOut.getOutNum());
-        outMap.put("toStorageId", storageId);//处理仓库问题+测试
+        outMap.put("toStorageId", storageId);
         outMap.put("id", inMap.get("id"));
-        storageInService.updateTenantIn(outMap);
+        storageInService.updateTenantIn(outMap);//需要处理tenant_id问题，仓库问题和addflow问题
         return 1;
     }
 

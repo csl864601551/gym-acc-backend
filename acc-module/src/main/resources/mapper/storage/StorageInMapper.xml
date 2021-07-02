@@ -321,7 +321,7 @@
     </update>
 
     <select id="selectInIdByCode" resultType="java.lang.Long">
-        select storage_record_id from t_in_code_flow where company_id= #{companyId} and code= #{code}
+        select storage_record_id from t_in_code_flow where company_id= #{companyId} and code= #{code} order by create_time desc LIMIT 1
     </select>
     <update id="updateInStatusById" parameterType="Map">
         update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_OUT}
