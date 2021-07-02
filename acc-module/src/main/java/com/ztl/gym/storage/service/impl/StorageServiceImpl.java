@@ -87,10 +87,14 @@ public class StorageServiceImpl implements IStorageService {
             String ancestors = dept.getAncestors();
             int count = (ancestors.length() - ancestors.replace(",", "").length()) / ",".length();
             if (count == 1) {
-                storage.setCompanyId(deptId);
+                if(storage.getCompanyId()==null){
+                    storage.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+                }
                 storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             } else {
-                storage.setTenantId(deptId);
+                if(storage.getTenantId()==null){
+                    storage.setTenantId(deptId);
+                }
                 storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
             }
 
@@ -140,10 +144,20 @@ public class StorageServiceImpl implements IStorageService {
         Long deptId = dept.getDeptId();
         //判断是否为平台
         if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            Long companyId = SecurityUtils.getLoginUserTopCompanyId();
-            storage.setCompanyId(companyId);
-            Long tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
-            storage.setTenantId(tenantId);
+            Long companyId;
+            Long tenantId;
+            if (storage.getCompanyId() == null) {
+                companyId = SecurityUtils.getLoginUserTopCompanyId();
+                storage.setCompanyId(companyId);
+            } else {
+                companyId = storage.getCompanyId();
+            }
+            if (storage.getTenantId() == null) {
+                tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
+                storage.setTenantId(tenantId);
+            } else {
+                tenantId = storage.getTenantId();
+            }
             if (!tenantId.equals(companyId)) {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
             } else {
@@ -230,7 +244,7 @@ public class StorageServiceImpl implements IStorageService {
                 storageVo.setCode(codeVal);//区分前端是否查询到码相关信息
                 storageVo.setCompanyId(companyId);
                 if (codeEntity.getCodeType().toString().equals("single")) {//判断单码是属于单码or箱码
-                    if (codeEntity.getpCode()==null) {
+                    if (codeEntity.getpCode() == null) {
                         storageVo.setCodeTypeName("单码");
                     } else {
                         storageVo.setCodeTypeName("箱码");
@@ -256,7 +270,7 @@ public class StorageServiceImpl implements IStorageService {
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
-                        if(storageIn!=null){
+                        if (storageIn != null) {
                             storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
                             storageVo.setExtraNo(storageIn.getInNo());
                             storageVo.setNum(storageIn.getActInNum());
@@ -374,17 +388,17 @@ public class StorageServiceImpl implements IStorageService {
             productId = storageIn.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageIn.getActInNum()));
             // 无仓库，第一步查询是否有仓库，没有直接新建仓库
-            if(storageId == null ){
-                Storage temp=new Storage();
-                List<Storage> list=selectStorageList(temp);
-                if(list.size()>0){
-                    storageId=list.get(0).getId();
-                }else{
-                    Storage storage=new Storage();
+            if (storageId == null) {
+                Storage temp = new Storage();
+                List<Storage> list = selectStorageList(temp);
+                if (list.size() > 0) {
+                    storageId = list.get(0).getId();
+                } else {
+                    Storage storage = new Storage();
                     storage.setStorageName("默认仓库");
                     storage.setStorageNo("1");
                     insertStorage(storage);
-                    storageId=storage.getId();
+                    storageId = storage.getId();
                 }
                 storageIn.setToStorageId(storageId);
                 storageInService.updateStorageIn(storageIn);
