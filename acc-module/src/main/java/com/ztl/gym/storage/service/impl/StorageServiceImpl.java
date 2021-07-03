@@ -267,8 +267,8 @@ public class StorageServiceImpl implements IStorageService {
                 storageVo.setRecordId(codeEntity.getCodeAttr().getRecordId());//码记录表ID
                 storageVo.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));//企业入库单号
 
-                Integer storageType = codeEntity.getCodeAttr().getStorageType();
-                Long storageRecordId = codeEntity.getCodeAttr().getStorageRecordId();
+                Integer storageType = codeEntity.getStorageType();
+                Long storageRecordId = codeEntity.getStorageRecordId();
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);

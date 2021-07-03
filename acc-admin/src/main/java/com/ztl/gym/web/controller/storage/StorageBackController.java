@@ -108,7 +108,7 @@ public class StorageBackController extends BaseController {
         storageBack.setStorageFromName(dept.getDeptName());
         storageBack.setCreateTime(new Date());
 
-        StorageIn storageIn = storageInService.selectStorageInById(codeRes.getCodeAttr().getStorageRecordId());
+        StorageIn storageIn = storageInService.selectStorageInById(codeRes.getStorageRecordId());
 //        if (storageBack.getCodeStr().startsWith("P")) {
         if (CodeRuleUtils.getCodeType(storageBack.getCodeStr()).equals(AccConstants.CODE_TYPE_BOX)) {
             storageBack.setCodeIndex(codeRes.getCodeAttr().getCodeRecord().getIndexStart() + "~" + codeRes.getCodeAttr().getCodeRecord().getIndexEnd());
@@ -180,7 +180,7 @@ public class StorageBackController extends BaseController {
         Code codeRes = codeService.selectCode(codeEntity);
 
         //根据上一次流转信息获取产品物流数据
-        if (codeRes.getCodeAttr().getStorageType() == null) {
+        if (codeRes.getStorageType() == null) {
             throw new CustomException("该货码尚未开始流转！");
         }
         //判断码当前所属是不是当前登录账户企业
@@ -188,7 +188,7 @@ public class StorageBackController extends BaseController {
             throw new CustomException("该码已属于当前登录账号");
         }
         //判断码当前是不是入库状态，如果是入库状态则无法退货入库
-        if (codeRes.getCodeAttr().getStorageType() != AccConstants.STORAGE_TYPE_IN) {
+        if (codeRes.getStorageType() != AccConstants.STORAGE_TYPE_IN) {
             throw new CustomException("当前码状态不是入库状态，无法直接退货入库!");
         }
         return codeRes;
