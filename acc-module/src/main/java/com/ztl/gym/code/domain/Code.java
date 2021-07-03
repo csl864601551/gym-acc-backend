@@ -60,6 +60,16 @@ public class Code extends BaseEntity {
 //    @Excel(name = "码属性id")
     private Long codeAttrId;
 
+    /**
+     * 当前流转类型
+     */
+    private Integer storageType;
+
+    /**
+     * 当前流转记录id
+     */
+    private Long storageRecordId;
+
     /*---------------------- 冗余字段 ----------------------*/
 //    @Excel(name = "码状态")
     private String statusName;
@@ -166,6 +176,22 @@ public class Code extends BaseEntity {
 
     public void setCodeAttr(CodeAttr codeAttr) {
         this.codeAttr = codeAttr;
+    }
+
+    public Integer getStorageType() {
+        return storageType;
+    }
+
+    public void setStorageType(Integer storageType) {
+        this.storageType = storageType;
+    }
+
+    public Long getStorageRecordId() {
+        return storageRecordId;
+    }
+
+    public void setStorageRecordId(Long storageRecordId) {
+        this.storageRecordId = storageRecordId;
     }
 
     @Override

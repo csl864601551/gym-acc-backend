@@ -370,6 +370,10 @@ public class StorageServiceImpl implements IStorageService {
             codeAttr.setStorageRecordId(storageRecordId);
             updRes = codeAttrService.updateCodeAttr(codeAttr);
 
+            //更新码属性中的最新流转节点信息2
+            codeRes.setStorageType(storageType);
+            codeRes.setStorageRecordId(storageRecordId);
+            codeService.updateCode(codeRes);
 
         }
         return updRes;

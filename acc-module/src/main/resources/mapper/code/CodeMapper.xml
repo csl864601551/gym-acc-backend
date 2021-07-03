@@ -13,6 +13,8 @@
         <result property="codeType" column="code_type"/>
         <result property="pCode" column="p_code"/>
         <result property="codeAttrId" column="code_attr_id"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="storageRecordId" column="storage_record_id"/>
         <result property="codeTypeName" column="code_type_name"/>
         <association property="codeAttr" column="code_attr_id"
                      select="com.ztl.gym.code.mapper.CodeAttrMapper.selectCodeAttrById">
@@ -27,7 +29,8 @@
     </resultMap>
 
     <sql id="selectCodeVo">
-        select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id,case when code_type='box' then '箱码' else '单码' end as code_type_name from t_code
+        select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id,
+        case when code_type='box' then '箱码' else '单码' end as code_type_name,storage_type,storage_record_id from t_code
     </sql>
 
     <select id="selectCode" parameterType="Code" resultMap="CodeResult">
@@ -119,6 +122,8 @@
             <if test="codeType != null">code_type = #{codeType},</if>
             <if test="pCode != null">p_code = #{pCode},</if>
             <if test="codeAttrId != null">code_attr_id = #{codeAttrId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
         </trim>
         where code_index = #{codeIndex}
     </update>
