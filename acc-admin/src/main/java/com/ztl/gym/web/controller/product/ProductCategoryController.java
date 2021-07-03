@@ -43,13 +43,17 @@ public class ProductCategoryController extends BaseController
         if(type.equals("1")) {
             //一级类型
             productCategory.setpId(Convert.toLong(0));
+            categoryList = roductCategoryService.selectProductCategoryOneList(productCategory);
         } else if(type.equals("2")) {
             //二级类型
             productCategory.setpId(Convert.toLong(id));
+            categoryList = roductCategoryService.selectProductCategoryList(productCategory);
         }
-        categoryList = roductCategoryService.selectProductCategoryList(productCategory);
+
         return categoryList;
     }
+
+
     @GetMapping("/getCategoryDic")
     public List<Map<String,Object>> getCategoryDic(@RequestParam("p_id") Long p_id)
     {
