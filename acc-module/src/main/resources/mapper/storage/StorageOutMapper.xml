@@ -78,7 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endTime != null ">and so.create_time &lt;= #{endTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and so.tenant_id ')}
-        order by so.create_time
+        order by so.create_time desc
     </select>
 
     <select id="selectStorageOutById" parameterType="Long" resultMap="StorageOutResult">
