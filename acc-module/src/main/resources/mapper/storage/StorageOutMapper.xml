@@ -194,7 +194,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDayCount" resultMap="map">
         SELECT product_id,storage_to,sum(act_out_num) num,DATE_FORMAT(out_time,'%Y-%m-%d') out_time  FROM `t_storage_out` where `status`!=9 and
-        product_id=#{product_id} and storage_to = #{tenant_id} and DATE_FORMAT(out_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
+        product_id=#{productId} and storage_to = #{tenantId} and DATE_FORMAT(out_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
         GROUP BY product_id,storage_to,DATE_FORMAT(out_time,'%Y-%m-%d')
     </select>
 </mapper>
