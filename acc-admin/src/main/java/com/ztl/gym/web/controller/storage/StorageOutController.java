@@ -132,7 +132,7 @@ public class StorageOutController extends BaseController
     /**
      * 统计当日已出库产品数量
      */
-    @GetMapping("/dayCount")
+    @PostMapping("/dayCount")
     public AjaxResult dayCount(@RequestBody Map<String, Object> map)
     {
         int count=0;

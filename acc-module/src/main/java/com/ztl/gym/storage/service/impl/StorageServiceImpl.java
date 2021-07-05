@@ -378,7 +378,7 @@ public class StorageServiceImpl implements IStorageService {
             }
             codeRes.setStorageType(storageType);
             codeRes.setStorageRecordId(storageRecordId);
-            codeService.updateCode(codeRes);
+            updRes =codeService.updateCode(codeRes);
 
         }
         return updRes;
