@@ -153,13 +153,13 @@ public class StorageInController extends BaseController {
                     codeone = str2;
                     list.add(str2);
                 }
-                if(codeinfo.getCodeTypeName().equals("单码")){
-                    String code = codeinfo.getCode();
-                    String str1=code.substring(0, code.indexOf("="));
-                    String str2=code.substring(str1.length()+1, code.length());
-                    codeone = str2;
-                    list1.add(str2);
-                }
+//                if(codeinfo.getCodeTypeName().equals("单码")){
+//                    String code = codeinfo.getCode();
+//                    String str1=code.substring(0, code.indexOf("="));
+//                    String str2=code.substring(str1.length()+1, code.length());
+//                    codeone = str2;
+//                    list1.add(str2);
+//                }
             }
         }
         //根据code 获取信息
@@ -182,7 +182,7 @@ public class StorageInController extends BaseController {
             map.put("remark","");
             map.put("thirdPartyFlag","1");
         }
-        map.put("codes",list1);
+        map.put("codes",list);
         int show = storageInService.insertStorageIn(map);
         return AjaxResult.success(show);
     }
