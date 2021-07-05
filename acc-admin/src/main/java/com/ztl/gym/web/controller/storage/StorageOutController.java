@@ -138,7 +138,9 @@ public class StorageOutController extends BaseController
         int count=0;
         List<Map<String,Object>> list = storageOutService.selectDayCount(map);
         if(list.size()>0){
-            count=Integer.valueOf(list.get(0).get("num").toString());
+            if(list.get(0).get("num")!=null){
+                count=Integer.valueOf(list.get(0).get("num").toString());
+            }
         }
         return AjaxResult.success(count);
     }
