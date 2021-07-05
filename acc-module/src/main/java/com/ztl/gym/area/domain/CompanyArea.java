@@ -47,6 +47,9 @@ public class CompanyArea extends BaseEntity
     /** 是否窜货 0未窜货 1窜货  2未接收到数据 */
     private int isMix;
 
+    /** 码*/
+    private String code;
+
     /** codeAttrID*/
     private Long codeAttrId;
 
@@ -139,6 +142,14 @@ public class CompanyArea extends BaseEntity
 
     public void setCreatorName(String creatorName) {
         this.creatorName = creatorName;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override

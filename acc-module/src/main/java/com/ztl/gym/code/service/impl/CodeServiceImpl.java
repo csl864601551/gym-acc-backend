@@ -96,6 +96,7 @@ public class CodeServiceImpl implements ICodeService {
      * @return 结果
      */
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public int updateCode(Code code) {
         return codeMapper.updateCode(code);
     }

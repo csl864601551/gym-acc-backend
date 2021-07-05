@@ -358,7 +358,7 @@ public class StorageServiceImpl implements IStorageService {
         //更新码属性最新物流节点
         int updRes = 0;
         if (insertRes > 0) {
-            //更新码属性中的最新流转节点信息
+/*            //更新码属性中的最新流转节点信息
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(codeRes.getCodeAttrId());
             //入库或退货入库时需更新码所属企业/经销商
@@ -368,9 +368,14 @@ public class StorageServiceImpl implements IStorageService {
             }
             codeAttr.setStorageType(storageType);
             codeAttr.setStorageRecordId(storageRecordId);
-            updRes = codeAttrService.updateCodeAttr(codeAttr);
+            updRes = codeAttrService.updateCodeAttr(codeAttr);*/
 
             //更新码属性中的最新流转节点信息2
+            //入库或退货入库时需更新码所属企业/经销商
+            if (storageType == AccConstants.STORAGE_TYPE_IN) {
+                StorageIn storageIn=storageInService.selectStorageInById(storageRecordId);
+                codeRes.setTenantId(storageIn.getTenantId());
+            }
             codeRes.setStorageType(storageType);
             codeRes.setStorageRecordId(storageRecordId);
             codeService.updateCode(codeRes);

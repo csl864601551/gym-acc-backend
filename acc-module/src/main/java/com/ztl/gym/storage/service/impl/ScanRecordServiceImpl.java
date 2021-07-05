@@ -13,6 +13,7 @@ import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.exception.CustomException;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.storage.domain.ScanRecord;
@@ -179,9 +180,13 @@ public class ScanRecordServiceImpl implements IScanRecordService {
             throw new BaseException("未查询到相关销售区域");
         }else{
             //根据码属性ID获取对应的companyID和tenantID
-            CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());
-            temp.setCompanyId(codeAttr.getCompanyId());
-            temp.setTenantId(codeAttr.getTenantId());
+            //CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());//V1.0.5之前
+            Code codeTemp=new Code();
+            codeTemp.setCompanyId(CodeRuleUtils.getCompanyIdByCode(area.getCode()));
+            codeTemp.setCode(area.getCode());
+            Code code=codeService.selectCode(codeTemp);
+            temp.setCompanyId(code.getCompanyId());
+            temp.setTenantId(code.getTenantId());
         }
         List<CompanyArea> list = companyAreaService.selectCompanyAreaListV2(temp);
         if (area.getProvince() == null) {

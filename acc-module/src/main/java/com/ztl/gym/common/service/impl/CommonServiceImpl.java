@@ -228,7 +228,7 @@ public class CommonServiceImpl implements CommonService {
                 break;
             case AccConstants.STORAGE_TYPE_OUT:
                 if (codeResult.getStorageType() == AccConstants.STORAGE_TYPE_IN) {
-                    if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
+                    if (codeResult.getTenantId() != currentUserDeptId) {
                         throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                     }
                 } else if (codeResult.getStorageType() == AccConstants.STORAGE_TYPE_OUT) {
@@ -241,7 +241,7 @@ public class CommonServiceImpl implements CommonService {
                     if (storageTransfer == null) {
                         throw new CustomException("该码当前调拨数据异常", HttpStatus.ERROR);
                     } else {
-                        if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
+                        if (codeResult.getTenantId() != currentUserDeptId) {
                             throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                         }
                     }
@@ -253,7 +253,7 @@ public class CommonServiceImpl implements CommonService {
                 break;
             case AccConstants.STORAGE_TYPE_BACK:
                 if (codeResult.getStorageType() == AccConstants.STORAGE_TYPE_IN) {
-                    if (codeResult.getCodeAttr().getTenantId() != currentUserDeptId) {
+                    if (codeResult.getTenantId() != currentUserDeptId) {
                         throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                     }
                 } else if (codeResult.getStorageType() == AccConstants.STORAGE_TYPE_OUT) {

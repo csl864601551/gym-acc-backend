@@ -22,6 +22,11 @@ public class Code extends BaseEntity {
     private Long codeIndex;
 
     /**
+     * 当前所属经销商id
+     */
+    private Long tenantId;
+
+    /**
      * 企业ID
      */
     private Long companyId;
@@ -192,6 +197,14 @@ public class Code extends BaseEntity {
 
     public void setStorageRecordId(Long storageRecordId) {
         this.storageRecordId = storageRecordId;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override
