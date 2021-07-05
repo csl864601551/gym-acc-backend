@@ -81,4 +81,6 @@ public interface StorageOutMapper {
      * @return
      */
     int deleteByTransfer(String transferNo);
+
+    List<Map<String,Object>> selectDayCount(Map<String, Object> map);
 }

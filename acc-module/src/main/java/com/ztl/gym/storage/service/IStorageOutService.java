@@ -86,4 +86,6 @@ public interface IStorageOutService {
      * @return
      */
     int deleteByTransfer(long transferId);
+
+    List<Map<String,Object>> selectDayCount(Map<String, Object> map);
 }

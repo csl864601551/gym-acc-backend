@@ -129,4 +129,17 @@ public class StorageOutController extends BaseController
     {
         return toAjax(storageOutService.updateOutStatusByCode(map));
     }
+    /**
+     * 统计当日已出库产品数量
+     */
+    @GetMapping("/dayCount")
+    public AjaxResult dayCount(@RequestBody Map<String, Object> map)
+    {
+        int count=0;
+        List<Map<String,Object>> list = storageOutService.selectDayCount(map);
+        if(list.size()>0){
+            count=Integer.valueOf(list.get(0).get("num").toString());
+        }
+        return AjaxResult.success(count);
+    }
 }

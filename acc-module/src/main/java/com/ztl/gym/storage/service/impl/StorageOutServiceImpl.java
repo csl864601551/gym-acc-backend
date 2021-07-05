@@ -303,4 +303,9 @@ public class StorageOutServiceImpl implements IStorageOutService {
         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(transferId);
         return storageOutMapper.deleteByTransfer(storageTransfer.getTransferNo());
     }
+
+    @Override
+    public List<Map<String,Object>> selectDayCount(Map<String, Object> map) {
+        return storageOutMapper.selectDayCount(map);
+    }
 }
