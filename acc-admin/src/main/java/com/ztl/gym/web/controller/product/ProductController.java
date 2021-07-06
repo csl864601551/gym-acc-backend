@@ -1,5 +1,6 @@
 package com.ztl.gym.web.controller.product;
 
+import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -70,6 +71,15 @@ public class ProductController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody Product product)
     {
+        if(StrUtil.isNotEmpty(product.getProductName())&&StrUtil.isNotEmpty(product.getProductNo())){
+            Product productquery = new Product();
+            productquery.setProductName(product.getProductName());
+            productquery.setProductNo(product.getProductNo());
+            List<Product> list = tProductService.selectTProductList1(productquery);
+            if(list.size()>0){
+                return error("该产品编号和产品名称已存在！！！");
+            }
+        }
         return toAjax(tProductService.insertTProduct(product));
     }
 

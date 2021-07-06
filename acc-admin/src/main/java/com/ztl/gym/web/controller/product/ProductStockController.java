@@ -1,27 +1,20 @@
 package com.ztl.gym.web.controller.product;
 
-import java.util.List;
-
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.utils.SecurityUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.product.domain.ProductStock;
 import com.ztl.gym.product.service.IProductStockService;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 库存统计 Controller
@@ -41,7 +34,6 @@ public class ProductStockController extends BaseController {
     @PreAuthorize("@ss.hasPermi('product:stock:list')")
     @GetMapping("/list")
     public TableDataInfo list(ProductStock productStock) {
-        startPage();
         if (!SecurityUtils.getLoginUserCompany().getDeptId().equals(AccConstants.ADMIN_DEPT_ID)) {
             productStock.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
             productStock.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
@@ -50,7 +42,7 @@ public class ProductStockController extends BaseController {
                 productStock.setStockLevel(AccConstants.STOCK_LEVEL_TENANT);
             }
         }
-
+        startPage();
         List<ProductStock> list = productStockService.selectProductStockList(productStock);
         return getDataTable(list);
     }
