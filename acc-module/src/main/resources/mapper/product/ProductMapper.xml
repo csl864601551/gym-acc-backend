@@ -103,6 +103,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by sort
     </select>
 
+
+    <select id="selectTProductList1" parameterType="Product" resultMap="TProductResult">
+        <include refid="selectTProductVo"/>
+        <where>
+            <if test="companyId != null "> and p.company_id = #{companyId}</if>
+            <if test="productNo != null  and productNo != ''"> and p.product_no = #{productNo}</if>
+            <if test="status != null"> and p.status = #{status}</if>
+            <if test="status == null "> and p.status != 1</if>
+            <if test="productName != null  and productName != ''"> and p.product_name = #{productName}</if>
+            <if test="barCode != null  and barCode != ''"> and p.bar_code = #{barCode}</if>
+            <if test="categoryOne != null  and categoryOne != ''"> and p.category_one = #{categoryOne}</if>
+            <if test="categoryTwo != null  and categoryTwo != ''"> and p.category_two = #{categoryTwo}</if>
+            <if test="proaductCategory != null  and proaductCategory != ''"> and( category_two = #{proaductCategory} or category_one=#{proaductCategory})</if>
+            <if test="salePrice != null "> and p.sale_price = #{salePrice}</if>
+            <if test="marketPrice != null "> and p.market_price = #{marketPrice}</if>
+            <if test="productIntroduce != null  and productIntroduce != ''"> and p.product_introduce = #{productIntroduce}</if>
+            <if test="productDetailPc != null  and productDetailPc != ''"> and p.product_detail_pc = #{productDetailPc}</if>
+            <if test="productDetailMobile != null  and productDetailMobile != ''"> and p.product_detail_mobile = #{productDetailMobile}</if>
+            <if test="storageId != null "> and p.storage_id = #{storageId}</if>
+            <if test="stock != null "> and p.stock = #{stock}</if>
+            <if test="stockLimit != null "> and p.stock_limit = #{stockLimit}</if>
+            <if test="unit != null  and unit != ''"> and p.unit = #{unit}</if>
+            <if test="sort != null "> and p.sort = #{sort}</if>
+            <if test="salesNum != null "> and p.sales_num = #{salesNum}</if>
+            <if test="createUser != null "> and p.create_user = #{createUser}</if>
+            <if test="updateUser != null "> and p.update_user = #{updateUser}</if>
+        </where>
+        order by sort
+    </select>
+
     <select id="selectTProductById" parameterType="Long" resultMap="TProductResult">
         <include refid="selectTProductVo"/>
         where p.id = #{id}
