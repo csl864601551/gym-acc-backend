@@ -80,9 +80,8 @@ public class ProductStockServiceImpl implements IProductStockService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insertProductStock(long storageId, long productId, int storageType, long storageRecordId, int flowNum) {
+    public int insertProductStock(long tenantId,long storageId, long productId, int storageType, long storageRecordId, int flowNum) {
         long companyId = 0;
-        Long tenantId = null;
         int flowBefore = 0;
         int flowAfter = 0;
         int res = 0;

@@ -46,7 +46,7 @@ public interface IProductStockService {
      * @param flowNum         变动数量
      * @return 结果
      */
-    public int insertProductStock(long storageId, long productId, int storageType, long storageRecordId, int flowNum);
+    public int insertProductStock(long tenantId,long storageId, long productId, int storageType, long storageRecordId, int flowNum);
 
     /**
      * 修改库存统计

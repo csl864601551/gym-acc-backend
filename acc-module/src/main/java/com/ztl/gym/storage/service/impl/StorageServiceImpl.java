@@ -392,6 +392,7 @@ public class StorageServiceImpl implements IStorageService {
      * @return
      */
     public void updateProductStock(int storageType, long storageRecordId) {
+        Long tenantId = null;
         Long storageId = null;
         Long productId = null;
         Integer flowNum = null;
@@ -400,6 +401,7 @@ public class StorageServiceImpl implements IStorageService {
             if (storageIn == null) {
                 throw new CustomException("更新产品库存时未查询到最新入库单");
             }
+            tenantId = storageIn.getTenantId();
             storageId = storageIn.getToStorageId();
             productId = storageIn.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageIn.getActInNum()));
@@ -427,6 +429,7 @@ public class StorageServiceImpl implements IStorageService {
             if (storageOut == null) {
                 throw new CustomException("更新产品库存时未查询到最新出库单");
             }
+            tenantId = storageOut.getTenantId();
             storageId = storageOut.getFromStorageId();
             productId = storageOut.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageOut.getActOutNum()));
@@ -436,6 +439,7 @@ public class StorageServiceImpl implements IStorageService {
             if (storageBack == null) {
                 throw new CustomException("更新产品库存时未查询到最新退货单");
             }
+            tenantId = storageBack.getTenantId();
             storageId = storageBack.getFromStorageId();
             productId = storageBack.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageBack.getActBackNum()));
@@ -447,7 +451,7 @@ public class StorageServiceImpl implements IStorageService {
         if (storageId == null || storageId == 0 || productId == null || productId == 0 || flowNum == null || flowNum == 0) {
             throw new CustomException("更新产品库存缺少参数!");
         } else {
-            productStockService.insertProductStock(storageId, productId, storageType, storageRecordId, flowNum);
+            productStockService.insertProductStock(tenantId,storageId, productId, storageType, storageRecordId, flowNum);
         }
     }
 
