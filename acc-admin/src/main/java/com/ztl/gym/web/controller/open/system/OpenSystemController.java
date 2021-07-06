@@ -1,18 +1,14 @@
 package com.ztl.gym.web.controller.open.system;
 
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.service.ICodeService;
-import com.ztl.gym.common.constant.Constants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysMenu;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.LoginBody;
 import com.ztl.gym.common.core.domain.model.LoginUser;
-import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.domain.AndroidVersion;
 import com.ztl.gym.common.exception.CustomException;
-import com.ztl.gym.common.service.CommonService;
-import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.service.IAndroidVersionService;
 import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.framework.web.service.SysLoginService;
 import com.ztl.gym.framework.web.service.SysPermissionService;
@@ -20,10 +16,7 @@ import com.ztl.gym.framework.web.service.TokenService;
 import com.ztl.gym.system.service.ISysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.*;
 
 @RestController
@@ -31,6 +24,10 @@ import java.util.*;
 public class OpenSystemController {
     @Autowired
     private SysLoginService loginService;
+
+    @Autowired
+    private IAndroidVersionService androidVersionService;
+
     @Autowired
     private ISysMenuService menuService;
 
@@ -121,18 +118,27 @@ public class OpenSystemController {
     public AjaxResult pdaUpdate(@RequestBody Map<String,Object> temp)
     {
         try {
-            String currentVersion=temp.get("currentVersion").toString();//当前版本号
+            Map<String,Object> map=new HashMap<>();
+            Integer currentVersion=Integer.valueOf(temp.get("currentVersion").toString());//当前版本号
             String clientType=temp.get("clientType").toString();//终端类型 dayi
 
-            Map<String,Object> map=new HashMap<>();
-            map.put("versionName","1.5.5");
+            AndroidVersion androidVersion=new AndroidVersion();
+            List<AndroidVersion> list = androidVersionService.selectAndroidVersionList(androidVersion);
+            if(list.size()>0){
+                if(list.get(0).getVersion()>currentVersion){
+                    return AjaxResult.success(list.get(0));
+                }
+            }
+            map.put("versionName","1.0.5");
             map.put("updateDescription",1);// 1.bug修复； 2.新功能
-            map.put("apkUrl","http://10.88.11.110:8080/examples/1.apk");
+            map.put("apkUrl","http://10.70.151.108:8080/examples/1.apk");
             map.put("fileSize",20480);
             map.put("forceUpdate",false);
             map.put("isUpdate",false);
-
             return AjaxResult.success(map);
+
+
+
         }catch (Exception e){
             throw new CustomException("登录超时，请检查网络连接！", HttpStatus.ERROR);
         }
