@@ -275,7 +275,6 @@ public class StorageServiceImpl implements IStorageService {
                         if (storageIn != null) {
                             storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
                             storageVo.setExtraNo(storageIn.getInNo());
-                            storageVo.setNum(storageIn.getActInNum());
                             storageVo.setFromStorageId(storageIn.getToStorageId());
                         }
                     } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
@@ -287,15 +286,10 @@ public class StorageServiceImpl implements IStorageService {
                     } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
                     }
-                } else {
-                    if(storageVo.getCodeTypeName().equals("箱码")){
-                        storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getSingleCount());//产品数量
-                    }else{
-                        storageVo.setNum(1L);
-                    }
                 }
             }
         }
+        storageVo.setNum(codeService.getCodeCount(codeVal));
         return storageVo;
     }
 

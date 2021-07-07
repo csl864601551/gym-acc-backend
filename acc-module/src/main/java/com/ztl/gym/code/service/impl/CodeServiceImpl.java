@@ -327,6 +327,7 @@ public class CodeServiceImpl implements ICodeService {
     }
 
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public long getCodeCount(String codeStr) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", codeStr);

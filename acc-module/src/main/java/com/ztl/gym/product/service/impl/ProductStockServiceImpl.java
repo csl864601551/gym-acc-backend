@@ -88,7 +88,6 @@ public class ProductStockServiceImpl implements IProductStockService {
 
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
-            tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
         } else {
             throw new CustomException("平台无库存操作需要");
         }
