@@ -128,4 +128,8 @@ public interface ICodeService {
     void updatePCodeByCode(Long companyId,String pCode, String s);
 
     List<Code> selectCodes(Map<String, Object> codeParam);
+
+    void updateCodeStorageByPCode(Code codeTemp);
+
+    int updateCodeStorageByCode(Code codeRes);
 }

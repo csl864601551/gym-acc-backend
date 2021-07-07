@@ -174,4 +174,8 @@ public interface CodeMapper {
     void updatePCodeByCode(Map<String, Object> params);
 
     List<Code> selectCodes(Map<String, Object> codeParam);
+
+    void updateCodeStorageByPCode(Code codeTemp);
+
+    int updateCodeStorageByCode(Code codeRes);
 }
