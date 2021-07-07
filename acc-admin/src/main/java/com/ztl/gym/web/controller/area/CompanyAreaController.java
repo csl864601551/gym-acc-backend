@@ -92,9 +92,10 @@ public class CompanyAreaController extends BaseController {
         companyAreas.setProvince(companyArea.getProvince());
         companyAreas.setCity(companyArea.getCity());
         companyAreas.setArea(companyArea.getArea());
+        companyAreas.setTenantId(companyArea.getTenantId());
         List<CompanyArea> list = companyAreaService.selectCompanyAreaList(companyAreas);
         if(list.size()>0){
-            return error("该区域已经在区域管理中！！！");
+            return error("该区域或该经销商已经在区域管理中！！！");
         }else{
             SysUser loginUser = SecurityUtils.getLoginUser().getUser();
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
