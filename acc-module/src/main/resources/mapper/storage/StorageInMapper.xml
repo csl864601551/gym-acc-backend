@@ -69,7 +69,7 @@
         si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,si.create_time,si.in_time,si.update_time
         ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,sd.dept_name as
-        storage_from_name,s.storage_name as to_storage_id_name,p.product_name
+        storage_from_name,s.storage_name as to_storage_id_name,p.product_name,p.product_no
         FROM
         t_storage_in AS si
         left join sys_dept sd on sd.dept_id=si.storage_from
