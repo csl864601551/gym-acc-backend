@@ -366,13 +366,25 @@ public class StorageServiceImpl implements IStorageService {
 
             //更新码属性中的最新流转节点信息2
             //入库或退货入库时需更新码所属企业/经销商
+            Code codeTemp=new Code();//箱码用
             if (storageType == AccConstants.STORAGE_TYPE_IN) {
                 StorageIn storageIn=storageInService.selectStorageInById(storageRecordId);
                 codeRes.setTenantId(storageIn.getTenantId());
+
+                codeTemp.setCompanyId(companyId);
+                codeTemp.setTenantId(storageIn.getTenantId());
             }
             codeRes.setStorageType(storageType);
             codeRes.setStorageRecordId(storageRecordId);
-            updRes =codeService.updateCode(codeRes);
+            if(isBox){
+                codeTemp.setStorageType(storageType);
+                codeTemp.setStorageRecordId(storageRecordId);
+                codeTemp.setpCode(boxCode);
+                codeService.updateCodeStorageByPCode(codeTemp);
+                codeRes.setCode(boxCode);
+            }
+
+            updRes =codeService.updateCodeStorageByCode(codeRes);
 
         }
         return updRes;

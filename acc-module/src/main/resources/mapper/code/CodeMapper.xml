@@ -128,6 +128,25 @@
         </trim>
         where company_id=#{companyId} and code_index = #{codeIndex}
     </update>
+    <update id="updateCodeStorageByPCode" parameterType="Code">
+        update t_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
+        </trim>
+        where company_id=#{companyId} and p_code = #{pCode}
+    </update>
+
+    <update id="updateCodeStorageByCode" parameterType="Code">
+        update t_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
+        </trim>
+        where company_id=#{companyId} and code = #{code}
+    </update>
 
     <delete id="deleteCodeById" parameterType="Long">
         delete from t_code where code_index = #{codeIndex}
