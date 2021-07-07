@@ -101,10 +101,10 @@ public class StorageBackController extends BaseController {
         String backNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_BACK);
         storageBack.setBackNo(backNo);
         storageBack.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-        storageBack.setTenantId(codeRes.getCodeAttr().getTenantId());
-        storageBack.setStorageFrom(codeRes.getCodeAttr().getTenantId());
+        storageBack.setTenantId(codeRes.getTenantId());
+        storageBack.setStorageFrom(codeRes.getTenantId());
         storageBack.setStorageTo(SecurityUtils.getLoginUserCompany().getDeptId());
-        SysDept dept = deptService.selectDeptById(codeRes.getCodeAttr().getTenantId());
+        SysDept dept = deptService.selectDeptById(codeRes.getTenantId());
         storageBack.setStorageFromName(dept.getDeptName());
         storageBack.setCreateTime(new Date());
 
@@ -184,7 +184,7 @@ public class StorageBackController extends BaseController {
             throw new CustomException("该货码尚未开始流转！");
         }
         //判断码当前所属是不是当前登录账户企业
-        if (codeRes.getCodeAttr().getTenantId().equals(SecurityUtils.getLoginUserCompany().getDeptId())) {
+        if (codeRes.getTenantId().equals(SecurityUtils.getLoginUserCompany().getDeptId())) {
             throw new CustomException("该码已属于当前登录账号");
         }
         //判断码当前是不是入库状态，如果是入库状态则无法退货入库
