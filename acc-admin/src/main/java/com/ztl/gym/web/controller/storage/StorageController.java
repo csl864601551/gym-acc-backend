@@ -1,36 +1,26 @@
 package com.ztl.gym.web.controller.storage;
 
-import java.util.ArrayList;
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.core.controller.BaseController;
+import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.exception.CustomException;
+import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.storage.domain.Storage;
+import com.ztl.gym.storage.service.IStorageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.github.pagehelper.PageInfo;
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.service.ICodeService;
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.constant.HttpStatus;
-import com.ztl.gym.common.core.domain.model.LoginUser;
-import com.ztl.gym.common.core.page.PageDomain;
-import com.ztl.gym.common.core.page.TableSupport;
-import com.ztl.gym.common.exception.BaseException;
-import com.ztl.gym.common.exception.CustomException;
-import com.ztl.gym.common.service.CommonService;
-import com.ztl.gym.common.utils.CodeRuleUtils;
-import com.ztl.gym.common.utils.PageUtil;
-import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.storage.domain.StorageBack;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import com.ztl.gym.common.annotation.Log;
-import com.ztl.gym.common.core.controller.BaseController;
-import com.ztl.gym.common.core.domain.AjaxResult;
-import com.ztl.gym.common.enums.BusinessType;
-import com.ztl.gym.storage.domain.Storage;
-import com.ztl.gym.storage.service.IStorageService;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.common.core.page.TableDataInfo;
 
 /**
  * 仓库Controller
@@ -175,7 +165,9 @@ public class StorageController extends BaseController {
     @GetMapping("/listCode")
     public TableDataInfo listCode(int storageType, long storageRecordId) {
         try {
-
+            if(storageType==3){
+                storageType = 2;
+            }
             List<String> codeStrs = commonService.selectCodeByStorageForPage(SecurityUtils.getLoginUserTopCompanyId(), storageType, storageRecordId);
             Map<String,Object> codeParam = new HashMap<>();
             codeParam.put("companyId",SecurityUtils.getLoginUserTopCompanyId());

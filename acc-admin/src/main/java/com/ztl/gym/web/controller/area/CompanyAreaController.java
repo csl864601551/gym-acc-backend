@@ -1,32 +1,27 @@
 package com.ztl.gym.web.controller.area;
 
-import java.util.*;
-
 import cn.hutool.core.util.StrUtil;
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.core.domain.entity.SysUser;
-import com.ztl.gym.common.core.domain.model.LoginUser;
-import com.ztl.gym.common.utils.DateUtils;
-import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.common.utils.html.EscapeUtil;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.ztl.gym.common.annotation.Log;
-import com.ztl.gym.common.core.controller.BaseController;
-import com.ztl.gym.common.core.domain.AjaxResult;
-import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.service.ICompanyAreaService;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.core.controller.BaseController;
+import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysRole;
+import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 经销商销售区域 Controller
@@ -49,6 +44,15 @@ public class CompanyAreaController extends BaseController {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
             companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        SysUser loginUser = SecurityUtils.getLoginUser().getUser();
+        List<SysRole> roles = loginUser.getRoles();
+        if(roles.size()>0){
+            for (SysRole sysRole : roles) {
+                if(sysRole.getRoleId()!=AccConstants.COMPANY_ROLE&&sysRole.getRoleId()!=AccConstants.ADMIN_ROLE){
+                    companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+                }
+            }
         }
         startPage();
         List<CompanyArea> list = companyAreaService.selectCompanyAreaList(companyArea);
@@ -94,14 +98,18 @@ public class CompanyAreaController extends BaseController {
         companyAreas.setArea(companyArea.getArea());
         companyAreas.setTenantId(companyArea.getTenantId());
         List<CompanyArea> list = companyAreaService.selectCompanyAreaList(companyAreas);
-        if(list.size()>0){
+        if (list.size() > 0) {
             return error("该区域或该经销商已经在区域管理中！！！");
-        }else{
+        } else {
             SysUser loginUser = SecurityUtils.getLoginUser().getUser();
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
             if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
                 companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-                companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+                if(companyArea.getTenantId()>0&&companyArea.getTenantId()!=null){
+
+                }else{
+                    companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+                }
             }
             companyArea.setCreateUser(loginUser.getUserId());
             companyArea.setCreateTime(DateUtils.getNowDate());
@@ -142,29 +150,28 @@ public class CompanyAreaController extends BaseController {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         List<CompanyArea> list = companyAreaService.selectkyjxsdqList(companyId);
         List<Map<String, String>> QYlist = new ArrayList<Map<String, String>>();
-        if(list.size()>0){
-            for(CompanyArea companyArea :list ){
+        if (list.size() > 0) {
+            for (CompanyArea companyArea : list) {
                 Map<String, String> map = new HashMap<>();
                 String value = null;
-                if(StrUtil.isNotBlank(companyArea.getProvince())){
+                if (StrUtil.isNotBlank(companyArea.getProvince())) {
                     value = companyArea.getProvince();
                 }
-                if(StrUtil.isNotBlank(companyArea.getCity())){
-                    value = value+"/"+companyArea.getCity();
+                if (StrUtil.isNotBlank(companyArea.getCity())) {
+                    value = value + "/" + companyArea.getCity();
                 }
-                if(StrUtil.isNotBlank(companyArea.getArea())){
-                    value = value+"/"+companyArea.getArea();
+                if (StrUtil.isNotBlank(companyArea.getArea())) {
+                    value = value + "/" + companyArea.getArea();
                 }
-                map.put("value",value);
-                map.put("label",value);
+                map.put("value", value);
+                map.put("label", value);
                 QYlist.add(map);
             }
-            System.out.println("QYlist=="+QYlist);
+            System.out.println("QYlist==" + QYlist);
         }
 //        companyAreaService.selectCompanyAreaById(id);
         return AjaxResult.success(QYlist);
     }
-
 
 
 }

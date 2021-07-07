@@ -1,6 +1,5 @@
 package com.ztl.gym.area.domain;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -56,6 +55,14 @@ public class CompanyArea extends BaseEntity
     /** 销售地区 */
     @Excel(name = "销售地区")
     private String salesArea;
+
+
+    /** 企业ID */
+    private String companyName;
+
+
+    /** 经销商id */
+    private String tenantName;
 
     public Long getCodeAttrId() {
         return codeAttrId;
@@ -152,6 +159,22 @@ public class CompanyArea extends BaseEntity
         this.code = code;
     }
 
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getTenantName() {
+        return tenantName;
+    }
+
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -165,6 +188,8 @@ public class CompanyArea extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateUser", getUpdateUser())
             .append("updateTime", getUpdateTime())
+            .append("companyName", getCompanyName())
+            .append("tenantName", getTenantName())
             .toString();
     }
 }

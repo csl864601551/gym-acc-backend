@@ -21,6 +21,15 @@ public interface AttrMapper
      */
     public Attr selectAttrById(Long id);
 
+
+    /**
+     * 查询规格属性
+     *
+     * @param name 规格属性ID
+     * @return 规格属性
+     */
+    public Attr selectAttrByName(String name);
+
     /**
      * 查询规格属性列表
      * 

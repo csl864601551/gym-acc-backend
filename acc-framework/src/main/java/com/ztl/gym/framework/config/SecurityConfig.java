@@ -124,6 +124,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/storage/record").permitAll()
                 .antMatchers("/mix/record/addRecord").permitAll()
 
+                .antMatchers("/storage/transfer/**").permitAll()
+                .antMatchers("/storage/storage/**").permitAll()
+                .antMatchers("/storage/out/**").permitAll()
+
+
+
+
+
                 //扫码详情
 //                .antMatchers("/c").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证

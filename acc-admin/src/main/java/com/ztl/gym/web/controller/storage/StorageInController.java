@@ -142,6 +142,7 @@ public class StorageInController extends BaseController {
         List<String> list1 = new ArrayList<String>();
         Map<String, Object> map = new HashMap<String,Object>();
         String codeone = null;
+        int exceltype = 0 ;
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
         List<Code> codeList = util.importExcel(file.getInputStream());
         if(codeList.size()>0){
@@ -152,14 +153,17 @@ public class StorageInController extends BaseController {
                     String str2=code.substring(str1.length()+1, code.length());
                     codeone = str2;
                     list.add(str2);
+                    exceltype = 1 ;
                 }
-//                if(codeinfo.getCodeTypeName().equals("单码")){
-//                    String code = codeinfo.getCode();
-//                    String str1=code.substring(0, code.indexOf("="));
-//                    String str2=code.substring(str1.length()+1, code.length());
-//                    codeone = str2;
-//                    list1.add(str2);
-//                }
+                if(exceltype!=1){
+                    if(codeinfo.getCodeTypeName().equals("单码")){
+                        String code = codeinfo.getCode();
+                        String str1=code.substring(0, code.indexOf("="));
+                        String str2=code.substring(str1.length()+1, code.length());
+                        codeone = str2;
+                        list1.add(str2);
+                    }
+                }
             }
         }
         //根据code 获取信息
@@ -176,13 +180,15 @@ public class StorageInController extends BaseController {
             map.put("inNo",storageVo.getInNo());
             map.put("productId",storageVo.getProductId());
             map.put("batchNo",storageVo.getBatchNo());
-//            map.put("inNum",codeList.size()-list.size());
-//            map.put("actInNum",codeList.size()-list.size());
             map.put("toStorageId",storageId);
             map.put("remark","");
             map.put("thirdPartyFlag","1");
         }
-        map.put("codes",list);
+        if(exceltype==1){
+            map.put("codes",list);
+        }else{
+            map.put("codes",list1);
+        }
         int show = storageInService.insertStorageIn(map);
         return AjaxResult.success(show);
     }

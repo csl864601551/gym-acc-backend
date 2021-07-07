@@ -161,4 +161,14 @@ public class AttrController extends BaseController
     {
         return AjaxResult.success(attrService.getAttrValuesById(id));
     }
+
+
+    /**
+     * 获取属性值可选值列表
+     */
+    @GetMapping(value = "/getAttrsByName/{name}")
+    public AjaxResult getAttrValuesById(@PathVariable("name") String name)
+    {
+        return AjaxResult.success(attrService.selectAttrByName(name));
+    }
 }

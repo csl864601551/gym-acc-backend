@@ -1,7 +1,6 @@
 package com.ztl.gym.storage.service.impl;
 
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -438,7 +437,11 @@ public class StorageServiceImpl implements IStorageService {
             tenantId = storageOut.getTenantId();
             storageId = storageOut.getFromStorageId();
             productId = storageOut.getProductId();
-            flowNum = Integer.parseInt(String.valueOf(storageOut.getActOutNum()));
+            if(storageOut.getActOutNum()!=null){
+                flowNum = Integer.parseInt(String.valueOf(storageOut.getActOutNum()));
+            }else {
+                flowNum = Integer.parseInt(String.valueOf(storageOut.getOutNum()));
+            }
 
         } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
             StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);

@@ -81,7 +81,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectAttrById" parameterType="Long" resultMap="AttrResult">
         <include refid="selectAttrVo"/>
-        where id = #{id}
+        where id = #{id} and status=0
+    </select>
+
+
+    <select id="selectAttrByName" parameterType="String" resultMap="AttrResult">
+        <include refid="selectAttrVo"/>
+        where attr_name_cn = #{name} and status=0
     </select>
 
     <insert id="insertAttr" parameterType="Attr" useGeneratedKeys="true" keyProperty="id">

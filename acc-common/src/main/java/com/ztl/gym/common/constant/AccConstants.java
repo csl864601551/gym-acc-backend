@@ -192,4 +192,16 @@ public class AccConstants {
      */
     public final static int STORAG_TRANSFERE_STATUS_IN = 0;
 
+
+    /*---------------------------- 角色常量 ----------------------------*/
+    /**
+     * 企业角色
+     */
+    public final static long COMPANY_ROLE = 101;
+
+    /**
+     * 管理员角色
+     */
+    public final static long ADMIN_ROLE = 1;
+
 }

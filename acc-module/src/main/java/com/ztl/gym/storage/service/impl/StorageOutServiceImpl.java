@@ -126,7 +126,6 @@ public class StorageOutServiceImpl implements IStorageOutService {
             map.put("codes", storageOut.getCodes());
             map.put("outsFlag", "1");
             updateOutStatusByCode(map);//PDA端使用
-
         }
 //        long storageRecordId=storageInMapper.selectInIdByExtraNo(storageOut.getExtraNo());//最新入库单号
 //        List<String> codes=codeService.selectCodeByStorage( storageOut.getCompanyId(),AccConstants.STORAGE_TYPE_IN,storageRecordId);
@@ -216,7 +215,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         if (extraNo != null) {//判断非空
             if (extraNo.substring(0, 2).equals("DB")) {
                 StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(extraNo);
-                storageTransfer.setStatus(StorageTransfer.STATUS_DEALING);
+                storageTransfer.setStatus(StorageTransfer.STATUS_FINISH);
                 storageTransfer.setBatchNo(storageOut.getBatchNo());
                 storageTransfer.setActTransferNum(storageOut.getActOutNum());
                 storageTransferService.updateStorageTransfer(storageTransfer);
@@ -291,6 +290,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setStorageTo(storageTransfer.getStorageTo());
         storageOut.setFromStorageId(storageTransfer.getFromStorageId());
         storageOut.setRemark("调拨出库，调拨单号：" + storageTransfer.getTransferNo());
+        storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageOut.setCreateTime(new Date());
         return storageOutMapper.insertStorageOut(storageOut);
     }
 

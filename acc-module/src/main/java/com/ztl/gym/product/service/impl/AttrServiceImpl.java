@@ -38,6 +38,20 @@ public class AttrServiceImpl implements IAttrService
         return attrMapper.selectAttrById(id);
     }
 
+
+
+    /**
+     * 查询规格属性
+     *
+     * @param name 规格属性name
+     * @return 规格属性
+     */
+    @Override
+    public Attr selectAttrByName(String name)
+    {
+        return attrMapper.selectAttrByName(name);
+    }
+
     /**
      * 查询规格属性列表
      *

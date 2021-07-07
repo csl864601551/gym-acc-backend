@@ -23,18 +23,25 @@
     </sql>
 
     <sql id="selectCompanyAreaExtraVo">
-        select a.id,
-        a.company_id,
-        a.tenant_id,
-        a.province,
-        a.city,
-        a.area,
-        a.create_user,
-        a.create_time,
-        a.update_user,
-        a.update_time,
-        u.nick_name
-        from t_company_area a left join sys_user u on a.create_user = u.user_id
+        SELECT
+	a.id,
+	a.company_id,
+	a.tenant_id,
+	a.province,
+	a.city,
+	a.area,
+	a.create_user,
+	a.create_time,
+	a.update_user,
+	a.update_time,
+	u.nick_name,
+	b.dept_name companyName,
+	c.dept_name tenantName
+FROM
+	t_company_area a
+	LEFT JOIN sys_user u ON a.create_user = u.user_id
+	LEFT JOIN sys_dept b ON a.company_id = b.dept_id
+	LEFT JOIN sys_dept c ON a.tenant_id = c.dept_id
     </sql>
 
     <select id="selectCompanyAreaList" parameterType="CompanyArea" resultMap="CompanyAreaResult">
@@ -48,7 +55,7 @@
             <if test="createUser != null ">and create_user = #{createUser}</if>
             <if test="updateUser != null ">and update_user = #{updateUser}</if>
         </where>
-        ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and tenant_id ')}
+--         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and tenant_id ')}
     </select>
 
     <select id="selectCompanyAreaListV2" parameterType="CompanyArea" resultMap="CompanyAreaResult">
@@ -71,7 +78,7 @@
 
     <select id="selectkyjxsdqList" parameterType="Long" resultType="com.ztl.gym.area.domain.CompanyArea">
         <include refid="selectCompanyAreaVo"/>
-        where tenant_id IN (select parent_id from  sys_dept  where dept_id = #{companyId})
+        where tenant_id IN (select parent_id from sys_dept where dept_id = #{companyId})
     </select>
 
     <insert id="insertCompanyArea" parameterType="CompanyArea" useGeneratedKeys="true" keyProperty="id">
