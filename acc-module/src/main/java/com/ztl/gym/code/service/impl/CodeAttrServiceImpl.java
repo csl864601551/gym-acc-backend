@@ -104,4 +104,14 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     {
         return codeAttrMapper.deleteCodeAttrById(id);
     }
+    /**
+     * 批量修改码属性
+     *
+     * @param attrList 码属性
+     * @return 结果
+     */
+    @Override
+    public int updateCodeAttrBatch(List<CodeAttr> attrList) {
+        return codeAttrMapper.updateCodeAttrBatch(attrList);
+    }
 }

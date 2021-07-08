@@ -160,11 +160,15 @@
     </delete>
 
     <update id="updateStatusByAttrId" parameterType="Map">
-        update t_code
+        update t_code_${companyId}
         <trim prefix="SET" suffixOverrides=",">
             <if test="status != null">status = #{status},</if>
         </trim>
-        where code_attr_id = #{codeAttrId} and company_id = #{companyId}
+        where  company_id = #{companyId} and
+        code_attr_id in
+        <foreach item="codeAttrId" collection="idList" open="(" separator="," close=")">
+            #{codeAttrId}
+        </foreach>
     </update>
 
     <insert id="insertInCodeFlowForBatchSingleV2">

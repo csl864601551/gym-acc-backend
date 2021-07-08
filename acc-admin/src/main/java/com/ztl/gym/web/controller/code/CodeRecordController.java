@@ -1,5 +1,6 @@
 package com.ztl.gym.web.controller.code;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
@@ -36,10 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code/record")
@@ -316,30 +315,38 @@ public class CodeRecordController extends BaseController {
         List<CodeAttr> codeAttrs = codeAttrService.selectCodeAttrByRecordId(fuzhiVo.getRecordId());
         Product product = productService.selectTProductById(fuzhiVo.getProductId());
         ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
-
+        ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
+        ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        String productCategory = category1.getCategoryName() + "-" + category2.getCategoryName();
+        Date inputTime = new Date();
+        List<CodeAttr> codeAttrList = new LinkedList<>();
+        CodeAttr attrParam = null;
         for (CodeAttr codeAttr : codeAttrs) {
-            CodeAttr attrParam = new CodeAttr();
+            attrParam = new CodeAttr();
             attrParam.setId(codeAttr.getId());
             attrParam.setProductId(product.getId());
             attrParam.setProductName(product.getProductName());
             attrParam.setProductNo(product.getProductNo());
             attrParam.setBarCode(product.getBarCode());
-            ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
-            ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
-            attrParam.setProductCategory(category1.getCategoryName() + "-" + category2.getCategoryName());
+            attrParam.setProductCategory(productCategory);
             attrParam.setProductUnit(product.getUnit());
             attrParam.setProductIntroduce(product.getProductIntroduce());
             attrParam.setBatchId(fuzhiVo.getBatchId());
             attrParam.setBatchNo(productBatch.getBatchNo());
             attrParam.setRemark(fuzhiVo.getRemark());
-            attrParam.setInputBy(SecurityUtils.getLoginUser().getUser().getUserId());
-            attrParam.setInputTime(new Date());
-            codeAttrService.updateCodeAttr(attrParam);
-
-            //更新对应码的状态
-            codeService.updateStatusByAttrId(codeAttr.getCompanyId(), codeAttr.getId(), AccConstants.CODE_STATUS_FINISH);
+            attrParam.setInputBy(userId);
+            attrParam.setInputTime(inputTime);
+            attrParam.setUpdateTime(inputTime);
+            codeAttrList.add(attrParam);
         }
-
+        //批量更新
+        if(!CollectionUtil.isEmpty(codeAttrList)){
+            codeAttrService.updateCodeAttrBatch(codeAttrList);
+            //更新对应码的状态
+            List idList = codeAttrList.stream().map(CodeAttr::getId).collect(Collectors.toList());
+            codeService.updateStatusByAttrId(codeAttrs.get(0).getCompanyId(), idList, AccConstants.CODE_STATUS_FINISH);
+        }
         CodeRecord codeRecord = new CodeRecord();
         codeRecord.setId(fuzhiVo.getRecordId());
         codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);

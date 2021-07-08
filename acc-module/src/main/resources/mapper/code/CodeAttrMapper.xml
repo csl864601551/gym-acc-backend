@@ -182,4 +182,35 @@
         </trim>
         where record_id = #{id}
     </update>
+    <update id="updateCodeAttrBatch" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_code_attr
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.companyId != null">company_id = #{item.companyId},</if>
+                <if test="item.tenantId != null">tenant_id = #{item.tenantId},</if>
+                <if test="item.storageType != null">storage_type = #{item.storageType},</if>
+                <if test="item.storageRecordId != null">storage_record_id = #{item.storageRecordId},</if>
+                <if test="item.recordId != null">recordId = #{item.recordId},</if>
+                <if test="item.indexStart != null">index_start = #{item.indexStart},</if>
+                <if test="item.indexEnd != null">index_end = #{item.indexEnd},</if>
+                <if test="item.productId != null">product_id = #{item.productId},</if>
+                <if test="item.productName != null">product_name = #{item.productName},</if>
+                <if test="item.productNo != null">product_no = #{item.productNo},</if>
+                <if test="item.barCode != null">bar_code = #{item.barCode},</if>
+                <if test="item.productCategory != null">product_category = #{item.productCategory},</if>
+                <if test="item.productUnit != null">product_unit = #{item.productUnit},</if>
+                <if test="item.batchId != null">batch_id = #{item.batchId},</if>
+                <if test="item.batchNo != null">batch_no = #{item.batchNo},</if>
+                <if test="item.productIntroduce != null">product_introduce = #{item.productIntroduce},</if>
+                <if test="item.remark != null">remark = #{item.remark},</if>
+                <if test="item.inputBy != null">input_by = #{item.inputBy},</if>
+                <if test="item.inputTime != null">input_time = #{item.inputTime},</if>
+                <if test="item.createUser != null">create_user = #{item.createUser},</if>
+                <if test="item.createTime != null">create_time = #{item.createTime},</if>
+                <if test="item.updateUser != null">update_user = #{item.updateUser},</if>
+                <if test="item.updateTime != null">update_time = #{item.updateTime},</if>
+            </trim>
+            where id = #{item.id}
+        </foreach>
+    </update>
 </mapper>

@@ -87,11 +87,11 @@ public interface ICodeService {
      * 根据属性id修改码状态
      *
      * @param companyId
-     * @param codeAttrId
+     * @param idList
      * @param status
      * @return
      */
-    int updateStatusByAttrId(Long companyId, Long codeAttrId, int status);
+    int updateStatusByAttrId(Long companyId, List<Long> idList, int status);
 
     /**
      * 批量新增码流转明细 【insertProvider形式】

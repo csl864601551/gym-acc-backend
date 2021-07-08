@@ -211,10 +211,10 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public int updateStatusByAttrId(Long companyId, Long codeAttrId, int status) {
+    public int updateStatusByAttrId(Long companyId, List<Long> idList, int status) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
-        params.put("codeAttrId", codeAttrId);
+        params.put("idList", idList);
         params.put("status", status);
         return codeMapper.updateStatusByAttrId(params);
     }

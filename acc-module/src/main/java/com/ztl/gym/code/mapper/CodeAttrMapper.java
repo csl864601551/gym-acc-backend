@@ -77,4 +77,5 @@ public interface CodeAttrMapper {
      */
     int updateCodeIndex(Map<String, Object> params);
 
+    int updateCodeAttrBatch(List<CodeAttr> attrList);
 }
