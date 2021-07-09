@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.print.mapper.PrintDataMapper">
+
+    <select id="selectPrintData" resultType="com.ztl.gym.print.domain.PrintData">
+        select id, box_code boxCode, code_index codeIndex from t_print_data where print_status = 0
+    </select>
+
+    <update id="updatePrint">
+        update t_print_data
+        set print_status = 1
+        where id = #{id}
+    </update>
+
+</mapper>
