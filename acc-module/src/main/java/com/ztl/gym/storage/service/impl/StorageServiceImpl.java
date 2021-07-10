@@ -370,9 +370,9 @@ public class StorageServiceImpl implements IStorageService {
                 StorageIn storageIn=storageInService.selectStorageInById(storageRecordId);
                 codeRes.setTenantId(storageIn.getTenantId());
 
-                codeTemp.setCompanyId(companyId);
                 codeTemp.setTenantId(storageIn.getTenantId());
             }
+            codeTemp.setCompanyId(companyId);
             codeRes.setStorageType(storageType);
             codeRes.setStorageRecordId(storageRecordId);
             if(isBox){
