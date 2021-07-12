@@ -14,6 +14,7 @@
         <result property="codeType" column="code_type"/>
         <result property="pCode" column="p_code"/>
         <result property="codeAttrId" column="code_attr_id"/>
+        <result property="singleId" column="single_id"/>
         <result property="storageType" column="storage_type"/>
         <result property="storageRecordId" column="storage_record_id"/>
         <result property="codeTypeName" column="code_type_name"/>
@@ -105,11 +106,11 @@
     </insert>
 
     <insert id="insertCodeForBatch">
-        insert into t_code(code_index, code, company_id, status, code_acc, code_type, p_code, code_attr_id)
+        insert into t_code(code_index, code, company_id, status, code_acc, code_type, p_code, code_attr_id,single_id)
         values
         <foreach collection="list" item="code" separator=",">
             (#{code.codeIndex}, #{code.code}, #{code.companyId}, #{code.status}, #{code.codeAcc}, #{code.codeType},
-            #{code.pCode}, #{code.codeAttrId})
+            #{code.pCode}, #{code.codeAttrId}, #{code.singleId})
         </foreach>
     </insert>
 
@@ -239,6 +240,12 @@
         <include refid="selectCodeVo"/>
         where company_id = #{companyId} and  code_attr_id in
         (select id from t_code_attr where record_id = #{recordId} and company_id = #{companyId})
+        order by code_index  asc
+    </select>
+
+    <select id="selectCodeListBySingle" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where company_id = #{companyId} and  single_id = #{singleId}
         order by code_index  asc
     </select>
 

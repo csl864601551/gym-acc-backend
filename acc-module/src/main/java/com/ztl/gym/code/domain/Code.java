@@ -66,6 +66,12 @@ public class Code extends BaseEntity {
     private Long codeAttrId;
 
     /**
+     * 生码记录id
+     */
+//    @Excel(name = "生码记录id")
+    private Long singleId;
+
+    /**
      * 当前流转类型
      */
     private Integer storageType;
@@ -205,6 +211,14 @@ public class Code extends BaseEntity {
 
     public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public Long getSingleId() {
+        return singleId;
+    }
+
+    public void setSingleId(Long singleId) {
+        this.singleId = singleId;
     }
 
     @Override

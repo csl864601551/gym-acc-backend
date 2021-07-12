@@ -3,6 +3,7 @@ package com.ztl.gym.storage.service.impl;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
@@ -88,12 +89,21 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageOut(StorageOut storageOut) {
+        //判定是否重复录入
+        StorageOut temp = new StorageOut();
+        temp.setOutNo(storageOut.getOutNo());
+        List list = storageOutMapper.selectStorageOutList(temp);
+        if (list.size() > 0) {
+            throw new CustomException("该批次码已出库,请退出页面重试！", HttpStatus.ERROR);
+        }
+
         storageOut.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         storageOut.setStatus(StorageOut.STATUS_WAIT);
         storageOut.setTenantId(commonService.getTenantId());
         storageOut.setStorageFrom(commonService.getTenantId());
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
+
         if (storageOut.getThirdPartyFlag() != null) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
@@ -113,12 +123,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         } else {
             storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
         }
-        StorageOut temp = new StorageOut();
-        temp.setOutNo(storageOut.getOutNo());
-        List list = storageOutMapper.selectStorageOutList(temp);
-        if (list.size() > 0) {
-            throw new CustomException("该批次码已出库,请退出页面重试！");
-        }
+
         int res = storageOutMapper.insertStorageOut(storageOut);//插入t_storage_out出库表
         if (storageOut.getThirdPartyFlag() != null) {
             Map<String, Object> map = new HashMap<>();

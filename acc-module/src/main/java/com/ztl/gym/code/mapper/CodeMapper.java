@@ -170,6 +170,7 @@ public interface CodeMapper {
      * @return
      */
     List<Code> selectCodeListByRecord(@Param("companyId") long companyId, @Param("recordId") long recordId);
+    List<Code> selectCodeListBySingle(@Param("companyId") long companyId, @Param("singleId") long singleId);
 
     void updatePCodeByCode(Map<String, Object> params);
 

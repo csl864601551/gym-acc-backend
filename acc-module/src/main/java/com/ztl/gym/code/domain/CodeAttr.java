@@ -51,6 +51,14 @@ public class CodeAttr extends BaseEntity {
     @Excel(name = "生码记录id")
     private Long recordId;
 
+
+    /**
+     * 生码记录id
+     */
+    @Excel(name = "生码记录id")
+    private Long singleId;
+
+
     /**
      * 起始流水号
      */
@@ -345,6 +353,14 @@ public class CodeAttr extends BaseEntity {
 
     public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public Long getSingleId() {
+        return singleId;
+    }
+
+    public void setSingleId(Long singleId) {
+        this.singleId = singleId;
     }
 
     @Override
