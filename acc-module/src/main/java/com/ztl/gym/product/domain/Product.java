@@ -1,14 +1,14 @@
 package com.ztl.gym.product.domain;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品对象 t_product
@@ -103,6 +103,10 @@ public class Product extends BaseEntity
     /** 创建人 */
     @Excel(name = "创建人")
     private Long createUser;
+
+
+    /** 创建人 */
+    private String createUserName;
 
     /** 更新人 */
     @Excel(name = "更新人")
@@ -327,6 +331,14 @@ public class Product extends BaseEntity
         this.categoryName = categoryName;
     }
 
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -353,6 +365,7 @@ public class Product extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateUser", getUpdateUser())
             .append("updateTime", getUpdateTime())
+                .append("createUserName", getCreateUserName())
             .toString();
     }
 }
