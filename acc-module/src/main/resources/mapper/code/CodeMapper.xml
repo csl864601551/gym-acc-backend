@@ -31,7 +31,7 @@
     </resultMap>
 
     <sql id="selectCodeVo">
-        select code_index, company_id,tenant_id, status, code, code_acc, code_type, p_code, code_attr_id,
+        select code_index, company_id,tenant_id, status, code, code_acc, code_type, p_code, code_attr_id,single_id,
         case when code_type='box' then '箱码' else '单码' end as code_type_name,storage_type,storage_record_id from t_code
     </sql>
 
@@ -92,6 +92,7 @@
             <if test="codeType != null">code_type,</if>
             <if test="pCode != null">p_code,</if>
             <if test="codeAttrId != null">code_attr_id,</if>
+            <if test="singleId != null">single_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="codeIndex != null">#{codeIndex},</if>
@@ -102,6 +103,7 @@
             <if test="codeType != null">#{codeType},</if>
             <if test="pCode != null">#{pCode},</if>
             <if test="codeAttrId != null">#{codeAttrId},</if>
+            <if test="singleId != null">#{singleId},</if>
         </trim>
     </insert>
 

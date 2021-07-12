@@ -264,7 +264,9 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                code.setpCode(preFixUrl + code.getpCode());
+                if(code.getpCode()!=null) {
+                    code.setpCode(preFixUrl + code.getpCode());
+                }
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
             }

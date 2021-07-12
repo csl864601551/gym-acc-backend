@@ -9,6 +9,7 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
@@ -180,7 +181,7 @@ public class CodeSingleController extends BaseController {
     @Log(title = "生码记录", businessType = BusinessType.EXPORT)
     @GetMapping("/download")
     public AjaxResult download(CodeSingle codeSingle) {
-        List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
+        List<Code> list = codeService.selectCodeListBySingle(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -191,7 +192,9 @@ public class CodeSingleController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                code.setpCode(preFixUrl + code.getpCode());
+                if(code.getpCode()!=null){
+                    code.setpCode(preFixUrl + code.getpCode());
+                }
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
             }
@@ -206,7 +209,7 @@ public class CodeSingleController extends BaseController {
     @PreAuthorize("@ss.hasPermi('code:single:download')")
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeSingle codeSingle, HttpServletResponse response) {
-        List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
+        List<Code> list = codeService.selectCodeListBySingle(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
         String temp = "码" + "                                        " + "\r\n";
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
@@ -250,6 +253,34 @@ public class CodeSingleController extends BaseController {
     }
 
     /**
+     * 普通生码，单码List装箱,每次校验码状态
+     */
+    @GetMapping("/checkPackageCode")
+    @DataSource(DataSourceType.SHARDING)
+    public AjaxResult checkPackageCode(@RequestParam("code") String codeStr) {
+        AjaxResult ajax = AjaxResult.success();
+        codeStr=codeStr.trim();
+        if(!codeStr.equals("")){
+            Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+
+            Code temp = new Code();
+            temp.setCode(codeStr);
+            temp.setCompanyId(companyId);
+            Code code=codeService.selectCode(temp);//查询单码数据
+            if(code==null){
+                throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
+            }
+            if(code.getpCode()!=null){
+                throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！", HttpStatus.ERROR);
+            }
+            ajax.put("data", code);
+            return ajax;
+        }else{
+            throw new CustomException("未接收到单码数据！", HttpStatus.ERROR);
+        }
+
+    }
+    /**
      * 普通生码，单码List装箱
      */
     @PostMapping("/packageCode")
@@ -283,8 +314,12 @@ public class CodeSingleController extends BaseController {
                 if(code==null){
                     throw new CustomException("未查询到相关码数据！");
                 }
-                codeAttrId=code.getCodeAttrId();
-                singleId=code.getSingleId();
+                if(code.getCodeAttrId()!=null){
+                    codeAttrId=code.getCodeAttrId();
+                }
+                if(code.getSingleId()!=null){
+                    singleId=code.getSingleId();
+                }
                 if(code.getpCode()!=null){
                     throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
                 }
