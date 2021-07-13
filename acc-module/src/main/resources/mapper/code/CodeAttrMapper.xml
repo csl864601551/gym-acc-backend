@@ -96,6 +96,7 @@
             <if test="indexStart != null">index_start,</if>
             <if test="indexEnd != null">index_end,</if>
             <if test="productId != null">product_id,</if>
+            <if test="productName != null">product_name,</if>
             <if test="productNo != null">product_no,</if>
             <if test="barCode != null">bar_code,</if>
             <if test="productCategory != null">product_category,</if>
@@ -121,6 +122,7 @@
             <if test="indexStart != null">#{indexStart},</if>
             <if test="indexEnd != null">#{indexEnd},</if>
             <if test="productId != null">#{productId},</if>
+            <if test="productName != null">#{productName},</if>
             <if test="productNo != null">#{productNo},</if>
             <if test="barCode != null">#{barCode},</if>
             <if test="productCategory != null">#{productCategory},</if>

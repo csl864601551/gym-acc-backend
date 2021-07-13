@@ -179,4 +179,6 @@ public interface CodeMapper {
     void updateCodeStorageByPCode(Code codeTemp);
 
     int updateCodeStorageByCode(Code codeRes);
+
+    void updateCodeAttrIdByPCode(Code code);
 }

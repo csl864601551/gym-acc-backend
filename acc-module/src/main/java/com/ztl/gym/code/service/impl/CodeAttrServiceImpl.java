@@ -62,10 +62,11 @@ public class CodeAttrServiceImpl implements ICodeAttrService
      * @return 结果
      */
     @Override
-    public int insertCodeAttr(CodeAttr codeAttr)
+    public Long insertCodeAttr(CodeAttr codeAttr)
     {
         codeAttr.setCreateTime(DateUtils.getNowDate());
-        return codeAttrMapper.insertCodeAttr(codeAttr);
+        codeAttrMapper.insertCodeAttr(codeAttr);
+        return codeAttr.getId();
     }
 
     /**
