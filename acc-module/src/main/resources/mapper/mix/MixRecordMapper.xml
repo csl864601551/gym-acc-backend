@@ -72,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and p.product_no like #{product_noLike}
             </if>
         </where>
+        order by mr.create_time desc
     </select>
     
     <select id="selectMixRecordById" parameterType="Long" resultMap="MixRecordResult">
