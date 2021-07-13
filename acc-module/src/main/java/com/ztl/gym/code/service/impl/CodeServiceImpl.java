@@ -478,4 +478,10 @@ public class CodeServiceImpl implements ICodeService {
     public int updateCodeStorageByCode(Code codeRes) {
         return codeMapper.updateCodeStorageByCode(codeRes);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void updateCodeAttrIdByPCode(Code code) {
+        codeMapper.updateCodeAttrIdByPCode(code);
+    }
 }

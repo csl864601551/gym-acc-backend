@@ -136,4 +136,6 @@ public interface ICodeService {
     int updateCodeStorageByCode(Code codeRes);
 
     int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId);
+
+    void updateCodeAttrIdByPCode(Code code);
 }

@@ -1,6 +1,7 @@
 package com.ztl.gym.web.controller.code;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
 import com.ztl.gym.code.service.ICodeAttrService;
@@ -352,5 +353,32 @@ public class CodeSingleController extends BaseController {
 
     }
 
-
+    /**
+     * 绑定产品信息
+     * @param map
+     * @return
+     */
+    @PostMapping("/bindCodeAttr")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult bindProductAttr(@RequestBody Map<String,Object> map) {
+        if(map != null) {
+            CodeAttr codeAttr = new CodeAttr();
+            codeAttr.setCompanyId(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+            codeAttr.setProductId(Long.valueOf(map.get("productId").toString()));
+            codeAttr.setProductNo(map.get("productNo").toString());
+            codeAttr.setProductName(map.get("productName").toString());
+            //插入编码属性表
+            Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+            //更新编码信息表
+            Code code = new Code();
+            code.setpCode((String) map.get("pCode"));
+            code.setCodeAttrId(Long.valueOf(codeAttrId));
+            code.setCompanyId(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+            codeService.updateCodeAttrIdByPCode(code);
+            return AjaxResult.success();
+        } else {
+            throw new CustomException("产品信息为空！");
+        }
+    }
 }

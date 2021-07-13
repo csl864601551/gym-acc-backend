@@ -44,7 +44,7 @@ public interface CodeAttrMapper {
      * @param codeAttr 码属性
      * @return 结果
      */
-    public int insertCodeAttr(CodeAttr codeAttr);
+    public Long insertCodeAttr(CodeAttr codeAttr);
 
     /**
      * 修改码属性

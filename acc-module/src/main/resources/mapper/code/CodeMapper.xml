@@ -254,4 +254,8 @@
     <update id="updatePCodeByCode" parameterType="Map" >
         update t_code set p_code = #{pCode}  where company_id=#{companyId} and code = #{code}
     </update>
+
+    <update id="updateCodeAttrIdByPCode" parameterType="Code" >
+        update t_code set code_attr_id = #{codeAttrId} where company_id=#{companyId} and (p_code = #{pCode} or code = #{pCode})
+    </update>
 </mapper>
