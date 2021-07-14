@@ -1,11 +1,11 @@
 package com.ztl.gym.storage.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.storage.domain.StorageOut;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 出库Mapper接口
@@ -83,4 +83,13 @@ public interface StorageOutMapper {
     int deleteByTransfer(String transferNo);
 
     List<Map<String,Object>> selectDayCount(Map<String, Object> map);
+
+
+    /**
+     * 产品出货量
+     *
+     * @param map 需要撤销出库dept
+     * @return 结果
+     */
+    int selectCountByDept(Map<String, Object> map);
 }

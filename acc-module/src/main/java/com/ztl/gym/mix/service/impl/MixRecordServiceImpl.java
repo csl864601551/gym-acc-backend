@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 窜货记录Service业务层处理
@@ -116,5 +117,17 @@ public class MixRecordServiceImpl implements IMixRecordService
     public int deleteMixRecordById(Long id)
     {
         return mixRecordMapper.deleteMixRecordById(id);
+    }
+
+    /**
+     * 窜货总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectmixnum(Map<String, Object> map)
+    {
+        return mixRecordMapper.selectmixnum(map);
     }
 }

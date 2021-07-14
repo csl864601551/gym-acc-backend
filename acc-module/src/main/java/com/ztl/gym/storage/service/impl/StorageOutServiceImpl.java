@@ -316,4 +316,16 @@ public class StorageOutServiceImpl implements IStorageOutService {
     public List<Map<String,Object>> selectDayCount(Map<String, Object> map) {
         return storageOutMapper.selectDayCount(map);
     }
+
+
+    /**
+     * 产品出货量
+     *
+     * @param map 需要撤销出库dept
+     * @return 结果
+     */
+    @Override
+    public int selectCountByDept(Map<String, Object> map) {
+        return storageOutMapper.selectCountByDept(map);
+    }
 }

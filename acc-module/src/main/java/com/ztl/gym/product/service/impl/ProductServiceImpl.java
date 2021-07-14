@@ -194,4 +194,16 @@ public class ProductServiceImpl implements IProductService
     {
         return productMapper.deleteTProductById(id);
     }
+
+    /**
+     * 根据信息 获取产品数量
+     *
+     * @param map 产品
+     * @return 结果
+     */
+    @Override
+    public int selectProductNum(Map<String, Object> map)
+    {
+        return productMapper.selectProductNum(map);
+    }
 }

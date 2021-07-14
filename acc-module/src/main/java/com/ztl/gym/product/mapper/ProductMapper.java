@@ -77,4 +77,13 @@ public interface ProductMapper
     List<Map<String, Object>> getAttributeList(Long id);
 
     void deleteProductAttrById(Long id);
+
+    /**
+     * 根据信息 获取产品数量
+     *
+     * @param map 产品
+     * @return 结果
+     */
+    public int selectProductNum(Map<String, Object> map);
+
 }

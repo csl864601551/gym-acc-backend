@@ -1,23 +1,24 @@
 package com.ztl.gym.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.ztl.gym.common.annotation.DataScope;
+import com.ztl.gym.common.constant.UserConstants;
+import com.ztl.gym.common.core.domain.TreeSelect;
+import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysRole;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.system.mapper.SysDeptMapper;
 import com.ztl.gym.system.mapper.SysRoleMapper;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.common.constant.UserConstants;
-import com.ztl.gym.common.core.domain.TreeSelect;
-import com.ztl.gym.common.core.domain.entity.SysDept;
-import com.ztl.gym.common.exception.CustomException;
-import com.ztl.gym.system.mapper.SysDeptMapper;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 部门管理 服务实现
@@ -301,5 +302,16 @@ public class SysDeptServiceImpl implements ISysDeptService {
      */
     private boolean hasChild(List<SysDept> list, SysDept t) {
         return getChildList(list, t).size() > 0 ? true : false;
+    }
+
+    /**
+     * 根据部门信息获取经销商数量
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    @Override
+    public int selectCountBydept(Map<String, Object> map) {
+        return deptMapper.selectCountBydept(map);
     }
 }
