@@ -368,14 +368,15 @@ public class CodeSingleController extends BaseController {
             codeAttr.setProductId(Long.valueOf(map.get("productId").toString()));
             codeAttr.setProductNo(map.get("productNo").toString());
             codeAttr.setProductName(map.get("productName").toString());
+            codeAttr.setBatchId(Long.valueOf(map.get("BatchId").toString()));
             //插入编码属性表
             Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
             //更新编码信息表
-            Code code = new Code();
-            code.setpCode((String) map.get("pCode"));
-            code.setCodeAttrId(Long.valueOf(codeAttrId));
-            code.setCompanyId(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
-            codeService.updateCodeAttrIdByPCode(code);
+            Map<String, Object> params = new HashMap<>();
+            params.put("pCode", map.get("pCode"));
+            params.put("codeAttrId", Long.valueOf(codeAttrId));
+            params.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+            codeService.updateCodeAttrIdByPCode(params);
             return AjaxResult.success();
         } else {
             throw new CustomException("产品信息为空！");

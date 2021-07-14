@@ -180,5 +180,5 @@ public interface CodeMapper {
 
     int updateCodeStorageByCode(Code codeRes);
 
-    void updateCodeAttrIdByPCode(Code code);
+    void updateCodeAttrIdByPCode(Map<String, Object> params);
 }

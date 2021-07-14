@@ -481,7 +481,7 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public void updateCodeAttrIdByPCode(Code code) {
-        codeMapper.updateCodeAttrIdByPCode(code);
+    public void updateCodeAttrIdByPCode(Map<String, Object> param) {
+        codeMapper.updateCodeAttrIdByPCode(param);
     }
 }
