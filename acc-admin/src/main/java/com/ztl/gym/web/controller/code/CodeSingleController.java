@@ -368,7 +368,7 @@ public class CodeSingleController extends BaseController {
             codeAttr.setProductId(Long.valueOf(map.get("productId").toString()));
             codeAttr.setProductNo(map.get("productNo").toString());
             codeAttr.setProductName(map.get("productName").toString());
-            codeAttr.setBatchId(Long.valueOf(map.get("BatchId").toString()));
+            codeAttr.setBatchId(Long.valueOf(map.get("batchId").toString()));
             //插入编码属性表
             Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
             //更新编码信息表
