@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.net.Inet4Address;
@@ -26,6 +25,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -284,5 +284,17 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         codeRecord.setCreateTime(new Date());
         codeRecord.setUpdateTime(new Date());
         return codeRecord;
+    }
+
+
+    /**
+     * 生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectcodenum(Map<String, Object> map) {
+        return codeRecordMapper.selectcodenum(map);
     }
 }

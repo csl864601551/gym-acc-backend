@@ -197,4 +197,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         product_id=#{productId} and storage_to = #{tenantId} and DATE_FORMAT(out_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
         GROUP BY product_id,storage_to,DATE_FORMAT(out_time,'%Y-%m-%d')
     </select>
+
+
+    <select id="selectCountByDept" resultType="java.lang.Integer" parameterType="Map">
+        select sum(act_out_num) from  t_storage_out where status=1
+        <if test="deptId != null">
+            and company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and company_id = #{deptId}
+        </if>
+    </select>
 </mapper>

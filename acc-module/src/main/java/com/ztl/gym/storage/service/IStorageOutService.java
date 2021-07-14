@@ -1,9 +1,9 @@
 package com.ztl.gym.storage.service;
 
+import com.ztl.gym.storage.domain.StorageOut;
+
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.storage.domain.StorageOut;
 
 /**
  * 出库Service接口
@@ -88,4 +88,12 @@ public interface IStorageOutService {
     int deleteByTransfer(long transferId);
 
     List<Map<String,Object>> selectDayCount(Map<String, Object> map);
+
+    /**
+     * 产品出货量
+     *
+     * @param map 需要撤销出库dept
+     * @return 结果
+     */
+    public int selectCountByDept(Map<String, Object> map);
 }

@@ -1,7 +1,9 @@
 package com.ztl.gym.mix.mapper;
 
-import java.util.List;
 import com.ztl.gym.mix.domain.MixRecord;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 窜货记录Mapper接口
@@ -58,4 +60,12 @@ public interface MixRecordMapper
      * @return 结果
      */
     public int deleteMixRecordByIds(Long[] ids);
+
+    /**
+     * 窜货总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectmixnum(Map<String, Object> map);
 }

@@ -3,6 +3,7 @@ package com.ztl.gym.product.service;
 import com.ztl.gym.product.domain.Product;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 产品Service接口
@@ -69,4 +70,12 @@ public interface IProductService
      * @return 结果
      */
     public int deleteTProductById(Long id);
+
+    /**
+     * 根据信息 获取产品数量
+     *
+     * @param map 产品
+     * @return 结果
+     */
+    public int selectProductNum(Map<String, Object> map);
 }

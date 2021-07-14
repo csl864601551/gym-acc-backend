@@ -177,4 +177,11 @@
         </trim>
         where id = #{id}
     </update>
+
+    <select id="selectcodenum" resultType="java.lang.Integer">
+        select sum(count) from  t_code_record  where  1=1
+        <if test="deptId != null">
+            and  company_id = #{deptId}
+        </if>
+    </select>
 </mapper>

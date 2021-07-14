@@ -87,4 +87,12 @@ public interface CodeRecordMapper {
      * @return 生码记录
      */
     public CodeRecord selectCodeRecordByIndex(@Param("codeIndex")  long codeIndex, @Param("companyId") long companyId);
+
+    /**
+     * 生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectcodenum(Map<String, Object> map);
 }

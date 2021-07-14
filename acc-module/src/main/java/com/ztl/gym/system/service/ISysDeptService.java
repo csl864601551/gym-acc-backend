@@ -1,8 +1,10 @@
 package com.ztl.gym.system.service;
 
-import java.util.List;
 import com.ztl.gym.common.core.domain.TreeSelect;
 import com.ztl.gym.common.core.domain.entity.SysDept;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 部门管理 服务层
@@ -114,4 +116,12 @@ public interface ISysDeptService
      * @return 结果
      */
     public int deleteDeptById(Long deptId);
+
+    /**
+     * 根据部门信息获取经销商数量
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    public int selectCountBydept(Map<String, Object> map);
 }
