@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -227,6 +226,18 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         }
         temp.setSalesArea(salesArea);
         return temp;
+    }
+
+
+    /**
+     * 查询热力图扫码记录
+     *
+     * @param map 扫码记录
+     * @return 扫码记录集合
+     */
+    @Override
+    public List<ScanRecord> selectRLTList(Map<String,Object> map) {
+        return scanRecordMapper.selectRLTList(map);
     }
 
 

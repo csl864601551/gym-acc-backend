@@ -1,10 +1,10 @@
 package com.ztl.gym.storage.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.storage.domain.ScanRecord;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 扫码记录Mapper接口
@@ -63,4 +63,13 @@ public interface ScanRecordMapper
     public int deleteScanRecordByIds(Long[] ids);
 
     List<Map<String, Object>> selectFlowList(@Param("companyId")Long companyId,@Param("code") String code);
+
+
+    /**
+     * 查询热力图扫码记录
+     *
+     * @param map 扫码记录
+     * @return 扫码记录集合
+     */
+    public List<ScanRecord> selectRLTList(Map<String,Object> map);
 }

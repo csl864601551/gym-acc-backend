@@ -141,7 +141,5 @@ public class MixRecordController extends BaseController
         }catch (Exception e){
             return toAjax(0);
         }
-
-
     }
 }

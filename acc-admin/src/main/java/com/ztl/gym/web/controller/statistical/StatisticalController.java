@@ -2,11 +2,15 @@ package com.ztl.gym.web.controller.statistical;
 
 import cn.hutool.core.date.DateUtil;
 import com.ztl.gym.code.service.ICodeRecordService;
+import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.mix.service.IMixRecordService;
 import com.ztl.gym.product.service.IProductService;
+import com.ztl.gym.storage.domain.ScanRecord;
+import com.ztl.gym.storage.service.IScanRecordService;
 import com.ztl.gym.storage.service.IStorageOutService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author shenz
@@ -43,12 +45,16 @@ public class StatisticalController {
     @Autowired
     private IProductService tProductService;
 
+    @Autowired
+    private IScanRecordService scanRecordService;
+
     /**
      * 查询首页信息
      */
-    @PostMapping("/indexsj")
-    public AjaxResult selectindexsj(@RequestBody Map<String,Object> map)
+    @PostMapping("/indexSj")
+    public AjaxResult selectIndexSj(@RequestBody Map<String,Object> map)
     {
+        try {
         boolean isadmin = false;
         Long topdeptId = 0L;
         //获取用户部门信息
@@ -61,21 +67,21 @@ public class StatisticalController {
         }
         Map<String, Object> query = new HashMap<String, Object>();
         //平台管理员
-        int qynum =0;
-        int jxsnum =0;
-        int cpchlnum =0;
-        int chzlnum =0;
-        int smzlnum =0;
-        int ljczfynum =0;
+        int qyNum =0;
+        int jxsNum =0;
+        int cpchlNum =0;
+        int chzlNum =0;
+        int smzlNum =0;
+        int ljczfyNum =0;
         //产品总览
-        int yxjnum =0;
-        int ysjnum =0;
-        int kcjznum =0;
-        int qbcpnum =0;
+        int yxjNum =0;
+        int ysjNum =0;
+        int kcjzNum =0;
+        int qbcpNum =0;
         //经销商总览
-        int jrxznum =0;
-        int zrxznum =0;
-        int byxznum =0;
+        int jrxzNum =0;
+        int zrxzNum =0;
+        int byxzNum =0;
         int jxszs =0;
 
         //平台方
@@ -83,53 +89,53 @@ public class StatisticalController {
             //企业总数
             query.put("type",5);
             query.put("topdeptId",AccConstants.ADMIN_DEPT_ID);
-            qynum = deptService.selectCountBydept(query);
+            qyNum = deptService.selectCountBydept(query);
             //产品出货总量
-            cpchlnum = storageOutService.selectCountByDept(query);
+            cpchlNum = storageOutService.selectCountByDept(query);
             //窜货总量
-            chzlnum = mixRecordService.selectmixnum(query);
+            chzlNum = mixRecordService.selectmixnum(query);
             //生码总量
-            smzlnum = codeRecordService.selectcodenum(query);
+            smzlNum = codeRecordService.selectcodenum(query);
             //累计充值费用
 
             //产品总览
             //已下架
             query.put("type",1);
-            yxjnum = tProductService.selectProductNum(query);
+            yxjNum = tProductService.selectProductNum(query);
             //已上架
             query.put("type",2);
-            ysjnum = tProductService.selectProductNum(query);
+            ysjNum = tProductService.selectProductNum(query);
             //库存紧张
             query.put("type",3);
-            kcjznum = tProductService.selectProductNum(query);
+            kcjzNum = tProductService.selectProductNum(query);
             //全部产品
             query.put("type",4);
-            qbcpnum = tProductService.selectProductNum(query);
+            qbcpNum = tProductService.selectProductNum(query);
 
             //经销商总览
             //今日新增
             Date today = DateUtil.date();
-            Date begintime = DateUtil.beginOfDay(today);
-            Date endtime = DateUtil.endOfDay(today);
+            Date beginTime = DateUtil.beginOfDay(today);
+            Date endTime = DateUtil.endOfDay(today);
             query.put("type",1);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
-            jrxznum = deptService.selectCountBydept(query);
+            query.put("begintime",beginTime);
+            query.put("endTime",endTime);
+            jrxzNum = deptService.selectCountBydept(query);
             //昨日新增
             Date yesterday = DateUtil.yesterday();
-            begintime = DateUtil.beginOfDay(yesterday);
-            endtime = DateUtil.endOfDay(yesterday);
+            beginTime = DateUtil.beginOfDay(yesterday);
+            endTime = DateUtil.endOfDay(yesterday);
             query.put("type",2);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
-            zrxznum = deptService.selectCountBydept(query);
+            query.put("begintime",beginTime);
+            query.put("endtime",endTime);
+            zrxzNum = deptService.selectCountBydept(query);
             //本月新增
-            begintime = DateUtil.beginOfMonth(today);
-            endtime = DateUtil.endOfMonth(today);
+            beginTime = DateUtil.beginOfMonth(today);
+            endTime = DateUtil.endOfMonth(today);
             query.put("type",3);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
-            byxznum = deptService.selectCountBydept(query);
+            query.put("begintime",beginTime);
+            query.put("endtime",endTime);
+            byxzNum = deptService.selectCountBydept(query);
             //经销商总数
             query.put("type",3);
             jxszs = deptService.selectCountBydept(query);
@@ -138,29 +144,29 @@ public class StatisticalController {
             query.put("deptId",deptId);
             //经销商总数
             query.put("type",3);
-            jxsnum = deptService.selectCountBydept(query);
+            jxsNum = deptService.selectCountBydept(query);
             //产品出货总数
-            cpchlnum = storageOutService.selectCountByDept(query);
+            cpchlNum = storageOutService.selectCountByDept(query);
             //窜货总数
-            chzlnum = mixRecordService.selectmixnum(query);
+            chzlNum = mixRecordService.selectmixnum(query);
             //剩余码量
             //已经使用的码量
-            smzlnum = codeRecordService.selectcodenum(query);
+            smzlNum = codeRecordService.selectcodenum(query);
             //剩余费用
 
             //产品总览
             //已下架
             query.put("type",1);
-            yxjnum = tProductService.selectProductNum(query);
+            yxjNum = tProductService.selectProductNum(query);
             //已上架
             query.put("type",2);
-            ysjnum = tProductService.selectProductNum(query);
+            ysjNum = tProductService.selectProductNum(query);
             //库存紧张
             query.put("type",3);
-            kcjznum = tProductService.selectProductNum(query);
+            kcjzNum = tProductService.selectProductNum(query);
             //全部产品
             query.put("type",4);
-            qbcpnum = tProductService.selectProductNum(query);
+            qbcpNum = tProductService.selectProductNum(query);
 
             //经销商总览
             //今日新增
@@ -170,7 +176,7 @@ public class StatisticalController {
             query.put("type",1);
             query.put("begintime",begintime);
             query.put("endtime",endtime);
-            jrxznum = deptService.selectCountBydept(query);
+            jrxzNum = deptService.selectCountBydept(query);
             //昨日新增
             Date yesterday = DateUtil.yesterday();
             begintime = DateUtil.beginOfDay(yesterday);
@@ -178,34 +184,38 @@ public class StatisticalController {
             query.put("type",2);
             query.put("begintime",begintime);
             query.put("endtime",endtime);
-            zrxznum = deptService.selectCountBydept(query);
+            zrxzNum = deptService.selectCountBydept(query);
             //本月新增
             begintime = DateUtil.beginOfMonth(today);
             endtime = DateUtil.endOfMonth(today);
             query.put("type",3);
             query.put("begintime",begintime);
             query.put("endtime",endtime);
-            byxznum = deptService.selectCountBydept(query);
+            byxzNum = deptService.selectCountBydept(query);
             //经销商总数
             query.put("type",3);
             jxszs = deptService.selectCountBydept(query);
         }
         AjaxResult ajax = AjaxResult.success();
-        ajax.put("qynum", qynum);
-        ajax.put("jxsnum", jxsnum);
-        ajax.put("cpchlnum", cpchlnum);
-        ajax.put("chzlnum", chzlnum);
-        ajax.put("smzlnum", smzlnum);
-        ajax.put("ljczfynum", ljczfynum);
-        ajax.put("yxjnum", yxjnum);
-        ajax.put("ysjnum", ysjnum);
-        ajax.put("kcjznum", kcjznum);
-        ajax.put("qbcpnum", qbcpnum);
-        ajax.put("jrxznum", jrxznum);
-        ajax.put("zrxznum", zrxznum);
-        ajax.put("byxznum", byxznum);
+        ajax.put("qyNum", qyNum);
+        ajax.put("jxsNum", jxsNum);
+        ajax.put("cpchlNum", cpchlNum);
+        ajax.put("chzlNum", chzlNum);
+        ajax.put("smzlNum", smzlNum);
+        ajax.put("ljczfyNum", ljczfyNum);
+        ajax.put("yxjNum", yxjNum);
+        ajax.put("ysjNum", ysjNum);
+        ajax.put("kcjzNum", kcjzNum);
+        ajax.put("qbcpNum", qbcpNum);
+        ajax.put("jrxzNum", jrxzNum);
+        ajax.put("zrxzNum", zrxzNum);
+        ajax.put("byxzNum", byxzNum);
         ajax.put("jxszs", jxszs);
         return ajax;
+        }catch (Exception e){
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
     }
 
 
@@ -242,6 +252,40 @@ public class StatisticalController {
         AjaxResult ajax = AjaxResult.success();
         ajax.put("jxszs", 0);
         return ajax;
+    }
+
+
+
+    /**
+     * 热力图扫码信息
+     */
+    @Log(title = "热力图扫码信息", businessType = BusinessType.INSERT)
+    @PostMapping("/getRltXx")
+    public AjaxResult getRltXx(@RequestBody Map<String,Object> map)
+    {
+        try {
+            List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
+            //查询热力图数据
+            List<ScanRecord> list = scanRecordService.selectRLTList(map);
+            if(list.size()>0){
+                for(int i=0;i<list.size();i++){
+                    Map<String,Object> rltmap = new HashMap<String,Object>();
+                    ScanRecord scanRecord  = list.get(i);
+                    rltmap.put("lng",scanRecord.getLongitude());
+                    rltmap.put("lat",scanRecord.getLatitude());
+                    rltmap.put("count",i);
+//                    rltmap.put("code",scanRecord.getCode());
+//                    rltmap.put("id",scanRecord.getId());
+                    lists.add(rltmap);
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("rltjson", lists);
+            return ajax;
+        }catch (Exception e){
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
     }
 
 

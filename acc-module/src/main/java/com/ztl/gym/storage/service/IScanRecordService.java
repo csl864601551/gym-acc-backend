@@ -1,10 +1,10 @@
 package com.ztl.gym.storage.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.storage.domain.ScanRecord;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 扫码记录Service接口
@@ -65,4 +65,13 @@ public interface IScanRecordService
     Map<String,Object> getScanRecordByCode(Long companyId, String code);
 
     CompanyArea getIsMixInfo(CompanyArea area);
+
+
+    /**
+     * 查询热力图扫码记录
+     *
+     * @param map 扫码记录
+     * @return 扫码记录集合
+     */
+    public List<ScanRecord> selectRLTList(Map<String,Object> map);
 }

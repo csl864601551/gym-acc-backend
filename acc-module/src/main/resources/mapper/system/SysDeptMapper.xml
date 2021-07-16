@@ -173,13 +173,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			and ancestors like concat('%', #{deptId}, '%')
 		</if>
 		<if test="type != null and type == 1">
-			and create_time &gt;= #{begintime} and create_time &lt;=  #{endtime}
+			and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
 		</if>
 		<if test="type != null and type == 2">
-			and create_time &gt;= #{begintime} and create_time &lt;=  #{endtime}
+			and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
 		</if>
 		<if test="type != null and type == 3">
-			and create_time &gt;= #{begintime} and create_time &lt;=  #{endtime}
+			and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
 		</if>
 		<if test="type != null and type == 4">
 
