@@ -2,10 +2,8 @@ package com.ztl.gym.web.controller.statistical;
 
 import cn.hutool.core.date.DateUtil;
 import com.ztl.gym.code.service.ICodeRecordService;
-import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.AjaxResult;
-import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.mix.service.IMixRecordService;
 import com.ztl.gym.product.service.IProductService;
@@ -14,11 +12,10 @@ import com.ztl.gym.storage.service.IScanRecordService;
 import com.ztl.gym.storage.service.IStorageOutService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -259,7 +256,7 @@ public class StatisticalController {
     /**
      * 热力图扫码信息
      */
-    @Log(title = "热力图扫码信息", businessType = BusinessType.INSERT)
+    //@Log(title = "热力图扫码信息", businessType = BusinessType.INSERT)
     @PostMapping("/getRltXx")
     public AjaxResult getRltXx(@RequestBody Map<String,Object> map)
     {
@@ -286,6 +283,59 @@ public class StatisticalController {
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
             return ajax;
         }
+    }
+
+
+
+    /**
+     * 点聚合扫码信息
+     */
+    //@Log(title = "点聚合扫码信息", businessType = BusinessType.INSERT)
+    @RequestMapping(value = "getDjhXx", method = {RequestMethod.GET,RequestMethod.POST})
+    public AjaxResult getDjhXx(HttpServletRequest request, HttpServletResponse response)
+    {
+        try {
+            List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
+            Map<String,Object> map = new HashMap<String,Object>();
+            //查询热力图数据
+            List<ScanRecord> list = scanRecordService.selectRLTList(map);
+            if(list.size()>0){
+                for(int i=0;i<list.size();i++){
+                    Map<String,Object> rltmap = new HashMap<String,Object>();
+                    List<String> list1 = new ArrayList<String>();
+                    ScanRecord scanRecord  = list.get(i);
+                    list1.add(scanRecord.getLongitude());
+                    list1.add(scanRecord.getLatitude());
+                    rltmap.put("lnglat",list1);
+//                    rltmap.put("code",scanRecord.getCode());
+//                    rltmap.put("id",scanRecord.getId());
+                    lists.add(rltmap);
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("rltjson", lists);
+            return ajax;
+        }catch (Exception e){
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
+    }
+
+
+    /**
+     * 根据码号查询相关产品和码信息
+     */
+    @RequestMapping(value = "getDjhXxs", method = {RequestMethod.GET,RequestMethod.POST})
+    public AjaxResult getDjhXxs(HttpServletRequest request, HttpServletResponse response) {
+        //String code = request.getParameter("code");
+        //System.out.println("扫码详情进入成功  code=="+code);
+//        String compant_id = WxUtil.splitData(code,"-","-");
+//        long  companyId = Integer.parseInt(compant_id)/5;
+        String temp ="";
+        List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("rltjson", lists);
+        return ajax;
     }
 
 

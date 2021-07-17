@@ -127,6 +127,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/storage/transfer/**").permitAll()
                 .antMatchers("/storage/storage/**").permitAll()
                 .antMatchers("/storage/out/**").permitAll()
+                .antMatchers("/statistical/**").permitAll()
 
 
 
