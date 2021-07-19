@@ -1,11 +1,6 @@
 package com.ztl.gym.web.controller.storage;
 
-import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.area.domain.CompanyArea;
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeRecord;
-import com.ztl.gym.code.service.ICodeRecordService;
-import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -13,11 +8,8 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.product.domain.Product;
-import com.ztl.gym.product.service.IProductService;
 import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.service.IScanRecordService;
-import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,19 +27,11 @@ import java.util.List;
 public class ScanRecordController extends BaseController {
     @Autowired
     private IScanRecordService scanRecordService;
-    @Autowired
-    private IStorageService storageService;
-    @Autowired
-    private ICodeService codeService;
-    @Autowired
-    private ICodeRecordService codeRecordService;
-    @Autowired
-    private IProductService tProductService;
+
 
     /**
      * 查询扫码记录列表
      */
-    @PreAuthorize("@ss.hasPermi('storage:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(ScanRecord scanRecord) {
         startPage();
@@ -120,33 +104,5 @@ public class ScanRecordController extends BaseController {
         return AjaxResult.success(res);
     }
 
-    /**
-     * 根据码号查询相关产品和码信息
-     */
-    @GetMapping(value = "/cxspxqBycode")
-    public AjaxResult cxspxqBycode(@RequestParam("code") String code) {
-        String temp ="";
-        if(StrUtil.isNotEmpty(code)){
-            long companyId = CodeRuleUtils.getCompanyIdByCode(code.trim());
-            Code codequery = new Code();
-            codequery.setCompanyId(companyId);
-            codequery.setCode(code.trim());
-            Code codeEntity = codeService.selectCode(codequery);
-            if(codeEntity!=null){
-                long codeIndex = codeEntity.getCodeIndex();
-                CodeRecord codeRecord = codeRecordService.selectCodeRecordByIndex(codeIndex);
-                if(codeRecord!=null){
-                    long productId = codeRecord.getProductId();
-                    Product product = tProductService.selectTProductById(productId);
-                    if(product!=null){
-                        String productDetailPc = product.getProductDetailPc();
-                        if(StrUtil.isNotEmpty(productDetailPc)){
-                            temp = productDetailPc;
-                        }
-                    }
-                }
-            }
-        }
-        return AjaxResult.success(temp);
-    }
+
 }

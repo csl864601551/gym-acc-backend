@@ -1,9 +1,9 @@
 package com.ztl.gym.product.service;
 
+import com.ztl.gym.product.domain.Attr;
+
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.product.domain.Attr;
 
 /**
  * 规格属性Service接口
@@ -22,12 +22,29 @@ public interface IAttrService
     public Attr selectAttrById(Long id);
 
     /**
+     * 查询规格属性
+     *
+     * @param name 规格属性name
+     * @return 规格属性
+     */
+    public Attr selectAttrByName(String name);
+
+    /**
      * 查询规格属性列表
      * 
      * @param attr 规格属性
      * @return 规格属性集合
      */
     public List<Attr> selectAttrList(Attr attr);
+
+
+    /**
+     * 查询规格属性列表
+     *
+     * @param attr 规格属性
+     * @return 规格属性集合
+     */
+    public int selectcountAttrList(Attr attr);
 
     /**
      * 新增规格属性
@@ -62,4 +79,11 @@ public interface IAttrService
     public int deleteAttrById(Long id);
 
     List<Map<String,Object>> getAttrValuesById(Long id);
+
+    /**
+     * 根据名称查询有没有重复的
+     *
+     * @return 规格属性
+     */
+    public Attr selectAttrBySome(Long companyId,String attrNameCn);
 }

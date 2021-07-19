@@ -69,7 +69,7 @@
         si.id,si.company_id,si.tenant_id,si.status,si.in_no,si.extra_no,si.product_id,si.batch_no,si.in_num,si.act_in_num,si.storage_from,si.storage_to,
         si.from_storage_id,si.to_storage_id,si.remark,si.create_time,si.in_time,si.update_time
         ,suc.nick_name as create_user_name,suu.nick_name as update_user_name,sd.dept_name as
-        storage_from_name,s.storage_name as to_storage_id_name,p.product_name
+        storage_from_name,s.storage_name as to_storage_id_name,p.product_name,p.product_no
         FROM
         t_storage_in AS si
         left join sys_dept sd on sd.dept_id=si.storage_from
@@ -92,12 +92,18 @@
             <if test="storageTo != null  and storageTo != ''">and si.storage_to = #{storageTo}</if>
             <if test="fromStorageId != null ">and si.from_storage_id = #{fromStorageId}</if>
             <if test="toStorageId != null">and si.to_storage_id = #{toStorageId}</if>
-            <if test="inTime != null ">and si.in_time = #{inTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(si.in_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(si.in_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+<!--            <if test="inTime != null ">and si.in_time = #{inTime}</if>-->
             <if test="beginTime != null ">and si.create_time &gt;= #{beginTime}</if>
             <if test="endTime != null ">and si.create_time &lt;= #{endTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and si.tenant_id ')}
-        order by create_time
+        order by create_time desc
 
     </select>
 
@@ -315,7 +321,7 @@
     </update>
 
     <select id="selectInIdByCode" resultType="java.lang.Long">
-        select storage_record_id from t_in_code_flow where company_id= #{companyId} and code= #{code}
+        select storage_record_id from t_in_code_flow where company_id= #{companyId} and code= #{code} order by create_time desc LIMIT 1
     </select>
     <update id="updateInStatusById" parameterType="Map">
         update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_OUT}

@@ -135,6 +135,8 @@ public class StorageBack extends BaseEntity {
     @Excel(name = "收入仓库")
     private Long toStorageId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date outTime;
 
     @TableField(exist = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -411,6 +413,14 @@ public class StorageBack extends BaseEntity {
 
     public void setStorageToName(String storageToName) {
         this.storageToName = storageToName;
+    }
+
+    public Date getOutTime() {
+        return outTime;
+    }
+
+    public void setOutTime(Date outTime) {
+        this.outTime = outTime;
     }
 
     @Override

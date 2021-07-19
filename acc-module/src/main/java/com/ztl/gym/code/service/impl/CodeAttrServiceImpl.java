@@ -62,10 +62,11 @@ public class CodeAttrServiceImpl implements ICodeAttrService
      * @return 结果
      */
     @Override
-    public int insertCodeAttr(CodeAttr codeAttr)
+    public Long insertCodeAttr(CodeAttr codeAttr)
     {
         codeAttr.setCreateTime(DateUtils.getNowDate());
-        return codeAttrMapper.insertCodeAttr(codeAttr);
+        codeAttrMapper.insertCodeAttr(codeAttr);
+        return codeAttr.getId();
     }
 
     /**
@@ -103,5 +104,15 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     public int deleteCodeAttrById(Long id)
     {
         return codeAttrMapper.deleteCodeAttrById(id);
+    }
+    /**
+     * 批量修改码属性
+     *
+     * @param attrList 码属性
+     * @return 结果
+     */
+    @Override
+    public int updateCodeAttrBatch(List<CodeAttr> attrList) {
+        return codeAttrMapper.updateCodeAttrBatch(attrList);
     }
 }

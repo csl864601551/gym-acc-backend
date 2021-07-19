@@ -1,27 +1,23 @@
 package com.ztl.gym.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.ztl.gym.common.annotation.DataScope;
+import com.ztl.gym.common.constant.UserConstants;
 import com.ztl.gym.common.core.domain.entity.SysRole;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.spring.SpringUtils;
+import com.ztl.gym.system.domain.SysRoleDept;
+import com.ztl.gym.system.domain.SysRoleMenu;
+import com.ztl.gym.system.mapper.SysRoleDeptMapper;
 import com.ztl.gym.system.mapper.SysRoleMapper;
+import com.ztl.gym.system.mapper.SysRoleMenuMapper;
+import com.ztl.gym.system.mapper.SysUserRoleMapper;
 import com.ztl.gym.system.service.ISysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.ztl.gym.common.constant.UserConstants;
-import com.ztl.gym.common.exception.CustomException;
-import com.ztl.gym.system.domain.SysRoleDept;
-import com.ztl.gym.system.domain.SysRoleMenu;
-import com.ztl.gym.system.mapper.SysRoleDeptMapper;
-import com.ztl.gym.system.mapper.SysRoleMenuMapper;
-import com.ztl.gym.system.mapper.SysUserRoleMapper;
+
+import java.util.*;
 
 /**
  * 角色 业务层处理
@@ -150,6 +146,24 @@ public class SysRoleServiceImpl implements ISysRoleService
     {
         Long roleId = StringUtils.isNull(role.getRoleId()) ? -1L : role.getRoleId();
         SysRole info = roleMapper.checkRoleKeyUnique(role.getRoleKey(),role.getCreateBy());
+        if (StringUtils.isNotNull(info) && info.getRoleId().longValue() != roleId.longValue())
+        {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
+    }
+
+    /**
+     * 校验角色顺序是否唯一
+     *
+     * @param role 角色信息
+     * @return 结果
+     */
+    @Override
+    public String checkRoleSortUnique(SysRole role)
+    {
+        Long roleId = StringUtils.isNull(role.getRoleId()) ? -1L : role.getRoleId();
+        SysRole info = roleMapper.checkRoleSortUnique(role.getRoleSort(),role.getCreateBy());
         if (StringUtils.isNotNull(info) && info.getRoleId().longValue() != roleId.longValue())
         {
             return UserConstants.NOT_UNIQUE;

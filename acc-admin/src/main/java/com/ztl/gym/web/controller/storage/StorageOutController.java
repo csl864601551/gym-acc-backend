@@ -1,19 +1,19 @@
 package com.ztl.gym.web.controller.storage;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.service.IStorageOutService;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 出库Controller
@@ -78,6 +78,7 @@ public class StorageOutController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody StorageOut storageOut)
     {
+        //storageOut.setExtraNo("DB10220210707101654");
         storageOutService.insertStorageOut(storageOut);
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", storageOut.getId());
@@ -128,5 +129,20 @@ public class StorageOutController extends BaseController
     public AjaxResult updateOutStatusByCode(@RequestBody Map<String, Object> map)
     {
         return toAjax(storageOutService.updateOutStatusByCode(map));
+    }
+    /**
+     * 统计当日已出库产品数量
+     */
+    @PostMapping("/dayCount")
+    public AjaxResult dayCount(@RequestBody Map<String, Object> map)
+    {
+        int count=0;
+        List<Map<String,Object>> list = storageOutService.selectDayCount(map);
+        if(list.size()>0){
+            if(list.get(0).get("num")!=null){
+                count=Integer.valueOf(list.get(0).get("num").toString());
+            }
+        }
+        return AjaxResult.success(count);
     }
 }

@@ -1,8 +1,9 @@
 package com.ztl.gym.area.mapper;
 
-import java.util.List;
 import com.ztl.gym.area.domain.CompanyArea;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 经销商销售区域 Mapper接口
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Repository;
  * @date 2021-04-17
  */
 @Repository
-public interface CompanyAreaMapper
-{
+public interface CompanyAreaMapper {
     /**
      * 查询经销商销售区域
      *

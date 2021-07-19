@@ -3,7 +3,6 @@ package com.ztl.gym.weixin.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +34,7 @@ public class WxUtil {
     protected static String JssdkAccesstokenUrl;
     protected static String JssdkGetticketUrl;
     protected static String Token;
+
 
     @Value("${wx.appId}")
     public void setAppId(String appId) {
@@ -255,5 +255,14 @@ public class WxUtil {
         }
         return null;
     }
+
+
+
+    public static String splitData(String str, String strStart, String strEnd) {
+        String tempStr;
+        tempStr = str.substring(str.indexOf(strStart) + 1, str.lastIndexOf(strEnd));
+        return tempStr;
+    }
+
 
 }

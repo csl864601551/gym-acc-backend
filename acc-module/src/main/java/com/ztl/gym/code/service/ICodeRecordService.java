@@ -4,6 +4,7 @@ package com.ztl.gym.code.service;
 import com.ztl.gym.code.domain.CodeRecord;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 生码记录Service接口
@@ -88,5 +89,13 @@ public interface ICodeRecordService {
      * @param codeIndex 生码记录ID
      * @return 生码记录
      */
-    public CodeRecord selectCodeRecordByIndex(Long codeIndex);
+    public CodeRecord selectCodeRecordByIndex(long codeIndex,long companyId);
+
+    /**
+     * 生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectcodenum(Map<String, Object> map);
 }

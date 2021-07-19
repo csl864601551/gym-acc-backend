@@ -51,4 +51,5 @@ public interface CommonMapper {
      */
     List<SysUser> getTenantByParent(Map<String, Object> params);
 
+    void insertPrintData(Map<String, Object> mapTemp);
 }

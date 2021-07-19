@@ -62,6 +62,10 @@ public class Attr extends BaseEntity
     @Excel(name = "更新人")
     private Long updateUser;
 
+    /** 创建人名称 */
+    @Excel(name = "创建人名称")
+    private String createUserName;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -178,6 +182,14 @@ public class Attr extends BaseEntity
         this.input_name = input_name;
     }
 
+    public String getCreateUserName() {
+        return createUserName;
+    }
+
+    public void setCreateUserName(String createUserName) {
+        this.createUserName = createUserName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -194,6 +206,7 @@ public class Attr extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateUser", getUpdateUser())
             .append("updateTime", getUpdateTime())
+                .append("createUserName",getCreateUserName())
             .toString();
     }
 }

@@ -84,7 +84,7 @@
             <if test="endTime != null ">and st.create_time &lt;= #{endTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and st.tenant_id ')}
-        order by create_time
+        order by create_time desc
     </select>
 
     <select id="selectStorageTransferById" parameterType="Long" resultMap="StorageTransferResult">

@@ -1,5 +1,6 @@
 package com.ztl.gym.web.controller.code;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
@@ -8,6 +9,7 @@ import com.ztl.gym.code.domain.vo.FuzhiVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
@@ -15,7 +17,10 @@ import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
@@ -28,11 +33,12 @@ import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code/record")
@@ -258,13 +264,15 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                code.setpCode(preFixUrl + code.getpCode());
+                if(code.getpCode()!=null) {
+                    code.setpCode(preFixUrl + code.getpCode());
+                }
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
             }
         }
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
-        return util.exportExcel(list, "码");
+        return util.exportExcel(list,"-"+DateUtils.getDate()+"码");
     }
 
     /**
@@ -309,30 +317,38 @@ public class CodeRecordController extends BaseController {
         List<CodeAttr> codeAttrs = codeAttrService.selectCodeAttrByRecordId(fuzhiVo.getRecordId());
         Product product = productService.selectTProductById(fuzhiVo.getProductId());
         ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
-
+        ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
+        ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        String productCategory = category1.getCategoryName() + "-" + category2.getCategoryName();
+        Date inputTime = new Date();
+        List<CodeAttr> codeAttrList = new LinkedList<>();
+        CodeAttr attrParam = null;
         for (CodeAttr codeAttr : codeAttrs) {
-            CodeAttr attrParam = new CodeAttr();
+            attrParam = new CodeAttr();
             attrParam.setId(codeAttr.getId());
             attrParam.setProductId(product.getId());
             attrParam.setProductName(product.getProductName());
             attrParam.setProductNo(product.getProductNo());
             attrParam.setBarCode(product.getBarCode());
-            ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
-            ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
-            attrParam.setProductCategory(category1.getCategoryName() + "-" + category2.getCategoryName());
+            attrParam.setProductCategory(productCategory);
             attrParam.setProductUnit(product.getUnit());
             attrParam.setProductIntroduce(product.getProductIntroduce());
             attrParam.setBatchId(fuzhiVo.getBatchId());
             attrParam.setBatchNo(productBatch.getBatchNo());
             attrParam.setRemark(fuzhiVo.getRemark());
-            attrParam.setInputBy(SecurityUtils.getLoginUser().getUser().getUserId());
-            attrParam.setInputTime(new Date());
-            codeAttrService.updateCodeAttr(attrParam);
-
-            //更新对应码的状态
-            codeService.updateStatusByAttrId(codeAttr.getCompanyId(), codeAttr.getId(), AccConstants.CODE_STATUS_FINISH);
+            attrParam.setInputBy(userId);
+            attrParam.setInputTime(inputTime);
+            attrParam.setUpdateTime(inputTime);
+            codeAttrList.add(attrParam);
         }
-
+        //批量更新
+        if(!CollectionUtil.isEmpty(codeAttrList)){
+            codeAttrService.updateCodeAttrBatch(codeAttrList);
+            //更新对应码的状态
+            List idList = codeAttrList.stream().map(CodeAttr::getId).collect(Collectors.toList());
+            codeService.updateStatusByAttrId(codeAttrs.get(0).getCompanyId(), idList, AccConstants.CODE_STATUS_FINISH);
+        }
         CodeRecord codeRecord = new CodeRecord();
         codeRecord.setId(fuzhiVo.getRecordId());
         codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
@@ -362,7 +378,70 @@ public class CodeRecordController extends BaseController {
         return AjaxResult.success(res);
     }
 
+    /**
+     * 普通生码，单码List装箱
+     */
+    @PostMapping("/packageCode")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult packageCode(@RequestBody Map<String,Object> map) {
+        AjaxResult ajax = AjaxResult.success();
 
+        List<String> list=(List)map.get("codes");
+        if(list.size()>0){
+            Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+            /**
+             * 插入箱码，更新单码PCode
+             */
+            //获取并更新生码记录流水号
+            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
+            String[] codeIndexs = codeNoStr.split("-");
+            long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
+
+            String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+
+            Code temp = null;
+            long codeAttrId=0;
+
+            for (int i = 0; i < list.size(); i++) {
+                temp = new Code();
+                temp.setCode(list.get(i));
+                temp.setCompanyId(companyId);
+                Code code=codeService.selectCode(temp);//查询单码数据
+                if(code==null){
+                    throw new CustomException("未查询到相关码数据！");
+                }
+                codeAttrId=code.getCodeAttrId();
+                if(code.getpCode()!=null){
+                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
+                }
+                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+            }//更新单码
+
+
+            Code boxCode = new Code();
+            boxCode.setCodeIndex(codeIndex);
+            boxCode.setCompanyId(companyId);
+            boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
+            boxCode.setCode(pCode);
+            boxCode.setCodeAttrId(codeAttrId);
+            codeService.insertCode(boxCode);//插入箱码
+
+
+            commonService.updateVal(companyId, codeIndex);//更新code_index
+            Map<String,Object> mapTemp = new HashMap<>();
+            mapTemp.put("companyId",companyId);
+            mapTemp.put("boxCode",pCode);
+            mapTemp.put("codeIndex",codeIndex);
+            commonService.insertPrintData(mapTemp);//插入打印数据
+
+            ajax.put("data", pCode);
+            return ajax;
+        }else{
+            throw new CustomException("未接收到单码数据！");
+        }
+
+    }
 
 
 }

@@ -1,7 +1,9 @@
 package com.ztl.gym.mix.service;
 
-import java.util.List;
 import com.ztl.gym.mix.domain.MixRecord;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 窜货记录Service接口
@@ -58,4 +60,14 @@ public interface IMixRecordService
      * @return 结果
      */
     public int deleteMixRecordById(Long id);
+
+    /**
+     * 窜货总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectmixnum(Map<String, Object> map);
+
+
 }

@@ -1,9 +1,9 @@
 package com.ztl.gym.product.mapper;
 
+import com.ztl.gym.product.domain.Product;
+
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.product.domain.Product;
 
 /**
  * 产品Mapper接口
@@ -28,6 +28,15 @@ public interface ProductMapper
      * @return 产品集合
      */
     public List<Product> selectTProductList(Product product);
+
+
+    /**
+     * 查询产品列表
+     *
+     * @param product 产品
+     * @return 产品集合
+     */
+    public List<Product> selectTProductList1(Product product);
 
     /**
      * 新增产品
@@ -68,4 +77,13 @@ public interface ProductMapper
     List<Map<String, Object>> getAttributeList(Long id);
 
     void deleteProductAttrById(Long id);
+
+    /**
+     * 根据信息 获取产品数量
+     *
+     * @param map 产品
+     * @return 结果
+     */
+    public int selectProductNum(Map<String, Object> map);
+
 }

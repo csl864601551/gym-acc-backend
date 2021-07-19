@@ -1,13 +1,13 @@
 package com.ztl.gym.storage.domain;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.Date;
 
 /**
  * 调货对象 t_storage_transfer
@@ -138,8 +138,8 @@ public class StorageTransfer extends BaseEntity {
     /**
      * 出库时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "出库时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date outTime;
 
 

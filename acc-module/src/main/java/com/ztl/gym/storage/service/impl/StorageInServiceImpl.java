@@ -1,10 +1,5 @@
 package com.ztl.gym.storage.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
@@ -15,18 +10,22 @@ import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.StorageBack;
+import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.StorageTransfer;
-import com.ztl.gym.storage.domain.vo.StorageVo;
+import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.service.IStorageBackService;
+import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageService;
 import com.ztl.gym.storage.service.IStorageTransferService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.storage.mapper.StorageInMapper;
-import com.ztl.gym.storage.domain.StorageIn;
-import com.ztl.gym.storage.service.IStorageInService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 入库Service业务层处理
@@ -92,13 +91,17 @@ public class StorageInServiceImpl implements IStorageInService {
             map.put("tenantId", commonService.getTenantId());
         }
         map.put("inType", StorageIn.IN_TYPE_COMMON);
-        map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
+        if(map.get("storageTo")==null){
+            map.put("storageTo", SecurityUtils.getLoginUserCompany().getDeptId());
+        }
         map.put("createTime", DateUtils.getNowDate());
         if(map.get("thirdPartyFlag")!=null){
             map.put("updateTime", DateUtils.getNowDate());
             map.put("inTime", DateUtils.getNowDate());
-            long codeBoxCount=codeService.getCodeCount(((List)map.get("codes")).get(0).toString());
-            long count=codeBoxCount*(((List)map.get("codes")).size());
+            long count=0;
+            for (int i = 0; i < ((List)map.get("codes")).size(); i++) {
+                count+=codeService.getCodeCount(((List)map.get("codes")).get(i).toString());
+            }
             map.put("inNum", count);
             map.put("actInNum", count);
         }
@@ -107,11 +110,8 @@ public class StorageInServiceImpl implements IStorageInService {
 //        String id = map.get("id").toString();
 //        System.out.println("id=="+id);
         if(map.get("thirdPartyFlag")!=null){
-            List list=(List)map.get("codes");
-            for (int i = 0; i < list.size(); i++) {
-                map.put("code",list.get(i));
-                updateInStatusByCode(map);//PDA端使用
-            }
+            map.put("insFlag","1");
+            updateInStatusByCode(map);//PDA端使用
         }
         return result;
     }
@@ -182,7 +182,22 @@ public class StorageInServiceImpl implements IStorageInService {
         int res = storageInMapper.updateInStatusByCode(map);//更新企业入库信息
         StorageIn storageIn = storageInMapper.selectStorageInById(Long.valueOf(map.get("id").toString()));//查询入库单信息
         String extraNo = storageIn.getExtraNo();//相关单号
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+        int updRes=0;
+        if(map.get("insFlag")==null){
+            updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+
+        }else{
+            List list=(List)map.get("codes");
+            for (int i = 0; i < list.size(); i++) {
+                map.put("code",list.get(i));
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入码流转明细，转移到PDA执行
+            }
+        }
+        //产品库存更新
+        if (updRes > 0) {
+            storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()));
+        }
+
         if (extraNo != null) {//判断非空
             //判断是否调拨,执行更新调拨单
             if (extraNo.substring(0, 2).equals("DB")) {
@@ -223,17 +238,21 @@ public class StorageInServiceImpl implements IStorageInService {
         }
         List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
         boolean flag=true;
+        int updRes=0;
         for (int i = 0; i < codes.size(); i++) {
             if(codes.get(i).startsWith("20")){
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
                 flag=false;
             }
         }
         if(flag){
             for (int i = 0; i < codes.size(); i++) {
-                storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
             }
-
+        }
+        //产品库存更新
+        if (updRes > 0) {
+            storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()));
         }
         //判断是否调拨,执行更新调拨单
         if (extraNo.substring(0, 2).equals("DB")) {
@@ -297,6 +316,7 @@ public class StorageInServiceImpl implements IStorageInService {
         storageIn.setRemark(storageBack.getRemark());
         storageIn.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageIn.setCreateTime(new Date());
+        storageIn.setInTime(new Date());
         storageIn.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageIn.setUpdateTime(new Date());
         int inres = storageInMapper.insertStorageInV2(storageIn);
@@ -305,4 +325,5 @@ public class StorageInServiceImpl implements IStorageInService {
         }
         return 0L;
     }
+
 }

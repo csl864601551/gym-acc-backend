@@ -56,6 +56,7 @@
     </select>
     <select id="getTenantByParent" parameterType="Map" resultMap="SysDeptResult">
        SELECT * FROM `sys_dept` where parent_id=#{companyId} and dept_type = 2 and status = 0
+        <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
     </select>
 
     <insert id="insertCompany" parameterType="Map">
@@ -65,4 +66,9 @@
     <update id="updateVal" parameterType="Map">
         UPDATE t_code_sequence SET current_value = #{val} WHERE company_id = #{companyId}
     </update>
+
+    <insert id="insertPrintData" parameterType="Map">
+        INSERT INTO t_print_data( company_id,box_code, code_index) VALUES (#{companyId},#{boxCode}, #{codeIndex});
+    </insert>
+
 </mapper>

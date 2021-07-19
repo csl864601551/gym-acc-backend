@@ -46,7 +46,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMixRecordList" parameterType="MixRecord" resultMap="MixRecordResult">
         <include refid="selectMixRecordVo"/>
-        <where>  
+        <where>
+            <if test="id != null "> and mr.id = #{id}</if>
             <if test="companyId != null "> and mr.company_id = #{companyId}</if>
             <if test="tenantId != null "> and mr.tenant_id = #{tenantId}</if>
             <if test="code != null  and code != ''"> and mr.code = #{code}</if>
@@ -71,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and p.product_no like #{product_noLike}
             </if>
         </where>
+        order by mr.create_time desc
     </select>
     
     <select id="selectMixRecordById" parameterType="Long" resultMap="MixRecordResult">
@@ -154,4 +156,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectmixnum" resultType="java.lang.Integer" parameterType="Map">
+        select count(distinct product_id)  from  t_mix_record  where mix_type='1'
+        <if test="deptId != null">
+            and  company_id = #{deptId}
+        </if>
+    </select>
 </mapper>

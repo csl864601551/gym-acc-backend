@@ -1,6 +1,5 @@
 package com.ztl.gym.area.domain;
 
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -47,12 +46,23 @@ public class CompanyArea extends BaseEntity
     /** 是否窜货 0未窜货 1窜货  2未接收到数据 */
     private int isMix;
 
+    /** 码*/
+    private String code;
+
     /** codeAttrID*/
     private Long codeAttrId;
 
     /** 销售地区 */
     @Excel(name = "销售地区")
     private String salesArea;
+
+
+    /** 企业ID */
+    private String companyName;
+
+
+    /** 经销商id */
+    private String tenantName;
 
     public Long getCodeAttrId() {
         return codeAttrId;
@@ -141,6 +151,30 @@ public class CompanyArea extends BaseEntity
         this.creatorName = creatorName;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getTenantName() {
+        return tenantName;
+    }
+
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -154,6 +188,8 @@ public class CompanyArea extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateUser", getUpdateUser())
             .append("updateTime", getUpdateTime())
+            .append("companyName", getCompanyName())
+            .append("tenantName", getTenantName())
             .toString();
     }
 }

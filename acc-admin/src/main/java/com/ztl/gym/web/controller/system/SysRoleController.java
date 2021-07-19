@@ -1,34 +1,27 @@
 package com.ztl.gym.web.controller.system;
 
-import java.util.List;
-
 import com.ztl.gym.common.annotation.Log;
-import com.ztl.gym.common.core.domain.entity.SysRole;
-import com.ztl.gym.common.core.page.TableDataInfo;
-import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.common.utils.ServletUtils;
-import com.ztl.gym.common.utils.StringUtils;
-import com.ztl.gym.system.service.ISysRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ztl.gym.common.constant.UserConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysRole;
 import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.ServletUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.framework.web.service.SysPermissionService;
 import com.ztl.gym.framework.web.service.TokenService;
+import com.ztl.gym.system.service.ISysRoleService;
 import com.ztl.gym.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 角色信息
@@ -104,6 +97,8 @@ public class SysRoleController extends BaseController {
             return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role))) {
             return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
+        } else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleSortUnique(role))) {
+            return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色显示顺序已存在");
         }
         return toAjax(roleService.insertRole(role));
 
@@ -121,6 +116,8 @@ public class SysRoleController extends BaseController {
             return AjaxResult.error("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleKeyUnique(role))) {
             return AjaxResult.error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
+        } else if (UserConstants.NOT_UNIQUE.equals(roleService.checkRoleSortUnique(role))) {
+            return AjaxResult.error("新增角色'" + role.getRoleName() + "'失败，角色显示顺序已存在");
         }
         role.setUpdateBy(SecurityUtils.getUsername());
 

@@ -22,6 +22,11 @@ public class Code extends BaseEntity {
     private Long codeIndex;
 
     /**
+     * 当前所属经销商id
+     */
+    private Long tenantId;
+
+    /**
      * 企业ID
      */
     private Long companyId;
@@ -59,6 +64,22 @@ public class Code extends BaseEntity {
      */
 //    @Excel(name = "码属性id")
     private Long codeAttrId;
+
+    /**
+     * 生码记录id
+     */
+//    @Excel(name = "生码记录id")
+    private Long singleId;
+
+    /**
+     * 当前流转类型
+     */
+    private Integer storageType;
+
+    /**
+     * 当前流转记录id
+     */
+    private Long storageRecordId;
 
     /*---------------------- 冗余字段 ----------------------*/
 //    @Excel(name = "码状态")
@@ -166,6 +187,38 @@ public class Code extends BaseEntity {
 
     public void setCodeAttr(CodeAttr codeAttr) {
         this.codeAttr = codeAttr;
+    }
+
+    public Integer getStorageType() {
+        return storageType;
+    }
+
+    public void setStorageType(Integer storageType) {
+        this.storageType = storageType;
+    }
+
+    public Long getStorageRecordId() {
+        return storageRecordId;
+    }
+
+    public void setStorageRecordId(Long storageRecordId) {
+        this.storageRecordId = storageRecordId;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public Long getSingleId() {
+        return singleId;
+    }
+
+    public void setSingleId(Long singleId) {
+        this.singleId = singleId;
     }
 
     @Override

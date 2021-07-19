@@ -1,9 +1,9 @@
 package com.ztl.gym.system.service;
 
+import com.ztl.gym.common.core.domain.entity.SysRole;
+
 import java.util.List;
 import java.util.Set;
-
-import com.ztl.gym.common.core.domain.entity.SysRole;
 
 /**
  * 角色业务层
@@ -72,6 +72,14 @@ public interface ISysRoleService {
      * @return 结果
      */
     public String checkRoleKeyUnique(SysRole role);
+
+    /**
+     * 校验角色顺序是否唯一
+     *
+     * @param role 角色信息
+     * @return 结果
+     */
+    public String checkRoleSortUnique(SysRole role);
 
     /**
      * 校验角色是否允许操作

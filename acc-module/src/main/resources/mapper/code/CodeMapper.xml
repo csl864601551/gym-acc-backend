@@ -7,12 +7,17 @@
     <resultMap type="Code" id="CodeResult">
         <result property="codeIndex" column="code_index"/>
         <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
         <result property="status" column="status"/>
         <result property="code" column="code"/>
         <result property="codeAcc" column="code_acc"/>
         <result property="codeType" column="code_type"/>
         <result property="pCode" column="p_code"/>
         <result property="codeAttrId" column="code_attr_id"/>
+        <result property="singleId" column="single_id"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="storageRecordId" column="storage_record_id"/>
+        <result property="codeTypeName" column="code_type_name"/>
         <association property="codeAttr" column="code_attr_id"
                      select="com.ztl.gym.code.mapper.CodeAttrMapper.selectCodeAttrById">
         </association>
@@ -26,7 +31,8 @@
     </resultMap>
 
     <sql id="selectCodeVo">
-        select code_index, company_id, status, code, code_acc, code_type, p_code, code_attr_id from t_code
+        select code_index, company_id,tenant_id, status, code, code_acc, code_type, p_code, code_attr_id,single_id,
+        case when code_type='box' then '箱码' else '单码' end as code_type_name,storage_type,storage_record_id from t_code
     </sql>
 
     <select id="selectCode" parameterType="Code" resultMap="CodeResult">
@@ -36,6 +42,18 @@
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
         </where>
         limit 1
+    </select>
+
+    <select id="selectCodes" parameterType="Map" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="codes != null  and codes != ''">and code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>)
+            </if>
+        </where>
     </select>
 
     <select id="selectCodeList" parameterType="Code" resultMap="CodeResult">
@@ -74,6 +92,7 @@
             <if test="codeType != null">code_type,</if>
             <if test="pCode != null">p_code,</if>
             <if test="codeAttrId != null">code_attr_id,</if>
+            <if test="singleId != null">single_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="codeIndex != null">#{codeIndex},</if>
@@ -84,30 +103,52 @@
             <if test="codeType != null">#{codeType},</if>
             <if test="pCode != null">#{pCode},</if>
             <if test="codeAttrId != null">#{codeAttrId},</if>
+            <if test="singleId != null">#{singleId},</if>
         </trim>
     </insert>
 
     <insert id="insertCodeForBatch">
-        insert into t_code(code_index, code, company_id, status, code_acc, code_type, p_code, code_attr_id)
+        insert into t_code(code_index, code, company_id, status, code_acc, code_type, p_code, code_attr_id,single_id)
         values
         <foreach collection="list" item="code" separator=",">
             (#{code.codeIndex}, #{code.code}, #{code.companyId}, #{code.status}, #{code.codeAcc}, #{code.codeType},
-            #{code.pCode}, #{code.codeAttrId})
+            #{code.pCode}, #{code.codeAttrId}, #{code.singleId})
         </foreach>
     </insert>
 
     <update id="updateCode" parameterType="Code">
         update t_code
         <trim prefix="SET" suffixOverrides=",">
-            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="code != null">code = #{code},</if>
             <if test="codeAcc != null">code_acc = #{codeAcc},</if>
             <if test="codeType != null">code_type = #{codeType},</if>
             <if test="pCode != null">p_code = #{pCode},</if>
             <if test="codeAttrId != null">code_attr_id = #{codeAttrId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
         </trim>
-        where code_index = #{codeIndex}
+        where company_id=#{companyId} and code_index = #{codeIndex}
+    </update>
+    <update id="updateCodeStorageByPCode" parameterType="Code">
+        update t_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
+        </trim>
+        where company_id=#{companyId} and p_code = #{pCode}
+    </update>
+
+    <update id="updateCodeStorageByCode" parameterType="Code">
+        update t_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
+        </trim>
+        where company_id=#{companyId} and code = #{code}
     </update>
 
     <delete id="deleteCodeById" parameterType="Long">
@@ -122,11 +163,15 @@
     </delete>
 
     <update id="updateStatusByAttrId" parameterType="Map">
-        update t_code
+        update t_code_${companyId}
         <trim prefix="SET" suffixOverrides=",">
             <if test="status != null">status = #{status},</if>
         </trim>
-        where code_attr_id = #{codeAttrId} and company_id = #{companyId}
+        where  company_id = #{companyId} and
+        code_attr_id in
+        <foreach item="codeAttrId" collection="idList" open="(" separator="," close=")">
+            #{codeAttrId}
+        </foreach>
     </update>
 
     <insert id="insertInCodeFlowForBatchSingleV2">
@@ -199,4 +244,18 @@
         (select id from t_code_attr where record_id = #{recordId} and company_id = #{companyId})
         order by code_index  asc
     </select>
+
+    <select id="selectCodeListBySingle" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        where company_id = #{companyId} and  single_id = #{singleId}
+        order by code_index  asc
+    </select>
+
+    <update id="updatePCodeByCode" parameterType="Map" >
+        update t_code set p_code = #{pCode}  where company_id=#{companyId} and code = #{code}
+    </update>
+
+    <update id="updateCodeAttrIdByPCode" parameterType="Map" >
+        update t_code set code_attr_id = #{codeAttrId} where company_id=#{companyId} and (p_code = #{pCode} or code = #{pCode})
+    </update>
 </mapper>
