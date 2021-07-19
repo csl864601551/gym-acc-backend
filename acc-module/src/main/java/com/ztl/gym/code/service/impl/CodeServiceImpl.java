@@ -3,9 +3,11 @@ package com.ztl.gym.code.service.impl;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
+import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
+import com.ztl.gym.code.mapper.CodeSingleMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -41,6 +43,8 @@ public class CodeServiceImpl implements ICodeService {
 
     @Autowired
     private CodeRecordMapper codeRecordMapper;
+    @Autowired
+    private CodeSingleMapper codeSingleMapper;
 
     @Autowired
     private CommonService commonService;
@@ -84,6 +88,7 @@ public class CodeServiceImpl implements ICodeService {
      * @return 结果
      */
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public int insertCode(Code code) {
         return codeMapper.insertCode(code);
     }
@@ -95,6 +100,7 @@ public class CodeServiceImpl implements ICodeService {
      * @return 结果
      */
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public int updateCode(Code code) {
         return codeMapper.updateCode(code);
     }
@@ -206,13 +212,62 @@ public class CodeServiceImpl implements ICodeService {
         }
         return correct;
     }
+    /**
+     * 生码
+     *
+     * @param companyId    企业id
+     * @param codeSingleId 生码记录id
+     * @param codeTotalNum 生码总数
+     * @param userId       用户id
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId) {
+        int correct = 0;
+        List<Code> codeList = new ArrayList<>();
+        //企业自增数
+        CodeSingle codeSingle = codeSingleMapper.selectCodeSingleById(codeSingleId);
+        long codeIndex = codeSingle.getIndexStart();
+
+
+        for (int i = 0; i < codeTotalNum; i++) {
+            Code code = new Code();
+            code.setCodeIndex(codeIndex + i);
+            code.setpCode(null);
+            code.setCompanyId(companyId);
+            code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
+            code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
+            code.setSingleId(codeSingleId);
+            codeList.add(code);
+
+            //更新自增数
+            if (i + 1 == codeTotalNum) {
+                commonService.updateVal(companyId, codeSingle.getIndexEnd());
+            }
+        }
+
+
+        int res = codeMapper.insertCodeForBatch(codeList);
+        if (res > 0) {
+            logger.info("single生码记录ID：" + codeSingleId + "生码成功");
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", codeSingleId);
+            params.put("status", AccConstants.CODE_RECORD_STATUS_FINISH);
+            codeSingleMapper.insertCodeSingleStatus(params);
+        } else {
+            logger.error("single生码记录ID：" + codeSingleId + "生码异常");
+        }
+        return correct;
+    }
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public int updateStatusByAttrId(Long companyId, Long codeAttrId, int status) {
+    public int updateStatusByAttrId(Long companyId, List<Long> idList, int status) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
-        params.put("codeAttrId", codeAttrId);
+        params.put("idList", idList);
         params.put("status", status);
         return codeMapper.updateStatusByAttrId(params);
     }
@@ -325,6 +380,7 @@ public class CodeServiceImpl implements ICodeService {
     }
 
     @Override
+    @DataSource(DataSourceType.SHARDING)
     public long getCodeCount(String codeStr) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", codeStr);
@@ -357,6 +413,21 @@ public class CodeServiceImpl implements ICodeService {
         params.put("recordId", recordId);
         return codeMapper.selectCodeListByRecord(companyId, recordId);
     }
+    /**
+     * 根据生码记录id查询码集合
+     *
+     * @param singleId
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeListBySingle(Long companyId, Long singleId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("singleId", singleId);
+        return codeMapper.selectCodeListBySingle(companyId, singleId);
+    }
+
 
     /**
      * 保存生码属性
@@ -379,5 +450,38 @@ public class CodeServiceImpl implements ICodeService {
         codeAttr.setUpdateTime(new Date());
         codeAttrService.insertCodeAttr(codeAttr);
         return codeAttr.getId();
+    }
+
+    @Override
+    public void updatePCodeByCode(Long companyId,String pCode, String code) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("pCode", pCode);
+        params.put("code", code);
+        codeMapper.updatePCodeByCode(params);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodes(Map<String, Object> codeParam) {
+        return codeMapper.selectCodes(codeParam);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void updateCodeStorageByPCode(Code codeTemp) {
+        codeMapper.updateCodeStorageByPCode(codeTemp);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int updateCodeStorageByCode(Code codeRes) {
+        return codeMapper.updateCodeStorageByCode(codeRes);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void updateCodeAttrIdByPCode(Map<String, Object> param) {
+        codeMapper.updateCodeAttrIdByPCode(param);
     }
 }

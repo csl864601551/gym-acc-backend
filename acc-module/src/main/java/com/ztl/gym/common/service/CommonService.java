@@ -5,6 +5,7 @@ import com.ztl.gym.common.core.domain.entity.SysUser;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 public interface
 
@@ -88,7 +89,9 @@ CommonService {
      * @param storageRecordId
      * @return
      */
-    List<Code> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
+    List<String> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId);
 
     void downloadTXT(String fileName, String content, HttpServletResponse response);
+
+    void insertPrintData(Map<String, Object> mapTemp);
 }

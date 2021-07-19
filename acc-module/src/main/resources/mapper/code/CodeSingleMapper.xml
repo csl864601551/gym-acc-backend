@@ -2,76 +2,53 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ztl.gym.code.mapper.CodeRecordMapper">
+<mapper namespace="com.ztl.gym.code.mapper.CodeSingleMapper">
 
-    <resultMap type="CodeRecord" id="CodeRecordResult">
+    <resultMap type="CodeSingle" id="CodeSingleResult">
         <result property="id" column="id"/>
         <result property="companyId" column="company_id"/>
         <result property="status" column="status"/>
-        <result property="type" column="type"/>
-        <result property="boxCount" column="box_count"/>
-        <result property="singleCount" column="single_count"/>
         <result property="count" column="count"/>
         <result property="indexStart" column="index_start"/>
         <result property="indexEnd" column="index_end"/>
-        <result property="productId" column="product_id"/>
-        <result property="batchId" column="batch_id"/>
         <result property="remark" column="remark"/>
         <result property="createUser" column="create_user"/>
         <result property="createTime" column="create_time"/>
         <result property="updateUser" column="update_user"/>
         <result property="updateTime" column="update_time"/>
         <result property="creatorName" column="nick_name"/>
-        <result property="productName" column="product_name"/>
-        <result property="batchNo" column="batch_no"/>
-        <result property="barCode" column="bar_code"/>
     </resultMap>
 
-    <sql id="selectCodeRecordVo">
-        select id, company_id, status, type,box_count,single_count, count, index_start, index_end, product_id, batch_id, remark, create_user, create_time, update_user, update_time from t_code_record
+    <sql id="selectCodeSingleVo">
+        select id, company_id, status, count, index_start, index_end,  remark, create_user, create_time, update_user, update_time from t_code_single
     </sql>
 
-    <sql id="selectCodeRecordExtraVo">
+    <sql id="selectCodeSingleExtraVo">
         select r.id,
         r.company_id,
         r.status,
-        r.type,
-        r.box_count,
-        r.single_count,
         r.count,
         r.index_start,
         r.index_end,
-        r.product_id,
-        r.batch_id,
         r.remark,
         r.create_user,
         r.create_time,
         r.update_user,
         r.update_time,
-        u.nick_name,
-        p.product_name,
-        b.batch_no,
-        p.bar_code
-        from t_code_record r
+        u.nick_name
+        from t_code_single r
         left join sys_user u on r.create_user = u.user_id
-        left join t_product p on r.product_id = p.id
-        left join t_product_batch b on r.batch_id = b.id
     </sql>
 
 
-    <select id="selectCodeRecordList" parameterType="CodeRecord" resultMap="CodeRecordResult">
-        <include refid="selectCodeRecordExtraVo"/>
+    <select id="selectCodeSingleList" parameterType="CodeSingle" resultMap="CodeSingleResult">
+        <include refid="selectCodeSingleExtraVo"/>
         <where>
             <if test="companyId != null ">and r.company_id = #{companyId}</if>
             <if test="status != null ">and r.status = #{status}</if>
-            <if test="type != null ">and r.type = #{type}</if>
-            <if test="boxCount != null ">and r.box_count = #{boxCount}</if>
-            <if test="singleCount != null ">and r.single_count = #{singleCount}</if>
             <if test="count != null ">and r.count = #{count}</if>
             <if test="indexStart != null ">and r.index_start = #{indexStart}</if>
             <if test="indexEnd != null ">and r.index_end = #{indexEnd}</if>
-            <if test="productId != null ">and r.product_id = #{productId}</if>
-            <if test="batchId != null ">and r.batch_id = #{batchId}</if>
             <if test="createUser != null ">and r.create_user = #{createUser}</if>
             <if test="updateUser != null ">and r.update_user = #{updateUser}</if>
             <if test="params.codeIndex != null and params.codeIndex != '' ">and r.index_start &lt;= #{params.codeIndex}
@@ -81,18 +58,18 @@
         order by r.index_end desc
     </select>
 
-    <select id="selectCodeRecordById" parameterType="Long" resultMap="CodeRecordResult">
-        <include refid="selectCodeRecordExtraVo"/>
+    <select id="selectCodeSingleById" parameterType="Long" resultMap="CodeSingleResult">
+        <include refid="selectCodeSingleExtraVo"/>
         where r.id = #{id}
     </select>
 
-    <select id="selectCodeRecordByIndex" parameterType="long" resultMap="CodeRecordResult">
-        <include refid="selectCodeRecordVo"/>
+    <select id="selectCodeSingleByIndex" parameterType="long" resultMap="CodeSingleResult">
+        <include refid="selectCodeSingleVo"/>
         where index_start &lt;= #{codeIndex} and index_end &gt;= #{codeIndex} and company_id  = #{companyId}
     </select>
 
-    <insert id="insertCodeRecord" parameterType="CodeRecord" useGeneratedKeys="true" keyProperty="id">
-        insert into t_code_record
+    <insert id="insertCodeSingle" parameterType="CodeSingle" useGeneratedKeys="true" keyProperty="id">
+        insert into t_code_single
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyId != null">company_id,</if>
             <if test="status != null">status,</if>
@@ -102,8 +79,6 @@
             <if test="count != null">count,</if>
             <if test="indexStart != null">index_start,</if>
             <if test="indexEnd != null">index_end,</if>
-            <if test="productId != null">product_id,</if>
-            <if test="batchId != null">batch_id,</if>
             <if test="remark != null">remark,</if>
             <if test="createUser != null">create_user,</if>
             <if test="createTime != null">create_time,</if>
@@ -119,8 +94,6 @@
             <if test="count != null">#{count},</if>
             <if test="indexStart != null">#{indexStart},</if>
             <if test="indexEnd != null">#{indexEnd},</if>
-            <if test="productId != null">#{productId},</if>
-            <if test="batchId != null">#{batchId},</if>
             <if test="remark != null">#{remark},</if>
             <if test="createUser != null">#{createUser},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -129,8 +102,8 @@
         </trim>
     </insert>
 
-    <update id="updateCodeRecord" parameterType="CodeRecord">
-        update t_code_record
+    <update id="updateCodeSingle" parameterType="CodeSingle">
+        update t_code_single
         <trim prefix="SET" suffixOverrides=",">
             <if test="companyId != null">company_id = #{companyId},</if>
             <if test="status != null">status = #{status},</if>
@@ -150,19 +123,19 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteCodeRecordById" parameterType="Long">
-        delete from t_code_record where id = #{id}
+    <delete id="deleteCodeSingleById" parameterType="Long">
+        delete from t_code_single where id = #{id}
     </delete>
 
-    <delete id="deleteCodeRecordByIds" parameterType="String">
-        delete from t_code_record where id in
+    <delete id="deleteCodeSingleByIds" parameterType="String">
+        delete from t_code_single where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <update id="updateCodeIndex" parameterType="Map">
-        update t_code_record
+        update t_code_single
         <trim prefix="SET" suffixOverrides=",">
             <if test="indexStart != null">index_start = #{indexStart},</if>
             <if test="indexEnd != null">index_end = #{indexEnd},</if>
@@ -170,18 +143,11 @@
         where id = #{id}
     </update>
 
-    <update id="insertCodeRecordStatus" parameterType="Map">
-        update t_code_record
+    <update id="insertCodeSingleStatus" parameterType="Map">
+        update t_code_single
         <trim prefix="SET" suffixOverrides=",">
             <if test="status != null">status = #{status},</if>
         </trim>
         where id = #{id}
     </update>
-
-    <select id="selectcodenum" resultType="java.lang.Integer">
-        select sum(count) from  t_code_record  where  1=1
-        <if test="deptId != null">
-            and  company_id = #{deptId}
-        </if>
-    </select>
 </mapper>

@@ -78,7 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endTime != null ">and so.create_time &lt;= #{endTime}</if>
         </where>
         ${@com.ztl.gym.storage.service.impl.StorageServiceImpl@getMyTenantId('and so.tenant_id ')}
-        order by so.create_time
+        order by so.create_time desc
     </select>
 
     <select id="selectStorageOutById" parameterType="Long" resultMap="StorageOutResult">
@@ -168,6 +168,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateOutStatusByCode" parameterType="Map">
         update t_storage_out set act_out_num=out_num,status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_NORMAL}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
+        <if test="outTime != null">,out_time = #{outTime}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
         where id = #{id}
     </update>
@@ -191,4 +192,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update t_storage_out set status=#{status} where id = #{id}
     </delete>
 
+    <select id="selectDayCount" resultMap="map">
+        SELECT product_id,storage_to,sum(act_out_num) num,DATE_FORMAT(out_time,'%Y-%m-%d') out_time  FROM `t_storage_out` where `status`!=9 and
+        product_id=#{productId} and storage_to = #{tenantId} and DATE_FORMAT(out_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
+        GROUP BY product_id,storage_to,DATE_FORMAT(out_time,'%Y-%m-%d')
+    </select>
+
+
+    <select id="selectCountByDept" resultType="java.lang.Integer" parameterType="Map">
+        select sum(act_out_num) from  t_storage_out where status=1
+        <if test="deptId != null">
+            and company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and company_id = #{deptId}
+        </if>
+    </select>
 </mapper>

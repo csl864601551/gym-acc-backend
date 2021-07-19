@@ -21,6 +21,8 @@ import com.ztl.gym.common.utils.file.FileUploadUtils;
 import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.framework.config.ServerConfig;
 
+import java.util.Map;
+
 /**
  * 通用请求处理
  *

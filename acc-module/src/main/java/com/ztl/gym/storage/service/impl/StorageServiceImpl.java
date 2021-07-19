@@ -1,7 +1,6 @@
 package com.ztl.gym.storage.service.impl;
 
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -87,12 +86,16 @@ public class StorageServiceImpl implements IStorageService {
             String ancestors = dept.getAncestors();
             int count = (ancestors.length() - ancestors.replace(",", "").length()) / ",".length();
             if (count == 1) {
-                storage.setCompanyId(deptId);
-                storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
-            } else {
-                storage.setTenantId(deptId);
-                storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
+                if(storage.getCompanyId()==null){
+                    storage.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+                }
+                //storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             }
+            if(storage.getTenantId()==null){
+                storage.setTenantId(deptId);
+            }
+                //storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
+
 
             //FIXME
 //            Map<String, Object> params = new HashMap<>();
@@ -128,6 +131,7 @@ public class StorageServiceImpl implements IStorageService {
             throw new BaseException("仓库编号不能为空！");
         }
         Storage queryStorage = new Storage();
+        queryStorage.setTenantId(storage.getTenantId());
         queryStorage.setStorageNo(storage.getStorageNo());
         queryStorage.setStatus(AccConstants.STORAGE_DELETE_NO);
         Integer storageCount = this.countStorage(queryStorage);
@@ -140,16 +144,27 @@ public class StorageServiceImpl implements IStorageService {
         Long deptId = dept.getDeptId();
         //判断是否为平台
         if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            Long companyId = SecurityUtils.getLoginUserTopCompanyId();
-            storage.setCompanyId(companyId);
-            Long tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
-            storage.setTenantId(tenantId);
+            Long companyId;
+            Long tenantId;
+            if (storage.getCompanyId() == null) {
+                companyId = SecurityUtils.getLoginUserTopCompanyId();
+                storage.setCompanyId(companyId);
+            } else {
+                companyId = storage.getCompanyId();
+            }
+            if (storage.getTenantId() == null) {
+                tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
+                storage.setTenantId(tenantId);
+            } else {
+                tenantId = storage.getTenantId();
+            }
             if (!tenantId.equals(companyId)) {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_TENANT);
             } else {
                 storage.setLevel(AccConstants.STORAGE_LEVEL_COMPANY);
             }
         }
+        storage.setStatus(0L);
         storage.setCreateTime(DateUtils.getNowDate());
         storage.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return storageMapper.insertStorage(storage);
@@ -230,7 +245,7 @@ public class StorageServiceImpl implements IStorageService {
                 storageVo.setCode(codeVal);//区分前端是否查询到码相关信息
                 storageVo.setCompanyId(companyId);
                 if (codeEntity.getCodeType().toString().equals("single")) {//判断单码是属于单码or箱码
-                    if (codeEntity.getpCode()==null) {
+                    if (codeEntity.getpCode() == null) {
                         storageVo.setCodeTypeName("单码");
                     } else {
                         storageVo.setCodeTypeName("箱码");
@@ -251,15 +266,14 @@ public class StorageServiceImpl implements IStorageService {
                 storageVo.setRecordId(codeEntity.getCodeAttr().getRecordId());//码记录表ID
                 storageVo.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));//企业入库单号
 
-                Integer storageType = codeEntity.getCodeAttr().getStorageType();
-                Long storageRecordId = codeEntity.getCodeAttr().getStorageRecordId();
+                Integer storageType = codeEntity.getStorageType();
+                Long storageRecordId = codeEntity.getStorageRecordId();
                 if (storageType != null && storageRecordId != 0) {
                     if (storageType == AccConstants.STORAGE_TYPE_IN) {
                         StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
-                        if(storageIn!=null){
+                        if (storageIn != null) {
                             storageVo.setOutNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_OUT));//企业第一次出库
                             storageVo.setExtraNo(storageIn.getInNo());
-                            storageVo.setNum(storageIn.getActInNum());
                             storageVo.setFromStorageId(storageIn.getToStorageId());
                         }
                     } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
@@ -271,11 +285,10 @@ public class StorageServiceImpl implements IStorageService {
                     } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
                         StorageTransfer storageTransfer = storageTransferService.selectStorageTransferById(storageRecordId);
                     }
-                } else {
-                    storageVo.setNum(codeEntity.getCodeAttr().getCodeRecord().getSingleCount());//产品数量
                 }
             }
         }
+        storageVo.setNum(codeService.getCodeCount(codeVal));
         return storageVo;
     }
 
@@ -338,21 +351,40 @@ public class StorageServiceImpl implements IStorageService {
         //更新码属性最新物流节点
         int updRes = 0;
         if (insertRes > 0) {
-            //更新码属性中的最新流转节点信息
+/*            //更新码属性中的最新流转节点信息
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(codeRes.getCodeAttrId());
             //入库或退货入库时需更新码所属企业/经销商
             if (storageType == AccConstants.STORAGE_TYPE_IN) {
-                codeAttr.setTenantId(commonService.getTenantId());
+                StorageIn storageIn=storageInService.selectStorageInById(storageRecordId);
+                codeAttr.setTenantId(storageIn.getTenantId());
             }
             codeAttr.setStorageType(storageType);
             codeAttr.setStorageRecordId(storageRecordId);
-            updRes = codeAttrService.updateCodeAttr(codeAttr);
+            updRes = codeAttrService.updateCodeAttr(codeAttr);*/
 
-            //产品库存更新
-            if (updRes > 0) {
-                updateProductStock(storageType, storageRecordId);
+            //更新码属性中的最新流转节点信息2
+            //入库或退货入库时需更新码所属企业/经销商
+            Code codeTemp=new Code();//箱码用
+            if (storageType == AccConstants.STORAGE_TYPE_IN) {
+                StorageIn storageIn=storageInService.selectStorageInById(storageRecordId);
+                codeRes.setTenantId(storageIn.getTenantId());
+
+                codeTemp.setTenantId(storageIn.getTenantId());
             }
+            codeTemp.setCompanyId(companyId);
+            codeRes.setStorageType(storageType);
+            codeRes.setStorageRecordId(storageRecordId);
+            if(isBox){
+                codeTemp.setStorageType(storageType);
+                codeTemp.setStorageRecordId(storageRecordId);
+                codeTemp.setpCode(boxCode);
+                codeService.updateCodeStorageByPCode(codeTemp);
+                codeRes.setCode(boxCode);
+            }
+
+            updRes =codeService.updateCodeStorageByCode(codeRes);
+
         }
         return updRes;
     }
@@ -364,7 +396,8 @@ public class StorageServiceImpl implements IStorageService {
      * @param storageRecordId
      * @return
      */
-    private void updateProductStock(int storageType, long storageRecordId) {
+    public void updateProductStock(int storageType, long storageRecordId) {
+        Long tenantId = null;
         Long storageId = null;
         Long productId = null;
         Integer flowNum = null;
@@ -373,21 +406,24 @@ public class StorageServiceImpl implements IStorageService {
             if (storageIn == null) {
                 throw new CustomException("更新产品库存时未查询到最新入库单");
             }
+            tenantId = storageIn.getTenantId();
             storageId = storageIn.getToStorageId();
             productId = storageIn.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageIn.getActInNum()));
             // 无仓库，第一步查询是否有仓库，没有直接新建仓库
-            if(storageId == null ){
-                Storage temp=new Storage();
-                List<Storage> list=selectStorageList(temp);
-                if(list.size()>0){
-                    storageId=list.get(0).getId();
-                }else{
-                    Storage storage=new Storage();
+            if (storageId == null) {
+                Storage temp = new Storage();
+                temp.setTenantId(storageIn.getTenantId());
+                List<Storage> list = selectStorageList(temp);
+                if (list.size() > 0) {
+                    storageId = list.get(0).getId();
+                } else {
+                    Storage storage = new Storage();
                     storage.setStorageName("默认仓库");
                     storage.setStorageNo("1");
+                    storage.setTenantId(storageIn.getTenantId());
                     insertStorage(storage);
-                    storageId=storage.getId();
+                    storageId = storage.getId();
                 }
                 storageIn.setToStorageId(storageId);
                 storageInService.updateStorageIn(storageIn);
@@ -398,15 +434,21 @@ public class StorageServiceImpl implements IStorageService {
             if (storageOut == null) {
                 throw new CustomException("更新产品库存时未查询到最新出库单");
             }
+            tenantId = storageOut.getTenantId();
             storageId = storageOut.getFromStorageId();
             productId = storageOut.getProductId();
-            flowNum = Integer.parseInt(String.valueOf(storageOut.getActOutNum()));
+            if(storageOut.getActOutNum()!=null){
+                flowNum = Integer.parseInt(String.valueOf(storageOut.getActOutNum()));
+            }else {
+                flowNum = Integer.parseInt(String.valueOf(storageOut.getOutNum()));
+            }
 
         } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
             StorageBack storageBack = storageBackService.selectStorageBackById(storageRecordId);
             if (storageBack == null) {
                 throw new CustomException("更新产品库存时未查询到最新退货单");
             }
+            tenantId = storageBack.getTenantId();
             storageId = storageBack.getFromStorageId();
             productId = storageBack.getProductId();
             flowNum = Integer.parseInt(String.valueOf(storageBack.getActBackNum()));
@@ -418,7 +460,7 @@ public class StorageServiceImpl implements IStorageService {
         if (storageId == null || storageId == 0 || productId == null || productId == 0 || flowNum == null || flowNum == 0) {
             throw new CustomException("更新产品库存缺少参数!");
         } else {
-            productStockService.insertProductStock(storageId, productId, storageType, storageRecordId, flowNum);
+            productStockService.insertProductStock(tenantId,storageId, productId, storageType, storageRecordId, flowNum);
         }
     }
 

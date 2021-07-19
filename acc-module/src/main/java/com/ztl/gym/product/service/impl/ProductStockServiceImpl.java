@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -80,16 +81,14 @@ public class ProductStockServiceImpl implements IProductStockService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int insertProductStock(long storageId, long productId, int storageType, long storageRecordId, int flowNum) {
+    public int insertProductStock(long tenantId,long storageId, long productId, int storageType, long storageRecordId, int flowNum) {
         long companyId = 0;
-        Long tenantId = null;
         int flowBefore = 0;
         int flowAfter = 0;
         int res = 0;
 
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
-            tenantId = SecurityUtils.getLoginUserCompany().getDeptId();
         } else {
             throw new CustomException("平台无库存操作需要");
         }
@@ -117,7 +116,7 @@ public class ProductStockServiceImpl implements IProductStockService {
                     stockInfo.setInNum(flowNum);
                     stockInfo.setRemainNum(flowNum);
                 } else {
-                    throw new CustomException("库存第一次变更对应流转类型异常：不是入库类型");
+                    throw new CustomException("库存第一次变更对应流转类型异常：不是入库类型（出库与入库产品不一致提示）", HttpStatus.ERROR);
                 }
                 stockInfo.setUpdateTime(new Date());
                 res = productStockMapper.insertProductStock(stockInfo);
@@ -160,7 +159,7 @@ public class ProductStockServiceImpl implements IProductStockService {
                 productStockFlowService.insertProductStockFlow(stockFlow);
             }
         } else {
-            throw new CustomException("企业经销商id异常");
+            throw new CustomException("企业经销商id异常", HttpStatus.ERROR);
         }
         return res;
     }

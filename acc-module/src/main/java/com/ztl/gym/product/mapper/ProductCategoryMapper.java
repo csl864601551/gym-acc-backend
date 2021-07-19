@@ -1,10 +1,10 @@
 package com.ztl.gym.product.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.product.domain.ProductCategory;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品分类Mapper接口
@@ -29,6 +29,15 @@ public interface ProductCategoryMapper
      * @return 产品分类集合
      */
     public List<ProductCategory> selectProductCategoryList(ProductCategory productCategory);
+
+
+    /**
+     * 查询产品分类列表
+     *
+     * @param productCategory 产品分类
+     * @return 产品分类集合
+     */
+    public List<ProductCategory> selectProductCategoryOneList(ProductCategory productCategory);
 
     /**
      * 新增产品分类

@@ -165,4 +165,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		update sys_dept set del_flag = '2' where dept_id = #{deptId}
 	</delete>
 
+
+	<!--	type = 1 今日新增 2 昨日新增 3 本月新增 4经销商总数 5企业数-->
+	<select id="selectCountBydept" resultType="java.lang.Integer" parameterType="Map">
+		select count(dept_id) from sys_dept where status='0' and del_flag='0'
+		<if test="deptId != null">
+			and ancestors like concat('%', #{deptId}, '%')
+		</if>
+		<if test="type != null and type == 1">
+			and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+		</if>
+		<if test="type != null and type == 2">
+			and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+		</if>
+		<if test="type != null and type == 3">
+			and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+		</if>
+		<if test="type != null and type == 4">
+
+		</if>
+		<if test="type != null and type == 5">
+			<if test="topdeptId != null">
+				and parent_id = #{topdeptId}
+			</if>
+		</if>
+	</select>
+
 </mapper>

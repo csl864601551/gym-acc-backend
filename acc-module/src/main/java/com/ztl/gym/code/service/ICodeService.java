@@ -87,11 +87,11 @@ public interface ICodeService {
      * 根据属性id修改码状态
      *
      * @param companyId
-     * @param codeAttrId
+     * @param idList
      * @param status
      * @return
      */
-    int updateStatusByAttrId(Long companyId, Long codeAttrId, int status);
+    int updateStatusByAttrId(Long companyId, List<Long> idList, int status);
 
     /**
      * 批量新增码流转明细 【insertProvider形式】
@@ -124,4 +124,18 @@ public interface ICodeService {
      * @return
      */
     List<Code> selectCodeListByRecord(Long companyId, Long recordId);
+
+    List<Code> selectCodeListBySingle(Long companyId, Long recordId);
+
+    void updatePCodeByCode(Long companyId,String pCode, String s);
+
+    List<Code> selectCodes(Map<String, Object> codeParam);
+
+    void updateCodeStorageByPCode(Code codeTemp);
+
+    int updateCodeStorageByCode(Code codeRes);
+
+    int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId);
+
+    void updateCodeAttrIdByPCode(Map<String, Object> param);
 }

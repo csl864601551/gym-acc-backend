@@ -3,16 +3,19 @@ package com.ztl.gym.web.controller.product;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.core.text.Convert;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.product.domain.ProductCategory;
 import com.ztl.gym.product.service.IProductCategoryService;
+import com.ztl.gym.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +32,9 @@ public class ProductCategoryController extends BaseController
     @Autowired
     private IProductCategoryService roductCategoryService;
 
+    @Autowired
+    private ISysUserService userService;
+
     @GetMapping("/getCategory")
     public List<ProductCategory> getCategory(@RequestParam("type") String type, @RequestParam("id") String id)
     {
@@ -37,13 +43,17 @@ public class ProductCategoryController extends BaseController
         if(type.equals("1")) {
             //一级类型
             productCategory.setpId(Convert.toLong(0));
+            categoryList = roductCategoryService.selectProductCategoryOneList(productCategory);
         } else if(type.equals("2")) {
             //二级类型
             productCategory.setpId(Convert.toLong(id));
+            categoryList = roductCategoryService.selectProductCategoryList(productCategory);
         }
-        categoryList = roductCategoryService.selectProductCategoryList(productCategory);
+
         return categoryList;
     }
+
+
     @GetMapping("/getCategoryDic")
     public List<Map<String,Object>> getCategoryDic(@RequestParam("p_id") Long p_id)
     {
@@ -58,9 +68,19 @@ public class ProductCategoryController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(ProductCategory productCategory)
     {
+        List<ProductCategory> lists = new ArrayList<ProductCategory>();
         startPage();
         List<ProductCategory> list = roductCategoryService.selectProductCategoryList(productCategory);
-        return getDataTable(list);
+        if(list.size()>0){
+            for(ProductCategory productCategoryinfo : list){
+                SysUser user = userService.selectUserById(productCategoryinfo.getCreateUser());
+                if(user!=null){
+                    productCategoryinfo.setCreateUserName(user.getNickName());
+                    lists.add(productCategoryinfo);
+                }
+            }
+        }
+        return getDataTable(lists);
     }
 
     /**

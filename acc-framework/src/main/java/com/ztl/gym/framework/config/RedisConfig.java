@@ -2,6 +2,7 @@ package com.ztl.gym.framework.config;
 
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.code.service.ICodeSingleService;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -72,5 +73,33 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Bean
     public MessageListenerAdapter codeGenerationMessageListenerAdapter(ICodeRecordService codeRecordService) {
         return new MessageListenerAdapter(codeRecordService, "onPublishCode");
+    }
+
+    /**
+     * redis监听
+     *
+     * @param connectionFactory
+     * @param codeGenerationMessageListenerAdapterSingle
+     * @return
+     */
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainerSingle(
+            RedisConnectionFactory connectionFactory,
+            MessageListenerAdapter codeGenerationMessageListenerAdapterSingle) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.addMessageListener(codeGenerationMessageListenerAdapterSingle, new PatternTopic("acc.code.genSingle"));
+        return container;
+    }
+
+    /**
+     * redis监听
+     *
+     * @param codeSingleService
+     * @return
+     */
+    @Bean
+    public MessageListenerAdapter codeGenerationMessageListenerAdapterSingle(ICodeSingleService codeSingleService) {
+        return new MessageListenerAdapter(codeSingleService, "onPublishCodeSingle");
     }
 }

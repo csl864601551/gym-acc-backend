@@ -1,31 +1,29 @@
 package com.ztl.gym.storage.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
-import com.ztl.gym.common.core.domain.entity.SysDept;
-import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.storage.domain.ScanRecord;
+import com.ztl.gym.storage.mapper.ScanRecordMapper;
+import com.ztl.gym.storage.service.IScanRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.storage.mapper.ScanRecordMapper;
-import com.ztl.gym.storage.domain.ScanRecord;
-import com.ztl.gym.storage.service.IScanRecordService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 扫码记录Service业务层处理
@@ -75,12 +73,24 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      */
     @Override
     public int insertScanRecord(ScanRecord scanRecord) {
-        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
-            scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        if(StrUtil.isNotEmpty(scanRecord.getFromType())){
+            if(scanRecord.getFromType().equals("0")){
+                Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+                if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                    scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+                }
+                scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+            }else{
+                scanRecord.setCreateUser(AccConstants.WEIXIN_ADMIN_ID);
+            }
+        }else{
+            Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            }
+            scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         }
         scanRecord.setCreateTime(DateUtils.getNowDate());
-        scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return scanRecordMapper.insertScanRecord(scanRecord);
     }
 
@@ -163,18 +173,19 @@ public class ScanRecordServiceImpl implements IScanRecordService {
 
     @Override
     public CompanyArea getIsMixInfo(CompanyArea area) {
-        LoginUser user = SecurityUtils.getLoginUser();
-        SysDept dept = user.getUser().getDept();
-        Long deptId = dept.getDeptId();
         CompanyArea temp = new CompanyArea();
 
-        if(area.getCodeAttrId()==null){
+        if(area.getCode()==null){
             throw new BaseException("未查询到相关销售区域");
         }else{
             //根据码属性ID获取对应的companyID和tenantID
-            CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());
-            temp.setCompanyId(codeAttr.getCompanyId());
-            temp.setTenantId(codeAttr.getTenantId());
+            //CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());//V1.0.5之前
+            Code codeTemp=new Code();
+            codeTemp.setCompanyId(CodeRuleUtils.getCompanyIdByCode(area.getCode()));
+            codeTemp.setCode(area.getCode());
+            Code code=codeService.selectCode(codeTemp);
+            temp.setCompanyId(code.getCompanyId());
+            temp.setTenantId(code.getTenantId());
         }
         List<CompanyArea> list = companyAreaService.selectCompanyAreaListV2(temp);
         if (area.getProvince() == null) {
@@ -185,11 +196,11 @@ public class ScanRecordServiceImpl implements IScanRecordService {
                     temp.setIsMix(0);
                     break;
                 } else if (list.get(i).getProvince().equals(area.getProvince())) {//否则判断是否有包含的省；有则往下判断
-                    if (list.get(i).getCity().equals("全部")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
+                    if (list.get(i).getCity().equals("全部")||list.get(i).getArea().equals("市辖区")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
                         temp.setIsMix(0);
                         break;
                     } else if (list.get(i).getCity().equals(area.getCity())) {//否则判断是否有包含的市；有则往下判断
-                        if (list.get(i).getArea().equals("全部")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
+                        if (list.get(i).getArea().equals("全部")||list.get(i).getArea().equals("市辖区")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
                             temp.setIsMix(0);
                             break;
                         } else if (list.get(i).getArea().equals(area.getArea())) {//否则判断是否有包含的区；有则返回false,未窜货
@@ -215,6 +226,18 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         }
         temp.setSalesArea(salesArea);
         return temp;
+    }
+
+
+    /**
+     * 查询热力图扫码记录
+     *
+     * @param map 扫码记录
+     * @return 扫码记录集合
+     */
+    @Override
+    public List<ScanRecord> selectRLTList(Map<String,Object> map) {
+        return scanRecordMapper.selectRLTList(map);
     }
 
 

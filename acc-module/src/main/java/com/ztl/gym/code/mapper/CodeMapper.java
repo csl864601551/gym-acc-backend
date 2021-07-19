@@ -4,13 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.vo.CodeVo;
-import com.ztl.gym.code.service.impl.CodeServiceImpl;
 import com.ztl.gym.storage.domain.vo.FlowVo;
-import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 码 Mapper接口
@@ -174,4 +170,15 @@ public interface CodeMapper {
      * @return
      */
     List<Code> selectCodeListByRecord(@Param("companyId") long companyId, @Param("recordId") long recordId);
+    List<Code> selectCodeListBySingle(@Param("companyId") long companyId, @Param("singleId") long singleId);
+
+    void updatePCodeByCode(Map<String, Object> params);
+
+    List<Code> selectCodes(Map<String, Object> codeParam);
+
+    void updateCodeStorageByPCode(Code codeTemp);
+
+    int updateCodeStorageByCode(Code codeRes);
+
+    void updateCodeAttrIdByPCode(Map<String, Object> params);
 }

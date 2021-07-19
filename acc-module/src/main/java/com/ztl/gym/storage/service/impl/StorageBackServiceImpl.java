@@ -76,19 +76,28 @@ public class StorageBackServiceImpl implements IStorageBackService {
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageBack(StorageBack storageBack) {
         storageBack.setCreateTime(DateUtils.getNowDate());
+        storageBack.setOutTime(DateUtils.getNowDate());
         //先新增退货单
         storageBack.setRemark("退货入库自动创建该退货单");
         storageBack.setStatus(StorageBack.STATUS_NORMAL);
         storageBack.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         int res = storageBackMapper.insertStorageBack(storageBack);
         //退货、新增码明细 FIXME 单码退货时，码流转明细会把整套给加进去
-        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), storageBack.getCodeStr());
+        int updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_BACK, storageBack.getId(), storageBack.getCodeStr());
+        //产品库存更新
+        if (updRes > 0) {
+            storageService.updateProductStock(AccConstants.STORAGE_TYPE_BACK, storageBack.getId());
+        }
 
         if (res > 0) {
             //添加退货入库单
             long inId = storageInService.insertStorageInForBack(storageBack);
             //退货入库 新增码明细
-            storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, inId, storageBack.getCodeStr());
+            int updResi=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, inId, storageBack.getCodeStr());
+            //产品库存更新
+            if (updResi > 0) {
+                storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, inId);
+            }
         }
         return res;
     }

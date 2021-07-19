@@ -182,4 +182,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where cf.company_id = #{companyId} and cf.code=#{code}
         order by create_time desc
     </select>
+
+    <select id="selectRLTList" resultType="com.ztl.gym.storage.domain.ScanRecord" parameterType="map">
+        select id,code,longitude,latitude from t_scan_record where longitude!=""
+--         where code in (select code from t_mix_record  where  mix_type='1')
+    </select>
 </mapper>

@@ -1,9 +1,9 @@
 package com.ztl.gym.product.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.product.domain.Attr;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 规格属性Mapper接口
@@ -21,6 +21,15 @@ public interface AttrMapper
      */
     public Attr selectAttrById(Long id);
 
+
+    /**
+     * 查询规格属性
+     *
+     * @param name 规格属性ID
+     * @return 规格属性
+     */
+    public Attr selectAttrByName(String name);
+
     /**
      * 查询规格属性列表
      * 
@@ -28,6 +37,15 @@ public interface AttrMapper
      * @return 规格属性集合
      */
     public List<Attr> selectAttrList(Attr attr);
+
+
+    /**
+     * 查询规格属性列表
+     *
+     * @param attr 规格属性
+     * @return 规格属性集合
+     */
+    public int selectcountAttrList(Attr attr);
 
     /**
      * 新增规格属性
@@ -60,5 +78,13 @@ public interface AttrMapper
      * @return 结果
      */
     public int deleteAttrByIds(Long[] ids);
+
+
+    /**
+     * 查询规格名称是否存在
+     *
+     * @return 结果
+     */
+    public Attr selectAttrBySome(@Param("companyId")Long companyId, @Param("attrNameCn")String attrNameCn);
 
 }

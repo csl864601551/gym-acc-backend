@@ -41,7 +41,7 @@ public interface ICodeAttrService {
      * @param codeAttr 码属性
      * @return 结果
      */
-    public int insertCodeAttr(CodeAttr codeAttr);
+    public Long insertCodeAttr(CodeAttr codeAttr);
 
     /**
      * 修改码属性
@@ -66,4 +66,11 @@ public interface ICodeAttrService {
      * @return 结果
      */
     public int deleteCodeAttrById(Long id);
+    /**
+     * 批量修改码属性
+     *
+     * @param attrList 码属性集合
+     * @return 结果
+     */
+    public int updateCodeAttrBatch(List<CodeAttr> attrList);
 }

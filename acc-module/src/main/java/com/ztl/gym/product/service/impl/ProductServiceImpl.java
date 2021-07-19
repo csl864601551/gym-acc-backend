@@ -62,6 +62,22 @@ public class ProductServiceImpl implements IProductService
     }
 
     /**
+     * 查询产品列表
+     *
+     * @param product 产品
+     * @return 产品
+     */
+    @Override
+    public List<Product> selectTProductList1(Product product)
+    {
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            product.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        return productMapper.selectTProductList1(product);
+    }
+
+    /**
      * 新增产品
      *
      * @param product 产品
@@ -177,5 +193,17 @@ public class ProductServiceImpl implements IProductService
     public int deleteTProductById(Long id)
     {
         return productMapper.deleteTProductById(id);
+    }
+
+    /**
+     * 根据信息 获取产品数量
+     *
+     * @param map 产品
+     * @return 结果
+     */
+    @Override
+    public int selectProductNum(Map<String, Object> map)
+    {
+        return productMapper.selectProductNum(map);
     }
 }

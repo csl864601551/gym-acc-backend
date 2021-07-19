@@ -1,18 +1,18 @@
 package com.ztl.gym.product.service.impl;
 
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.product.domain.Attr;
+import com.ztl.gym.product.mapper.AttrMapper;
+import com.ztl.gym.product.service.IAttrService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.utils.DateUtils;
-import com.ztl.gym.common.utils.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.ztl.gym.product.mapper.AttrMapper;
-import com.ztl.gym.product.domain.Attr;
-import com.ztl.gym.product.service.IAttrService;
 
 /**
  * 规格属性Service业务层处理
@@ -38,6 +38,20 @@ public class AttrServiceImpl implements IAttrService
         return attrMapper.selectAttrById(id);
     }
 
+
+
+    /**
+     * 查询规格属性
+     *
+     * @param name 规格属性name
+     * @return 规格属性
+     */
+    @Override
+    public Attr selectAttrByName(String name)
+    {
+        return attrMapper.selectAttrByName(name);
+    }
+
     /**
      * 查询规格属性列表
      *
@@ -52,6 +66,24 @@ public class AttrServiceImpl implements IAttrService
             attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
         return attrMapper.selectAttrList(attr);
+    }
+
+
+
+    /**
+     * 查询规格属性列表
+     *
+     * @param attr 规格属性
+     * @return 规格属性
+     */
+    @Override
+    public int selectcountAttrList(Attr attr)
+    {
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        return attrMapper.selectcountAttrList(attr);
     }
 
     /**
@@ -123,5 +155,15 @@ public class AttrServiceImpl implements IAttrService
             list.add(temp);
         }
         return list;
+    }
+
+    /**
+     * 查询规格名称是否存在
+     * @return 规格属性
+     */
+    @Override
+    public Attr selectAttrBySome(Long companyId,String attrNameCn)
+    {
+        return attrMapper.selectAttrBySome(companyId,attrNameCn);
     }
 }

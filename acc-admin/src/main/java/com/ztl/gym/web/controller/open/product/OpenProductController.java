@@ -25,7 +25,6 @@ public class OpenProductController {
      *
      * @return
      */
-    @PreAuthorize("@ss.hasPermi('code:record:listProduct')")
     @GetMapping("/listProduct")
     public AjaxResult listProduct() {
         Product product = new Product();

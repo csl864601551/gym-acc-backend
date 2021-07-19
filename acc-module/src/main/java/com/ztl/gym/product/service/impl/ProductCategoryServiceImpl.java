@@ -1,8 +1,5 @@
 package com.ztl.gym.product.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
@@ -11,6 +8,9 @@ import com.ztl.gym.product.mapper.ProductCategoryMapper;
 import com.ztl.gym.product.service.IProductCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品分类Service业务层处理
@@ -50,6 +50,23 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
             productCategory.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
         return productCategoryMapper.selectProductCategoryList(productCategory);
+    }
+
+
+    /**
+     * 查询产品分类列表
+     *
+     * @param productCategory 产品分类
+     * @return 产品分类
+     */
+    @Override
+    public List<ProductCategory> selectProductCategoryOneList(ProductCategory productCategory)
+    {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            productCategory.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        return productCategoryMapper.selectProductCategoryOneList(productCategory);
     }
 
     /**

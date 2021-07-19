@@ -99,6 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 对于登录login 验证码captchaImage 允许匿名访问
                 .antMatchers("/login", "/captchaImage").anonymous()
                 .antMatchers("/open/system/login").anonymous()
+                .antMatchers("/open/system/pdaUpdate").anonymous()
                 .antMatchers("/order/**").anonymous() //fixme
                 .antMatchers(
                         HttpMethod.GET,
@@ -116,9 +117,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/*/api-docs").anonymous()
                 .antMatchers("/druid/**").anonymous()
                 //微信接口
-                .antMatchers("/weixin/**").anonymous()
+                .antMatchers("/weixin/**").permitAll()
+                .antMatchers("/storage/record/getScanRecordByCode").permitAll()
+                .antMatchers("/storage/record/getIsMixInfo").permitAll()
+                .antMatchers("/mix/record").permitAll()
+                .antMatchers("/storage/record").permitAll()
+                .antMatchers("/mix/record/addRecord").permitAll()
+
+                .antMatchers("/storage/transfer/**").permitAll()
+                .antMatchers("/storage/storage/**").permitAll()
+                .antMatchers("/storage/out/**").permitAll()
+                .antMatchers("/statistical/**").permitAll()
+
+
+
+
+
                 //扫码详情
-                .antMatchers("/storage/record/cxspxqBycode").anonymous()
 //                .antMatchers("/c").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()

@@ -1,15 +1,17 @@
 package com.ztl.gym.mix.service.impl;
 
-import java.util.List;
-
+import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.mix.domain.MixRecord;
+import com.ztl.gym.mix.mapper.MixRecordMapper;
+import com.ztl.gym.mix.service.IMixRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.mix.mapper.MixRecordMapper;
-import com.ztl.gym.mix.domain.MixRecord;
-import com.ztl.gym.mix.service.IMixRecordService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 窜货记录Service业务层处理
@@ -60,12 +62,23 @@ public class MixRecordServiceImpl implements IMixRecordService
     @Override
     public int insertMixRecord(MixRecord mixRecord)
     {
-        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
-            mixRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        if(StrUtil.isNotEmpty(mixRecord.getFromType())){
+            if(mixRecord.getFromType().equals("0")){
+                Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+                if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                    mixRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+                }
+            }else{
+                mixRecord.setCreateUser(AccConstants.WEIXIN_ADMIN_ID);
+            }
+        }else{
+            Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                mixRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            }
+            mixRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         }
         mixRecord.setCreateTime(DateUtils.getNowDate());
-        mixRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         return mixRecordMapper.insertMixRecord(mixRecord);
     }
 
@@ -104,5 +117,17 @@ public class MixRecordServiceImpl implements IMixRecordService
     public int deleteMixRecordById(Long id)
     {
         return mixRecordMapper.deleteMixRecordById(id);
+    }
+
+    /**
+     * 窜货总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectmixnum(Map<String, Object> map)
+    {
+        return mixRecordMapper.selectmixnum(map);
     }
 }
