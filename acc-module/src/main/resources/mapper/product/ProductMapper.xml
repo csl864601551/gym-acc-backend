@@ -164,7 +164,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getAttributeList" resultMap="map">
-        select id, company_id, product_id, attr_name_cn, attr_name_en, attr_value, sort, create_user, create_time, update_user, update_time, template_id1, template_id2, template_content1, template_content2, content1, content2
+        select id, company_id, product_id, attr_name_cn, attr_name_en, attr_value, sort, create_user, create_time, update_user, update_time
         from t_product_attr
         where product_id = #{id}
     </select>
