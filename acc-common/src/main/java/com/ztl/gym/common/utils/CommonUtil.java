@@ -8,8 +8,12 @@ import cn.hutool.core.util.URLUtil;
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.PutObjectResult;
+import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +22,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -26,6 +32,10 @@ import java.util.function.Function;
 @Slf4j
 @Component
 public class CommonUtil {
+    /**
+     * 定义日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger(CommonUtil.class);
 
     /**
      * 雪花算法18位
@@ -290,5 +300,26 @@ public class CommonUtil {
             }
         }
         return str;
+    }
+
+    /**
+     * 生成订单随机数
+     * 生成规则时间戳+随机数
+     *
+     * @return
+     */
+    public static String buildOrderNo() {
+        SecureRandom random = null;
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("生成随机数失败");
+            throw new CustomException("系统内部错误.", HttpStatus.ERROR);
+        }
+        StringBuffer num = new StringBuffer();
+        for (int i = 0; i < 5; i++) {
+            num.append(random.nextInt(9));
+        }
+        return DateUtils.dateTimeNow() + num;
     }
 }
