@@ -45,3 +45,27 @@ CREATE TABLE `t_code_single` (
 ALTER TABLE `t_code` ADD `single_id` bigint(20) NULL DEFAULT NULL COMMENT '生码记录ID' AFTER `code_attr_id`;
 ALTER TABLE `t_code_attr` ADD `single_id` bigint(20) NULL DEFAULT NULL COMMENT '生码记录ID' AFTER `record_id`;
 ```
+
+
+#### Beta V1.0.8 2021/07/20
+CREATE TABLE `t_security_code_template`  (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '模板名称',
+  `content` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '防伪模板内容',
+  `type` int(2) NULL DEFAULT NULL COMMENT '类型',
+  `company_id` bigint(20) NULL DEFAULT NULL COMMENT '企业id',
+  `scenario` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '显示场景',
+  `is_open` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '是否启用',
+  `create_user` bigint(20) NULL DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_user` bigint(20) NULL DEFAULT NULL COMMENT '更新人',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+ALTER TABLE `t_product` ADD `template_id1` bigint(20) NULL DEFAULT NULL COMMENT '防伪模板1' ;
+ALTER TABLE `t_product` ADD `template_id2` bigint(20) NULL DEFAULT NULL COMMENT '防伪模板2' ;
+ALTER TABLE `t_product` ADD `template_content1` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '防伪模板1内容' ;
+ALTER TABLE `t_product` ADD `template_content2` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '防伪模板2内容' ;
+ALTER TABLE `t_product` ADD `content1` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单次查询内容' ;
+ALTER TABLE `t_product` ADD `content2` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '多次查询内容' ;
+ALTER TABLE `t_product` alter column product_detail_mobile varchar(255)
