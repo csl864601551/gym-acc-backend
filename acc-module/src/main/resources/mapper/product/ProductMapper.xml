@@ -33,6 +33,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="attrNameCn"    column="attr_name_cn"    />
         <result property="attrNameEn"    column="attr_name_en"    />
         <result property="attrValue"    column="attr_value"    />
+        <result property="templateId1"    column="template_id1"    />
+        <result property="templateId2"    column="template_id2"    />
+        <result property="templateContent1"    column="template_content1"    />
+        <result property="templateContent2"    column="template_content2"    />
+        <result property="content1"    column="content1"    />
+        <result property="content2"    column="content2"    />
     </resultMap>
     <resultMap type="Map" id="map">
         <result property="id"    column="id"    />
@@ -63,12 +69,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="attrNameCn"    column="attr_name_cn"    />
         <result property="attrNameEn"    column="attr_name_en"    />
         <result property="attrValue"    column="attr_value"    />
+        <result property="templateId1"    column="template_id1"    />
+        <result property="templateId2"    column="template_id2"    />
+        <result property="templateContent1"    column="template_content1"    />
+        <result property="templateContent2"    column="template_content2"    />
+        <result property="content1"    column="content1"    />
+        <result property="content2"    column="content2"    />
     </resultMap>
 
     <sql id="selectTProductVo">
         select p.id, p.company_id, p.product_no, p.status, p.product_name, p.bar_code, p.category_one, p.category_two,pc.category_name,
         p.sale_price, p.market_price, p.product_introduce, p.product_detail_pc, p.product_detail_mobile, p.storage_id,
-        p.stock, p.stock_limit, p.unit, p.sort, p.sales_num, p.create_user, p.create_time, p.update_user, p.update_time,u.nick_name createUserName
+        p.stock, p.stock_limit, p.unit, p.sort, p.sales_num, p.create_user, p.create_time, p.update_user, p.update_time,p.template_id1, p.template_id2, p.template_content1, p.template_content2, p.content1, p.content2,u.nick_name createUserName
         from t_product p
         left join t_product_category pc on pc.id=p.category_two
         left join sys_user u on p.create_user = u.user_id
@@ -100,6 +112,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="salesNum != null "> and p.sales_num = #{salesNum}</if>
             <if test="createUser != null "> and p.create_user = #{createUser}</if>
             <if test="updateUser != null "> and p.update_user = #{updateUser}</if>
+            <if test="templateId1 != null "> and p.template_id1 = #{templateId1}</if>
+            <if test="templateId2 != null "> and p.template_id2 = #{templateId2}</if>
+            <if test="templateContent1 != null  and templateContent1 != ''"> and p.template_content1 = #{templateContent1}</if>
+            <if test="templateContent2 != null  and templateContent2 != ''"> and p.template_content2 = #{templateContent2}</if>
+            <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
+            <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
         </where>
         order by sort
     </select>
@@ -130,6 +148,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="salesNum != null "> and p.sales_num = #{salesNum}</if>
             <if test="createUser != null "> and p.create_user = #{createUser}</if>
             <if test="updateUser != null "> and p.update_user = #{updateUser}</if>
+            <if test="templateId1 != null "> and p.template_id1 = #{templateId1}</if>
+            <if test="templateId2 != null "> and p.template_id2 = #{templateId2}</if>
+            <if test="templateContent1 != null  and templateContent1 != ''"> and p.template_content1 = #{templateContent1}</if>
+            <if test="templateContent2 != null  and templateContent2 != ''"> and p.template_content2 = #{templateContent2}</if>
+            <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
+            <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
         </where>
         order by sort
     </select>
@@ -170,6 +194,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="templateId1 != null">template_id1,</if>
+            <if test="templateId2 != null">template_id2,</if>
+            <if test="templateContent1 != null">template_content1,</if>
+            <if test="templateContent2 != null">template_content2,</if>
+            <if test="content1 != null">content1,</if>
+            <if test="content2 != null">content2,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
@@ -194,6 +224,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="templateId1 != null">#{templateId1},</if>
+            <if test="templateId2 != null">#{templateId2},</if>
+            <if test="templateContent1 != null">#{templateContent1},</if>
+            <if test="templateContent2 != null">#{templateContent2},</if>
+            <if test="content1 != null">#{content1},</if>
+            <if test="content2 != null">#{content2},</if>
          </trim>
     </insert>
 
@@ -252,6 +288,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateUser != null">update_user = #{updateUser},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="templateId1 != null">template_id1 = #{templateId1},</if>
+            <if test="templateId2 != null">template_id2 = #{templateId2},</if>
+            <if test="templateContent1 != null">template_content1 = #{templateContent1},</if>
+            <if test="templateContent2 != null">template_content2 = #{templateContent2},</if>
+            <if test="content1 != null">content1 = #{content1},</if>
+            <if test="content2 != null">content2 = #{content2},</if>
         </trim>
         where id = #{id}
     </update>
