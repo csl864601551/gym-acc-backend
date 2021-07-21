@@ -205,6 +205,12 @@ public class Product extends BaseEntity {
     @Excel(name = "多次查询内容")
     private String content2;
 
+
+    /**
+     * 多次查询内容
+     */
+    private String updateType;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -453,6 +459,14 @@ public class Product extends BaseEntity {
         this.content2 = content2;
     }
 
+    public String getUpdateType() {
+        return updateType;
+    }
+
+    public void setUpdateType(String updateType) {
+        this.updateType = updateType;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -486,6 +500,7 @@ public class Product extends BaseEntity {
                 .append("templateContent2", getTemplateContent2())
                 .append("content1", getContent1())
                 .append("content2", getContent2())
+                .append("updateType", getUpdateType())
                 .toString();
     }
 }

@@ -133,32 +133,36 @@ public class ProductController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody Product product)
     {
-        //判断属性列表的值是否对应
-        boolean istrue = true;
-        if(product.getAttributeList()!=null) {
-            if (product.getAttributeList().size() > 0) {
-                for (int i = 0; i < product.getAttributeList().size(); i++) {
-                    Map<String, Object> topmap = new HashMap<String, Object>();
-                    topmap = product.getAttributeList().get(i);
-                    String name = topmap.get("attrNameCn").toString();
-                    String value = topmap.get("attrValue").toString();
-                    Attr attrinfo = attrService.selectAttrByName(name);
-                    if (attrinfo != null) {
-                        if (attrinfo.getInputType() == 1) {
+        if(StrUtil.isNotEmpty(product.getUpdateType())){
 
-                        } else if (attrinfo.getInputType() == 2) {
-                            List<Map<String, Object>> attlist = attrService.getAttrValuesById(attrinfo.getId());
-                            if (attlist.size() > 0) {
-                                for (int j = 0; j < attlist.size(); j++) {
-                                    Map<String, Object> secendmap = new HashMap<String, Object>();
-                                    secendmap = attlist.get(j);
-                                    String twovalue = secendmap.get("value").toString();
-                                    if (twovalue.equals(value)) {
-                                        istrue = false;
+        }else{
+            //判断属性列表的值是否对应
+            boolean istrue = true;
+            if(product.getAttributeList()!=null) {
+                if (product.getAttributeList().size() > 0) {
+                    for (int i = 0; i < product.getAttributeList().size(); i++) {
+                        Map<String, Object> topmap = new HashMap<String, Object>();
+                        topmap = product.getAttributeList().get(i);
+                        String name = topmap.get("attrNameCn").toString();
+                        String value = topmap.get("attrValue").toString();
+                        Attr attrinfo = attrService.selectAttrByName(name);
+                        if (attrinfo != null) {
+                            if (attrinfo.getInputType() == 1) {
+
+                            } else if (attrinfo.getInputType() == 2) {
+                                List<Map<String, Object>> attlist = attrService.getAttrValuesById(attrinfo.getId());
+                                if (attlist.size() > 0) {
+                                    for (int j = 0; j < attlist.size(); j++) {
+                                        Map<String, Object> secendmap = new HashMap<String, Object>();
+                                        secendmap = attlist.get(j);
+                                        String twovalue = secendmap.get("value").toString();
+                                        if (twovalue.equals(value)) {
+                                            istrue = false;
+                                        }
                                     }
-                                }
-                                if (istrue) {
-                                    return error("产品属性类型和值不一致！！！");
+                                    if (istrue) {
+                                        return error("产品属性类型和值不一致！！！");
+                                    }
                                 }
                             }
                         }
