@@ -49,7 +49,7 @@ public class SysRoleController extends BaseController {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (loginUser != null) {
             Long deptId = loginUser.getUser().getDeptId();
-            if (deptId != 100) {
+            if (deptId != 99) {
                 role.setQueryAllFlag("1");
                 role.setCreateBy(loginUser.getUser().getUserName());
             } else {
