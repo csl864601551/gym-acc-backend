@@ -74,6 +74,10 @@ public class AccConstants {
      * 码状态-已赋值
      */
     public final static int CODE_STATUS_FINISH = 1;
+    /**
+     * 码状态-已成功同步至企业节点
+     */
+    public final static int CODE_STATUS_SYNCED = 2;
 
     /*---------------------------- 生码记录常量 ----------------------------*/
     /**
