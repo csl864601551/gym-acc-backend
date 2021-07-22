@@ -87,9 +87,12 @@ public class PurchaseRecordController extends BaseController
     @Log(title = "消费记录 ", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody PurchaseRecord purchaseRecord) {
+        logger.info("the method add enter,add purchaseRecord param is {}", purchaseRecord);
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
             purchaseRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }else{
+            purchaseRecord.setCompanyId(companyId);
         }
         long userId = SecurityUtils.getLoginUser().getUser().getUserId();
         purchaseRecord.setCreateUser(userId);

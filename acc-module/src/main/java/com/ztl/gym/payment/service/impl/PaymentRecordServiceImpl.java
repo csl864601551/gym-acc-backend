@@ -77,11 +77,14 @@ public class PaymentRecordServiceImpl implements IPaymentRecordService {
         query.setParamKey(QuotaConstants.MONEY);
         List<Quota> quotaList = quotaService.selectQuotaList(query);
         if (CollectionUtil.isEmpty(quotaList)) {
+            logger.info("配额表无记录，进行金额新增操作");
             quotaService.insertQuota(buildQuotaBean(paymentRecord));
         } else {
+            logger.info("the method insertPaymentRecord end");
             Quota quota = quotaList.get(0);
             BigDecimal money = quota.getParamValue();
             quota.setParamValue(money.add(paymentRecord.getPayAmount()));
+            logger.info("配额表有记录，进行金额更新操作");
             quotaService.updateQuota(quota);
         }
         paymentRecord.setCreateTime(DateUtils.getNowDate());

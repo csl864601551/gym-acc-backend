@@ -147,16 +147,19 @@ public class PurchaseRecordServiceImpl implements IPurchaseRecordService {
             throw new CustomException("余额不足无法购买.", HttpStatus.ERROR);
         }
         money.setParamValue(balance.subtract(purchaseRecord.getPurchaseAmount()));
+        logger.info("进行金额更新操作");
         quotaService.updateQuota(money);
         List<Quota> codeList = list.stream().
                 filter(item -> item.getParamKey().equals(QuotaConstants.CODE))
                 .collect(Collectors.toList());
         //如果配额没有码量则新增，有则更新
         if (CollectionUtil.isEmpty(codeList)) {
+            logger.info("配额表无记录，进行码量新增操作");
             quotaService.insertQuota(buildQuotaBean(purchaseRecord));
         } else {
             Quota code = codeList.get(0);
             code.setParamValue(code.getParamValue().add(BigDecimal.valueOf(purchaseRecord.getCount())));
+            logger.info("配额表有记录，进行码量更新操作");
             quotaService.updateQuota(code);
         }
     }
