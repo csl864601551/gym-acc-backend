@@ -79,4 +79,6 @@ public interface ICodeSingleService {
      * @return 生码记录
      */
     public CodeSingle selectCodeSingleByIndex(long codeIndex,long companyId);
+
+    int createAccCodeSingle(long companyId, long count, String remark);
 }

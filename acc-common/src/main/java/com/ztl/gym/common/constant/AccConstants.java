@@ -97,6 +97,10 @@ public class AccConstants {
      * 生码类型-套标生码
      */
     public final static int GEN_CODE_TYPE_BOX = 2;
+    /**
+     * 生码类型-防伪码生码
+     */
+    public final static int GEN_CODE_TYPE_ACC = 3;
 
     /*---------------------------- 仓库库存 ----------------------------*/
     /**

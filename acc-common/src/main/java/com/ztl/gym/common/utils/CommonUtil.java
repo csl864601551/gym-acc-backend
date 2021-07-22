@@ -308,6 +308,26 @@ public class CommonUtil {
      *
      * @return
      */
+    public static String buildOrderNo(int length) {
+        SecureRandom random = null;
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("生成随机数失败");
+            throw new CustomException("系统内部错误.", HttpStatus.ERROR);
+        }
+        StringBuffer num = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            num.append(random.nextInt(9));
+        }
+        return num.toString();
+    }
+    /**
+     * 生成订单随机数
+     * 生成规则时间戳+随机数
+     *
+     * @return
+     */
     public static String buildOrderNo() {
         SecureRandom random = null;
         try {
@@ -321,5 +341,9 @@ public class CommonUtil {
             num.append(random.nextInt(9));
         }
         return DateUtils.dateTimeNow() + num;
+    }
+    public static void main(String[] args) {
+        String code = buildOrderNo(5);
+        System.out.println(code);
     }
 }

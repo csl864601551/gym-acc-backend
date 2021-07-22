@@ -181,4 +181,6 @@ public interface CodeMapper {
     int updateCodeStorageByCode(Code codeRes);
 
     void updateCodeAttrIdByPCode(Map<String, Object> params);
+
+    int insertAccCodeForBatch(List<Map> codeList);
 }

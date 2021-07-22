@@ -1,6 +1,8 @@
 package com.ztl.gym.common.utils;
 
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,11 +43,11 @@ public class CodeRuleUtils {
 
     static {
         //托码
-        CODE_PREFIX_MAP.put("T", 10);
+        CODE_PREFIX_MAP.put("T", 1);
         //箱码
-        CODE_PREFIX_MAP.put("B", 20);
+        CODE_PREFIX_MAP.put("B", 2);
         //单码
-        CODE_PREFIX_MAP.put("S", 30);
+        CODE_PREFIX_MAP.put("S", 3);
     }
 
 
@@ -68,12 +70,42 @@ public class CodeRuleUtils {
         if (companyId != null && StringUtils.isNotBlank(codePrefix) && codeIndex != null) {
             //注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去
             //企业id转换
-            long companyIdComplex = companyId * 5;
-            code = CODE_PREFIX_MAP.get(codePrefix) + "-" + companyIdComplex + "-"  + codeIndex;
+            String companyIdComplex = companyId.toString();
+            if(companyIdComplex.length()<5){
+                // 不够位数的在前面补0，保留num的长度位数字
+                companyIdComplex = String.format("%0" + 5 + "d", companyId);
+            }
+            code = CODE_PREFIX_MAP.get(codePrefix)  + companyIdComplex + ""  + codeIndex;
+            //补足3位随机数
+            code+=CommonUtil.buildOrderNo(3);
+
         }
         return code;
     }
-
+    /**
+     * 创建防伪码 【生码规则：码类型前缀转换值+企业id+码自增数 】
+     *
+     * @return
+     */
+    public static String buildAccCode(Long companyId) {
+        String code = "";
+        if (companyId != null  ) {
+            //注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去
+            //企业id转换
+            String companyIdComplex = companyId.toString();
+            if(companyIdComplex.length()<5){
+                // 不够位数的在前面补0，保留num的长度位数字
+                companyIdComplex = String.format("%0" + 5 + "d", companyId);
+            }
+            code = companyIdComplex ;
+            //防伪码不够16位补足随机数
+            if(code.length()<16){
+                String random=CommonUtil.buildOrderNo(16-code.length());
+                code+=random;
+            }
+        }
+        return code;
+    }
 
     /**
      * 根据码获得该码类型
@@ -82,14 +114,17 @@ public class CodeRuleUtils {
      * @return
      */
     public static String getCodeType(String code) {
-        String[] codes = code.split("-");
-        if (codes.length > 1) {
-            String prefix = codes[0];
-            if (prefix.equals("20")) {
-                return AccConstants.CODE_TYPE_BOX;
-            } else if (prefix.equals("30")) {
-                return AccConstants.CODE_TYPE_SINGLE;
+        try {
+            if (code.length() > 1) {
+                String prefix = code.substring(0,1);
+                if (prefix.equals("2")) {
+                    return AccConstants.CODE_TYPE_BOX;
+                } else if (prefix.equals("3")) {
+                    return AccConstants.CODE_TYPE_SINGLE;
+                }
             }
+        }catch (Exception e){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         return AccConstants.CODE_TYPE_ERROR;
     }
@@ -101,11 +136,33 @@ public class CodeRuleUtils {
      * @return
      */
     public static Long getCompanyIdByCode(String code) {
-        String[] codes = code.split("-");
-        if (codes.length > 1) {
-            String prefix = codes[1];
-            return Long.parseLong(prefix) / 5;
+        try {
+            if (code.length() > 1) {
+                String prefix = code.substring(1,6);
+                return Long.parseLong(prefix);
+            }
+        }catch (Exception e){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
+
+        return 0L;
+    }
+    /**
+     * 根据码获得该码所属企业id
+     *
+     * @param code
+     * @return
+     */
+    public static Long getCompanyIdBySecurityCode(String code) {
+        try {
+            if (code.length() > 1) {
+                String prefix = code.substring(0,5);
+                return Long.parseLong(prefix);
+            }
+        }catch (Exception e){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+
         return 0L;
     }
 
@@ -133,7 +190,7 @@ public class CodeRuleUtils {
 
 
     public static void main(String[] args) {
-        String code = buildCode(286L, "B", 1L);
+        String code = buildCode(286L, "B", 1000329770L);
         System.out.println(code);
         System.out.println("companyId : " + getCompanyIdByCode(code));
     }

@@ -115,6 +115,13 @@
             #{code.pCode}, #{code.codeAttrId}, #{code.singleId})
         </foreach>
     </insert>
+    <insert id="insertAccCodeForBatch">
+        insert into t_code_acc(  company_id,  code_acc, record_id, create_time)
+        values
+        <foreach collection="list" item="code" separator=",">
+            (  #{code.companyId},  #{code.codeAcc},  #{code.recordId}, #{code.createTime})
+        </foreach>
+    </insert>
 
     <update id="updateCode" parameterType="Code">
         update t_code

@@ -171,8 +171,11 @@ public class CodeSingleController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody CodeSingle codeSingle) {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        return toAjax(codeSingleService.createCodeSingle(companyId, codeSingle.getCount(), codeSingle.getRemark()));
-
+        if (codeSingle.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
+            return toAjax(codeSingleService.createCodeSingle(companyId, codeSingle.getCount(), codeSingle.getRemark()));
+        } else{
+            return toAjax(codeSingleService.createAccCodeSingle(companyId, codeSingle.getCount(), codeSingle.getRemark()));
+        }
     }
 
     /**

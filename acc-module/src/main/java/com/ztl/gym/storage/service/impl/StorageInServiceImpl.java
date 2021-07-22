@@ -6,6 +6,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.service.IProductStockService;
@@ -240,7 +241,7 @@ public class StorageInServiceImpl implements IStorageInService {
         boolean flag=true;
         int updRes=0;
         for (int i = 0; i < codes.size(); i++) {
-            if(codes.get(i).startsWith("20")){
+            if(CodeRuleUtils.getCodeType(codes.get(i)).equals(AccConstants.CODE_TYPE_BOX)){
                 updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
                 flag=false;
             }

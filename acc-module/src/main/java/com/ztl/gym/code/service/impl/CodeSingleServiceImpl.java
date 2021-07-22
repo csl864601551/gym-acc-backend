@@ -1,5 +1,6 @@
 package com.ztl.gym.code.service.impl;
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
@@ -23,8 +24,7 @@ import javax.annotation.Resource;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -166,6 +166,36 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         }
         return res;
     }
+    /**
+     * 生码-防伪码
+     *
+     * @param companyId 企业id
+     * @param num       生码数量
+     * @param remark    备注详情
+     * @return
+     */
+    @Override
+    public int createAccCodeSingle(long companyId, long num, String remark) {
+        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_ACC, 0, num, remark);
+        codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+        int res = codeSingleMapper.insertCodeSingle(codeSingle);
+        if (res > 0) {
+            List<Map> codeList = new ArrayList<>();
+            Date createTime=DateUtils.getNowDate();
+            for (int i = 0; i < num; i++) {
+                Map<String,Object> code=new HashMap();
+                code.put("companyId",companyId);
+                code.put("codeAcc",CodeRuleUtils.buildAccCode(companyId));
+                code.put("singleId",codeSingle.getId());
+                code.put("createTime",createTime);
+                codeList.add(code);
+
+            }
+            res = codeMapper.insertAccCodeForBatch(codeList);
+        }
+        return res;
+    }
+
 
 
     /**
@@ -224,10 +254,13 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         } else if (type == AccConstants.GEN_CODE_TYPE_BOX) {
             codePrefix = CodeRuleUtils.CODE_PREFIX_B;
         }
-        String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, boxCount, num, codePrefix);
-        String[] codeIndexs = codeNoStr.split("-");
-        CodeSingle.setIndexStart(Long.parseLong(codeIndexs[0]) + 1);
-        CodeSingle.setIndexEnd(Long.parseLong(codeIndexs[1]));
+        if(codePrefix != null){
+            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, boxCount, num, codePrefix);
+            String[] codeIndexs = codeNoStr.split("-");
+            CodeSingle.setIndexStart(Long.parseLong(codeIndexs[0]) + 1);
+            CodeSingle.setIndexEnd(Long.parseLong(codeIndexs[1]));
+        }
+
         //基础属性
         CodeSingle.setCompanyId(companyId);
         long totalNum = num;
