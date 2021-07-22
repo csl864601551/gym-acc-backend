@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.quota.mapper.QuotaMapper">
+    
+    <resultMap type="Quota" id="QuotaResult">
+        <result property="id"    column="id"    />
+        <result property="paramName"    column="param_name"    />
+        <result property="paramKey"    column="param_key"    />
+        <result property="paramValue"    column="param_value"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectQuotaVo">
+        select id, param_name, param_key, param_value, company_id, remark, create_user, create_time, update_user, update_time from t_quota
+    </sql>
+
+    <select id="selectQuotaList" parameterType="Quota" resultMap="QuotaResult">
+        <include refid="selectQuotaVo"/>
+        <where>  
+            <if test="paramName != null  and paramName != ''"> and param_name like concat('%', #{paramName}, '%')</if>
+            <if test="paramKey != null  and paramKey != ''"> and param_key = #{paramKey}</if>
+            <if test="paramValue != null "> and param_value = #{paramValue}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectQuotaById" parameterType="Long" resultMap="QuotaResult">
+        <include refid="selectQuotaVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertQuota" parameterType="Quota" useGeneratedKeys="true" keyProperty="id">
+        insert into t_quota
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="paramName != null">param_name,</if>
+            <if test="paramKey != null">param_key,</if>
+            <if test="paramValue != null">param_value,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="paramName != null">#{paramName},</if>
+            <if test="paramKey != null">#{paramKey},</if>
+            <if test="paramValue != null">#{paramValue},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateQuota" parameterType="Quota">
+        update t_quota
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="paramName != null">param_name = #{paramName},</if>
+            <if test="paramKey != null">param_key = #{paramKey},</if>
+            <if test="paramValue != null">param_value = #{paramValue},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQuotaById" parameterType="Long">
+        delete from t_quota where id = #{id}
+    </delete>
+
+    <delete id="deleteQuotaByIds" parameterType="String">
+        delete from t_quota where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -204,4 +204,20 @@ public class AccConstants {
      */
     public final static long ADMIN_ROLE = 1;
 
+    /**
+     * 待支付
+     */
+    public final static int PAYMENT_STATUS_ZERO = 0;
+
+    /**
+     * 已支付
+     */
+    public final static int PAYMENT_STATUS_ONE = 1;
+
+    /**
+     * 取消支付
+     */
+    public final static int PAYMENT_STATUS_TWO = 2;
+
+
 }
