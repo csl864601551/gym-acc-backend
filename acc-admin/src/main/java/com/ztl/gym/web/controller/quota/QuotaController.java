@@ -31,13 +31,12 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 @RequestMapping("/quota")
 public class QuotaController extends BaseController
 {
-//    @Autowired
-//    private IQuotaService quotaService;
-//
+    @Autowired
+    private IQuotaService quotaService;
+
 //    /**
 //     * 查询配额 列表
 //     */
-//    @PreAuthorize("@ss.hasPermi('product:quota:list')")
 //    @GetMapping("/list")
 //    public TableDataInfo list(Quota quota)
 //    {

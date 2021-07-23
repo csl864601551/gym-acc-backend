@@ -56,11 +56,11 @@ public class StatisticalController {
         Long topdeptId = 0L;
         //获取用户部门信息
         Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
+        if (deptId.equals(AccConstants.ADMIN_DEPT_ID)||deptId.equals(AccConstants.XTADMIN_DEPT_ID)||deptId>200) {
+            isadmin = true;
+        }else{
             topdeptId = SecurityUtils.getLoginUserTopCompanyId();
             isadmin = false;
-        }else{
-            isadmin = true;
         }
         Map<String, Object> query = new HashMap<String, Object>();
         //平台管理员
@@ -115,7 +115,7 @@ public class StatisticalController {
             Date beginTime = DateUtil.beginOfDay(today);
             Date endTime = DateUtil.endOfDay(today);
             query.put("type",1);
-            query.put("begintime",beginTime);
+            query.put("beginTime",beginTime);
             query.put("endTime",endTime);
             jrxzNum = deptService.selectCountBydept(query);
             //昨日新增
@@ -123,15 +123,15 @@ public class StatisticalController {
             beginTime = DateUtil.beginOfDay(yesterday);
             endTime = DateUtil.endOfDay(yesterday);
             query.put("type",2);
-            query.put("begintime",beginTime);
-            query.put("endtime",endTime);
+            query.put("beginTime",beginTime);
+            query.put("endTime",endTime);
             zrxzNum = deptService.selectCountBydept(query);
             //本月新增
             beginTime = DateUtil.beginOfMonth(today);
             endTime = DateUtil.endOfMonth(today);
             query.put("type",3);
-            query.put("begintime",beginTime);
-            query.put("endtime",endTime);
+            query.put("beginTime",beginTime);
+            query.put("endTime",endTime);
             byxzNum = deptService.selectCountBydept(query);
             //经销商总数
             query.put("type",3);
@@ -168,26 +168,26 @@ public class StatisticalController {
             //经销商总览
             //今日新增
             Date today = DateUtil.date();
-            Date begintime = DateUtil.beginOfDay(today);
-            Date endtime = DateUtil.endOfDay(today);
+            Date beginTime = DateUtil.beginOfDay(today);
+            Date endTime = DateUtil.endOfDay(today);
             query.put("type",1);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
+            query.put("beginTime",beginTime);
+            query.put("endTime",endTime);
             jrxzNum = deptService.selectCountBydept(query);
             //昨日新增
             Date yesterday = DateUtil.yesterday();
-            begintime = DateUtil.beginOfDay(yesterday);
-            endtime = DateUtil.endOfDay(yesterday);
+            beginTime = DateUtil.beginOfDay(yesterday);
+            endTime = DateUtil.endOfDay(yesterday);
             query.put("type",2);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
+            query.put("beginTime",beginTime);
+            query.put("endTime",endTime);
             zrxzNum = deptService.selectCountBydept(query);
             //本月新增
-            begintime = DateUtil.beginOfMonth(today);
-            endtime = DateUtil.endOfMonth(today);
+            beginTime = DateUtil.beginOfMonth(today);
+            endTime = DateUtil.endOfMonth(today);
             query.put("type",3);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
+            query.put("beginTime",beginTime);
+            query.put("endTime",endTime);
             byxzNum = deptService.selectCountBydept(query);
             //经销商总数
             query.put("type",3);
@@ -217,7 +217,7 @@ public class StatisticalController {
 
 
     /**
-     * 查询首页信息
+     * 查询出货数量信息
      */
     @PostMapping("/selectOutNum")
     public AjaxResult selectOutNum(@RequestBody Map<String,Object> map)

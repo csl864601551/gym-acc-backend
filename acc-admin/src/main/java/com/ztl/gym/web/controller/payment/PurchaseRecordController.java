@@ -6,10 +6,12 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.domain.PurchaseRecord;
 import com.ztl.gym.payment.service.IPurchaseRecordService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -86,7 +88,7 @@ public class PurchaseRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('payment:purchase:add')")
     @Log(title = "消费记录 ", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PurchaseRecord purchaseRecord) {
+    public AjaxResult add(@RequestBody @Validated PurchaseRecord purchaseRecord) {
         logger.info("the method add enter,add purchaseRecord param is {}", purchaseRecord);
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
@@ -98,6 +100,16 @@ public class PurchaseRecordController extends BaseController
         purchaseRecord.setCreateUser(userId);
         purchaseRecord.setUpdateUser(userId);
         return toAjax(purchaseRecordService.insertPurchaseRecord(purchaseRecord));
+    }
+
+    /**
+     * 获取统计数值
+     */
+    @GetMapping("/total")
+    public AjaxResult getTotal(PurchaseRecord purchaseRecord)
+    {
+        logger.info("the method getTotal enter,param is {}", purchaseRecord);
+        return AjaxResult.success(purchaseRecordService.getStatistics(purchaseRecord));
     }
 
     /**
