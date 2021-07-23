@@ -197,6 +197,8 @@ public class PurchaseRecordServiceImpl implements IPurchaseRecordService {
                 total.put(quota.getParamKey(),quota.getParamValue());
             }
             //获取已用码量
+            Long usedCodeSum = purchaseRecordMapper.totalUsedCodeSum(purchaseRecord.getCompanyId());
+            total.put("usedCode",usedCodeSum);
         }
         return total;
     }
