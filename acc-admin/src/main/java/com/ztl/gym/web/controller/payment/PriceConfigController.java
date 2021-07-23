@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,7 +46,6 @@ public class PriceConfigController extends BaseController
     /**
      * 查询价格 平台设置码包价格列表
      */
-    @PreAuthorize("@ss.hasPermi('payment:config:list')")
     @GetMapping("/list")
     public TableDataInfo list(PriceConfig priceConfig)
     {
@@ -74,7 +74,7 @@ public class PriceConfigController extends BaseController
     @PreAuthorize("@ss.hasPermi('payment:config:add')")
     @Log(title = "价格 平台设置码包价格", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PriceConfig priceConfig)
+    public AjaxResult add(@RequestBody @Validated PriceConfig priceConfig)
     {
         logger.info("the method add enter,add priceConfig param is {}", priceConfig);
         return toAjax(priceConfigService.insertPriceConfig(priceConfig));
@@ -86,7 +86,7 @@ public class PriceConfigController extends BaseController
     @PreAuthorize("@ss.hasPermi('payment:config:edit')")
     @Log(title = "价格 平台设置码包价格", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody PriceConfig priceConfig)
+    public AjaxResult edit(@RequestBody @Validated PriceConfig priceConfig)
     {
         logger.info("the method edit enter,edit priceConfig param is {}", priceConfig);
         return toAjax(priceConfigService.updatePriceConfig(priceConfig));

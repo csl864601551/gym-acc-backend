@@ -1,6 +1,7 @@
 package com.ztl.gym.payment.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ztl.gym.payment.domain.PaymentRecord;
 
@@ -59,4 +60,12 @@ public interface IPaymentRecordService
      * @return 结果
      */
     public int deletePaymentRecordById(Long id);
+
+    /**
+     ** 获取统计数值
+     *获取充值总数和可用金额总数
+     * @param paymentRecord 充值记录
+     * @return map
+     */
+    public Map<String,Object> getStatistics(PaymentRecord paymentRecord);
 }

@@ -1,15 +1,14 @@
 package com.ztl.gym.payment.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,6 +18,7 @@ import javax.validation.constraints.Size;
  * @author wujinhao
  * @date 2021-07-19
  */
+@Valid
 public class PaymentRecord extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -36,8 +36,10 @@ public class PaymentRecord extends BaseEntity {
     /**
      * 支付金额
      */
-    @Excel(name = "支付金额")
-    @NotNull
+    @Excel(name = "充值金额")
+    @NotNull(message = "充值金额不能为空")
+    @DecimalMin(value = "0.00", message = "充值金额不能小于0.00元")
+    @Digits(integer = 32, fraction=2, message = "充值金额格式不正确")
     private BigDecimal payAmount;
 
     /**
@@ -63,7 +65,6 @@ public class PaymentRecord extends BaseEntity {
      */
     @Excel(name = "企业ID")
     @NotNull()
-    @Size(min = 1, max = 20, message = "企业ID不能超过20个字符")
     private Long companyId;
 
     /**

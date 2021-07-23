@@ -1,18 +1,26 @@
 package com.ztl.gym.web.controller.payment;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.service.IPaymentRecordService;
+import com.ztl.gym.quota.domain.Quota;
+import com.ztl.gym.quota.domain.QuotaConstants;
+import com.ztl.gym.quota.service.IQuotaService;
 import com.ztl.gym.quota.service.impl.QuotaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +50,8 @@ public class PaymentRecordController extends BaseController
     private static Logger logger = LoggerFactory.getLogger(PaymentRecordController.class);
     @Autowired
     private IPaymentRecordService paymentRecordService;
+    @Autowired
+    private IQuotaService quotaService;
 
     /**
      * 查询充值记录 列表
@@ -76,7 +86,7 @@ public class PaymentRecordController extends BaseController
     @PreAuthorize("@ss.hasPermi('payment:record:add')")
     @Log(title = "充值记录 ", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PaymentRecord paymentRecord)
+    public AjaxResult add(@RequestBody @Validated PaymentRecord paymentRecord)
     {
         logger.info("the method add enter,add paymentRecord param is {}", paymentRecord);
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
@@ -87,6 +97,17 @@ public class PaymentRecordController extends BaseController
         paymentRecord.setCreateUser(userId);
         paymentRecord.setUpdateUser(userId);
         return toAjax(paymentRecordService.insertPaymentRecord(paymentRecord));
+    }
+
+    /**
+     * 获取统计数值
+     * 获取充值总数和可用金额总数
+     */
+    @GetMapping("/totalAmount")
+    public AjaxResult getTotalAmount(PaymentRecord paymentRecord)
+    {
+        logger.info("the method getTotalAmount enter,param is {}", paymentRecord);
+        return AjaxResult.success(paymentRecordService.getStatistics(paymentRecord));
     }
 
 //    /**

@@ -1,7 +1,9 @@
 package com.ztl.gym.payment.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.domain.PurchaseRecord;
 
 /**
@@ -59,4 +61,12 @@ public interface IPurchaseRecordService
      * @return 结果
      */
     public int deletePurchaseRecordById(Long id);
+
+    /**
+     ** 获取统计数值
+     *获取可用金额总数,总码量，已用码量
+     * @param purchaseRecord 充值记录
+     * @return map
+     */
+    public Map<String,Object> getStatistics(PurchaseRecord purchaseRecord);
 }

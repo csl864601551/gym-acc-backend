@@ -47,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createUser != null "> and create_user = #{createUser}</if>
             <if test="updateUser != null "> and update_user = #{updateUser}</if>
         </where>
+        order by a.create_time desc
     </select>
     
     <select id="selectPriceConfigById" parameterType="Long" resultMap="PriceConfigResult">

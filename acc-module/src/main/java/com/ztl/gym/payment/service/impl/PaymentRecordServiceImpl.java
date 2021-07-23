@@ -1,11 +1,15 @@
 package com.ztl.gym.payment.service.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.CommonUtil;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.mapper.PaymentRecordMapper;
 import com.ztl.gym.quota.domain.Quota;
@@ -126,6 +130,40 @@ public class PaymentRecordServiceImpl implements IPaymentRecordService {
     @Override
     public int deletePaymentRecordById(Long id) {
         return paymentRecordMapper.deletePaymentRecordById(id);
+    }
+
+    /**
+     ** 获取统计数值
+     *获取充值总数和可用金额总数
+     * @param paymentRecord 充值记录
+     * @return map
+     */
+    @Override
+    public Map<String, Object> getStatistics(PaymentRecord paymentRecord) {
+        logger.info("the method getStatistics enter");
+        Map<String, Object> total = new HashMap<>(2);
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            paymentRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            //如果是企业返回余额
+            //查询配额表
+            Quota query = new Quota();
+            query.setCompanyId(paymentRecord.getCompanyId());
+            query.setParamKey(QuotaConstants.MONEY);
+            List<Quota> quotaList = quotaService.selectQuotaList(query);
+            if(CollectionUtil.isEmpty(quotaList)){
+                logger.info("该企业没有充值记录");
+                total.put(QuotaConstants.MONEY, 0 );
+            }else{
+                total.put(QuotaConstants.MONEY, quotaList.get(0).getParamValue());
+            }
+        }
+        //统计
+        List<PaymentRecord> list = selectPaymentRecordList(paymentRecord);
+        BigDecimal reduceTotal = list.stream()
+                .map(PaymentRecord::getPayAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        total.put("amount", reduceTotal);
+        return total;
     }
 
     /**

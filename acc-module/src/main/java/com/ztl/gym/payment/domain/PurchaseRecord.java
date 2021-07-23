@@ -6,12 +6,16 @@ import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+
 /**
  * 消费记录 对象 t_purchase_record
  *
  * @author wujinhao
  * @date 2021-07-19
  */
+@Valid
 public class PurchaseRecord extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -25,6 +29,7 @@ public class PurchaseRecord extends BaseEntity
 
     /** 购买数量 */
     @Excel(name = "购买数量")
+    @Min(value = 1, message = "购买数量大于0")
     private Long count;
 
     /**
@@ -37,7 +42,10 @@ public class PurchaseRecord extends BaseEntity
     private Long companyId;
 
     /** 金额 */
-    @Excel(name = "金额")
+    @Excel(name = "消费金额")
+    @NotNull(message = "消费金额不能为空")
+    @DecimalMin(value = "0.00", message = "消费金额不能小于0.00元")
+    @Digits(integer = 32, fraction=2, message = "消费金额格式不正确")
     private BigDecimal purchaseAmount;
 
     /** 类型 0-消费，1-退款 */

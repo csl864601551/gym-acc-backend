@@ -6,12 +6,16 @@ import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+
 /**
  * 价格 平台设置码包价格对象 t_price_config
  *
  * @author wujinhao
  * @date 2021-07-19
  */
+@Valid
 public class PriceConfig extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -25,14 +29,19 @@ public class PriceConfig extends BaseEntity
 
     /** 价格 */
     @Excel(name = "价格")
+    @NotNull(message = "价格不能为空")
+    @DecimalMin(value = "0.00", message = "价格不能小于0.00元")
+    @Digits(integer = 32, fraction=2, message = "价格格式不正确")
     private BigDecimal price;
 
     /** 数量 码量 */
     @Excel(name = "数量 码量")
+    @Min(value = 1, message = "数量大于0")
     private Long count;
 
     /** 类型 1-码 */
     @Excel(name = "类型 1-码")
+    @NotNull(message = "配置类型不能为空")
     private Long type;
 
     /** 是否启用 0-关闭1-开启 */

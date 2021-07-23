@@ -3,14 +3,19 @@ package com.ztl.gym.payment.service.impl;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CommonUtil;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.domain.PurchaseRecord;
 import com.ztl.gym.payment.mapper.PurchaseRecordMapper;
 import com.ztl.gym.quota.domain.Quota;
@@ -162,6 +167,38 @@ public class PurchaseRecordServiceImpl implements IPurchaseRecordService {
             logger.info("配额表有记录，进行码量更新操作");
             quotaService.updateQuota(code);
         }
+    }
+
+    /**
+     ** 获取统计数值
+     *获取充值总数和可用金额总数
+     * @param purchaseRecord 充值记录
+     * @return map
+     */
+    @Override
+    public Map<String, Object> getStatistics(PurchaseRecord purchaseRecord) {
+        logger.info("the method getStatistics enter");
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        Map<String, Object> total = null;
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            purchaseRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            //如果是企业返回余额
+            //查询配额表
+            Quota query = new Quota();
+            query.setCompanyId(purchaseRecord.getCompanyId());
+            List<Quota> quotaList = quotaService.selectQuotaList(query);
+            total = new HashMap<>(quotaList.size() + 1);
+            if (CollectionUtil.isEmpty(quotaList)) {
+                logger.info("该企业没有充值和购码使用记录");
+                return total;
+            }
+            //遍历塞值  key-value
+            for (Quota quota : quotaList) {
+                total.put(quota.getParamKey(),quota.getParamValue());
+            }
+            //获取已用码量
+        }
+        return total;
     }
 
     /**
