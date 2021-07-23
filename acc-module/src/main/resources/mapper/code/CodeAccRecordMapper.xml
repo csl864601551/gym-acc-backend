@@ -54,6 +54,7 @@
             <if test="createUser != null ">and r.create_user = #{createUser}</if>
             <if test="updateUser != null ">and r.update_user = #{updateUser}</if>
         </where>
+        order by r.create_time desc
     </select>
 
     <select id="selectCodeAccRecordById" parameterType="Long" resultMap="CodeAccRecordResult">
