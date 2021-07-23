@@ -2,6 +2,8 @@ package com.ztl.gym.code.service.impl;
 
 import java.util.*;
 
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAcc;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.common.annotation.DataSource;
@@ -105,6 +107,7 @@ public class CodeAccRecordServiceImpl implements ICodeAccRecordService
         return res;
     }
 
+
     /**
      * 修改生码记录
      *
@@ -140,5 +143,13 @@ public class CodeAccRecordServiceImpl implements ICodeAccRecordService
     public int deleteCodeAccRecordById(Long id)
     {
         return codeAccRecordMapper.deleteCodeAccRecordById(id);
+    }
+
+    @Override
+    public List<CodeAcc> selectAccCodeListByRecord(Long companyId, Long recordId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("recordId", recordId);
+        return codeAccRecordMapper.selectAccCodeListByRecord(companyId, recordId);
     }
 }

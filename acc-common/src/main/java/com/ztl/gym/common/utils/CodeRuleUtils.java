@@ -98,9 +98,9 @@ public class CodeRuleUtils {
                 companyIdComplex = String.format("%0" + 5 + "d", companyId);
             }
             code = companyIdComplex ;
-            //防伪码不够16位补足随机数
-            if(code.length()<16){
-                String random=CommonUtil.buildOrderNo(16-code.length());
+            //防伪码不够15位补足随机数
+            if(code.length()<15){
+                String random=CommonUtil.buildOrderNo(15-code.length());
                 code+=random;
             }
         }

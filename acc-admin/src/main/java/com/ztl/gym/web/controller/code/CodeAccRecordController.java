@@ -2,7 +2,11 @@ package com.ztl.gym.web.controller.code;
 
 import java.util.List;
 
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAcc;
+import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import com.ztl.gym.code.domain.CodeAccRecord;
 import com.ztl.gym.code.service.ICodeAccRecordService;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.common.core.page.TableDataInfo;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 生码记录Controller
@@ -104,5 +110,48 @@ public class CodeAccRecordController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(codeAccRecordService.deleteCodeAccRecordByIds(ids));
+    }
+    /**
+     * 根据生码记录id查询码明细
+     *
+     * @param codeAccRecord
+     * @return
+     */
+    @GetMapping("/listSon")
+    public TableDataInfo listSon(CodeAccRecord codeAccRecord) {
+        startPage();
+        List<CodeAcc> list = codeAccRecordService.selectAccCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeAccRecord.getId());
+        return getDataTable(list);
+    }
+    /**
+     * 码下载
+     */
+    @PreAuthorize("@ss.hasPermi('code:acc:download')")
+    @Log(title = "生码记录", businessType = BusinessType.EXPORT)
+    @GetMapping("/download")
+    public AjaxResult download(CodeAccRecord codeAccRecord) {
+        List<CodeAcc> list =  codeAccRecordService.selectAccCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeAccRecord.getId());
+        for (CodeAcc codeAcc : list) {
+            codeAcc.setCodeAcc(codeAcc.getCodeAcc());
+            codeAcc.setCodeTypeName("防伪码");
+        }
+        ExcelUtil<CodeAcc> util = new ExcelUtil<CodeAcc>(CodeAcc.class);
+        return util.exportExcel(list,"-"+ DateUtils.getDate()+"防伪码");
+    }
+
+    /**
+     * 码下载TXT
+     */
+    @PreAuthorize("@ss.hasPermi('code:acc:download')")
+    @GetMapping("/downloadTxt")
+    public AjaxResult downloadTxt(CodeAccRecord codeAccRecord, HttpServletResponse response) {
+        List<CodeAcc> list =  codeAccRecordService.selectAccCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeAccRecord.getId());
+        String temp = "防伪码" + "                                        " + "\r\n";
+        for (CodeAcc codeAcc : list) {
+            temp += "        " + codeAcc.getCodeAcc() + "\r\n";
+        }
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("data", temp);
+        return ajax;
     }
 }

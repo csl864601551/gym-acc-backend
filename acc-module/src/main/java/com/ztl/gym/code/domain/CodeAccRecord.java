@@ -54,6 +54,64 @@ public class CodeAccRecord extends BaseEntity
     @Excel(name = "创建人名称", sort = 9)
     private String creatorName;
 
+
+    /**
+     * 单次防伪模板内容
+     */
+    @Excel(name = "单次防伪模板内容")
+    private String onceTemplateContent;
+
+    /**
+     * 多次防伪模板内容
+     */
+    @Excel(name = "多次防伪模板内容")
+    private String moreTemplateContent;
+
+    /**
+     * 单次查询内容
+     */
+    @Excel(name = "单次查询内容")
+    private String onceContent;
+
+    /**
+     * 多次查询内容
+     */
+    @Excel(name = "多次查询内容")
+    private String moreContent;
+
+
+    public String getOnceTemplateContent() {
+        return onceTemplateContent;
+    }
+
+    public void setOnceTemplateContent(String onceTemplateContent) {
+        this.onceTemplateContent = onceTemplateContent;
+    }
+
+    public String getMoreTemplateContent() {
+        return moreTemplateContent;
+    }
+
+    public void setMoreTemplateContent(String moreTemplateContent) {
+        this.moreTemplateContent = moreTemplateContent;
+    }
+
+    public String getOnceContent() {
+        return onceContent;
+    }
+
+    public void setOnceContent(String onceContent) {
+        this.onceContent = onceContent;
+    }
+
+    public String getMoreContent() {
+        return moreContent;
+    }
+
+    public void setMoreContent(String moreContent) {
+        this.moreContent = moreContent;
+    }
+
     public String getCreatorName() {
         return creatorName;
     }

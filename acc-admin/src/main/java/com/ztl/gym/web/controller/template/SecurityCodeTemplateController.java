@@ -57,7 +57,6 @@ public class SecurityCodeTemplateController extends BaseController
     /**
      * 获取防伪模板详细信息
      */
-    @PreAuthorize("@ss.hasPermi('template:template:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {

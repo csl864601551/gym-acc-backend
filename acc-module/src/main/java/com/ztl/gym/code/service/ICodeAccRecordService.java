@@ -1,6 +1,9 @@
 package com.ztl.gym.code.service;
 
 import java.util.List;
+
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAcc;
 import com.ztl.gym.code.domain.CodeAccRecord;
 
 /**
@@ -60,4 +63,6 @@ public interface ICodeAccRecordService
     public int deleteCodeAccRecordById(Long id);
 
     int createAccCodeSingle(long companyId, long count, String remark);
+
+    List<CodeAcc> selectAccCodeListByRecord(Long loginUserTopCompanyId, Long id);
 }

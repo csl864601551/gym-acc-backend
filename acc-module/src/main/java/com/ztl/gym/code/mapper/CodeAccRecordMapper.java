@@ -1,7 +1,11 @@
 package com.ztl.gym.code.mapper;
 
 import java.util.List;
+
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAcc;
 import com.ztl.gym.code.domain.CodeAccRecord;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 生码记录Mapper接口
@@ -58,4 +62,6 @@ public interface CodeAccRecordMapper
      * @return 结果
      */
     public int deleteCodeAccRecordByIds(Long[] ids);
+
+    List<CodeAcc> selectAccCodeListByRecord(@Param("companyId") Long companyId, @Param("recordId")  Long recordId);
 }
