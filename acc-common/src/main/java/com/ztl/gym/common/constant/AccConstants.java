@@ -141,6 +141,10 @@ public class AccConstants {
 
     /*---------------------------- 部门常量 ----------------------------*/
     /**
+     * 系统ID
+     */
+    public final static Long XTADMIN_DEPT_ID = 99L;
+    /**
      * 平台ID
      */
     public final static Long ADMIN_DEPT_ID = 100L;
