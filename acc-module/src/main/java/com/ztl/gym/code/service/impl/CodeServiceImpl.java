@@ -158,6 +158,9 @@ public class CodeServiceImpl implements ICodeService {
                 boxCode.setCompanyId(companyId);
                 boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
                 boxCode.setCode(pCode);
+                if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                    boxCode.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+                }
                 boxCode.setCodeAttrId(boxAttrId);
                 codeList.add(boxCode);
                 //单码流水号+1
@@ -171,6 +174,9 @@ public class CodeServiceImpl implements ICodeService {
                     singleCode.setCompanyId(companyId);
                     singleCode.setCodeType(AccConstants.CODE_TYPE_SINGLE);
                     singleCode.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, singleCode.getCodeIndex()));
+                    if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                        singleCode.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+                    }
                     singleCode.setCodeAttrId(boxAttrId);
                     codeList.add(singleCode);
                     codeIndex += 1;
@@ -190,6 +196,9 @@ public class CodeServiceImpl implements ICodeService {
                 code.setCompanyId(companyId);
                 code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
                 code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
+                if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                    code.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+                }
                 code.setCodeAttrId(attrId);
                 codeList.add(code);
 
@@ -239,6 +248,9 @@ public class CodeServiceImpl implements ICodeService {
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
             code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
+            if(codeSingle.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                code.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+            }
             code.setSingleId(codeSingleId);
             codeList.add(code);
 

@@ -70,7 +70,7 @@ public interface ICodeRecordService {
      * @param remark    备注详情
      * @return
      */
-    int createCodeRecord(long companyId, long num, String remark);
+    int createCodeRecord(long companyId,int isAcc, long num, String remark);
 
     /**
      * 生码-套标 【箱码与单码 1：n】
@@ -81,7 +81,7 @@ public interface ICodeRecordService {
      * @param remark    备注详情
      * @return
      */
-    int createPCodeRecord(long companyId, long boxCount, long num, String remark);
+    int createPCodeRecord(long companyId,int isAcc, long boxCount, long num, String remark);
 
     /**
      * 查询生码记录

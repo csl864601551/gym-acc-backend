@@ -69,7 +69,7 @@ public interface ICodeSingleService {
      * @param remark    备注详情
      * @return
      */
-    int createCodeSingle(long companyId, long num, String remark);
+    int createCodeSingle(long companyId, int isAcc, long num, String remark);
 
 
     /**
@@ -80,5 +80,5 @@ public interface ICodeSingleService {
      */
     public CodeSingle selectCodeSingleByIndex(long codeIndex,long companyId);
 
-    int createAccCodeSingle(long companyId, long count, String remark);
+    int createAccCodeSingle(long companyId,int isAcc, long count, String remark);
 }

@@ -144,8 +144,8 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @return
      */
     @Override
-    public int createCodeSingle(long companyId, long num, String remark) {
-        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, 0, num, remark);
+    public int createCodeSingle(long companyId,int isAcc, long num, String remark) {
+        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_SINGLE,isAcc, 0, num, remark);
         int res = codeSingleMapper.insertCodeSingle(codeSingle);
         if (res > 0) {
             //生码属性
@@ -175,8 +175,8 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @return
      */
     @Override
-    public int createAccCodeSingle(long companyId, long num, String remark) {
-        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_ACC, 0, num, remark);
+    public int createAccCodeSingle(long companyId, int isAcc, long num, String remark) {
+        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_ACC,isAcc, 0, num, remark);
         codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
         int res = codeSingleMapper.insertCodeSingle(codeSingle);
         if (res > 0) {
@@ -245,7 +245,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @param remark
      * @return
      */
-    public static CodeSingle buildCodeSingle(long companyId, int type, long boxCount, long num, String remark) {
+    public static CodeSingle buildCodeSingle(long companyId, int type,int isAcc, long boxCount, long num, String remark) {
         CodeSingle CodeSingle = new CodeSingle();
         //获取并更新生码记录流水号
         String codePrefix = null;
@@ -269,6 +269,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         }
         CodeSingle.setCount(totalNum);
         CodeSingle.setType(type);
+        CodeSingle.setIsAcc(isAcc);
         CodeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
         CodeSingle.setRemark(remark);
         CodeSingle.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());

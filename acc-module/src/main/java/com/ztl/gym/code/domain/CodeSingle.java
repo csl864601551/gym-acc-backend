@@ -27,7 +27,8 @@ public class CodeSingle extends BaseEntity
 
     /** 生码类型 */
     private Integer type;
-
+    /** 是否开启防伪码 */
+    private Integer isAcc;
     /** 箱数量 */
     @Excel(name = "箱数量", sort = 6)
     private Long boxCount;
@@ -54,6 +55,14 @@ public class CodeSingle extends BaseEntity
     private String statusName;
     @Excel(name = "生码类型", sort = 5)
     private String typeName;
+
+    public Integer getIsAcc() {
+        return isAcc;
+    }
+
+    public void setIsAcc(Integer isAcc) {
+        this.isAcc = isAcc;
+    }
 
     public void setId(Long id)
     {

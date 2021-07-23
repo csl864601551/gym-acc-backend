@@ -28,6 +28,9 @@ public class CodeRecord extends BaseEntity
     /** 生码类型 */
     private Integer type;
 
+    /** 是否开启防伪码 */
+    private Integer isAcc;
+
     /** 套标数量 */
     @Excel(name = "套标数量", sort = 6)
     private Long trayCount;
@@ -71,6 +74,14 @@ public class CodeRecord extends BaseEntity
     private String barCode;
     @Excel(name = "关联批次", sort = 8)
     private String batchNo;
+
+    public Integer getIsAcc() {
+        return isAcc;
+    }
+
+    public void setIsAcc(Integer isAcc) {
+        this.isAcc = isAcc;
+    }
 
     public void setId(Long id)
     {

@@ -47,7 +47,7 @@ ALTER TABLE `t_code_attr` ADD `single_id` bigint(20) NULL DEFAULT NULL COMMENT '
 ```
 
 
-#### Beta V1.0.8 2021/07/20
+####  2021/07/20
 CREATE TABLE `t_security_code_template`  (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '模板名称',
@@ -69,3 +69,38 @@ ALTER TABLE `t_product` ADD `template_content2` varchar(1000) CHARACTER SET utf8
 ALTER TABLE `t_product` ADD `content1` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '单次查询内容' ;
 ALTER TABLE `t_product` ADD `content2` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '多次查询内容' ;
 ALTER TABLE `t_product` alter column product_detail_mobile varchar(255)
+
+####  2021/07/23
+
+CREATE TABLE `t_code_acc_record` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `company_id` bigint(20) DEFAULT NULL COMMENT '企业ID',
+  `status` int(11) DEFAULT NULL COMMENT '状态',
+  `type` int(11) DEFAULT NULL COMMENT '生码类型',
+  `count` int(11) DEFAULT NULL COMMENT '码数量',
+  `remark` varchar(1024) DEFAULT NULL COMMENT '备注',
+  `create_user` bigint(20) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_user` bigint(20) DEFAULT NULL COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `once_template_id` bigint(20) DEFAULT NULL COMMENT '首次查询模板',
+  `more_template_id` bigint(20) DEFAULT NULL COMMENT '多次查询模板',
+  `once_template_content` varchar(1000) DEFAULT NULL COMMENT '单次查询防伪模板1内容',
+  `more_template_content` varchar(1000) DEFAULT NULL COMMENT '多次查询防伪模板2内容',
+  `once_content` varchar(255) DEFAULT NULL COMMENT '单次查询内容',
+  `more_content` varchar(255) DEFAULT NULL COMMENT '多次查询内容',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=223 DEFAULT CHARSET=utf8 COMMENT='生码记录表';
+
+CREATE TABLE `t_code_acc` (
+  `company_id` bigint(20) DEFAULT NULL COMMENT '企业ID',
+  `code_acc` varchar(64) DEFAULT NULL COMMENT '防窜码',
+  `code` varchar(128) DEFAULT NULL COMMENT '码',
+  `query_count` int(20) DEFAULT '0' COMMENT '查询次数',
+  `product_id` varchar(64) DEFAULT NULL COMMENT '码类型（箱码or单码）',
+  `record_id` bigint(20) DEFAULT NULL COMMENT '生码记录ID',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='码表 ';
+
+ALTER TABLE `t_code_record` ADD `is_acc` int(11) NULL DEFAULT NULL COMMENT '是否开启防伪码' AFTER `type`;
+ALTER TABLE `t_code_single` ADD `is_acc` int(11) NULL DEFAULT NULL COMMENT '是否开启防伪码' AFTER `type`;

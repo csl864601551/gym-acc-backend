@@ -172,9 +172,9 @@ public class CodeSingleController extends BaseController {
     public AjaxResult add(@RequestBody CodeSingle codeSingle) {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (codeSingle.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
-            return toAjax(codeSingleService.createCodeSingle(companyId, codeSingle.getCount(), codeSingle.getRemark()));
+            return toAjax(codeSingleService.createCodeSingle(companyId,codeSingle.getIsAcc(), codeSingle.getCount(), codeSingle.getRemark()));
         } else{
-            return toAjax(codeSingleService.createAccCodeSingle(companyId, codeSingle.getCount(), codeSingle.getRemark()));
+            return toAjax(codeSingleService.createAccCodeSingle(companyId, codeSingle.getIsAcc(),codeSingle.getCount(), codeSingle.getRemark()));
         }
     }
 

@@ -9,6 +9,7 @@
         <result property="companyId" column="company_id"/>
         <result property="status" column="status"/>
         <result property="type" column="type"/>
+        <result property="isAcc" column="is_acc"/>
         <result property="trayCount" column="tray_count"/>
         <result property="boxCount" column="box_count"/>
         <result property="singleCount" column="single_count"/>
@@ -29,14 +30,14 @@
     </resultMap>
 
     <sql id="selectCodeRecordVo">
-        select id, company_id, status, type,tray_count,box_count,single_count, count, index_start, index_end, product_id, batch_id, remark, create_user, create_time, update_user, update_time from t_code_record
+        select id, company_id, status, type,is_acc,tray_count,box_count,single_count, count, index_start, index_end, product_id, batch_id, remark, create_user, create_time, update_user, update_time from t_code_record
     </sql>
 
     <sql id="selectCodeRecordExtraVo">
         select r.id,
         r.company_id,
         r.status,
-        r.type,r.tray_count,
+        r.type,r.is_acc,r.tray_count,
         r.box_count,
         r.single_count,
         r.count,
@@ -66,6 +67,7 @@
             <if test="companyId != null ">and r.company_id = #{companyId}</if>
             <if test="status != null ">and r.status = #{status}</if>
             <if test="type != null ">and r.type = #{type}</if>
+            <if test="isAcc != null ">and r.is_acc = #{isAcc}</if>
             <if test="trayCount != null ">and r.tray_count = #{trayCount}</if>
             <if test="boxCount != null ">and r.box_count = #{boxCount}</if>
             <if test="singleCount != null ">and r.single_count = #{singleCount}</if>
@@ -99,6 +101,7 @@
             <if test="companyId != null">company_id,</if>
             <if test="status != null">status,</if>
             <if test="type != null">type,</if>
+            <if test="isAcc != null">is_acc,</if>
             <if test="trayCount != null">tray_count,</if>
             <if test="boxCount != null">box_count,</if>
             <if test="singleCount != null">single_count,</if>
@@ -117,6 +120,7 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="status != null">#{status},</if>
             <if test="type != null">#{type},</if>
+            <if test="isAcc != null">#{isAcc},</if>
             <if test="trayCount != null">#{trayCount},</if>
             <if test="boxCount != null">#{boxCount},</if>
             <if test="singleCount != null">#{singleCount},</if>
@@ -139,6 +143,7 @@
             <if test="companyId != null">company_id = #{companyId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="type != null">type = #{type},</if>
+            <if test="isAcc != null">is_acc = #{isAcc},</if>
             <if test="trayCount != null">tray_count = #{trayCount},</if>
             <if test="boxCount != null">box_count = #{boxCount},</if>
             <if test="count != null">count = #{count},</if>

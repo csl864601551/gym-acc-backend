@@ -102,6 +102,16 @@ public class AccConstants {
      */
     public final static int GEN_CODE_TYPE_ACC = 3;
 
+
+    /**
+     * 生码-未开启防伪码
+     */
+    public final static int IS_ACC_FALSE = 1;
+    /**
+     * 生码-开启防伪码
+     */
+    public final static int IS_ACC_TRUE = 2;
+
     /*---------------------------- 仓库库存 ----------------------------*/
     /**
      * 仓库级别-企业
