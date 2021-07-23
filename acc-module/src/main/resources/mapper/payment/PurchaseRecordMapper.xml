@@ -122,9 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="totalUsedCodeSum" parameterType="Long" resultType="Long">
         select sum(code) from
         (
-        (select sum(count) code from t_code_single where type = 3 and company_id = #{companyId}) union all
         (select sum(count) code from t_code_single where company_id = #{companyId}) union all
-        (select sum(count) code from t_code_record where type = 3 and company_id = #{companyId}) union all
         (select sum(count) code from t_code_record where company_id = #{companyId}) union all
         (select sum(count) code from t_code_acc_record where company_id = #{companyId})
         ) sum

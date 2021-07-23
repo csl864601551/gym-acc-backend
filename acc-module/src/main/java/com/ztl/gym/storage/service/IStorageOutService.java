@@ -96,4 +96,12 @@ public interface IStorageOutService {
      * @return 结果
      */
     public int selectCountByDept(Map<String, Object> map);
+
+    /**
+     * 产品出货量 本周
+     *
+     * @param map
+     * @return 结果
+     */
+    List<Map<String,Object>> selectCountByWeek(Map<String, Object> map);
 }

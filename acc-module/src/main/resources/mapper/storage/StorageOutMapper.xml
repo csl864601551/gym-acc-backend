@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageOutMapper">
 
     <resultMap type="StorageOut" id="StorageOutResult">
-        <result property="id"    column="id"    />
-        <result property="companyId"    column="company_id"    />
-        <result property="tenantId"    column="tenant_id"    />
-        <result property="status"    column="status"    />
-        <result property="outNo"    column="out_no"    />
-        <result property="extraNo"    column="extra_no"    />
-        <result property="productId"    column="product_id"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="outNum"    column="out_num"    />
-        <result property="actOutNum"    column="act_out_num"    />
-        <result property="storageFrom"    column="storage_from"    />
-        <result property="storageTo"    column="storage_to"    />
-        <result property="fromStorageId"    column="from_storage_id"    />
-        <result property="toStorageId"    column="to_storage_id"    />
-        <result property="remark"    column="remark"    />
-        <result property="createUser"    column="create_user"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="outTime"    column="out_time"    />
-        <result property="updateUser"    column="update_user"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="createUserName"    column="create_user_name"    />
-        <result property="updateUserName"    column="update_user_name"    />
-        <result property="storageFromName"    column="storage_from_name"    />
-        <result property="storageToName"    column="storage_to_name"    />
-        <result property="fromStorageIdName"    column="from_storage_id_name"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="status" column="status"/>
+        <result property="outNo" column="out_no"/>
+        <result property="extraNo" column="extra_no"/>
+        <result property="productId" column="product_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="outNum" column="out_num"/>
+        <result property="actOutNum" column="act_out_num"/>
+        <result property="storageFrom" column="storage_from"/>
+        <result property="storageTo" column="storage_to"/>
+        <result property="fromStorageId" column="from_storage_id"/>
+        <result property="toStorageId" column="to_storage_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="outTime" column="out_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="storageFromName" column="storage_from_name"/>
+        <result property="storageToName" column="storage_to_name"/>
+        <result property="fromStorageIdName" column="from_storage_id_name"/>
         <result property="productName" column="product_name"/>
         <result property="productNo" column="product_no"/>
     </resultMap>
 
     <resultMap type="HashMap" id="map">
-        <result property="code"    column="code"    />
-        <result property="productNo"    column="product_no"    />
-        <result property="productName"    column="product_name"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="num"    column="num"    />
+        <result property="code" column="code"/>
+        <result property="productNo" column="product_no"/>
+        <result property="productName" column="product_name"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="num" column="num"/>
     </resultMap>
 
     <sql id="selectStorageOutVo">
@@ -59,21 +59,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStorageOutList" parameterType="StorageOut" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
-        <where>  so.status!=9
-            <if test="companyId != null "> and so.company_id = #{companyId}</if>
-            <if test="tenantId != null "> and so.tenant_id = #{tenantId}</if>
-            <if test="status != null "> and so.status = #{status}</if>
-            <if test="outNo != null  and outNo != ''"> and so.out_no = #{outNo}</if>
-            <if test="extraNo != null  and extraNo != ''"> and so.extra_no = #{extraNo}</if>
-            <if test="productId != null "> and so.product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and so.batch_no = #{batchNo}</if>
-            <if test="outNum != null "> and so.out_num = #{outNum}</if>
-            <if test="actOutNum != null "> and so.act_out_num = #{actOutNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''"> and so.storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''"> and so.storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null "> and so.from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null "> and so.to_storage_id = #{toStorageId}</if>
-            <if test="outTime != null "> and so.out_time = #{outTime}</if>
+        <where>so.status!=9
+            <if test="companyId != null ">and so.company_id = #{companyId}</if>
+            <if test="tenantId != null ">and so.tenant_id = #{tenantId}</if>
+            <if test="status != null ">and so.status = #{status}</if>
+            <if test="outNo != null  and outNo != ''">and so.out_no = #{outNo}</if>
+            <if test="extraNo != null  and extraNo != ''">and so.extra_no = #{extraNo}</if>
+            <if test="productId != null ">and so.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''">and so.batch_no = #{batchNo}</if>
+            <if test="outNum != null ">and so.out_num = #{outNum}</if>
+            <if test="actOutNum != null ">and so.act_out_num = #{actOutNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''">and so.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''">and so.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null ">and so.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null ">and so.to_storage_id = #{toStorageId}</if>
+            <if test="outTime != null ">and so.out_time = #{outTime}</if>
             <if test="beginTime != null ">and so.create_time &gt;= #{beginTime}</if>
             <if test="endTime != null ">and so.create_time &lt;= #{endTime}</if>
         </where>
@@ -116,7 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outTime != null">out_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
@@ -137,7 +137,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outTime != null">#{outTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateStorageOut" parameterType="StorageOut">
@@ -198,14 +198,67 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY product_id,storage_to,DATE_FORMAT(out_time,'%Y-%m-%d')
     </select>
 
-
+    <!--    type 1 左侧数据  2 本周数据  3 本月数据  4 时间数据        -->
     <select id="selectCountByDept" resultType="java.lang.Integer" parameterType="Map">
-        select sum(act_out_num) from  t_storage_out where status=1
+        select IFNULL(sum(act_out_num),0) from t_storage_out where status=1
         <if test="deptId != null">
             and company_id = #{deptId}
         </if>
         <if test="type != null and type == 1">
-            and company_id = #{deptId}
+            and create_time &gt;= #{beginTime} and create_time &lt;= #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+            and create_time &gt;= #{beginTime} and create_time &lt;= #{endTime}
+        </if>
+    </select>
+    <select id="selectCountByWeek" resultType="java.util.Map" parameterType="Map">
+        <if test="type != null and type == 1">
+            SELECT
+            t1.timeDay AS 'date',
+            t2.num AS 'num'
+            FROM
+            (
+            SELECT
+            date_format( lastWeek.`timeDay`, '%Y-%m-%d' ) AS 'timeDay'
+            FROM
+            (
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 7 DAY ) AS 'timeDay' UNION ALL
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 6 DAY ) AS 'timeDay' UNION ALL
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 5 DAY ) AS 'timeDay' UNION ALL
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 4 DAY ) AS 'timeDay' UNION ALL
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 3 DAY ) AS 'timeDay' UNION ALL
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 2 DAY ) AS 'timeDay' UNION ALL
+            SELECT
+            DATE_SUB( NOW( ), INTERVAL 1 DAY ) AS 'timeDay'
+            ) AS lastWeek
+            ) AS t1
+            LEFT JOIN (
+            SELECT
+            create_time,
+            num AS 'num'
+            FROM
+            (
+            SELECT
+            date( create_time ) AS create_time,
+            IFNULL( SUM( act_out_num ), 0 ) AS num
+            FROM
+            t_storage_out
+            WHERE 1=1
+            <if test="deptId != null">
+                and company_id = #{deptId}
+            </if>
+            GROUP BY
+            date( create_time )
+            ) AS temp
+            ) AS t2 ON t1.timeDay = t2.create_time
+            ORDER BY
+            t1.timeDay
         </if>
     </select>
 </mapper>
