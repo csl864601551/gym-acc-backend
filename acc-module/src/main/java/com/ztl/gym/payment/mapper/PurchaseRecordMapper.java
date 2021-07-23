@@ -60,4 +60,11 @@ public interface PurchaseRecordMapper
      * @return 结果
      */
     public int deletePurchaseRecordByIds(Long[] ids);
+
+    /**
+     * 统计已经使用的码数量，包含单码箱码防伪码
+     * @param companyId
+     * @return
+     */
+    public Long totalUsedCodeSum(Long companyId);
 }
