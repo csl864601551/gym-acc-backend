@@ -32,7 +32,6 @@ public class SecurityCodeTemplateController extends BaseController
     /**
      * 查询防伪模板列表
      */
-    @PreAuthorize("@ss.hasPermi('template:template:list')")
     @GetMapping("/list")
     public TableDataInfo list(SecurityCodeTemplate securityCodeTemplate)
     {

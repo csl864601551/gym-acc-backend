@@ -49,6 +49,10 @@ public class CodeAccRecordController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(CodeAccRecord codeAccRecord)
     {
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            codeAccRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         startPage();
         List<CodeAccRecord> list = codeAccRecordService.selectCodeAccRecordList(codeAccRecord);
         return getDataTable(list);
@@ -62,6 +66,10 @@ public class CodeAccRecordController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(CodeAccRecord codeAccRecord)
     {
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            codeAccRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
         List<CodeAccRecord> list = codeAccRecordService.selectCodeAccRecordList(codeAccRecord);
         ExcelUtil<CodeAccRecord> util = new ExcelUtil<CodeAccRecord>(CodeAccRecord.class);
         return util.exportExcel(list, "record");
