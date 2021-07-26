@@ -56,6 +56,37 @@ public class CodeSingle extends BaseEntity
     @Excel(name = "生码类型", sort = 5)
     private String typeName;
 
+
+    private long productId;
+    private long batchId;
+    private String remark;
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
+
+    public long getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(long batchId) {
+        this.batchId = batchId;
+    }
+
+    @Override
+    public String getRemark() {
+        return remark;
+    }
+
+    @Override
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public Integer getIsAcc() {
         return isAcc;
     }

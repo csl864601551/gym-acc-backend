@@ -114,12 +114,9 @@
             <if test="status != null">status = #{status},</if>
             <if test="type != null">type = #{type},</if>
             <if test="isAcc != null">is_acc = #{isAcc},</if>
-            <if test="boxCount != null">box_count = #{boxCount},</if>
             <if test="count != null">count = #{count},</if>
             <if test="indexStart != null">index_start = #{indexStart},</if>
             <if test="indexEnd != null">index_end = #{indexEnd},</if>
-            <if test="productId != null">product_id = #{productId},</if>
-            <if test="batchId != null">batch_id = #{batchId},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="createUser != null">create_user = #{createUser},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

@@ -496,4 +496,16 @@ public class CodeServiceImpl implements ICodeService {
     public void updateCodeAttrIdByPCode(Map<String, Object> param) {
         codeMapper.updateCodeAttrIdByPCode(param);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int updateStatusByIndex(Long companyId, Long codeAttrId, Long indexStart, Long indexEnd, int codeStatusFinish) {
+        Map<String, Object> param=new HashMap<>();
+        param.put("companyId",companyId);
+        param.put("codeAttrId",codeAttrId);
+        param.put("indexStart",indexStart);
+        param.put("indexEnd",indexEnd);
+        param.put("status",codeStatusFinish);
+        return codeMapper.updateStatusByIndex(param);
+    }
 }

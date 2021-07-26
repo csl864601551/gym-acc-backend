@@ -183,4 +183,6 @@ public interface CodeMapper {
     void updateCodeAttrIdByPCode(Map<String, Object> params);
 
     int insertAccCodeForBatch(List<Map> codeList);
+
+    int updateStatusByIndex(Map<String, Object> params);
 }

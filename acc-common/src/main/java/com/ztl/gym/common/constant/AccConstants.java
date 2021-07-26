@@ -88,6 +88,10 @@ public class AccConstants {
      * 生码记录状态-已赋值
      */
     public final static int CODE_RECORD_STATUS_EVA = 2;
+    /**
+     * 生码记录状态-部分赋值
+     */
+    public final static int CODE_RECORD_STATUS_ON = 3;
 
     /**
      * 生码类型-普通生码

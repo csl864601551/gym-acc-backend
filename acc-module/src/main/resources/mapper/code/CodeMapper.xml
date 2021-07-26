@@ -265,4 +265,10 @@
     <update id="updateCodeAttrIdByPCode" parameterType="Map" >
         update t_code set code_attr_id = #{codeAttrId} where company_id=#{companyId} and (p_code = #{pCode} or code = #{pCode})
     </update>
+
+    <update id="updateStatusByIndex" parameterType="Map">
+        update t_code_${companyId} set status = #{status},code_attr_id = #{codeAttrId}  where company_id=#{companyId} and (code_index = &gt; #{indexStart} and code_index &lt;= #{indexEnd})
+
+    </update>
+
 </mapper>

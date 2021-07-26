@@ -1,9 +1,13 @@
 package com.ztl.gym.web.controller.code;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.primitives.Longs;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
+import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
+import com.ztl.gym.code.domain.vo.FuzhiVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
@@ -22,6 +26,12 @@ import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.domain.ProductBatch;
+import com.ztl.gym.product.domain.ProductCategory;
+import com.ztl.gym.product.service.IProductBatchService;
+import com.ztl.gym.product.service.IProductCategoryService;
+import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code/single")
@@ -44,6 +53,15 @@ public class CodeSingleController extends BaseController {
     private ICodeService codeService;
     @Autowired
     private ICodeAttrService codeAttrService;
+
+    @Autowired
+    private IProductService productService;
+    @Autowired
+    private IProductBatchService productBatchService;
+    @Autowired
+    private IProductCategoryService productCategoryService;
+    @Autowired
+    private IProductService tProductService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -236,6 +254,63 @@ public class CodeSingleController extends BaseController {
         return ajax;
     }
 
+    /**
+     * 生码赋值
+     *
+     * @return
+     */
+    @Log(title = "生码记录", businessType = BusinessType.OTHER)
+    @PostMapping("/fuzhi")
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult fuzhi(@RequestBody FuzhiVo fuzhiVo) {
+        int res = 0;
+        Product product = productService.selectTProductById(fuzhiVo.getProductId());
+        ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
+        ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
+        ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        Long companyId=SecurityUtils.getLoginUserTopCompanyId();
+        String productCategory = category1.getCategoryName() + "-" + category2.getCategoryName();
+        Date inputTime = new Date();
+        CodeAttr codeAttr = new CodeAttr();
+        codeAttr = new CodeAttr();
+        codeAttr.setCompanyId(companyId);
+        codeAttr.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+        Long singleId=fuzhiVo.getRecordId();
+        Long indexStart=fuzhiVo.getIndexStart();
+        Long indexEnd=fuzhiVo.getIndexEnd();
+        codeAttr.setSingleId(singleId);//TODO 处理分段赋值
+        codeAttr.setIndexStart(indexStart);
+        codeAttr.setIndexEnd(indexEnd);
+
+        codeAttr.setProductId(fuzhiVo.getProductId());
+        codeAttr.setProductName(product.getProductName());
+        codeAttr.setProductNo(product.getProductNo());
+        codeAttr.setBarCode(product.getBarCode());
+        codeAttr.setProductCategory(productCategory);
+        codeAttr.setProductUnit(product.getUnit());
+        codeAttr.setProductIntroduce(product.getProductIntroduce());
+        codeAttr.setBatchId(fuzhiVo.getBatchId());
+        codeAttr.setBatchNo(productBatch.getBatchNo());
+        codeAttr.setRemark(fuzhiVo.getRemark());
+        codeAttr.setInputBy(userId);
+        codeAttr.setCreateUser(userId);
+        codeAttr.setInputTime(inputTime);
+        codeAttr.setUpdateTime(inputTime);
+        //插入编码属性表
+        Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+
+        //更新对应码的状态
+        res=codeService.updateStatusByIndex(companyId, codeAttrId,indexStart, indexEnd,AccConstants.CODE_STATUS_FINISH);
+
+        CodeSingle codeSingle = new CodeSingle();
+        codeSingle.setId(fuzhiVo.getRecordId());
+        codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
+        //更新生码记录赋值信息
+        res = codeSingleService.updateCodeSingle(codeSingle);
+        return toAjax(res);
+
+    }
 
     /**
      * 查询该企业是否有状态为创建中的生码记录【用于前端生码记录页面自动刷新】
@@ -383,7 +458,7 @@ public class CodeSingleController extends BaseController {
             codeService.updateCodeAttrIdByPCode(params);
             return AjaxResult.success();
         } else {
-            throw new CustomException("产品信息为空！");
+            throw new CustomException("产品信息为空！",HttpStatus.ERROR);
         }
     }
 }

@@ -138,4 +138,6 @@ public interface ICodeService {
     int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId);
 
     void updateCodeAttrIdByPCode(Map<String, Object> param);
+
+    int updateStatusByIndex(Long companyId, Long codeAttrId, Long indexStart, Long indexEnd, int codeStatusFinish);
 }
