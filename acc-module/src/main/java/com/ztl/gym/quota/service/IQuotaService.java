@@ -11,6 +11,15 @@ import com.ztl.gym.quota.domain.Quota;
  */
 public interface IQuotaService 
 {
+
+    /**
+     * 根据param查询配额
+     *
+     * @param key 配额 paramKey
+     * @return 配额
+     */
+    public Quota selectQuotaByParamKey(String key);
+
     /**
      * 查询配额 
      * 

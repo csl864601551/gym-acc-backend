@@ -1,7 +1,10 @@
 package com.ztl.gym.quota.service.impl;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.payment.service.impl.PaymentRecordServiceImpl;
 import com.ztl.gym.quota.domain.Quota;
 import com.ztl.gym.quota.mapper.QuotaMapper;
@@ -26,6 +29,26 @@ public class QuotaServiceImpl implements IQuotaService
     private static Logger logger = LoggerFactory.getLogger(QuotaServiceImpl.class);
     @Autowired
     private QuotaMapper quotaMapper;
+
+    /**
+     * 根据param查询配额
+     *
+     * @param key 配额 paramKey
+     * @return 配额
+     */
+    @Override
+    public Quota selectQuotaByParamKey(String key) {
+        logger.info("the method selectQuotaByParamKey enter ");
+        Quota quota = new Quota();
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            quota.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        } else {
+            quota.setCompanyId(companyId);
+        }
+        quota.setParamKey(key);
+        return quotaMapper.selectQuotaByParam(quota);
+    }
 
     /**
      * 查询配额 

@@ -104,10 +104,11 @@ public class PaymentRecordController extends BaseController
      * 获取充值总数和可用金额总数
      */
     @GetMapping("/totalAmount")
-    public AjaxResult getTotalAmount(PaymentRecord paymentRecord)
-    {
+    public AjaxResult getTotalAmount(PaymentRecord paymentRecord) {
         logger.info("the method getTotalAmount enter,param is {}", paymentRecord);
-        return AjaxResult.success(paymentRecordService.getStatistics(paymentRecord));
+        Map<String, Object> result = paymentRecordService.getStatistics(paymentRecord);
+        logger.info("the method getTotalAmount end,result is {}", result);
+        return AjaxResult.success(result);
     }
 
 //    /**

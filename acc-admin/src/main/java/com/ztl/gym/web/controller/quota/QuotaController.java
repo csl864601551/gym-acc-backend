@@ -2,8 +2,13 @@ package com.ztl.gym.web.controller.quota;
 
 import java.util.List;
 
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.quota.domain.Quota;
 import com.ztl.gym.quota.service.IQuotaService;
+import com.ztl.gym.web.controller.payment.PaymentRecordController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +36,23 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 @RequestMapping("/quota")
 public class QuotaController extends BaseController
 {
+    /**
+     * 定义日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger(QuotaController.class);
     @Autowired
     private IQuotaService quotaService;
+
+    /**
+     * 根据paramkey获取配额 详细信息
+     */
+    @GetMapping(value = "/{key}")
+    public AjaxResult getInfoByKey(@PathVariable("key") String key) {
+        logger.info("the method getInfoByKey enter, param is {}", key);
+        Quota quota = quotaService.selectQuotaByParamKey(key);
+        logger.info("the method getInfoByKey end, result is {}", quota);
+        return AjaxResult.success(quota);
+    }
 
 //    /**
 //     * 查询配额 列表
@@ -58,13 +78,13 @@ public class QuotaController extends BaseController
 //        return util.exportExcel(list, "quota");
 //    }
 //
+
 //    /**
 //     * 获取配额 详细信息
 //     */
 //    @PreAuthorize("@ss.hasPermi('product:quota:query')")
 //    @GetMapping(value = "/{id}")
-//    public AjaxResult getInfo(@PathVariable("id") Long id)
-//    {
+//    public AjaxResult getInfo(@PathVariable("id") Long id) {
 //        return AjaxResult.success(quotaService.selectQuotaById(id));
 //    }
 //

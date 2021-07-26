@@ -60,4 +60,12 @@ public interface QuotaMapper
      * @return 结果
      */
     public int deleteQuotaByIds(Long[] ids);
+
+    /**
+     * 根据param查询配额
+     *
+     * @param quota 配额 ID
+     * @return 配额
+     */
+    public Quota selectQuotaByParam(Quota quota);
 }

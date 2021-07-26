@@ -1,6 +1,7 @@
 package com.ztl.gym.web.controller.payment;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
@@ -106,10 +107,11 @@ public class PurchaseRecordController extends BaseController
      * 获取统计数值
      */
     @GetMapping("/total")
-    public AjaxResult getTotal(PurchaseRecord purchaseRecord)
-    {
+    public AjaxResult getTotal(PurchaseRecord purchaseRecord) {
         logger.info("the method getTotal enter,param is {}", purchaseRecord);
-        return AjaxResult.success(purchaseRecordService.getStatistics(purchaseRecord));
+        Map<String, Object> result = purchaseRecordService.getStatistics(purchaseRecord);
+        logger.info("the method getTotal end,result is {}", result);
+        return AjaxResult.success(result);
     }
 
     /**
