@@ -1,9 +1,11 @@
 package com.ztl.gym.payment.mapper;
 
-import java.util.List;
-
 import com.ztl.gym.payment.domain.PaymentRecord;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 充值记录 Mapper接口
@@ -61,4 +63,12 @@ public interface PaymentRecordMapper
      * @return 结果
      */
     public int deletePaymentRecordByIds(Long[] ids);
+
+
+    /**
+     ** 累计充值金额
+     * @param map 充值记录
+     * @return map
+     */
+    public BigDecimal getAllAmountNum(Map<String, Object> map);
 }

@@ -1,9 +1,10 @@
 package com.ztl.gym.payment.service;
 
+import com.ztl.gym.payment.domain.PaymentRecord;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.payment.domain.PaymentRecord;
 
 /**
  * 充值记录 Service接口
@@ -68,4 +69,11 @@ public interface IPaymentRecordService
      * @return map
      */
     public Map<String,Object> getStatistics(PaymentRecord paymentRecord);
+
+    /**
+     ** 累计充值金额
+     * @param map 充值记录
+     * @return map
+     */
+    public BigDecimal getAllAmountNum(Map<String, Object> map);
 }

@@ -1,10 +1,5 @@
 package com.ztl.gym.payment.service.impl;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.CommonUtil;
@@ -12,16 +7,20 @@ import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.mapper.PaymentRecordMapper;
+import com.ztl.gym.payment.service.IPaymentRecordService;
 import com.ztl.gym.quota.domain.Quota;
 import com.ztl.gym.quota.domain.QuotaConstants;
-import com.ztl.gym.quota.mapper.QuotaMapper;
 import com.ztl.gym.quota.service.IQuotaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.payment.service.IPaymentRecordService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 充值记录 Service业务层处理
@@ -180,6 +179,17 @@ public class PaymentRecordServiceImpl implements IPaymentRecordService {
         quota.setCompanyId(paymentRecord.getCompanyId());
         quota.setCreateBy(paymentRecord.getCreateBy());
         return quota;
+    }
+
+
+    /**
+     ** 累计充值金额
+     * @param map 充值记录
+     * @return map
+     */
+    @Override
+    public BigDecimal getAllAmountNum(Map<String, Object> map) {
+        return paymentRecordMapper.getAllAmountNum(map);
     }
 
 }

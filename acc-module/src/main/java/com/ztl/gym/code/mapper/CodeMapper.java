@@ -184,5 +184,13 @@ public interface CodeMapper {
 
     int insertAccCodeForBatch(List<Map> codeList);
 
+    /**
+     * 生码总量查询
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    public int selectCodeNum(Map<String, Object> map);
+
     int updateStatusByIndex(Map<String, Object> params);
 }

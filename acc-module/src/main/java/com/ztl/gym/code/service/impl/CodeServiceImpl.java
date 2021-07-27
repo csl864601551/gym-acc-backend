@@ -515,4 +515,16 @@ public class CodeServiceImpl implements ICodeService {
         param.put("status",codeStatusFinish);
         return codeMapper.updateStatusByIndex(param);
     }
+
+
+    /**
+     * 生码总量查询
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    @Override
+    public int selectCodeNum(Map<String, Object> map) {
+        return codeMapper.selectCodeNum(map);
+    }
 }
