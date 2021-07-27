@@ -188,10 +188,205 @@
         where id = #{id}
     </update>
 
-    <select id="selectcodenum" resultType="java.lang.Integer">
-        select IFNULL(SUM(count),0) from  t_code_record  where  1=1
+    <select id="selectCodeNum" resultType="java.lang.Integer" parameterType="Map">
+        select IFNULL( SUM(count), 0 ) from  t_code_record where 1=1
         <if test="deptId != null">
             and  company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+
+        </if>
+    </select>
+
+
+
+    <!--    type =1 最近7天 2 最近30天 3 选择时间  -->
+    <select id="selectCodeByDate" resultType="java.util.Map" parameterType="Map">
+        <if test="type != null and type == 1">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( sum( pv.count ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 2">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( sum( pv.count ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 3">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.create_time ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            <if test="beginTime != null">
+                and pv.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and pv.create_time &lt;= #{endTime}
+            </if>
+            and pv.company_id  = #{deptId}
+            GROUP BY
+            mycreatedate
         </if>
     </select>
 </mapper>

@@ -295,7 +295,19 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @return 结果
      */
     @Override
-    public int selectcodenum(Map<String, Object> map) {
-        return codeRecordMapper.selectcodenum(map);
+    public int selectCodeNum(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeNum(map);
+    }
+
+
+    /**
+     * 生码总量统计图
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectCodeByDate(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeByDate(map);
     }
 }

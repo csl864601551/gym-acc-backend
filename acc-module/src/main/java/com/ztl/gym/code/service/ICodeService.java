@@ -141,5 +141,14 @@ public interface ICodeService {
 
     void updateCodeAttrIdByPCode(Map<String, Object> param);
 
+    /**
+     * 生码总量查询
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    public int selectCodeNum(Map<String, Object> map);
+
+    int updateStatusByIndex(Long companyId, Long codeAttrId, Long indexStart, Long indexEnd, int codeStatusFinish);
     int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
 }

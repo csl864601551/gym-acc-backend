@@ -1,38 +1,26 @@
 package com.ztl.gym.web.controller.payment;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import cn.hutool.core.collection.CollectionUtil;
+import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.core.controller.BaseController;
+import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
+import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.payment.domain.PaymentRecord;
 import com.ztl.gym.payment.service.IPaymentRecordService;
-import com.ztl.gym.quota.domain.Quota;
-import com.ztl.gym.quota.domain.QuotaConstants;
 import com.ztl.gym.quota.service.IQuotaService;
-import com.ztl.gym.quota.service.impl.QuotaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.ztl.gym.common.annotation.Log;
-import com.ztl.gym.common.core.controller.BaseController;
-import com.ztl.gym.common.core.domain.AjaxResult;
-import com.ztl.gym.common.enums.BusinessType;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 充值记录 Controller
@@ -132,4 +120,7 @@ public class PaymentRecordController extends BaseController
 //    {
 //        return toAjax(paymentRecordService.deletePaymentRecordByIds(ids));
 //    }
+
+
+
 }

@@ -74,4 +74,58 @@ public interface IScanRecordService
      * @return 扫码记录集合
      */
     public List<ScanRecord> selectRLTList(Map<String,Object> map);
+
+
+    /**
+     * 扫码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectScanRecordNum(Map<String, Object> map);
+
+
+    /**
+     * 查验总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectSecueityRecordNum(Map<String, Object> map);
+
+
+    /**
+     * 扫码统计数据
+     *
+     * @param map
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectCountByTime(Map<String, Object> map);
+
+
+    /**
+     * 扫码统计数据
+     *
+     * @param map
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectCountByDate(Map<String, Object> map);
+
+
+    /**
+     * 查验总量统计数据
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectSecueityRecordByDate(Map<String, Object> map);
+
+
+    /**
+     * 扫码数据top10
+     *
+     * @param map
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectSmTop10(Map<String, Object> map);
 }

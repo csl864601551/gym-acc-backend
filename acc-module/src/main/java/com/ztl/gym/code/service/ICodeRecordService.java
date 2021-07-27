@@ -97,5 +97,14 @@ public interface ICodeRecordService {
      * @param map 部门信息
      * @return 结果
      */
-    public int selectcodenum(Map<String, Object> map);
+    public int selectCodeNum(Map<String, Object> map);
+
+
+    /**
+     * 生码总量统计图
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectCodeByDate(Map<String, Object> map);
 }
