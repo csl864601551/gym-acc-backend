@@ -255,7 +255,7 @@ public class CodeSingleController extends BaseController {
     }
 
     /**
-     * 生码赋值
+     * 生码赋值,按单赋值、分段赋值
      *
      * @return
      */
@@ -418,15 +418,11 @@ public class CodeSingleController extends BaseController {
             /**
              * 插入箱码，更新单码PCode
              */
-            //获取并更新生码记录流水号
-            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
-            String[] codeIndexs = codeNoStr.split("-");
-            long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
-
-            String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+            //最后一个码变成箱码
+            String oldCode=list.get(list.size()-1);
+            String pCode=oldCode.replaceFirst("3","2");
 
             Code temp = null;
-            long codeAttrId=0;
             long singleId=0;
 
             for (int i = 0; i < list.size(); i++) {
@@ -435,42 +431,35 @@ public class CodeSingleController extends BaseController {
                 temp.setCompanyId(companyId);
                 Code code=codeService.selectCode(temp);//查询单码数据
                 if(code==null){
-                    throw new CustomException("未查询到相关码数据！");
+                    throw new CustomException("未查询到相关码数据！",HttpStatus.ERROR);
                 }
                 if(code.getCodeAttrId()!=null){
-                    codeAttrId=code.getCodeAttrId();
+                    throw new CustomException("存在已赋值产品码，请重新扫码！",HttpStatus.ERROR);
                 }
                 if(code.getSingleId()!=null){
+                    if(i > 0&singleId!=code.getSingleId()){
+                        throw new CustomException("不允许跨生码区间装箱，请重新扫码！",HttpStatus.ERROR);
+                    }
                     singleId=code.getSingleId();
                 }
                 if(code.getpCode()!=null){
-                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
+                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！",HttpStatus.ERROR);
                 }
-                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
-            }//更新单码
-
-
-            Code boxCode = new Code();
-            boxCode.setCodeIndex(codeIndex);
-            boxCode.setCompanyId(companyId);
-            boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
-            boxCode.setCode(pCode);
-            boxCode.setCodeAttrId(codeAttrId);
-            boxCode.setSingleId(singleId);
-            codeService.insertCode(boxCode);//插入箱码
-
-
-            commonService.updateVal(companyId, codeIndex);//更新code_index
-            Map<String,Object> mapTemp = new HashMap<>();
-            mapTemp.put("companyId",companyId);
-            mapTemp.put("boxCode",pCode);
-            mapTemp.put("codeIndex",codeIndex);
-            commonService.insertPrintData(mapTemp);//插入打印数据
-
+                if(i<list.size()-1){//更新单码
+                    codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+                }else{//最后一个码变成箱码
+                    Code boxCode = new Code();
+                    boxCode.setCodeIndex(code.getCodeIndex());
+                    boxCode.setCompanyId(companyId);
+                    boxCode.setCode(pCode);
+                    boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
+                    codeService.updateCode(boxCode);
+                }
+            }
             ajax.put("data", pCode);
             return ajax;
         }else{
-            throw new CustomException("未接收到单码数据！");
+            throw new CustomException("未接收到单码数据！",HttpStatus.ERROR);
         }
 
     }
@@ -505,4 +494,5 @@ public class CodeSingleController extends BaseController {
             throw new CustomException("产品信息为空！",HttpStatus.ERROR);
         }
     }
+
 }
