@@ -5,6 +5,7 @@ import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
@@ -256,6 +257,9 @@ public class StorageServiceImpl implements IStorageService {
                     storageVo.setCodeTypeName("箱码");
                 }
                 //判断是否码是否绑定了产品
+                if(codeEntity.getCodeAttr()==null){
+                    throw new CustomException("该码尚未赋值，请先赋值产品信息！", HttpStatus.ERROR);
+                }
                 if (codeEntity.getCodeAttr().getProductId() != null) {
                     storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
                     storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
