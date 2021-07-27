@@ -31,6 +31,14 @@ public interface CodeAttrMapper {
     List<CodeAttr> selectCodeAttrByRecordId(Long recordId);
 
     /**
+     * 根据生码记录id查询码
+     *
+     * @param singleId
+     * @return
+     */
+    List<CodeAttr> selectCodeAttrBySingleId(Long singleId);
+
+    /**
      * 查询码属性列表
      *
      * @param codeAttr 码属性

@@ -261,7 +261,6 @@ public class CodeSingleController extends BaseController {
      */
     @Log(title = "生码记录", businessType = BusinessType.OTHER)
     @PostMapping("/fuzhi")
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult fuzhi(@RequestBody FuzhiVo fuzhiVo) {
         int res = 0;
         Product product = productService.selectTProductById(fuzhiVo.getProductId());
@@ -279,7 +278,35 @@ public class CodeSingleController extends BaseController {
         Long singleId=fuzhiVo.getRecordId();
         Long indexStart=fuzhiVo.getIndexStart();
         Long indexEnd=fuzhiVo.getIndexEnd();
-        codeAttr.setSingleId(singleId);//TODO 处理分段赋值
+        // 处理分段赋值逻辑
+        if(singleId==0){
+            //判断流水号区间是否已赋值
+            //step1判断是否存在于两个生码记录
+            Map<String,Object> map =new HashMap<>();
+            map.put("companyId",companyId);
+            map.put("indexBegin",indexStart);
+            map.put("indexEnd",indexEnd);
+            List<Code> list=codeService.selectCodeListByIndex(map);
+            if(list.size()>0){
+                for (int i = 0; i < list.size(); i++) {
+                    if(list.get(i).getSingleId()==null){
+                        throw new CustomException("流水区间存在套标码，请重新输入流水区间！",HttpStatus.ERROR);
+                    }
+                    if(list.get(i).getCodeAttrId()!=null){
+                        throw new CustomException("流水区间存在已赋值产品码，请重新输入流水区间！",HttpStatus.ERROR);
+                    }
+                    if(i==list.size()){
+                        if(list.get(0).getSingleId()!=list.get(i).getSingleId()){
+                            throw new CustomException("不允许跨生码区间赋值，请缩小赋值范围！",HttpStatus.ERROR);
+                        }
+                    }
+                }
+                singleId=list.get(0).getSingleId();//正确赋值singleId
+            }else{
+                throw new CustomException("未查询到相关码数据，请检查流水号区间是否正确！",HttpStatus.ERROR);
+            }
+        }
+        codeAttr.setSingleId(singleId);
         codeAttr.setIndexStart(indexStart);
         codeAttr.setIndexEnd(indexEnd);
 
@@ -301,11 +328,28 @@ public class CodeSingleController extends BaseController {
         Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
 
         //更新对应码的状态
-        res=codeService.updateStatusByIndex(companyId, codeAttrId,indexStart, indexEnd,AccConstants.CODE_STATUS_FINISH);
+        res=codeService.updateStatusByIndex(companyId, codeAttrId,singleId,indexStart, indexEnd,AccConstants.CODE_STATUS_FINISH);
 
         CodeSingle codeSingle = new CodeSingle();
-        codeSingle.setId(fuzhiVo.getRecordId());
-        codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
+        codeSingle.setId(singleId);
+
+        //计算是否全部赋值完成
+        if(fuzhiVo.getRecordId()==0){//分段赋值
+            CodeSingle codeSingle1=codeSingleService.selectCodeSingleById(singleId);
+            long totalNum=codeSingle1.getIndexEnd()-codeSingle1.getIndexStart()+1;//统计生码记录总码量
+            List<CodeAttr> codeSingle2=codeAttrService.selectCodeAttrBySingleId(singleId);
+            long countNum=0;//统计已赋值记录总码量
+            for(CodeAttr attr:codeSingle2){
+                countNum+=(attr.getIndexEnd()-attr.getIndexStart()+1);
+            }
+            if(totalNum!=countNum){//判断两个码量是否相等
+                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
+            }else {
+                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+            }
+        }else {
+            codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+        }
         //更新生码记录赋值信息
         res = codeSingleService.updateCodeSingle(codeSingle);
         return toAjax(res);

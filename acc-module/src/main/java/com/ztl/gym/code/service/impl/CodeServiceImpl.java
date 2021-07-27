@@ -393,6 +393,12 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeListByIndex(Map<String, Object> map) {
+         return codeMapper.selectCodeListByCodeOrIndex(map);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
     public long getCodeCount(String codeStr) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", codeStr);
@@ -499,10 +505,11 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public int updateStatusByIndex(Long companyId, Long codeAttrId, Long indexStart, Long indexEnd, int codeStatusFinish) {
+    public int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish) {
         Map<String, Object> param=new HashMap<>();
         param.put("companyId",companyId);
         param.put("codeAttrId",codeAttrId);
+        param.put("singleId",singleId);
         param.put("indexStart",indexStart);
         param.put("indexEnd",indexEnd);
         param.put("status",codeStatusFinish);

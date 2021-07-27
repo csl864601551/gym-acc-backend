@@ -42,7 +42,16 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     public List<CodeAttr> selectCodeAttrByRecordId(Long recordId) {
         return codeAttrMapper.selectCodeAttrByRecordId(recordId);
     }
-
+    /**
+     * 根据生码记录id查询码
+     *
+     * @param singleId
+     * @return
+     */
+    @Override
+    public List<CodeAttr> selectCodeAttrBySingleId(Long singleId) {
+        return codeAttrMapper.selectCodeAttrBySingleId(singleId);
+    }
     /**
      * 查询码属性列表
      *

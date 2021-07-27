@@ -115,6 +115,8 @@ public interface ICodeService {
 
     List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
 
+    List<Code> selectCodeListByIndex(Map<String, Object> map);
+
     long getCodeCount(String code);
 
     /**
@@ -139,5 +141,5 @@ public interface ICodeService {
 
     void updateCodeAttrIdByPCode(Map<String, Object> param);
 
-    int updateStatusByIndex(Long companyId, Long codeAttrId, Long indexStart, Long indexEnd, int codeStatusFinish);
+    int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
 }
