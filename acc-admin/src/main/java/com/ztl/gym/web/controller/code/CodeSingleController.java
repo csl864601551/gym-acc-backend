@@ -380,7 +380,7 @@ public class CodeSingleController extends BaseController {
      */
     @GetMapping("/checkPackageCode")
     @DataSource(DataSourceType.SHARDING)
-    public AjaxResult checkPackageCode(@RequestParam("code") String codeStr) {
+    public AjaxResult checkPackageCode(@RequestParam("code") String codeStr,@RequestParam("flag") Boolean flag) {
         AjaxResult ajax = AjaxResult.success();
         codeStr=codeStr.trim();
         if(!codeStr.equals("")){
@@ -395,6 +395,15 @@ public class CodeSingleController extends BaseController {
             }
             if(code.getpCode()!=null){
                 throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！", HttpStatus.ERROR);
+            }
+            if(code.getCodeAttrId()!=null){
+                throw new CustomException(code.getCode()+"该码已被赋值产品，请检查后重试！",HttpStatus.ERROR);
+            }
+            if(flag&&code.getCodeAcc()==null){
+                throw new CustomException(code.getCode()+"该码未开启防伪码，请检查后重试！",HttpStatus.ERROR);
+            }
+            if(!flag&&code.getCodeAcc()!=null){
+                throw new CustomException(code.getCode()+"该码已开启防伪码，请检查后重试！",HttpStatus.ERROR);
             }
             ajax.put("data", code);
             return ajax;

@@ -12,11 +12,20 @@ public class FuzhiVo {
     private long indexStart;
     private long indexEnd;
     private long recordId;
+    private List<String> codes;
     private long productId;
     private long batchId;
     private String remark;
     private List<Product> products;
     private List<ProductBatch> productBatchs;
+
+    public List<String> getCodes() {
+        return codes;
+    }
+
+    public void setCodes(List<String> codes) {
+        this.codes = codes;
+    }
 
     public long getIndexStart() {
         return indexStart;
