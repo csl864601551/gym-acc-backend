@@ -149,6 +149,5 @@ public interface ICodeService {
      */
     public int selectCodeNum(Map<String, Object> map);
 
-    int updateStatusByIndex(Long companyId, Long codeAttrId, Long indexStart, Long indexEnd, int codeStatusFinish);
     int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
 }
