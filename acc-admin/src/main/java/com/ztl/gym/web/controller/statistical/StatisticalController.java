@@ -492,7 +492,6 @@ public class StatisticalController {
                                 smslYlist.add(smslMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslXlist==" + smslXlist + "---------" + "smslYlist==" + smslYlist);
                         //扫码数量
                         List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
                         if (smslsList.size() > 0) {
@@ -503,7 +502,6 @@ public class StatisticalController {
                                 smslsYlist.add(smslsMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslsXlist==" + smslsXlist + "---------" + "smslsYlist==" + smslsYlist);
                         //查验数量
                         List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
                         if (cyslList.size() > 0) {
@@ -514,7 +512,6 @@ public class StatisticalController {
                                 cyslYlist.add(cyslMap.get("countValue"));
                             }
                         }
-                        System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
                     } else if (map.get("bstjType").equals("2")) {
                         query.put("type", "2");
                         //生码数量
@@ -527,7 +524,6 @@ public class StatisticalController {
                                 smslYlist.add(smslMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslXlist==" + smslXlist + "---------" + "smslYlist==" + smslYlist);
                         //扫码数量
                         List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
                         if (smslsList.size() > 0) {
@@ -538,7 +534,6 @@ public class StatisticalController {
                                 smslsYlist.add(smslsMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslsXlist==" + smslsXlist + "---------" + "smslsYlist==" + smslsYlist);
                         //查验数量
                         List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
                         if (cyslList.size() > 0) {
@@ -549,7 +544,6 @@ public class StatisticalController {
                                 cyslYlist.add(cyslMap.get("countValue"));
                             }
                         }
-                        System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
                     } else if (map.get("bstjType").equals("3")) {
                         query.put("type", "3");
                         if(map.get("beginTime")!=null&&map.get("endTime")!=null){
@@ -566,7 +560,6 @@ public class StatisticalController {
                                 smslYlist.add(smslMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslXlist==" + smslXlist + "---------" + "smslYlist==" + smslYlist);
                         //扫码数量
                         List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
                         if (smslsList.size() > 0) {
@@ -577,7 +570,6 @@ public class StatisticalController {
                                 smslsYlist.add(smslsMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslsXlist==" + smslsXlist + "---------" + "smslsYlist==" + smslsYlist);
                         //查验数量
                         List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
                         if (cyslList.size() > 0) {
@@ -588,7 +580,6 @@ public class StatisticalController {
                                 cyslYlist.add(cyslMap.get("countValue"));
                             }
                         }
-                        System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
                     }
                 }
             } else {
@@ -608,7 +599,6 @@ public class StatisticalController {
                                 smslYlist.add(smslMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslXlist==" + smslXlist + "---------" + "smslYlist==" + smslYlist);
                         //扫码数量
                         List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
                         if (smslsList.size() > 0) {
@@ -619,7 +609,6 @@ public class StatisticalController {
                                 smslsYlist.add(smslsMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslsXlist==" + smslsXlist + "---------" + "smslsYlist==" + smslsYlist);
                         //查验数量
                         List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
                         if (cyslList.size() > 0) {
@@ -630,7 +619,6 @@ public class StatisticalController {
                                 cyslYlist.add(cyslMap.get("countValue"));
                             }
                         }
-                        System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
                     } else if (map.get("bstjType").equals("2")) {
                         query.put("type", "2");
                         //生码数量
@@ -643,7 +631,6 @@ public class StatisticalController {
                                 smslYlist.add(smslMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslXlist==" + smslXlist + "---------" + "smslYlist==" + smslYlist);
                         //扫码数量
                         List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
                         if (smslsList.size() > 0) {
@@ -654,7 +641,6 @@ public class StatisticalController {
                                 smslsYlist.add(smslsMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslsXlist==" + smslsXlist + "---------" + "smslsYlist==" + smslsYlist);
                         //查验数量
                         List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
                         if (cyslList.size() > 0) {
@@ -665,7 +651,6 @@ public class StatisticalController {
                                 cyslYlist.add(cyslMap.get("countValue"));
                             }
                         }
-                        System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
                     } else if (map.get("bstjType").equals("3")) {
                         query.put("type", "3");
                         if(map.get("beginTime")!=null&&map.get("endTime")!=null){
@@ -682,7 +667,6 @@ public class StatisticalController {
                                 smslYlist.add(smslMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslXlist==" + smslXlist + "---------" + "smslYlist==" + smslYlist);
                         //扫码数量
                         List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
                         if (smslsList.size() > 0) {
@@ -693,7 +677,6 @@ public class StatisticalController {
                                 smslsYlist.add(smslsMap.get("countValue"));
                             }
                         }
-                        System.out.println("smslsXlist==" + smslsXlist + "---------" + "smslsYlist==" + smslsYlist);
                         //查验数量
                         List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
                         if (cyslList.size() > 0) {
@@ -704,7 +687,6 @@ public class StatisticalController {
                                 cyslYlist.add(cyslMap.get("countValue"));
                             }
                         }
-                        System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
                     }
                 }
             }
@@ -757,7 +739,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     } else if (map.get("smjlType").equals("2")) {
                         query.put("type", "2");
                         List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
@@ -769,7 +750,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     } else if (map.get("smjlType").equals("3")) {
                         query.put("type", "3");
                         List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
@@ -781,7 +761,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
 
                     } else if (map.get("smjlType").equals("4")) {
                         query.put("type", "4");
@@ -794,7 +773,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     } else if (map.get("smjlType").equals("5")) {
                         query.put("type", "5");
                         query.put("beginTime", map.get("beginTime"));
@@ -808,7 +786,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     }
                 }
             } else {
@@ -827,7 +804,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     } else if (map.get("smjlType").equals("2")) {
                         query.put("type", "2");
                         List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
@@ -839,7 +815,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     } else if (map.get("smjlType").equals("3")) {
                         query.put("type", "3");
                         List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
@@ -851,7 +826,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
 
                     } else if (map.get("smjlType").equals("4")) {
                         query.put("type", "4");
@@ -864,7 +838,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     } else if (map.get("smjlType").equals("5")) {
                         query.put("type", "5");
                         query.put("beginTime", map.get("beginTime"));
@@ -878,7 +851,6 @@ public class StatisticalController {
                                 smjlYlist.add(smjlMap.get("count"));
                             }
                         }
-                        System.out.println("smjlXlist==" + smjlXlist + "---------" + "smjlYlist==" + smjlYlist);
                     }
                 }
             }
@@ -1149,7 +1121,6 @@ public class StatisticalController {
                                 }
                             }
                         }
-                        System.out.println("Xlist==" + Xlist + "---------" + "Ylist==" + Ylist);
                     } else if (map.get("tjType").equals("2")) {
 
                     } else if (map.get("tjType").equals("3")) {
@@ -1217,7 +1188,6 @@ public class StatisticalController {
                                 }
                             }
                         }
-                        System.out.println("Xlist==" + Xlist + "---------" + "Ylist==" + Ylist);
                     } else if (map.get("tjType").equals("2")) {
 
                     } else if (map.get("tjType").equals("3")) {
@@ -1335,7 +1305,6 @@ public class StatisticalController {
                                 }
                             }
                         }
-                        System.out.println("Xlist==" + Xlist + "---------" + "Ylist==" + Ylist);
                     } else if (map.get("tjType").equals("2")) {
 
                     } else if (map.get("tjType").equals("3")) {
@@ -1403,7 +1372,6 @@ public class StatisticalController {
                                 }
                             }
                         }
-                        System.out.println("Xlist==" + Xlist + "---------" + "Ylist==" + Ylist);
                     } else if (map.get("tjType").equals("2")) {
 
                     } else if (map.get("tjType").equals("3")) {
