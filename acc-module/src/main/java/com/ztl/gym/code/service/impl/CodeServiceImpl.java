@@ -516,6 +516,15 @@ public class CodeServiceImpl implements ICodeService {
         return codeMapper.updateStatusByIndex(param);
     }
 
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Code selectCodeByCodeVal(String codeVal) {
+        Code code=new Code();
+        code.setCode(codeVal);
+        code.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        return codeMapper.selectCode(code);
+    }
+
 
     /**
      * 生码总量查询

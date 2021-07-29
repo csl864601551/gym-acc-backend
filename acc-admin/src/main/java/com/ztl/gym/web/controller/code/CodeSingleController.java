@@ -330,28 +330,9 @@ public class CodeSingleController extends BaseController {
         //更新对应码的状态
         res=codeService.updateStatusByIndex(companyId, codeAttrId,singleId,indexStart, indexEnd,AccConstants.CODE_STATUS_FINISH);
 
-        CodeSingle codeSingle = new CodeSingle();
-        codeSingle.setId(singleId);
 
-        //计算是否全部赋值完成
-        if(fuzhiVo.getRecordId()==0){//分段赋值
-            CodeSingle codeSingle1=codeSingleService.selectCodeSingleById(singleId);
-            long totalNum=codeSingle1.getIndexEnd()-codeSingle1.getIndexStart()+1;//统计生码记录总码量
-            List<CodeAttr> codeSingle2=codeAttrService.selectCodeAttrBySingleId(singleId);
-            long countNum=0;//统计已赋值记录总码量
-            for(CodeAttr attr:codeSingle2){
-                countNum+=(attr.getIndexEnd()-attr.getIndexStart()+1);
-            }
-            if(totalNum!=countNum){//判断两个码量是否相等
-                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
-            }else {
-                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
-            }
-        }else {
-            codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
-        }
-        //更新生码记录赋值信息
-        res = codeSingleService.updateCodeSingle(codeSingle);
+        //计算是否全部赋值完成；更新生码记录赋值信息
+        res = codeSingleService.updateCodeSingleStatusBySingleId(singleId,fuzhiVo.getRecordId()==0);
         return toAjax(res);
 
     }
@@ -474,7 +455,7 @@ public class CodeSingleController extends BaseController {
     }
 
     /**
-     * 绑定产品信息
+     * 摄像头或者PDA扫码绑定产品信息
      * @param map
      * @return
      */
@@ -492,6 +473,7 @@ public class CodeSingleController extends BaseController {
             codeAttr.setBatchNo(map.get("batchNo").toString());
             //插入编码属性表
             Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+
             //更新编码信息表
             Map<String, Object> params = new HashMap<>();
             params.put("pCode", map.get("pCode"));
