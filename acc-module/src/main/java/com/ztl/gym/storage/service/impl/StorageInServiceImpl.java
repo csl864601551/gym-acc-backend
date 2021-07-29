@@ -86,9 +86,7 @@ public class StorageInServiceImpl implements IStorageInService {
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map) {
         map.put("companyId", SecurityUtils.getLoginUserTopCompanyId());
-        if (map.get("tenantId") == null) {
-            map.put("tenantId", commonService.getTenantId());
-        }else if(map.get("tenantId").toString().equals("0")){
+        if (map.get("tenantId") == null || map.get("tenantId").toString().equals("0")) {
             map.put("tenantId", commonService.getTenantId());
         }
         map.put("inType", StorageIn.IN_TYPE_COMMON);

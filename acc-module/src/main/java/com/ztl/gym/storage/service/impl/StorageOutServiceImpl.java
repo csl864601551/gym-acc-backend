@@ -1,5 +1,6 @@
 package com.ztl.gym.storage.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
@@ -24,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 出库Service业务层处理
@@ -104,7 +102,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
 
-        if (storageOut.getThirdPartyFlag() != null) {
+        if (!CollectionUtil.isEmpty(storageOut.getCodes()) && storageOut.getCodes().size() > 1) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
             long count=0;
