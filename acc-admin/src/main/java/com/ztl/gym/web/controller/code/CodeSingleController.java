@@ -441,7 +441,7 @@ public class CodeSingleController extends BaseController {
                     Code boxCode = new Code();
                     boxCode.setCodeIndex(code.getCodeIndex());
                     boxCode.setCompanyId(companyId);
-                    boxCode.setCode(pCode);
+                    //boxCode.setCode(pCode);更新箱码后，原先码不可用
                     boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
                     codeService.updateCode(boxCode);
                 }

@@ -48,7 +48,7 @@ public class OpenCodeController {
             }
             for (Code codes : codeList) {
                 String typeName = "未知";
-                if (CodeRuleUtils.getCodeType(codes.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
+                if (codes.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                     typeName = "箱码";
                 } else {
                     typeName = "单码";

@@ -108,7 +108,9 @@ public class CodeRuleUtils {
     }
 
     /**
-     * 根据码获得该码类型
+     * 由于装箱无法改变码数据结构，因此废弃该方法
+     *
+     * 根据码获得该码类型;
      *
      * @param code
      * @return

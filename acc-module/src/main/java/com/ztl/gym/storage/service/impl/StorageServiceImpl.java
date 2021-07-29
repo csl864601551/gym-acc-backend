@@ -301,7 +301,6 @@ public class StorageServiceImpl implements IStorageService {
     @DataSource(DataSourceType.SHARDING)
     public int addCodeFlow(int storageType, long storageRecordId, String code) {
         //查询码类型与企业id
-        String codeType = CodeRuleUtils.getCodeType(code);
         Long companyId = CodeRuleUtils.getCompanyIdByCode(code);
 
         //查询码
@@ -311,6 +310,8 @@ public class StorageServiceImpl implements IStorageService {
         codeEntity.setCompanyId(companyId);
         codeRes = codeService.selectCode(codeEntity);
 
+        //查询码类型
+        String codeType = codeRes.getCodeType();
         //判断该单码有无箱码，如果有则更新整箱
         boolean isBox = false;
         boolean isSingle = false;
