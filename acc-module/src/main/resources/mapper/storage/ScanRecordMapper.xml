@@ -300,6 +300,7 @@
         GROUP BY
         hours
         ) b on a.click_date = b.hours
+        ORDER BY a.click_date
     </select>
 
 

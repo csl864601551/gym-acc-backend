@@ -515,7 +515,7 @@ public class StatisticalController {
                             }
                         }
                         System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
-                    } else if (map.get("smjlType").equals("2")) {
+                    } else if (map.get("bstjType").equals("2")) {
                         query.put("type", "2");
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
@@ -550,7 +550,7 @@ public class StatisticalController {
                             }
                         }
                         System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
-                    } else if (map.get("smjlType").equals("3")) {
+                    } else if (map.get("bstjType").equals("3")) {
                         query.put("type", "3");
                         if(map.get("beginTime")!=null&&map.get("endTime")!=null){
                             query.put("beginTime", map.get("beginTime"));
@@ -631,7 +631,7 @@ public class StatisticalController {
                             }
                         }
                         System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
-                    } else if (map.get("smjlType").equals("2")) {
+                    } else if (map.get("bstjType").equals("2")) {
                         query.put("type", "2");
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
@@ -666,7 +666,7 @@ public class StatisticalController {
                             }
                         }
                         System.out.println("cyslXlist==" + cyslXlist + "---------" + "cyslYlist==" + cyslYlist);
-                    } else if (map.get("smjlType").equals("3")) {
+                    } else if (map.get("bstjType").equals("3")) {
                         query.put("type", "3");
                         if(map.get("beginTime")!=null&&map.get("endTime")!=null){
                             query.put("beginTime", map.get("beginTime"));
@@ -940,8 +940,8 @@ public class StatisticalController {
                         if(top10Map.get("code")!=null){
                             Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
                             if(smxxMap!=null){
-                                top10Map.put("productName",smxxMap.get("date"));
-                                top10Map.put("productImage",null);
+                                top10Map.put("productName",smxxMap.get("productName"));
+                                top10Map.put("productImage",smxxMap.get("productName"));
                             }
                         }
                         smList.add(top10Map);

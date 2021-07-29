@@ -315,7 +315,7 @@
             GROUP BY
             mycreatedate
         </if>
-        <if test="type != null and type == 2">
+        <if test="type != null and type == 3">
             SELECT
             DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
             ifnull( sum( pv.act_out_num ), 0 ) AS countValue
