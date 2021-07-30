@@ -35,7 +35,8 @@ public class PriceConfig extends BaseEntity
     private BigDecimal price;
 
     /** 数量 码量 */
-    @Excel(name = "数量 码量")
+    @Excel(name = "码量")
+    @NotNull(message = "码量不能为空")
     @Min(value = 1, message = "数量大于0")
     private Long count;
 
