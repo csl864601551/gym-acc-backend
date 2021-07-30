@@ -125,4 +125,10 @@ public class QuotaServiceImpl implements IQuotaService
     {
         return quotaMapper.deleteQuotaById(id);
     }
+
+    @Override
+    public int updateQuotaByAddCode(Long codeNum) {
+
+        return quotaMapper.updateQuotaByAddCode(codeNum,SecurityUtils.getLoginUserCompany().getDeptId());
+    }
 }

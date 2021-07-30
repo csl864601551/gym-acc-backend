@@ -1,10 +1,15 @@
 package com.ztl.gym.web.controller.quota;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.payment.domain.PurchaseRecord;
 import com.ztl.gym.quota.domain.Quota;
+import com.ztl.gym.quota.domain.QuotaConstants;
 import com.ztl.gym.quota.service.IQuotaService;
 import com.ztl.gym.web.controller.payment.PaymentRecordController;
 import org.slf4j.Logger;
@@ -53,6 +58,16 @@ public class QuotaController extends BaseController
         logger.info("the method getInfoByKey end, result is {}", quota);
         return AjaxResult.success(quota);
     }
+    /**
+     * 生码扣减码量
+     */
+    @Log(title = "生码扣减码量 ", businessType = BusinessType.UPDATE)
+    @PutMapping(value = "/updateCodeQuota")
+    public AjaxResult updateCodeQuota(@RequestBody Long codeNum)
+    {
+        logger.info("生码扣减码量");
+        return AjaxResult.success(quotaService.updateQuotaByAddCode(codeNum));
+    }
 
 //    /**
 //     * 查询配额 列表
@@ -88,16 +103,6 @@ public class QuotaController extends BaseController
 //        return AjaxResult.success(quotaService.selectQuotaById(id));
 //    }
 //
-//    /**
-//     * 新增配额
-//     */
-//    @PreAuthorize("@ss.hasPermi('product:quota:add')")
-//    @Log(title = "配额 ", businessType = BusinessType.INSERT)
-//    @PostMapping
-//    public AjaxResult add(@RequestBody Quota quota)
-//    {
-//        return toAjax(quotaService.insertQuota(quota));
-//    }
 //
 //    /**
 //     * 修改配额

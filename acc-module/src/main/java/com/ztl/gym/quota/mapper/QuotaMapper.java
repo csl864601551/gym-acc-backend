@@ -2,6 +2,7 @@ package com.ztl.gym.quota.mapper;
 
 import java.util.List;
 import com.ztl.gym.quota.domain.Quota;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -68,4 +69,6 @@ public interface QuotaMapper
      * @return 配额
      */
     public Quota selectQuotaByParam(Quota quota);
+
+    int updateQuotaByAddCode(@Param("paramValue") Long codeNum,@Param("companyId")  Long companyId);
 }

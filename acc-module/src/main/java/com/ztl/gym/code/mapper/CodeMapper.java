@@ -193,4 +193,6 @@ public interface CodeMapper {
     public int selectCodeNum(Map<String, Object> map);
 
     int updateStatusByIndex(Map<String, Object> params);
+
+    List<Code> selectInCodesByCodeValList(Map<String, Object> codeParam);
 }

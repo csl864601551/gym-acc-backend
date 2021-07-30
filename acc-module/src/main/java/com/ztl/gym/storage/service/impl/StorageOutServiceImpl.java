@@ -255,13 +255,13 @@ public class StorageOutServiceImpl implements IStorageOutService {
             storageService.insertStorage(storage);
             storageId = storage.getId();
         }
-        //2、执行经销商入库动作
-        Map<String, Object> outMap = new HashMap<>();
-        outMap.put("tenantId", storageOut.getStorageTo());
-        outMap.put("actInNum", storageOut.getOutNum());
-        outMap.put("toStorageId", storageId);
-        outMap.put("id", inMap.get("id"));
-        storageInService.updateTenantIn(outMap);//需要处理tenant_id问题，仓库问题和addflow问题
+        //2、执行经销商入库动作，大艺项目用，南京暂不开启
+//        Map<String, Object> outMap = new HashMap<>();
+//        outMap.put("tenantId", storageOut.getStorageTo());
+//        outMap.put("actInNum", storageOut.getOutNum());
+//        outMap.put("toStorageId", storageId);
+//        outMap.put("id", inMap.get("id"));
+//        storageInService.updateTenantIn(outMap);//需要处理tenant_id问题，仓库问题和addflow问题
         return 1;
     }
 
