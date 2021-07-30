@@ -17,6 +17,9 @@ import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.service.IScanRecordService;
 import com.ztl.gym.storage.service.IStorageOutService;
 import com.ztl.gym.system.service.ISysDeptService;
+import com.ztl.gym.web.controller.quota.QuotaController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +36,10 @@ import java.util.*;
 @RequestMapping("/statistical/statistical")
 public class StatisticalController {
 
+    /**
+     * 定义日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger(QuotaController.class);
 
     @Autowired
     private ISysDeptService deptService;
@@ -63,6 +70,7 @@ public class StatisticalController {
      */
     @PostMapping("/indexSj")
     public AjaxResult selectIndexSj(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             StatisticalBean statisticalBean = new StatisticalBean();
             boolean isadmin = false;
@@ -210,9 +218,18 @@ public class StatisticalController {
                 PurchaseRecord purchaseRecord = new PurchaseRecord();
                 Map<String, Object> result = purchaseRecordService.getStatistics(purchaseRecord);
                 if(result!=null){
-                    statisticalBean.setSymlNum(ConversionUtill.ToBigDecimal(result.get("code")).intValue());
-                    //剩余费用
-                    statisticalBean.setSyfyNum(ConversionUtill.ToBigDecimal(result.get("money")));
+                    if(result.get("code")!=null){
+                        statisticalBean.setSymlNum(ConversionUtill.ToBigDecimal(result.get("code")).intValue());
+                    }else{
+                        statisticalBean.setSymlNum(ConversionUtill.ToBigDecimal("0").intValue());
+                    }
+                    if(result.get("money")!=null){
+                        //剩余费用
+                        statisticalBean.setSyfyNum(ConversionUtill.ToBigDecimal(result.get("money")));
+                    }else{
+                        //剩余费用
+                        statisticalBean.setSyfyNum(ConversionUtill.ToBigDecimal(0));
+                    }
                 }
 
                 //产品总览
@@ -323,10 +340,12 @@ public class StatisticalController {
             }
             AjaxResult ajax = AjaxResult.success();
             ajax.put("data", statisticalBean);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -338,6 +357,7 @@ public class StatisticalController {
      */
     @PostMapping("/selectChsjNum")
     public AjaxResult selectChsjNum(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             boolean isadmin = false;
             //获取用户部门信息
@@ -440,10 +460,12 @@ public class StatisticalController {
             AjaxResult ajax = AjaxResult.success();
             ajax.put("chsjXlist", chsjXlist);
             ajax.put("chsjYlist", chsjYlist);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -455,6 +477,7 @@ public class StatisticalController {
      */
     @PostMapping("/selectSmSmCyNum")
     public AjaxResult selectSmSmCyNum(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             boolean isadmin = false;
             //获取用户部门信息
@@ -697,10 +720,12 @@ public class StatisticalController {
             ajax.put("smslsYlist", smslsYlist);
             ajax.put("cyslXlist", cyslXlist);
             ajax.put("cyslYlist", cyslYlist);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -710,6 +735,7 @@ public class StatisticalController {
      */
     @PostMapping("/selectSmjlsjNum")
     public AjaxResult selectSmjlsjNum(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             boolean isadmin = false;
             //获取用户部门信息
@@ -857,10 +883,12 @@ public class StatisticalController {
             AjaxResult ajax = AjaxResult.success();
             ajax.put("smjlXlist", smjlXlist);
             ajax.put("smjlYlist", smjlYlist);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -872,6 +900,7 @@ public class StatisticalController {
      */
     @PostMapping("/selectSmjlTop10")
     public AjaxResult selectSmjlTop10(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             boolean isadmin = false;
             //获取用户部门信息
@@ -923,10 +952,12 @@ public class StatisticalController {
             }
             AjaxResult ajax = AjaxResult.success();
             ajax.put("smList", smList);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -946,6 +977,7 @@ public class StatisticalController {
     //@Log(title = "热力图扫码信息", businessType = BusinessType.INSERT)
     @PostMapping("/getRltXx")
     public AjaxResult getRltXx(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
             //查询热力图数据
@@ -964,10 +996,12 @@ public class StatisticalController {
             }
             AjaxResult ajax = AjaxResult.success();
             ajax.put("rltjson", lists);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -979,6 +1013,7 @@ public class StatisticalController {
     //@Log(title = "点聚合扫码信息", businessType = BusinessType.INSERT)
     @RequestMapping(value = "getDjhXx", method = {RequestMethod.GET, RequestMethod.POST})
     public AjaxResult getDjhXx(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("the method getInfoByKey enter, param is {}", request+""+response);
         try {
             List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
             Map<String, Object> map = new HashMap<String, Object>();
@@ -999,10 +1034,12 @@ public class StatisticalController {
             }
             AjaxResult ajax = AjaxResult.success();
             ajax.put("rltjson", lists);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {
             System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         }
     }
@@ -1013,6 +1050,7 @@ public class StatisticalController {
      */
     @RequestMapping(value = "getDjhXxs", method = {RequestMethod.GET, RequestMethod.POST})
     public AjaxResult getDjhXxs(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("the method getInfoByKey enter, param is {}", request+""+response);
         //String code = request.getParameter("code");
         //System.out.println("扫码详情进入成功  code=="+code);
 //        String compant_id = WxUtil.splitData(code,"-","-");
@@ -1021,6 +1059,7 @@ public class StatisticalController {
         List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
         AjaxResult ajax = AjaxResult.success();
         ajax.put("rltjson", lists);
+        logger.info("the method getInfoByKey end, result is {}", ajax);
         return ajax;
     }
 
@@ -1034,6 +1073,7 @@ public class StatisticalController {
      */
     @PostMapping("/selectOutNum")
     public AjaxResult selectOutNum(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             boolean isadmin = false;
             //获取用户部门信息
@@ -1218,6 +1258,7 @@ public class StatisticalController {
      */
     @PostMapping("/selectTjqsNums")
     public AjaxResult selectTjqsNums(@RequestBody Map<String, Object> map) {
+        logger.info("the method getInfoByKey enter, param is {}", map);
         try {
             boolean isadmin = false;
             //获取用户部门信息
