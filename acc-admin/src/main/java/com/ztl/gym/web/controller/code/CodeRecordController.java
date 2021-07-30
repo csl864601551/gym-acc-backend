@@ -240,9 +240,9 @@ public class CodeRecordController extends BaseController {
     public AjaxResult add(@RequestBody CodeRecord codeRecord) {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
-            return toAjax(codeRecordService.createCodeRecord(companyId, codeRecord.getCount(), codeRecord.getRemark()));
+            return toAjax(codeRecordService.createCodeRecord(companyId,codeRecord.getIsAcc(), codeRecord.getCount(), codeRecord.getRemark()));
         } else {
-            return toAjax(codeRecordService.createPCodeRecord(companyId, codeRecord.getBoxCount(), codeRecord.getCount(), codeRecord.getRemark()));
+            return toAjax(codeRecordService.createPCodeRecord(companyId,codeRecord.getIsAcc(), codeRecord.getBoxCount(), codeRecord.getCount(), codeRecord.getRemark()));
         }
     }
 

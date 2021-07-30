@@ -4,9 +4,15 @@ import cn.hutool.core.date.DateUtil;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.ConversionUtill;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.mix.service.IMixRecordService;
+import com.ztl.gym.payment.domain.PurchaseRecord;
+import com.ztl.gym.payment.service.IPaymentRecordService;
+import com.ztl.gym.payment.service.IPurchaseRecordService;
 import com.ztl.gym.product.service.IProductService;
+import com.ztl.gym.statistical.domain.StatisticalBean;
 import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.service.IScanRecordService;
 import com.ztl.gym.storage.service.IStorageOutService;
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -45,211 +52,891 @@ public class StatisticalController {
     @Autowired
     private IScanRecordService scanRecordService;
 
+    @Autowired
+    private IPaymentRecordService paymentRecordService;
+
+    @Autowired
+    private IPurchaseRecordService purchaseRecordService;
+
     /**
      * 查询首页信息
      */
     @PostMapping("/indexSj")
-    public AjaxResult selectIndexSj(@RequestBody Map<String,Object> map)
-    {
+    public AjaxResult selectIndexSj(@RequestBody Map<String, Object> map) {
         try {
-        boolean isadmin = false;
-        Long topdeptId = 0L;
-        //获取用户部门信息
-        Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            topdeptId = SecurityUtils.getLoginUserTopCompanyId();
-            isadmin = false;
-        }else{
-            isadmin = true;
-        }
-        Map<String, Object> query = new HashMap<String, Object>();
-        //平台管理员
-        int qyNum =0;
-        int jxsNum =0;
-        int cpchlNum =0;
-        int chzlNum =0;
-        int smzlNum =0;
-        int ljczfyNum =0;
-        //产品总览
-        int yxjNum =0;
-        int ysjNum =0;
-        int kcjzNum =0;
-        int qbcpNum =0;
-        //经销商总览
-        int jrxzNum =0;
-        int zrxzNum =0;
-        int byxzNum =0;
-        int jxszs =0;
+            StatisticalBean statisticalBean = new StatisticalBean();
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            Map<String, Object> query = new HashMap<String, Object>();
+            //平台方
+            if (isadmin) {
+                //企业总数
+                query.put("type", 5);
+                query.put("topdeptId", AccConstants.ADMIN_DEPT_ID);
+                statisticalBean.setQyNum(deptService.selectCountBydept(query));
+                //产品出货总量
+                query.put("type", null);
+                statisticalBean.setCpchlNum(storageOutService.selectCountByDept(query));
+                //窜货总量
+                statisticalBean.setChzlNum(mixRecordService.selectmixnum(query));
+                //生码总量
+                query.put("type", 2);
+                statisticalBean.setSmzlNum(codeRecordService.selectCodeNum(query));
+                //累计充值费用
+                statisticalBean.setLjczfyNum(paymentRecordService.getAllAmountNum(query));
+                //产品总览
+                //已下架
+                query.put("type", 1);
+                statisticalBean.setYxjNum(tProductService.selectProductNum(query));
+                //已上架
+                query.put("type", 2);
+                statisticalBean.setYsjNum(tProductService.selectProductNum(query));
+                //库存紧张
+                query.put("type", 3);
+                statisticalBean.setKcjzNum(tProductService.selectProductNum(query));
+                //全部产品
+                query.put("type", 4);
+                statisticalBean.setQbcpNum(tProductService.selectProductNum(query));
 
-        //平台方
-        if(isadmin){
-            //企业总数
-            query.put("type",5);
-            query.put("topdeptId",AccConstants.ADMIN_DEPT_ID);
-            qyNum = deptService.selectCountBydept(query);
-            //产品出货总量
-            cpchlNum = storageOutService.selectCountByDept(query);
-            //窜货总量
-            chzlNum = mixRecordService.selectmixnum(query);
-            //生码总量
-            smzlNum = codeRecordService.selectcodenum(query);
-            //累计充值费用
+                //经销商总览
+                //今日新增
+                Date today = DateUtil.date();
+                Date beginTime = DateUtil.beginOfDay(today);
+                Date endTime = DateUtil.endOfDay(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrxzNum(deptService.selectCountBydept(query));
+                //昨日新增
+                Date yesterday = DateUtil.yesterday();
+                beginTime = DateUtil.beginOfDay(yesterday);
+                endTime = DateUtil.endOfDay(yesterday);
+                query.put("type", 2);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setZrxzNum(deptService.selectCountBydept(query));
+                //本月新增
+                beginTime = DateUtil.beginOfMonth(today);
+                endTime = DateUtil.endOfMonth(today);
+                query.put("type", 3);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setByxzNum(deptService.selectCountBydept(query));
+                //经销商总数
+                query.put("type", 3);
+                statisticalBean.setJxszs(deptService.selectCountBydept(query));
 
-            //产品总览
-            //已下架
-            query.put("type",1);
-            yxjNum = tProductService.selectProductNum(query);
-            //已上架
-            query.put("type",2);
-            ysjNum = tProductService.selectProductNum(query);
-            //库存紧张
-            query.put("type",3);
-            kcjzNum = tProductService.selectProductNum(query);
-            //全部产品
-            query.put("type",4);
-            qbcpNum = tProductService.selectProductNum(query);
+                //出货统计
+                //本月出货总数
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setBychzsNum(storageOutService.selectCountByDept(query));
+                //同比上月
+                Date lastMonth = DateUtil.lastMonth();
+                beginTime = DateUtil.beginOfMonth(lastMonth);
+                endTime = DateUtil.endOfMonth(lastMonth);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                int sgyNum = storageOutService.selectCountByDept(query);
+                if (sgyNum > 0 && statisticalBean.getBychzsNum()>0) {
+                    statisticalBean.setTbsyNum(new BigDecimal((float) statisticalBean.getBychzsNum() / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                } else {
+                    statisticalBean.setTbsyNum(new BigDecimal("0"));
+                }
+                //本周出货总数
+                beginTime = DateUtil.beginOfWeek(today);
+                endTime = DateUtil.endOfWeek(today);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setBzchslNum(storageOutService.selectCountByDept(query));
+                //同比上周
+                Date lastWeek = DateUtil.lastWeek();
+                beginTime = DateUtil.beginOfWeek(lastWeek);
+                endTime = DateUtil.endOfWeek(lastWeek);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                int tbszNum = storageOutService.selectCountByDept(query);
+                if (tbszNum > 0 && statisticalBean.getBzchslNum()>0) {
+                    statisticalBean.setTbszNum(new BigDecimal((float) statisticalBean.getBzchslNum() / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                } else {
+                    statisticalBean.setTbszNum(new BigDecimal("0"));
+                }
 
-            //经销商总览
-            //今日新增
-            Date today = DateUtil.date();
-            Date beginTime = DateUtil.beginOfDay(today);
-            Date endTime = DateUtil.endOfDay(today);
-            query.put("type",1);
-            query.put("begintime",beginTime);
-            query.put("endTime",endTime);
-            jrxzNum = deptService.selectCountBydept(query);
-            //昨日新增
-            Date yesterday = DateUtil.yesterday();
-            beginTime = DateUtil.beginOfDay(yesterday);
-            endTime = DateUtil.endOfDay(yesterday);
-            query.put("type",2);
-            query.put("begintime",beginTime);
-            query.put("endtime",endTime);
-            zrxzNum = deptService.selectCountBydept(query);
-            //本月新增
-            beginTime = DateUtil.beginOfMonth(today);
-            endTime = DateUtil.endOfMonth(today);
-            query.put("type",3);
-            query.put("begintime",beginTime);
-            query.put("endtime",endTime);
-            byxzNum = deptService.selectCountBydept(query);
-            //经销商总数
-            query.put("type",3);
-            jxszs = deptService.selectCountBydept(query);
+                //今日生码总量
+                beginTime = DateUtil.beginOfDay(today);
+                endTime = DateUtil.endOfDay(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrsmNum(codeRecordService.selectCodeNum(query));
+                //累计生码总量
+                query.put("type", 2);
+                statisticalBean.setLjsmNum(codeRecordService.selectCodeNum(query));
+                //今日扫码总量
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrsmZl(scanRecordService.selectScanRecordNum(query));
+                //总扫码量
+                query.put("type", 2);
+                statisticalBean.setLjsmZl(scanRecordService.selectScanRecordNum(query));
+                //今日查验总量
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrcyNum(scanRecordService.selectSecueityRecordNum(query));
+                //总查验量
+                query.put("type", 2);
+                statisticalBean.setLjcyNum(scanRecordService.selectSecueityRecordNum(query));
 
-        }else{
-            query.put("deptId",deptId);
-            //经销商总数
-            query.put("type",3);
-            jxsNum = deptService.selectCountBydept(query);
-            //产品出货总数
-            cpchlNum = storageOutService.selectCountByDept(query);
-            //窜货总数
-            chzlNum = mixRecordService.selectmixnum(query);
-            //剩余码量
-            //已经使用的码量
-            smzlNum = codeRecordService.selectcodenum(query);
-            //剩余费用
+            } else {
+                query.put("deptId", deptId);
+                //经销商总数
+                query.put("type", 3);
+                statisticalBean.setJxsNum(deptService.selectCountBydept(query));
+                //产品出货总量
+                query.put("type", null);
+                statisticalBean.setCpchlNum(storageOutService.selectCountByDept(query));
+                //窜货总量
+                statisticalBean.setChzlNum(mixRecordService.selectmixnum(query));
+                //剩余码量
+                PurchaseRecord purchaseRecord = new PurchaseRecord();
+                Map<String, Object> result = purchaseRecordService.getStatistics(purchaseRecord);
+                if(result!=null){
+                    statisticalBean.setSymlNum(ConversionUtill.ToBigDecimal(result.get("code")).intValue());
+                    //剩余费用
+                    statisticalBean.setSyfyNum(ConversionUtill.ToBigDecimal(result.get("money")));
+                }
 
-            //产品总览
-            //已下架
-            query.put("type",1);
-            yxjNum = tProductService.selectProductNum(query);
-            //已上架
-            query.put("type",2);
-            ysjNum = tProductService.selectProductNum(query);
-            //库存紧张
-            query.put("type",3);
-            kcjzNum = tProductService.selectProductNum(query);
-            //全部产品
-            query.put("type",4);
-            qbcpNum = tProductService.selectProductNum(query);
+                //产品总览
+                //已下架
+                query.put("type", 1);
+                statisticalBean.setYxjNum(tProductService.selectProductNum(query));
+                //已上架
+                query.put("type", 2);
+                statisticalBean.setYsjNum(tProductService.selectProductNum(query));
+                //库存紧张
+                query.put("type", 3);
+                statisticalBean.setKcjzNum(tProductService.selectProductNum(query));
+                //全部产品
+                query.put("type", 4);
+                statisticalBean.setQbcpNum(tProductService.selectProductNum(query));
 
-            //经销商总览
-            //今日新增
-            Date today = DateUtil.date();
-            Date begintime = DateUtil.beginOfDay(today);
-            Date endtime = DateUtil.endOfDay(today);
-            query.put("type",1);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
-            jrxzNum = deptService.selectCountBydept(query);
-            //昨日新增
-            Date yesterday = DateUtil.yesterday();
-            begintime = DateUtil.beginOfDay(yesterday);
-            endtime = DateUtil.endOfDay(yesterday);
-            query.put("type",2);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
-            zrxzNum = deptService.selectCountBydept(query);
-            //本月新增
-            begintime = DateUtil.beginOfMonth(today);
-            endtime = DateUtil.endOfMonth(today);
-            query.put("type",3);
-            query.put("begintime",begintime);
-            query.put("endtime",endtime);
-            byxzNum = deptService.selectCountBydept(query);
-            //经销商总数
-            query.put("type",3);
-            jxszs = deptService.selectCountBydept(query);
-        }
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("qyNum", qyNum);
-        ajax.put("jxsNum", jxsNum);
-        ajax.put("cpchlNum", cpchlNum);
-        ajax.put("chzlNum", chzlNum);
-        ajax.put("smzlNum", smzlNum);
-        ajax.put("ljczfyNum", ljczfyNum);
-        ajax.put("yxjNum", yxjNum);
-        ajax.put("ysjNum", ysjNum);
-        ajax.put("kcjzNum", kcjzNum);
-        ajax.put("qbcpNum", qbcpNum);
-        ajax.put("jrxzNum", jrxzNum);
-        ajax.put("zrxzNum", zrxzNum);
-        ajax.put("byxzNum", byxzNum);
-        ajax.put("jxszs", jxszs);
-        return ajax;
-        }catch (Exception e){
+                //经销商总览
+                //今日新增
+                Date today = DateUtil.date();
+                Date beginTime = DateUtil.beginOfDay(today);
+                Date endTime = DateUtil.endOfDay(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrxzNum(deptService.selectCountBydept(query));
+                //昨日新增
+                Date yesterday = DateUtil.yesterday();
+                beginTime = DateUtil.beginOfDay(yesterday);
+                endTime = DateUtil.endOfDay(yesterday);
+                query.put("type", 2);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setZrxzNum(deptService.selectCountBydept(query));
+                //本月新增
+                beginTime = DateUtil.beginOfMonth(today);
+                endTime = DateUtil.endOfMonth(today);
+                query.put("type", 3);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setByxzNum(deptService.selectCountBydept(query));
+                //经销商总数
+                query.put("type", 3);
+                statisticalBean.setJxszs(deptService.selectCountBydept(query));
+
+                //出货统计
+                //本月出货总数
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setBychzsNum(storageOutService.selectCountByDept(query));
+                //同比上月
+                Date lastMonth = DateUtil.lastMonth();
+                beginTime = DateUtil.beginOfMonth(lastMonth);
+                endTime = DateUtil.endOfMonth(lastMonth);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                int sgyNum = storageOutService.selectCountByDept(query);
+                if (sgyNum > 0 && statisticalBean.getBychzsNum()>0) {
+                    statisticalBean.setTbsyNum(new BigDecimal((float) statisticalBean.getBychzsNum() / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                } else {
+                    statisticalBean.setTbsyNum(new BigDecimal("0"));
+                }
+                //本周出货总数
+                beginTime = DateUtil.beginOfWeek(today);
+                endTime = DateUtil.endOfWeek(today);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setBzchslNum(storageOutService.selectCountByDept(query));
+                //同比上周
+                Date lastWeek = DateUtil.lastWeek();
+                beginTime = DateUtil.beginOfWeek(lastWeek);
+                endTime = DateUtil.endOfWeek(lastWeek);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                int tbszNum = storageOutService.selectCountByDept(query);
+                if (tbszNum > 0 && statisticalBean.getBzchslNum()>0) {
+                    statisticalBean.setTbszNum(new BigDecimal((float) statisticalBean.getBzchslNum() / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                } else {
+                    statisticalBean.setTbszNum(new BigDecimal("0"));
+                }
+
+                //今日生码总量
+                beginTime = DateUtil.beginOfDay(today);
+                endTime = DateUtil.endOfDay(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrsmNum(codeRecordService.selectCodeNum(query));
+                //累计生码总量
+                query.put("type", 2);
+                statisticalBean.setLjsmNum(codeRecordService.selectCodeNum(query));
+                //今日扫码总量
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrsmZl(scanRecordService.selectScanRecordNum(query));
+                //总扫码量
+                query.put("type", 2);
+                statisticalBean.setLjsmZl(scanRecordService.selectScanRecordNum(query));
+                //今日查验总量
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                statisticalBean.setJrcyNum(scanRecordService.selectSecueityRecordNum(query));
+                //总查验量
+                query.put("type", 2);
+                statisticalBean.setLjcyNum(scanRecordService.selectSecueityRecordNum(query));
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("data", statisticalBean);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
             return ajax;
         }
     }
 
 
+
     /**
-     * 查询首页信息
+     * 出货数量趋势图
      */
-    @PostMapping("/selectOutNum")
-    public AjaxResult selectOutNum(@RequestBody Map<String,Object> map)
-    {
-        boolean isadmin = false;
-        Long topdeptId = 0L;
-        //获取用户部门信息
-        Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!deptId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            topdeptId = SecurityUtils.getLoginUserTopCompanyId();
-            isadmin = false;
-        }else{
-            isadmin = true;
+    @PostMapping("/selectChsjNum")
+    public AjaxResult selectChsjNum(@RequestBody Map<String, Object> map) {
+        try {
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            Map<String, Object> query = new HashMap<String, Object>();
+            //折线图数据
+            List<Object> chsjXlist = new ArrayList<Object>();
+            List<Object> chsjYlist = new ArrayList<Object>();
+            //平台方
+            if (isadmin) {
+                //1本周 2本月 3自选时间
+                if (map.get("chType") != null) {
+                    if(map.get("chType").equals("1")){
+                        query.put("type","1");
+                        List<Map<String, Object>> chsjList = storageOutService.selectCountByWeek(query);
+                        if (chsjList.size() > 0) {
+                            for (int i = 0; i < chsjList.size(); i++) {
+                                Map<String, Object> chsjmap = new HashMap<String, Object>();
+                                chsjmap = chsjList.get(i);
+                                chsjXlist.add(chsjmap.get("countKey"));
+                                chsjYlist.add(chsjmap.get("countValue"));
+                            }
+                        }
+                    }else if(map.get("chType").equals("2")){
+                        query.put("type","2");
+                        List<Map<String, Object>> chsjList = storageOutService.selectCountByWeek(query);
+                        if (chsjList.size() > 0) {
+                            for (int i = 0; i < chsjList.size(); i++) {
+                                Map<String, Object> chsjmap = new HashMap<String, Object>();
+                                chsjmap = chsjList.get(i);
+                                chsjXlist.add(chsjmap.get("countKey"));
+                                chsjYlist.add(chsjmap.get("countValue"));
+                            }
+                        }
+                    }else if(map.get("chType").equals("3")){
+                        query.put("type","3");
+                        if(map.get("beginTime")!=null&&map.get("endTime")!=null){
+                            query.put("beginTime", map.get("beginTime"));
+                            query.put("endTime", map.get("endTime"));
+                        }
+                        List<Map<String, Object>> chsjList = storageOutService.selectCountByWeek(query);
+                        if (chsjList.size() > 0) {
+                            for (int i = 0; i < chsjList.size(); i++) {
+                                Map<String, Object> chsjmap = new HashMap<String, Object>();
+                                chsjmap = chsjList.get(i);
+                                chsjXlist.add(chsjmap.get("countKey"));
+                                chsjYlist.add(chsjmap.get("countValue"));
+                            }
+                        }
+                    }
+                }
+            } else {
+                query.put("deptId", deptId);
+                if (map.get("chType") != null) {
+                    if(map.get("chType").equals("1")){
+                        query.put("type","1");
+                        List<Map<String, Object>> chsjList = storageOutService.selectCountByWeek(query);
+                        if (chsjList.size() > 0) {
+                            for (int i = 0; i < chsjList.size(); i++) {
+                                Map<String, Object> chsjmap = new HashMap<String, Object>();
+                                chsjmap = chsjList.get(i);
+                                chsjXlist.add(chsjmap.get("countKey"));
+                                chsjYlist.add(chsjmap.get("countValue"));
+                            }
+                        }
+                    }else if(map.get("chType").equals("2")){
+                        query.put("type","2");
+                        List<Map<String, Object>> chsjList = storageOutService.selectCountByWeek(query);
+                        if (chsjList.size() > 0) {
+                            for (int i = 0; i < chsjList.size(); i++) {
+                                Map<String, Object> chsjmap = new HashMap<String, Object>();
+                                chsjmap = chsjList.get(i);
+                                chsjXlist.add(chsjmap.get("countKey"));
+                                chsjYlist.add(chsjmap.get("countValue"));
+                            }
+                        }
+                    }else if(map.get("chType").equals("3")){
+                        query.put("type","3");
+                        if(map.get("beginTime")!=null&&map.get("endTime")!=null){
+                            query.put("beginTime", map.get("beginTime"));
+                            query.put("endTime", map.get("endTime"));
+                        }
+                        List<Map<String, Object>> chsjList = storageOutService.selectCountByWeek(query);
+                        if (chsjList.size() > 0) {
+                            for (int i = 0; i < chsjList.size(); i++) {
+                                Map<String, Object> chsjmap = new HashMap<String, Object>();
+                                chsjmap = chsjList.get(i);
+                                chsjXlist.add(chsjmap.get("countKey"));
+                                chsjYlist.add(chsjmap.get("countValue"));
+                            }
+                        }
+                    }
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("chsjXlist", chsjXlist);
+            ajax.put("chsjYlist", chsjYlist);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
         }
-        Map<String, Object> query = new HashMap<String, Object>();
-        //本月出货总量
-        int bychzlnum = 0;
-        //本周出货数量
-        int bzchsl = 0;
-        //平台方
-        if(isadmin){
-            //本月出货总量
-            query.put("type",1);
-            bychzlnum = storageOutService.selectCountByDept(query);
-
-        }else{
-
-        }
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("jxszs", 0);
-        return ajax;
     }
+
+
+
+    /**
+     * 查询标识统计趋势图
+     */
+    @PostMapping("/selectSmSmCyNum")
+    public AjaxResult selectSmSmCyNum(@RequestBody Map<String, Object> map) {
+        try {
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            //折线图数据
+            //生码数量
+            List<Object> smslXlist = new ArrayList<Object>();
+            List<Object> smslYlist = new ArrayList<Object>();
+            //扫码数量
+            List<Object> smslsXlist = new ArrayList<Object>();
+            List<Object> smslsYlist = new ArrayList<Object>();
+            //查验数量
+            List<Object> cyslXlist = new ArrayList<Object>();
+            List<Object> cyslYlist = new ArrayList<Object>();
+            Map<String, Object> query = new HashMap<String, Object>();
+            //平台方
+            if (isadmin) {
+                //统计图 1 最近7天 2 最近30天 3 选择时间
+                if (map.get("bstjType") != null) {
+                    //最近7天
+                    if (map.get("bstjType").equals("1")) {
+                        query.put("type", "1");
+                        //生码数量
+                        List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        if (smslList.size() > 0) {
+                            for (int i = 0; i < smslList.size(); i++) {
+                                Map<String, Object> smslMap = new HashMap<String, Object>();
+                                smslMap = smslList.get(i);
+                                smslXlist.add(smslMap.get("countKey"));
+                                smslYlist.add(smslMap.get("countValue"));
+                            }
+                        }
+                        //扫码数量
+                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        if (smslsList.size() > 0) {
+                            for (int i = 0; i < smslsList.size(); i++) {
+                                Map<String, Object> smslsMap = new HashMap<String, Object>();
+                                smslsMap = smslsList.get(i);
+                                smslsXlist.add(smslsMap.get("countKey"));
+                                smslsYlist.add(smslsMap.get("countValue"));
+                            }
+                        }
+                        //查验数量
+                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        if (cyslList.size() > 0) {
+                            for (int i = 0; i < cyslList.size(); i++) {
+                                Map<String, Object> cyslMap = new HashMap<String, Object>();
+                                cyslMap = cyslList.get(i);
+                                cyslXlist.add(cyslMap.get("countKey"));
+                                cyslYlist.add(cyslMap.get("countValue"));
+                            }
+                        }
+                    } else if (map.get("bstjType").equals("2")) {
+                        query.put("type", "2");
+                        //生码数量
+                        List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        if (smslList.size() > 0) {
+                            for (int i = 0; i < smslList.size(); i++) {
+                                Map<String, Object> smslMap = new HashMap<String, Object>();
+                                smslMap = smslList.get(i);
+                                smslXlist.add(smslMap.get("countKey"));
+                                smslYlist.add(smslMap.get("countValue"));
+                            }
+                        }
+                        //扫码数量
+                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        if (smslsList.size() > 0) {
+                            for (int i = 0; i < smslsList.size(); i++) {
+                                Map<String, Object> smslsMap = new HashMap<String, Object>();
+                                smslsMap = smslsList.get(i);
+                                smslsXlist.add(smslsMap.get("countKey"));
+                                smslsYlist.add(smslsMap.get("countValue"));
+                            }
+                        }
+                        //查验数量
+                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        if (cyslList.size() > 0) {
+                            for (int i = 0; i < cyslList.size(); i++) {
+                                Map<String, Object> cyslMap = new HashMap<String, Object>();
+                                cyslMap = cyslList.get(i);
+                                cyslXlist.add(cyslMap.get("countKey"));
+                                cyslYlist.add(cyslMap.get("countValue"));
+                            }
+                        }
+                    } else if (map.get("bstjType").equals("3")) {
+                        query.put("type", "3");
+                        if(map.get("beginTime")!=null&&map.get("endTime")!=null){
+                            query.put("beginTime", map.get("beginTime"));
+                            query.put("endTime", map.get("endTime"));
+                        }
+                        //生码数量
+                        List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        if (smslList.size() > 0) {
+                            for (int i = 0; i < smslList.size(); i++) {
+                                Map<String, Object> smslMap = new HashMap<String, Object>();
+                                smslMap = smslList.get(i);
+                                smslXlist.add(smslMap.get("countKey"));
+                                smslYlist.add(smslMap.get("countValue"));
+                            }
+                        }
+                        //扫码数量
+                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        if (smslsList.size() > 0) {
+                            for (int i = 0; i < smslsList.size(); i++) {
+                                Map<String, Object> smslsMap = new HashMap<String, Object>();
+                                smslsMap = smslsList.get(i);
+                                smslsXlist.add(smslsMap.get("countKey"));
+                                smslsYlist.add(smslsMap.get("countValue"));
+                            }
+                        }
+                        //查验数量
+                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        if (cyslList.size() > 0) {
+                            for (int i = 0; i < cyslList.size(); i++) {
+                                Map<String, Object> cyslMap = new HashMap<String, Object>();
+                                cyslMap = cyslList.get(i);
+                                cyslXlist.add(cyslMap.get("countKey"));
+                                cyslYlist.add(cyslMap.get("countValue"));
+                            }
+                        }
+                    }
+                }
+            } else {
+                query.put("deptId", deptId);
+                //统计图 1 最近7天 2 最近30天 3 选择时间
+                if (map.get("bstjType") != null) {
+                    //最近7天
+                    if (map.get("bstjType").equals("1")) {
+                        query.put("type", "1");
+                        //生码数量
+                        List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        if (smslList.size() > 0) {
+                            for (int i = 0; i < smslList.size(); i++) {
+                                Map<String, Object> smslMap = new HashMap<String, Object>();
+                                smslMap = smslList.get(i);
+                                smslXlist.add(smslMap.get("countKey"));
+                                smslYlist.add(smslMap.get("countValue"));
+                            }
+                        }
+                        //扫码数量
+                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        if (smslsList.size() > 0) {
+                            for (int i = 0; i < smslsList.size(); i++) {
+                                Map<String, Object> smslsMap = new HashMap<String, Object>();
+                                smslsMap = smslsList.get(i);
+                                smslsXlist.add(smslsMap.get("countKey"));
+                                smslsYlist.add(smslsMap.get("countValue"));
+                            }
+                        }
+                        //查验数量
+                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        if (cyslList.size() > 0) {
+                            for (int i = 0; i < cyslList.size(); i++) {
+                                Map<String, Object> cyslMap = new HashMap<String, Object>();
+                                cyslMap = cyslList.get(i);
+                                cyslXlist.add(cyslMap.get("countKey"));
+                                cyslYlist.add(cyslMap.get("countValue"));
+                            }
+                        }
+                    } else if (map.get("bstjType").equals("2")) {
+                        query.put("type", "2");
+                        //生码数量
+                        List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        if (smslList.size() > 0) {
+                            for (int i = 0; i < smslList.size(); i++) {
+                                Map<String, Object> smslMap = new HashMap<String, Object>();
+                                smslMap = smslList.get(i);
+                                smslXlist.add(smslMap.get("countKey"));
+                                smslYlist.add(smslMap.get("countValue"));
+                            }
+                        }
+                        //扫码数量
+                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        if (smslsList.size() > 0) {
+                            for (int i = 0; i < smslsList.size(); i++) {
+                                Map<String, Object> smslsMap = new HashMap<String, Object>();
+                                smslsMap = smslsList.get(i);
+                                smslsXlist.add(smslsMap.get("countKey"));
+                                smslsYlist.add(smslsMap.get("countValue"));
+                            }
+                        }
+                        //查验数量
+                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        if (cyslList.size() > 0) {
+                            for (int i = 0; i < cyslList.size(); i++) {
+                                Map<String, Object> cyslMap = new HashMap<String, Object>();
+                                cyslMap = cyslList.get(i);
+                                cyslXlist.add(cyslMap.get("countKey"));
+                                cyslYlist.add(cyslMap.get("countValue"));
+                            }
+                        }
+                    } else if (map.get("bstjType").equals("3")) {
+                        query.put("type", "3");
+                        if(map.get("beginTime")!=null&&map.get("endTime")!=null){
+                            query.put("beginTime", map.get("beginTime"));
+                            query.put("endTime", map.get("endTime"));
+                        }
+                        //生码数量
+                        List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        if (smslList.size() > 0) {
+                            for (int i = 0; i < smslList.size(); i++) {
+                                Map<String, Object> smslMap = new HashMap<String, Object>();
+                                smslMap = smslList.get(i);
+                                smslXlist.add(smslMap.get("countKey"));
+                                smslYlist.add(smslMap.get("countValue"));
+                            }
+                        }
+                        //扫码数量
+                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        if (smslsList.size() > 0) {
+                            for (int i = 0; i < smslsList.size(); i++) {
+                                Map<String, Object> smslsMap = new HashMap<String, Object>();
+                                smslsMap = smslsList.get(i);
+                                smslsXlist.add(smslsMap.get("countKey"));
+                                smslsYlist.add(smslsMap.get("countValue"));
+                            }
+                        }
+                        //查验数量
+                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        if (cyslList.size() > 0) {
+                            for (int i = 0; i < cyslList.size(); i++) {
+                                Map<String, Object> cyslMap = new HashMap<String, Object>();
+                                cyslMap = cyslList.get(i);
+                                cyslXlist.add(cyslMap.get("countKey"));
+                                cyslYlist.add(cyslMap.get("countValue"));
+                            }
+                        }
+                    }
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("smslXlist", smslXlist);
+            ajax.put("smslYlist", smslYlist);
+            ajax.put("smslsXlist", smslsXlist);
+            ajax.put("smslsYlist", smslsYlist);
+            ajax.put("cyslXlist", cyslXlist);
+            ajax.put("cyslYlist", cyslYlist);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
+    }
+
+    /**
+     * 扫码记录时间分布图
+     */
+    @PostMapping("/selectSmjlsjNum")
+    public AjaxResult selectSmjlsjNum(@RequestBody Map<String, Object> map) {
+        try {
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            //折线图数据
+            List<Object> smjlXlist = new ArrayList<Object>();
+            List<Object> smjlYlist = new ArrayList<Object>();
+            Map<String, Object> query = new HashMap<String, Object>();
+            //平台方
+            if (isadmin) {
+                //统计图 1今日 2 昨天 3 最近7天 4 最近30天 5 自己选择的时间
+                if (map.get("smjlType") != null) {
+                    //今日
+                    if (map.get("smjlType").equals("1")) {
+                        query.put("type", "1");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    } else if (map.get("smjlType").equals("2")) {
+                        query.put("type", "2");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    } else if (map.get("smjlType").equals("3")) {
+                        query.put("type", "3");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+
+                    } else if (map.get("smjlType").equals("4")) {
+                        query.put("type", "4");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    } else if (map.get("smjlType").equals("5")) {
+                        query.put("type", "5");
+                        query.put("beginTime", map.get("beginTime"));
+                        query.put("endTime", map.get("endTime"));
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    }
+                }
+            } else {
+                query.put("deptId", deptId);
+                //统计图 1今日 2 昨天 3 最近7天 4 最近30天 5 自己选择的时间
+                if (map.get("smjlType") != null) {
+                    //今日
+                    if (map.get("smjlType").equals("1")) {
+                        query.put("type", "1");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    } else if (map.get("smjlType").equals("2")) {
+                        query.put("type", "2");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    } else if (map.get("smjlType").equals("3")) {
+                        query.put("type", "3");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+
+                    } else if (map.get("smjlType").equals("4")) {
+                        query.put("type", "4");
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    } else if (map.get("smjlType").equals("5")) {
+                        query.put("type", "5");
+                        query.put("beginTime", map.get("beginTime"));
+                        query.put("endTime", map.get("endTime"));
+                        List<Map<String, Object>> smjlList = scanRecordService.selectCountByTime(query);
+                        if (smjlList.size() > 0) {
+                            for (int i = 0; i < smjlList.size(); i++) {
+                                Map<String, Object> smjlMap = new HashMap<String, Object>();
+                                smjlMap = smjlList.get(i);
+                                smjlXlist.add(smjlMap.get("click_date"));
+                                smjlYlist.add(smjlMap.get("count"));
+                            }
+                        }
+                    }
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("smjlXlist", smjlXlist);
+            ajax.put("smjlYlist", smjlYlist);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
+    }
+
+
+
+    /**
+     * 扫码记录时间分布图
+     */
+    @PostMapping("/selectSmjlTop10")
+    public AjaxResult selectSmjlTop10(@RequestBody Map<String, Object> map) {
+        try {
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            //折线图数据
+            List<Map<String, Object>> smList = new ArrayList<Map<String, Object>>();
+            Map<String, Object> query = new HashMap<String, Object>();
+            //平台方
+            if (isadmin) {
+                List<Map<String, Object>> top10List = scanRecordService.selectSmTop10(query);
+                if(top10List!=null){
+                    for(int i=0;i<top10List.size();i++){
+                        Map<String, Object> top10Map = new HashMap<String, Object>();
+                        top10Map = top10List.get(i);
+                        if(top10Map.get("code")!=null){
+                            Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
+                            if(smxxMap!=null){
+                                top10Map.put("productName",smxxMap.get("productName"));
+                                top10Map.put("productImage",smxxMap.get("productName"));
+                            }
+                        }
+                        smList.add(top10Map);
+                    }
+                }
+
+            } else {
+                query.put("deptId", deptId);
+                List<Map<String, Object>> top10List = scanRecordService.selectSmTop10(query);
+                if(top10List!=null){
+                    for(int i=0;i<top10List.size();i++){
+                        Map<String, Object> top10Map = new HashMap<String, Object>();
+                        top10Map = top10List.get(i);
+                        if(top10Map.get("code")!=null){
+                            Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
+                            if(smxxMap!=null){
+                                top10Map.put("productName",smxxMap.get("productName"));
+                                top10Map.put("productImage",smxxMap.get("productName"));
+                            }
+                        }
+                        smList.add(top10Map);
+                    }
+                }
+
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("smList", smList);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
+    }
+
+
+
+
+
+
+
 
 
 
@@ -258,19 +945,18 @@ public class StatisticalController {
      */
     //@Log(title = "热力图扫码信息", businessType = BusinessType.INSERT)
     @PostMapping("/getRltXx")
-    public AjaxResult getRltXx(@RequestBody Map<String,Object> map)
-    {
+    public AjaxResult getRltXx(@RequestBody Map<String, Object> map) {
         try {
-            List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
+            List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
             //查询热力图数据
             List<ScanRecord> list = scanRecordService.selectRLTList(map);
-            if(list.size()>0){
-                for(int i=0;i<list.size();i++){
-                    Map<String,Object> rltmap = new HashMap<String,Object>();
-                    ScanRecord scanRecord  = list.get(i);
-                    rltmap.put("lng",scanRecord.getLongitude());
-                    rltmap.put("lat",scanRecord.getLatitude());
-                    rltmap.put("count",i);
+            if (list.size() > 0) {
+                for (int i = 0; i < list.size(); i++) {
+                    Map<String, Object> rltmap = new HashMap<String, Object>();
+                    ScanRecord scanRecord = list.get(i);
+                    rltmap.put("lng", scanRecord.getLongitude());
+                    rltmap.put("lat", scanRecord.getLatitude());
+                    rltmap.put("count", i);
 //                    rltmap.put("code",scanRecord.getCode());
 //                    rltmap.put("id",scanRecord.getId());
                     lists.add(rltmap);
@@ -279,34 +965,33 @@ public class StatisticalController {
             AjaxResult ajax = AjaxResult.success();
             ajax.put("rltjson", lists);
             return ajax;
-        }catch (Exception e){
+        } catch (Exception e) {
+            System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
             return ajax;
         }
     }
 
 
-
     /**
      * 点聚合扫码信息
      */
     //@Log(title = "点聚合扫码信息", businessType = BusinessType.INSERT)
-    @RequestMapping(value = "getDjhXx", method = {RequestMethod.GET,RequestMethod.POST})
-    public AjaxResult getDjhXx(HttpServletRequest request, HttpServletResponse response)
-    {
+    @RequestMapping(value = "getDjhXx", method = {RequestMethod.GET, RequestMethod.POST})
+    public AjaxResult getDjhXx(HttpServletRequest request, HttpServletResponse response) {
         try {
-            List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
-            Map<String,Object> map = new HashMap<String,Object>();
+            List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
+            Map<String, Object> map = new HashMap<String, Object>();
             //查询热力图数据
             List<ScanRecord> list = scanRecordService.selectRLTList(map);
-            if(list.size()>0){
-                for(int i=0;i<list.size();i++){
-                    Map<String,Object> rltmap = new HashMap<String,Object>();
+            if (list.size() > 0) {
+                for (int i = 0; i < list.size(); i++) {
+                    Map<String, Object> rltmap = new HashMap<String, Object>();
                     List<String> list1 = new ArrayList<String>();
-                    ScanRecord scanRecord  = list.get(i);
+                    ScanRecord scanRecord = list.get(i);
                     list1.add(scanRecord.getLongitude());
                     list1.add(scanRecord.getLatitude());
-                    rltmap.put("lnglat",list1);
+                    rltmap.put("lnglat", list1);
 //                    rltmap.put("code",scanRecord.getCode());
 //                    rltmap.put("id",scanRecord.getId());
                     lists.add(rltmap);
@@ -315,7 +1000,8 @@ public class StatisticalController {
             AjaxResult ajax = AjaxResult.success();
             ajax.put("rltjson", lists);
             return ajax;
-        }catch (Exception e){
+        } catch (Exception e) {
+            System.out.println(e);
             AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
             return ajax;
         }
@@ -325,17 +1011,389 @@ public class StatisticalController {
     /**
      * 根据码号查询相关产品和码信息
      */
-    @RequestMapping(value = "getDjhXxs", method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "getDjhXxs", method = {RequestMethod.GET, RequestMethod.POST})
     public AjaxResult getDjhXxs(HttpServletRequest request, HttpServletResponse response) {
         //String code = request.getParameter("code");
         //System.out.println("扫码详情进入成功  code=="+code);
 //        String compant_id = WxUtil.splitData(code,"-","-");
 //        long  companyId = Integer.parseInt(compant_id)/5;
-        String temp ="";
-        List<Map<String,Object>> lists = new ArrayList<Map<String,Object>>();
+        String temp = "";
+        List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
         AjaxResult ajax = AjaxResult.success();
         ajax.put("rltjson", lists);
         return ajax;
+    }
+
+
+
+
+
+
+    /**
+     * 查询出货数量信息
+     */
+    @PostMapping("/selectOutNum")
+    public AjaxResult selectOutNum(@RequestBody Map<String, Object> map) {
+        try {
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            Map<String, Object> query = new HashMap<String, Object>();
+            //本月出货总数
+            int bychzsNum = 0;
+            //同比上月
+            int sgyNum = 0;
+            //差额
+            double tbsy = 0l;
+            //本周出货总数
+            int bzchslNum = 0;
+            //同比上周
+            int tbszNum = 0;
+            //差额
+            double tbsz = 0l;
+            //折线图数据
+            List<Object> Xlist = new ArrayList<Object>();
+            String xCode = null;
+            List<Object> Ylist = new ArrayList<Object>();
+            int yNum = 0;
+
+            //平台方
+            if (isadmin) {
+                //本月出货总数
+                Date today = DateUtil.date();
+                Date beginTime = DateUtil.beginOfMonth(today);
+                Date endTime = DateUtil.endOfMonth(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bychzsNum = storageOutService.selectCountByDept(query);
+                //同比上月
+                Date lastMonth = DateUtil.lastMonth();
+                beginTime = DateUtil.beginOfMonth(lastMonth);
+                endTime = DateUtil.endOfMonth(lastMonth);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                sgyNum = storageOutService.selectCountByDept(query);
+                if (sgyNum > 0) {
+                    tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsy = 100l;
+                }
+                //本周出货总数
+                beginTime = DateUtil.beginOfWeek(today);
+                endTime = DateUtil.endOfWeek(today);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bzchslNum = storageOutService.selectCountByDept(query);
+                //同比上周
+                Date lastWeek = DateUtil.lastWeek();
+                beginTime = DateUtil.beginOfWeek(lastWeek);
+                endTime = DateUtil.endOfWeek(lastWeek);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                tbszNum = storageOutService.selectCountByDept(query);
+                if (tbszNum > 0) {
+                    tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsz = 100l;
+                }
+                //统计图
+                if (map.get("tjType") != null) {
+                    //本周
+                    if (map.get("tjType").equals("1")) {
+                        query.put("type", "1");
+                        List<Map<String, Object>> weekList = storageOutService.selectCountByWeek(query);
+                        if (weekList.size() > 0) {
+                            for (int i = 0; i < weekList.size(); i++) {
+                                Map<String, Object> weekmap = new HashMap<String, Object>();
+                                weekmap = weekList.get(i);
+                                if (weekmap.get("num") == null) {
+                                    Ylist.add(0);
+                                    Xlist.add(weekmap.get("date"));
+                                } else {
+                                    Ylist.add(weekmap.get("num"));
+                                    Xlist.add(weekmap.get("date"));
+                                }
+                            }
+                        }
+                    } else if (map.get("tjType").equals("2")) {
+
+                    } else if (map.get("tjType").equals("3")) {
+
+                    }
+                }
+
+            } else {
+                query.put("deptId", deptId);
+                //本月出货总数
+                Date today = DateUtil.date();
+                Date beginTime = DateUtil.beginOfMonth(today);
+                Date endTime = DateUtil.endOfMonth(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bychzsNum = storageOutService.selectCountByDept(query);
+                //同比上月
+                Date lastMonth = DateUtil.lastMonth();
+                beginTime = DateUtil.beginOfMonth(lastMonth);
+                endTime = DateUtil.endOfMonth(lastMonth);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                sgyNum = storageOutService.selectCountByDept(query);
+                if (sgyNum > 0) {
+                    tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsy = 100l;
+                }
+                //本周出货总数
+                beginTime = DateUtil.beginOfWeek(today);
+                endTime = DateUtil.endOfWeek(today);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bzchslNum = storageOutService.selectCountByDept(query);
+                //同比上周
+                Date lastWeek = DateUtil.lastWeek();
+                beginTime = DateUtil.beginOfWeek(lastWeek);
+                endTime = DateUtil.endOfWeek(lastWeek);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                tbszNum = storageOutService.selectCountByDept(query);
+                if (tbszNum > 0) {
+                    tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsz = 100l;
+                }
+
+                //统计图
+                if (map.get("tjType") != null) {
+                    //本周
+                    if (map.get("tjType").equals("1")) {
+                        query.put("type", "1");
+                        List<Map<String, Object>> weekList = storageOutService.selectCountByWeek(query);
+                        if (weekList.size() > 0) {
+                            for (int i = 0; i < weekList.size(); i++) {
+                                Map<String, Object> weekmap = new HashMap<String, Object>();
+                                weekmap = weekList.get(i);
+                                if (weekmap.get("num") == null) {
+                                    Ylist.add(0);
+                                    Xlist.add(weekmap.get("date"));
+                                } else {
+                                    Ylist.add(weekmap.get("num"));
+                                    Xlist.add(weekmap.get("date"));
+                                }
+                            }
+                        }
+                    } else if (map.get("tjType").equals("2")) {
+
+                    } else if (map.get("tjType").equals("3")) {
+
+                    }
+                }
+
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("bychzsNum", bychzsNum);
+            ajax.put("sgyNum", sgyNum);
+            ajax.put("tbsy", tbsy);
+            ajax.put("bzchslNum", bzchslNum);
+            ajax.put("tbszNum", tbszNum);
+            ajax.put("tbsz", tbsz);
+            ajax.put("Xlist", Xlist);
+            ajax.put("Ylist", Ylist);
+            return ajax;
+        } catch (Exception e) {
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
+    }
+
+
+    /**
+     * 查询统计趋势
+     */
+    @PostMapping("/selectTjqsNums")
+    public AjaxResult selectTjqsNums(@RequestBody Map<String, Object> map) {
+        try {
+            boolean isadmin = false;
+            //获取用户部门信息
+            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+                isadmin = true;
+            } else {
+                isadmin = false;
+            }
+            Map<String, Object> query = new HashMap<String, Object>();
+            //本月出货总数
+            int bychzsNum = 0;
+            //同比上月
+            int sgyNum = 0;
+            //差额
+            double tbsy = 0l;
+            //本周出货总数
+            int bzchslNum = 0;
+            //同比上周
+            int tbszNum = 0;
+            //差额
+            double tbsz = 0l;
+            //折线图数据
+            List<Object> Xlist = new ArrayList<Object>();
+            String xCode = null;
+            List<Object> Ylist = new ArrayList<Object>();
+            int yNum = 0;
+
+            //平台方
+            if (isadmin) {
+                //本月出货总数
+                Date today = DateUtil.date();
+                Date beginTime = DateUtil.beginOfMonth(today);
+                Date endTime = DateUtil.endOfMonth(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bychzsNum = storageOutService.selectCountByDept(query);
+                //同比上月
+                Date lastMonth = DateUtil.lastMonth();
+                beginTime = DateUtil.beginOfMonth(lastMonth);
+                endTime = DateUtil.endOfMonth(lastMonth);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                sgyNum = storageOutService.selectCountByDept(query);
+                if (sgyNum > 0) {
+                    tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsy = 100l;
+                }
+                //本周出货总数
+                beginTime = DateUtil.beginOfWeek(today);
+                endTime = DateUtil.endOfWeek(today);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bzchslNum = storageOutService.selectCountByDept(query);
+                //同比上周
+                Date lastWeek = DateUtil.lastWeek();
+                beginTime = DateUtil.beginOfWeek(lastWeek);
+                endTime = DateUtil.endOfWeek(lastWeek);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                tbszNum = storageOutService.selectCountByDept(query);
+                if (tbszNum > 0) {
+                    tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsz = 100l;
+                }
+                //统计图
+                if (map.get("tjType") != null) {
+                    //本周
+                    if (map.get("tjType").equals("1")) {
+                        query.put("type", "1");
+                        List<Map<String, Object>> weekList = storageOutService.selectCountByWeek(query);
+                        if (weekList.size() > 0) {
+                            for (int i = 0; i < weekList.size(); i++) {
+                                Map<String, Object> weekmap = new HashMap<String, Object>();
+                                weekmap = weekList.get(i);
+                                if (weekmap.get("num") == null) {
+                                    Ylist.add(0);
+                                    Xlist.add(weekmap.get("date"));
+                                } else {
+                                    Ylist.add(weekmap.get("num"));
+                                    Xlist.add(weekmap.get("date"));
+                                }
+                            }
+                        }
+                    } else if (map.get("tjType").equals("2")) {
+
+                    } else if (map.get("tjType").equals("3")) {
+
+                    }
+                }
+
+            } else {
+                query.put("deptId", deptId);
+                //本月出货总数
+                Date today = DateUtil.date();
+                Date beginTime = DateUtil.beginOfMonth(today);
+                Date endTime = DateUtil.endOfMonth(today);
+                query.put("type", 1);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bychzsNum = storageOutService.selectCountByDept(query);
+                //同比上月
+                Date lastMonth = DateUtil.lastMonth();
+                beginTime = DateUtil.beginOfMonth(lastMonth);
+                endTime = DateUtil.endOfMonth(lastMonth);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                sgyNum = storageOutService.selectCountByDept(query);
+                if (sgyNum > 0) {
+                    tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsy = 100l;
+                }
+                //本周出货总数
+                beginTime = DateUtil.beginOfWeek(today);
+                endTime = DateUtil.endOfWeek(today);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                bzchslNum = storageOutService.selectCountByDept(query);
+                //同比上周
+                Date lastWeek = DateUtil.lastWeek();
+                beginTime = DateUtil.beginOfWeek(lastWeek);
+                endTime = DateUtil.endOfWeek(lastWeek);
+                query.put("beginTime", beginTime);
+                query.put("endTime", endTime);
+                tbszNum = storageOutService.selectCountByDept(query);
+                if (tbszNum > 0) {
+                    tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } else {
+                    tbsz = 100l;
+                }
+
+                //统计图
+                if (map.get("tjType") != null) {
+                    //本周
+                    if (map.get("tjType").equals("1")) {
+                        query.put("type", "1");
+                        List<Map<String, Object>> weekList = storageOutService.selectCountByWeek(query);
+                        if (weekList.size() > 0) {
+                            for (int i = 0; i < weekList.size(); i++) {
+                                Map<String, Object> weekmap = new HashMap<String, Object>();
+                                weekmap = weekList.get(i);
+                                if (weekmap.get("num") == null) {
+                                    Ylist.add(0);
+                                    Xlist.add(weekmap.get("date"));
+                                } else {
+                                    Ylist.add(weekmap.get("num"));
+                                    Xlist.add(weekmap.get("date"));
+                                }
+                            }
+                        }
+                    } else if (map.get("tjType").equals("2")) {
+
+                    } else if (map.get("tjType").equals("3")) {
+
+                    }
+                }
+
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("bychzsNum", bychzsNum);
+            ajax.put("sgyNum", sgyNum);
+            ajax.put("tbsy", tbsy);
+            ajax.put("bzchslNum", bzchslNum);
+            ajax.put("tbszNum", tbszNum);
+            ajax.put("tbsz", tbsz);
+            ajax.put("Xlist", Xlist);
+            ajax.put("Ylist", Ylist);
+            return ajax;
+        } catch (Exception e) {
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            return ajax;
+        }
     }
 
 

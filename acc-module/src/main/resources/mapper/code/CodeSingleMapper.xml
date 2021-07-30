@@ -9,6 +9,8 @@
         <result property="companyId" column="company_id"/>
         <result property="status" column="status"/>
         <result property="count" column="count"/>
+        <result property="type" column="type"/>
+        <result property="isAcc" column="is_acc"/>
         <result property="indexStart" column="index_start"/>
         <result property="indexEnd" column="index_end"/>
         <result property="remark" column="remark"/>
@@ -20,7 +22,7 @@
     </resultMap>
 
     <sql id="selectCodeSingleVo">
-        select id, company_id, status, count, index_start, index_end,  remark, create_user, create_time, update_user, update_time from t_code_single
+        select id, company_id, status,type,is_acc, count, index_start, index_end,  remark, create_user, create_time, update_user, update_time from t_code_single
     </sql>
 
     <sql id="selectCodeSingleExtraVo">
@@ -28,6 +30,7 @@
         r.company_id,
         r.status,
         r.count,
+        r.type,r.is_acc,
         r.index_start,
         r.index_end,
         r.remark,
@@ -74,6 +77,7 @@
             <if test="companyId != null">company_id,</if>
             <if test="status != null">status,</if>
             <if test="type != null">type,</if>
+            <if test="isAcc != null">is_acc,</if>
             <if test="boxCount != null">box_count,</if>
             <if test="singleCount != null">single_count,</if>
             <if test="count != null">count,</if>
@@ -89,6 +93,7 @@
             <if test="companyId != null">#{companyId},</if>
             <if test="status != null">#{status},</if>
             <if test="type != null">#{type},</if>
+            <if test="isAcc != null">#{isAcc},</if>
             <if test="boxCount != null">#{boxCount},</if>
             <if test="singleCount != null">#{singleCount},</if>
             <if test="count != null">#{count},</if>
@@ -108,12 +113,10 @@
             <if test="companyId != null">company_id = #{companyId},</if>
             <if test="status != null">status = #{status},</if>
             <if test="type != null">type = #{type},</if>
-            <if test="boxCount != null">box_count = #{boxCount},</if>
+            <if test="isAcc != null">is_acc = #{isAcc},</if>
             <if test="count != null">count = #{count},</if>
             <if test="indexStart != null">index_start = #{indexStart},</if>
             <if test="indexEnd != null">index_end = #{indexEnd},</if>
-            <if test="productId != null">product_id = #{productId},</if>
-            <if test="batchId != null">batch_id = #{batchId},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="createUser != null">create_user = #{createUser},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

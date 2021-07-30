@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.StorageOutMapper">
 
     <resultMap type="StorageOut" id="StorageOutResult">
-        <result property="id"    column="id"    />
-        <result property="companyId"    column="company_id"    />
-        <result property="tenantId"    column="tenant_id"    />
-        <result property="status"    column="status"    />
-        <result property="outNo"    column="out_no"    />
-        <result property="extraNo"    column="extra_no"    />
-        <result property="productId"    column="product_id"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="outNum"    column="out_num"    />
-        <result property="actOutNum"    column="act_out_num"    />
-        <result property="storageFrom"    column="storage_from"    />
-        <result property="storageTo"    column="storage_to"    />
-        <result property="fromStorageId"    column="from_storage_id"    />
-        <result property="toStorageId"    column="to_storage_id"    />
-        <result property="remark"    column="remark"    />
-        <result property="createUser"    column="create_user"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="outTime"    column="out_time"    />
-        <result property="updateUser"    column="update_user"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="createUserName"    column="create_user_name"    />
-        <result property="updateUserName"    column="update_user_name"    />
-        <result property="storageFromName"    column="storage_from_name"    />
-        <result property="storageToName"    column="storage_to_name"    />
-        <result property="fromStorageIdName"    column="from_storage_id_name"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="status" column="status"/>
+        <result property="outNo" column="out_no"/>
+        <result property="extraNo" column="extra_no"/>
+        <result property="productId" column="product_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="outNum" column="out_num"/>
+        <result property="actOutNum" column="act_out_num"/>
+        <result property="storageFrom" column="storage_from"/>
+        <result property="storageTo" column="storage_to"/>
+        <result property="fromStorageId" column="from_storage_id"/>
+        <result property="toStorageId" column="to_storage_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="outTime" column="out_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="updateUserName" column="update_user_name"/>
+        <result property="storageFromName" column="storage_from_name"/>
+        <result property="storageToName" column="storage_to_name"/>
+        <result property="fromStorageIdName" column="from_storage_id_name"/>
         <result property="productName" column="product_name"/>
         <result property="productNo" column="product_no"/>
     </resultMap>
 
     <resultMap type="HashMap" id="map">
-        <result property="code"    column="code"    />
-        <result property="productNo"    column="product_no"    />
-        <result property="productName"    column="product_name"    />
-        <result property="batchNo"    column="batch_no"    />
-        <result property="num"    column="num"    />
+        <result property="code" column="code"/>
+        <result property="productNo" column="product_no"/>
+        <result property="productName" column="product_name"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="num" column="num"/>
     </resultMap>
 
     <sql id="selectStorageOutVo">
@@ -59,21 +59,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStorageOutList" parameterType="StorageOut" resultMap="StorageOutResult">
         <include refid="selectStorageOutVo"/>
-        <where>  so.status!=9
-            <if test="companyId != null "> and so.company_id = #{companyId}</if>
-            <if test="tenantId != null "> and so.tenant_id = #{tenantId}</if>
-            <if test="status != null "> and so.status = #{status}</if>
-            <if test="outNo != null  and outNo != ''"> and so.out_no = #{outNo}</if>
-            <if test="extraNo != null  and extraNo != ''"> and so.extra_no = #{extraNo}</if>
-            <if test="productId != null "> and so.product_id = #{productId}</if>
-            <if test="batchNo != null  and batchNo != ''"> and so.batch_no = #{batchNo}</if>
-            <if test="outNum != null "> and so.out_num = #{outNum}</if>
-            <if test="actOutNum != null "> and so.act_out_num = #{actOutNum}</if>
-            <if test="storageFrom != null  and storageFrom != ''"> and so.storage_from = #{storageFrom}</if>
-            <if test="storageTo != null  and storageTo != ''"> and so.storage_to = #{storageTo}</if>
-            <if test="fromStorageId != null "> and so.from_storage_id = #{fromStorageId}</if>
-            <if test="toStorageId != null "> and so.to_storage_id = #{toStorageId}</if>
-            <if test="outTime != null "> and so.out_time = #{outTime}</if>
+        <where>so.status!=9
+            <if test="companyId != null ">and so.company_id = #{companyId}</if>
+            <if test="tenantId != null ">and so.tenant_id = #{tenantId}</if>
+            <if test="status != null ">and so.status = #{status}</if>
+            <if test="outNo != null  and outNo != ''">and so.out_no = #{outNo}</if>
+            <if test="extraNo != null  and extraNo != ''">and so.extra_no = #{extraNo}</if>
+            <if test="productId != null ">and so.product_id = #{productId}</if>
+            <if test="batchNo != null  and batchNo != ''">and so.batch_no = #{batchNo}</if>
+            <if test="outNum != null ">and so.out_num = #{outNum}</if>
+            <if test="actOutNum != null ">and so.act_out_num = #{actOutNum}</if>
+            <if test="storageFrom != null  and storageFrom != ''">and so.storage_from = #{storageFrom}</if>
+            <if test="storageTo != null  and storageTo != ''">and so.storage_to = #{storageTo}</if>
+            <if test="fromStorageId != null ">and so.from_storage_id = #{fromStorageId}</if>
+            <if test="toStorageId != null ">and so.to_storage_id = #{toStorageId}</if>
+            <if test="outTime != null ">and so.out_time = #{outTime}</if>
             <if test="beginTime != null ">and so.create_time &gt;= #{beginTime}</if>
             <if test="endTime != null ">and so.create_time &lt;= #{endTime}</if>
         </where>
@@ -116,7 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outTime != null">out_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
@@ -137,7 +137,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="outTime != null">#{outTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateStorageOut" parameterType="StorageOut">
@@ -198,14 +198,196 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY product_id,storage_to,DATE_FORMAT(out_time,'%Y-%m-%d')
     </select>
 
-
+    <!--    type 1 左侧数据  2 本周数据  3 本月数据  4 时间数据        -->
     <select id="selectCountByDept" resultType="java.lang.Integer" parameterType="Map">
-        select sum(act_out_num) from  t_storage_out where status=1
+        select IFNULL(sum(act_out_num),0) from t_storage_out where status=1
         <if test="deptId != null">
             and company_id = #{deptId}
         </if>
         <if test="type != null and type == 1">
-            and company_id = #{deptId}
+            and create_time &gt;= #{beginTime} and create_time &lt;= #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+            and create_time &gt;= #{beginTime} and create_time &lt;= #{endTime}
+        </if>
+    </select>
+
+    <select id="selectCountByWeek" resultType="java.util.Map" parameterType="Map">
+        <if test="type != null and type == 1">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( sum( pv.act_out_num ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_storage_out pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 2">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( sum( pv.act_out_num ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_storage_out pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 3">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( sum( pv.act_out_num ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_storage_out pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
         </if>
     </select>
 </mapper>

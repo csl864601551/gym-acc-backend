@@ -45,6 +45,14 @@ public interface ICodeSingleService {
     public int updateCodeSingle(CodeSingle codeSingle);
 
     /**
+     * 更新生码记录状态
+     *
+     * @param singleId 生码记录
+     * @return 结果
+     */
+    public int updateCodeSingleStatusBySingleId(long singleId,boolean flag);
+
+    /**
      * 批量删除生码记录
      *
      * @param ids 需要删除的生码记录ID
@@ -69,7 +77,7 @@ public interface ICodeSingleService {
      * @param remark    备注详情
      * @return
      */
-    int createCodeSingle(long companyId, long num, String remark);
+    int createCodeSingle(long companyId, int isAcc, long num, String remark);
 
 
     /**
@@ -79,4 +87,6 @@ public interface ICodeSingleService {
      * @return 生码记录
      */
     public CodeSingle selectCodeSingleByIndex(long codeIndex,long companyId);
+
+    int createAccCodeSingle(long companyId,int isAcc, long count, String remark);
 }

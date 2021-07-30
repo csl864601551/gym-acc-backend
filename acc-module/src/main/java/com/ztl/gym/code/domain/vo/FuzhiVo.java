@@ -9,12 +9,39 @@ import java.util.List;
  * 赋值vo
  */
 public class FuzhiVo {
+    private long indexStart;
+    private long indexEnd;
     private long recordId;
+    private List<String> codes;
     private long productId;
     private long batchId;
     private String remark;
     private List<Product> products;
     private List<ProductBatch> productBatchs;
+
+    public List<String> getCodes() {
+        return codes;
+    }
+
+    public void setCodes(List<String> codes) {
+        this.codes = codes;
+    }
+
+    public long getIndexStart() {
+        return indexStart;
+    }
+
+    public void setIndexStart(long indexStart) {
+        this.indexStart = indexStart;
+    }
+
+    public long getIndexEnd() {
+        return indexEnd;
+    }
+
+    public void setIndexEnd(long indexEnd) {
+        this.indexEnd = indexEnd;
+    }
 
     public long getRecordId() {
         return recordId;

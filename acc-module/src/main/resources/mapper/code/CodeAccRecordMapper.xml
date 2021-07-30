@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.CodeAccRecordMapper">
+
+    <resultMap type="CodeAccRecord" id="CodeAccRecordResult">
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="count" column="count"/>
+        <result property="onceTemplateId" column="once_template_id"/>
+        <result property="moreTemplateId" column="more_template_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="creatorName" column="nick_name"/>
+        <result property="onceTemplateContent"    column="once_template_content"    />
+        <result property="moreTemplateContent"    column="more_template_content"    />
+        <result property="onceContent"    column="once_content"    />
+        <result property="moreContent"    column="more_content"    />
+    </resultMap>
+
+    <resultMap type="CodeAcc" id="CodeAccResult">
+        <result property="companyId" column="company_id"/>
+        <result property="codeAcc" column="code_acc"/>
+        <result property="code" column="code"/>
+        <result property="queryCount" column="query_count"/>
+        <result property="productId" column="product_id"/>
+        <result property="recordId" column="record_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectCodeAccRecordVo">
+        select r.id, r.company_id, r.status, r.type, r.count, r.once_template_id, r.more_template_id, r.remark, r.create_user,
+        r.create_time, r.update_user, r.update_time,r.once_template_content, r.more_template_content, r.once_content, r.more_content,
+        u.nick_name
+        from t_code_acc_record r
+        left join sys_user u on r.create_user = u.user_id
+    </sql>
+
+    <select id="selectCodeAccRecordList" parameterType="CodeAccRecord" resultMap="CodeAccRecordResult">
+        <include refid="selectCodeAccRecordVo"/>
+        <where>
+            <if test="companyId != null ">and r.company_id = #{companyId}</if>
+            <if test="status != null ">and r.status = #{status}</if>
+            <if test="type != null ">and r.type = #{type}</if>
+            <if test="count != null ">and r.count = #{count}</if>
+            <if test="onceTemplateId != null ">and r.once_template_id = #{onceTemplateId}</if>
+            <if test="moreTemplateId != null ">and r.more_template_id = #{moreTemplateId}</if>
+            <if test="createUser != null ">and r.create_user = #{createUser}</if>
+            <if test="updateUser != null ">and r.update_user = #{updateUser}</if>
+        </where>
+        order by r.create_time desc
+    </select>
+
+    <select id="selectCodeAccRecordById" parameterType="Long" resultMap="CodeAccRecordResult">
+        <include refid="selectCodeAccRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCodeAccRecord" parameterType="CodeAccRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into t_code_acc_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="status != null">status,</if>
+            <if test="type != null">type,</if>
+            <if test="count != null">count,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="onceTemplateId != null">once_template_id,</if>
+            <if test="moreTemplateId != null">more_template_id,</if>
+            <if test="onceTemplateContent != null">once_template_content,</if>
+            <if test="moreTemplateContent != null">more_template_content,</if>
+            <if test="onceContent != null">once_content,</if>
+            <if test="moreContent != null">more_content,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="type != null">#{type},</if>
+            <if test="count != null">#{count},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="onceTemplateId != null">#{onceTemplateId},</if>
+            <if test="moreTemplateId != null">#{moreTemplateId},</if>
+            <if test="onceTemplateContent != null">#{onceTemplateContent},</if>
+            <if test="moreTemplateContent != null">#{moreTemplateContent},</if>
+            <if test="onceContent != null">#{onceContent},</if>
+            <if test="moreContent != null">#{moreContent},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCodeAccRecord" parameterType="CodeAccRecord">
+        update t_code_acc_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="onceTemplateId != null">once_template_id = #{onceTemplateId},</if>
+            <if test="moreTemplateId != null">more_template_id = #{moreTemplateId},</if>
+            <if test="onceTemplateContent != null">once_template_content = #{onceTemplateContent},</if>
+            <if test="moreTemplateContent != null">more_template_content = #{moreTemplateContent},</if>
+            <if test="onceContent != null">once_content = #{onceContent},</if>
+            <if test="moreContent != null">more_content = #{moreContent},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCodeAccRecordById" parameterType="Long">
+        delete from t_code_acc_record where id = #{id}
+    </delete>
+
+    <delete id="deleteCodeAccRecordByIds" parameterType="String">
+        delete from t_code_acc_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectAccCodeListByRecord" parameterType="Long" resultMap="CodeAccResult">
+        select code_acc,create_time from t_code_acc
+        where company_id = #{companyId} and  record_id = #{recordId}
+
+    </select>
+
+
+</mapper>

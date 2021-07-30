@@ -240,5 +240,80 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         return scanRecordMapper.selectRLTList(map);
     }
 
+    /**
+     * 扫码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectScanRecordNum(Map<String, Object> map) {
+        return scanRecordMapper.selectScanRecordNum(map);
+    }
+
+
+
+    /**
+     * 扫码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectSecueityRecordNum(Map<String, Object> map) {
+        return scanRecordMapper.selectSecueityRecordNum(map);
+    }
+
+    /**
+     * 扫码统计数据
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectCountByTime(Map<String, Object> map) {
+        return scanRecordMapper.selectCountByTime(map);
+    }
+
+
+    /**
+     * 扫码统计数据
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectCountByDate(Map<String, Object> map) {
+        return scanRecordMapper.selectCountByDate(map);
+    }
+
+
+
+
+
+    /**
+     * 查验总量统计数据
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectSecueityRecordByDate(Map<String, Object> map) {
+        return scanRecordMapper.selectSecueityRecordByDate(map);
+    }
+
+
+
+    /**
+     * 扫码数据top10
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectSmTop10(Map<String, Object> map) {
+        return scanRecordMapper.selectSmTop10(map);
+    }
+
 
 }

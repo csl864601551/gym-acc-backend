@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.payment.mapper.PurchaseRecordMapper">
+    
+    <resultMap type="PurchaseRecord" id="PurchaseRecordResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="count"    column="count"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="purchaseAmount"    column="purchase_amount"    />
+        <result property="purchaseType"    column="purchase_type"    />
+        <result property="userName"    column="nick_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPurchaseRecordVo">
+        select
+        a.id,
+        a.type,
+        a.count,
+        a.order_no,
+        a.company_id,
+        a.purchase_amount,
+        a.purchase_type,
+        a.remark,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        u.nick_name
+        from t_purchase_record a
+        LEFT JOIN sys_dept b ON a.company_id = b.dept_id
+        left join sys_user u on a.update_user = u.user_id
+    </sql>
+
+    <select id="selectPurchaseRecordList" parameterType="PurchaseRecord" resultMap="PurchaseRecordResult">
+        <include refid="selectPurchaseRecordVo"/>
+        <where>  
+            <if test="type != null "> and type = #{type}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="orderNo != null "> and order_no = #{orderNo}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="purchaseAmount != null "> and purchase_amount = #{purchaseAmount}</if>
+            <if test="purchaseType != null "> and purchase_type = #{purchaseType}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectPurchaseRecordById" parameterType="Long" resultMap="PurchaseRecordResult">
+        <include refid="selectPurchaseRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPurchaseRecord" parameterType="PurchaseRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into t_purchase_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="count != null">count,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="purchaseAmount != null">purchase_amount,</if>
+            <if test="purchaseType != null">purchase_type,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="count != null">#{count},</if>
+            <if test="orderNo != null ">#{orderNo},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="purchaseAmount != null">#{purchaseAmount},</if>
+            <if test="purchaseType != null">#{purchaseType},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseRecord" parameterType="PurchaseRecord">
+        update t_purchase_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="orderNo != null ">order_no = #{orderNo},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="purchaseAmount != null">purchase_amount = #{purchaseAmount},</if>
+            <if test="purchaseType != null">purchase_type = #{purchaseType},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePurchaseRecordById" parameterType="Long">
+        delete from t_purchase_record where id = #{id}
+    </delete>
+
+    <delete id="deletePurchaseRecordByIds" parameterType="String">
+        delete from t_purchase_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="totalUsedCodeSum" parameterType="Long" resultType="Long">
+        select sum(code) from
+        (
+        (select sum(count) code from t_code_single where company_id = #{companyId}) union all
+        (select sum(count) code from t_code_record where company_id = #{companyId}) union all
+        (select sum(count) code from t_code_acc_record where company_id = #{companyId})
+        ) sum
+    </select>
+
+</mapper>

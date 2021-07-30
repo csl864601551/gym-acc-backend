@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.storage.mapper.ScanRecordMapper">
-    
+
     <resultMap type="ScanRecord" id="ScanRecordResult">
-        <result property="id"    column="id"    />
-        <result property="companyId"    column="company_id"    />
-        <result property="code"    column="code"    />
-        <result property="longitude"    column="longitude"    />
-        <result property="latitude"    column="latitude"    />
-        <result property="terminal"    column="terminal"    />
-        <result property="ip"    column="ip"    />
-        <result property="address"    column="address"    />
-        <result property="province"    column="province"    />
-        <result property="city"    column="city"    />
-        <result property="area"    column="area"    />
-        <result property="createUser"    column="create_user"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateUser"    column="update_user"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="code" column="code"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="terminal" column="terminal"/>
+        <result property="ip" column="ip"/>
+        <result property="address" column="address"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="area" column="area"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateUser" column="update_user"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectScanRecordVo">
@@ -28,27 +28,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectScanRecordList" parameterType="ScanRecord" resultMap="ScanRecordResult">
         <include refid="selectScanRecordVo"/>
-        <where>  
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="code != null  and code != ''"> and code = #{code}</if>
-            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
-            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
-            <if test="terminal != null  and terminal != ''"> and terminal = #{terminal}</if>
-            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
-            <if test="address != null  and address != ''"> and address = #{address}</if>
-            <if test="province != null  and province != ''"> and province = #{province}</if>
-            <if test="city != null  and city != ''"> and city = #{city}</if>
-            <if test="area != null  and area != ''"> and area = #{area}</if>
-            <if test="createUser != null "> and create_user = #{createUser}</if>
-            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        <where>
+            <if test="companyId != null ">and company_id = #{companyId}</if>
+            <if test="code != null  and code != ''">and code = #{code}</if>
+            <if test="longitude != null  and longitude != ''">and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''">and latitude = #{latitude}</if>
+            <if test="terminal != null  and terminal != ''">and terminal = #{terminal}</if>
+            <if test="ip != null  and ip != ''">and ip = #{ip}</if>
+            <if test="address != null  and address != ''">and address = #{address}</if>
+            <if test="province != null  and province != ''">and province = #{province}</if>
+            <if test="city != null  and city != ''">and city = #{city}</if>
+            <if test="area != null  and area != ''">and area = #{area}</if>
+            <if test="createUser != null ">and create_user = #{createUser}</if>
+            <if test="updateUser != null ">and update_user = #{updateUser}</if>
         </where>
     </select>
-    
+
     <select id="selectScanRecordById" parameterType="Long" resultMap="ScanRecordResult">
         <include refid="selectScanRecordVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertScanRecord" parameterType="ScanRecord" useGeneratedKeys="true" keyProperty="id">
         insert into t_scan_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -66,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
             <if test="code != null">#{code},</if>
@@ -82,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateScanRecord" parameterType="ScanRecord">
@@ -111,7 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteScanRecordByIds" parameterType="String">
-        delete from t_scan_record where id in 
+        delete from t_scan_record where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -186,5 +186,506 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectRLTList" resultType="com.ztl.gym.storage.domain.ScanRecord" parameterType="map">
         select id,code,longitude,latitude from t_scan_record where longitude!=""
 --         where code in (select code from t_mix_record  where  mix_type='1')
+    </select>
+
+    <select id="selectScanRecordNum" resultType="java.lang.Integer" parameterType="Map">
+        select count(*) from t_scan_record where 1=1
+        <if test="deptId != null">
+            and company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and create_time &gt;= #{beginTime} and create_time &lt;= #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+
+        </if>
+
+    </select>
+
+    <select id="selectSecueityRecordNum" resultType="java.lang.Integer" parameterType="Map">
+        select count(*) from t_security_code_record where 1=1
+        <if test="deptId != null">
+            and company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and create_time &gt;= #{beginTime} and create_time &lt;= #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+
+        </if>
+
+    </select>
+
+    <!--    type = 0 全部 1 今天 2 昨天 3 最近7天 4 最近30天  5 选择时间-->
+    <select id="selectCountByTime" resultType="java.util.Map" parameterType="Map">
+        select a.click_date,ifnull(b.count,0) as count
+        from (
+        SELECT 0 as click_date
+        union all
+        SELECT 1 as click_date
+        union all
+        SELECT 2 as click_date
+        union all
+        SELECT 3 as click_date
+        union all
+        SELECT 4 as click_date
+        union all
+        SELECT 5 as click_date
+        union all
+        SELECT 6 as click_date
+        union all
+        SELECT 7 as click_date
+        union all
+        SELECT 8 as click_date
+        union all
+        SELECT 9 as click_date
+        union all
+        SELECT 10 as click_date
+        union all
+        SELECT 11 as click_date
+        union all
+        SELECT 12 as click_date
+        union all
+        SELECT 13 as click_date
+        union all
+        SELECT 14 as click_date
+        union all
+        SELECT 15 as click_date
+        union all
+        SELECT 16 as click_date
+        union all
+        SELECT 17 as click_date
+        union all
+        SELECT 18 as click_date
+        union all
+        SELECT 19 as click_date
+        union all
+        SELECT 20 as click_date
+        union all
+        SELECT 21 as click_date
+        union all
+        SELECT 22 as click_date
+        union all
+        SELECT 23 as click_date
+        ) a left join (
+        SELECT
+        HOUR (create_time) AS hours,
+        count(id) AS count
+        FROM
+        t_scan_record
+        WHERE
+        1=1
+        <if test="deptId != null">
+            and company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 0">
+
+        </if>
+        <if test="type != null and type == 1">
+            and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+        </if>
+        <if test="type != null and type == 2">
+            and TO_DAYS( NOW( ) ) - TO_DAYS( create_time) &lt;= 1
+        </if>
+        <if test="type != null and type == 3">
+            and DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(create_time)
+        </if>
+        <if test="type != null and type == 4">
+            and DATE_SUB(CURDATE(), INTERVAL 30 DAY) &lt;= date(create_time)
+        </if>
+        <if test="type != null and type == 5">
+            and DATE_FORMAT(create_time, '%Y-%m-%d') &gt;= DATE_FORMAT(#{beginTime}, '%Y-%m-%d')
+            and DATE_FORMAT(create_time, '%Y-%m-%d')&lt;= DATE_FORMAT(#{endTime}, '%Y-%m-%d')
+        </if>
+        GROUP BY
+        hours
+        ) b on a.click_date = b.hours
+        ORDER BY a.click_date
+    </select>
+
+
+    <!--    type =1 最近7天 2 最近30天 3 选择时间  -->
+    <select id="selectSecueityRecordByDate" resultType="java.util.Map" parameterType="Map">
+        <if test="type != null and type == 1">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.create_time ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_scan_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 2">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.create_time ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_scan_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 3">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.create_time ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_scan_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            <if test="beginTime != null">
+                and pv.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and pv.create_time &lt;= #{endTime}
+            </if>
+            and pv.company_id  = #{deptId}
+            GROUP BY
+            mycreatedate
+        </if>
+    </select>
+
+
+
+    <!--    type =1 最近7天 2 最近30天 3 选择时间  -->
+    <select id="selectCountByDate" resultType="java.util.Map" parameterType="Map">
+        <if test="type != null and type == 1">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.id ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_security_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 2">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.id ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_security_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 3">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( COUNT( pv.id ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 7 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 8 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 9 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 10 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 11 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 12 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 13 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 14 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 15 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 16 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 17 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 18 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 19 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 20 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 21 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 22 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 23 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 24 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 25 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 26 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 27 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 28 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_security_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            <if test="beginTime != null">
+                and pv.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and pv.create_time &lt;= #{endTime}
+            </if>
+            and pv.company_id  = #{deptId}
+            GROUP BY
+            mycreatedate
+        </if>
+    </select>
+
+    <!--   -->
+    <select id="selectSmTop10" resultType="java.util.Map" parameterType="Map">
+        SELECT code as code,COUNT(*) as value FROM t_scan_record where 1=1
+        <if test="deptId != null">
+            and company_id  = #{deptId}
+        </if>
+        GROUP BY code ORDER BY value DESC LIMIT 10
     </select>
 </mapper>

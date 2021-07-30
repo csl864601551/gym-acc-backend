@@ -181,4 +181,18 @@ public interface CodeMapper {
     int updateCodeStorageByCode(Code codeRes);
 
     void updateCodeAttrIdByPCode(Map<String, Object> params);
+
+    int insertAccCodeForBatch(List<Map> codeList);
+
+    /**
+     * 生码总量查询
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    public int selectCodeNum(Map<String, Object> map);
+
+    int updateStatusByIndex(Map<String, Object> params);
+
+    List<Code> selectInCodesByCodeValList(Map<String, Object> codeParam);
 }

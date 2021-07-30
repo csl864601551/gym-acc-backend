@@ -115,6 +115,8 @@ public interface ICodeService {
 
     List<Code> selectCodeListByCodeOrIndex(Map<String, Object> map);
 
+    List<Code> selectCodeListByIndex(Map<String, Object> map);
+
     long getCodeCount(String code);
 
     /**
@@ -138,4 +140,18 @@ public interface ICodeService {
     int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId);
 
     void updateCodeAttrIdByPCode(Map<String, Object> param);
+
+    /**
+     * 生码总量查询
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    public int selectCodeNum(Map<String, Object> map);
+
+    int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
+
+    Code selectCodeByCodeVal(String codeVal);
+
+    List<Code> selectInCodesByCodeValList(Map<String,Object> map);
 }

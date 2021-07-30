@@ -43,9 +43,9 @@ public class Code extends BaseEntity {
     private String code;
 
     /**
-     * 防窜码
+     * 防伪码
      */
-    @Excel(name = "防窜码")
+    @Excel(name = "防伪码")
     private String codeAcc;
 
     /**

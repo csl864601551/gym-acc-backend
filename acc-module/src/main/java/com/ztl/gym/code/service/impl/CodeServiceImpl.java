@@ -158,6 +158,9 @@ public class CodeServiceImpl implements ICodeService {
                 boxCode.setCompanyId(companyId);
                 boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
                 boxCode.setCode(pCode);
+                if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                    boxCode.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+                }
                 boxCode.setCodeAttrId(boxAttrId);
                 codeList.add(boxCode);
                 //单码流水号+1
@@ -171,6 +174,9 @@ public class CodeServiceImpl implements ICodeService {
                     singleCode.setCompanyId(companyId);
                     singleCode.setCodeType(AccConstants.CODE_TYPE_SINGLE);
                     singleCode.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, singleCode.getCodeIndex()));
+                    if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                        singleCode.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+                    }
                     singleCode.setCodeAttrId(boxAttrId);
                     codeList.add(singleCode);
                     codeIndex += 1;
@@ -190,6 +196,9 @@ public class CodeServiceImpl implements ICodeService {
                 code.setCompanyId(companyId);
                 code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
                 code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
+                if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                    code.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+                }
                 code.setCodeAttrId(attrId);
                 codeList.add(code);
 
@@ -239,6 +248,9 @@ public class CodeServiceImpl implements ICodeService {
             code.setCompanyId(companyId);
             code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
             code.setCode(CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCodeIndex()));
+            if(codeSingle.getIsAcc()==AccConstants.IS_ACC_TRUE){
+                code.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
+            }
             code.setSingleId(codeSingleId);
             codeList.add(code);
 
@@ -381,6 +393,12 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeListByIndex(Map<String, Object> map) {
+         return codeMapper.selectCodeListByCodeOrIndex(map);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
     public long getCodeCount(String codeStr) {
         Map<String, Object> map = new HashMap<>();
         map.put("code", codeStr);
@@ -388,8 +406,7 @@ public class CodeServiceImpl implements ICodeService {
         List<Code> codeList = selectCodeListByCodeOrIndex(map);
         boolean flag = false;
         for (Code code : codeList) {
-//            if (code.getCode().startsWith("P")) {
-            if (CodeRuleUtils.getCodeType(code.getCode()).equals(AccConstants.CODE_TYPE_BOX)) {
+            if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 flag = true;
             }
         }
@@ -469,6 +486,11 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectInCodesByCodeValList(Map<String, Object> codeParam) {
+        return codeMapper.selectInCodesByCodeValList(codeParam);
+    }
+    @Override
+    @DataSource(DataSourceType.SHARDING)
     public void updateCodeStorageByPCode(Code codeTemp) {
         codeMapper.updateCodeStorageByPCode(codeTemp);
     }
@@ -483,5 +505,39 @@ public class CodeServiceImpl implements ICodeService {
     @DataSource(DataSourceType.SHARDING)
     public void updateCodeAttrIdByPCode(Map<String, Object> param) {
         codeMapper.updateCodeAttrIdByPCode(param);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish) {
+        Map<String, Object> param=new HashMap<>();
+        param.put("companyId",companyId);
+        param.put("codeAttrId",codeAttrId);
+        param.put("singleId",singleId);
+        param.put("indexStart",indexStart);
+        param.put("indexEnd",indexEnd);
+        param.put("status",codeStatusFinish);
+        return codeMapper.updateStatusByIndex(param);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Code selectCodeByCodeVal(String codeVal) {
+        Code code=new Code();
+        code.setCode(codeVal);
+        code.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        return codeMapper.selectCode(code);
+    }
+
+
+    /**
+     * 生码总量查询
+     *
+     * @param map 部门ID
+     * @return 子部门数
+     */
+    @Override
+    public int selectCodeNum(Map<String, Object> map) {
+        return codeMapper.selectCodeNum(map);
     }
 }

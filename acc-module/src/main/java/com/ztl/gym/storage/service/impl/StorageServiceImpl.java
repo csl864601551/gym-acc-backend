@@ -5,6 +5,7 @@ import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.enums.DataSourceType;
@@ -26,9 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 仓库Service业务层处理
@@ -242,20 +242,20 @@ public class StorageServiceImpl implements IStorageService {
             code.setCompanyId(companyId);
             Code codeEntity = codeService.selectCode(code);
             if (codeEntity != null) {
-                storageVo.setCode(codeVal);//区分前端是否查询到码相关信息
+                //区分前端是否查询到码相关信息
+                storageVo.setCode(codeVal);
                 storageVo.setCompanyId(companyId);
-                if (codeEntity.getCodeType().toString().equals("single")) {//判断单码是属于单码or箱码
-                    if (codeEntity.getpCode() == null) {
-                        storageVo.setCodeTypeName("单码");
-                    } else {
-                        storageVo.setCodeTypeName("箱码");
-                        storageVo.setpCode(codeEntity.getpCode());
-                    }
+                //判断单码是属于单码or箱码
+                if (codeEntity.getCodeType().toString().equals("single")) {
+                    storageVo.setCodeTypeName("单码");
+                    storageVo.setpCode(codeEntity.getpCode());
                 } else if (codeEntity.getCodeType().toString().equals("box")) {
-                    storageVo.setpCode(codeEntity.getCode());
                     storageVo.setCodeTypeName("箱码");
                 }
                 //判断是否码是否绑定了产品
+                if(codeEntity.getCodeAttr()==null){
+                    throw new CustomException("该"+code.getCode()+"码尚未赋值，请先赋值产品信息！", HttpStatus.ERROR);
+                }
                 if (codeEntity.getCodeAttr().getProductId() != null) {
                     storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
                     storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
@@ -264,8 +264,6 @@ public class StorageServiceImpl implements IStorageService {
                     storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
                 }
                 storageVo.setRecordId(codeEntity.getCodeAttr().getRecordId());//码记录表ID
-                storageVo.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));//企业入库单号
-
                 Integer storageType = codeEntity.getStorageType();
                 Long storageRecordId = codeEntity.getStorageRecordId();
                 if (storageType != null && storageRecordId != 0) {
@@ -303,7 +301,6 @@ public class StorageServiceImpl implements IStorageService {
     @DataSource(DataSourceType.SHARDING)
     public int addCodeFlow(int storageType, long storageRecordId, String code) {
         //查询码类型与企业id
-        String codeType = CodeRuleUtils.getCodeType(code);
         Long companyId = CodeRuleUtils.getCompanyIdByCode(code);
 
         //查询码
@@ -313,6 +310,8 @@ public class StorageServiceImpl implements IStorageService {
         codeEntity.setCompanyId(companyId);
         codeRes = codeService.selectCode(codeEntity);
 
+        //查询码类型
+        String codeType = codeRes.getCodeType();
         //判断该单码有无箱码，如果有则更新整箱
         boolean isBox = false;
         boolean isSingle = false;
@@ -462,6 +461,24 @@ public class StorageServiceImpl implements IStorageService {
         } else {
             productStockService.insertProductStock(tenantId,storageId, productId, storageType, storageRecordId, flowNum);
         }
+    }
+
+    @Override
+    public List<StorageVo> filterDuplicateSingleCode(List<StorageVo> storageVos) {
+        //获取箱码
+        List<String> boxCodeList = storageVos.stream()
+                .filter(item -> StringUtils.isBlank(item.getpCode())).map(StorageVo :: getCode).collect(Collectors.toList());
+        List<StorageVo> storageVoList = new LinkedList<>();
+        for (StorageVo storageVo : storageVos) {
+            if (boxCodeList.contains(storageVo.getCode())) {
+                storageVoList.add(storageVo);
+                continue;
+            }
+            if (!boxCodeList.contains(storageVo.getpCode())) {
+                storageVoList.add(storageVo);
+            }
+        }
+        return storageVoList;
     }
 
     /**

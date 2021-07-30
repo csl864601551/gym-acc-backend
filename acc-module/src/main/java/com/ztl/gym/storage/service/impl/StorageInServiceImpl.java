@@ -1,11 +1,13 @@
 package com.ztl.gym.storage.service.impl;
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.service.IProductStockService;
@@ -85,9 +87,7 @@ public class StorageInServiceImpl implements IStorageInService {
     @DataSource(DataSourceType.SHARDING)
     public int insertStorageIn(Map<String, Object> map) {
         map.put("companyId", SecurityUtils.getLoginUserTopCompanyId());
-        if (map.get("tenantId") == null) {
-            map.put("tenantId", commonService.getTenantId());
-        }else if(map.get("tenantId").toString().equals("0")){
+        if (map.get("tenantId") == null || map.get("tenantId").toString().equals("0")) {
             map.put("tenantId", commonService.getTenantId());
         }
         map.put("inType", StorageIn.IN_TYPE_COMMON);
@@ -236,20 +236,18 @@ public class StorageInServiceImpl implements IStorageInService {
         }catch (Exception e){
             throw new CustomException("未查询到相关单号,请检查入库单来源");
         }
-        List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
-        boolean flag=true;
+        List<String> codeValList = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);//获得所有码
+        Map<String,Object> mapCode=new HashMap<>();
+        mapCode.put("companyId",companyId);
+        mapCode.put("codes",codeValList);
+        //筛选出箱码（不包含箱中的单码）或者单码
+        List<Code> codes = codeService.selectInCodesByCodeValList(mapCode);//获得所有需要的入库码
+
         int updRes=0;
         for (int i = 0; i < codes.size(); i++) {
-            if(codes.get(i).startsWith("20")){
-                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
-                flag=false;
-            }
+            updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i).getCode());//插入码流转明细，转移到PDA执行
         }
-        if(flag){
-            for (int i = 0; i < codes.size(); i++) {
-                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
-            }
-        }
+
         //产品库存更新
         if (updRes > 0) {
             storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()));

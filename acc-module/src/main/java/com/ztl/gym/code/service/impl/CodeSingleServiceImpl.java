@@ -1,5 +1,7 @@
 package com.ztl.gym.code.service.impl;
 
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
@@ -23,8 +25,7 @@ import javax.annotation.Resource;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -113,6 +114,32 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         return codeSingleMapper.updateCodeSingle(codeSingle);
     }
 
+    @Override
+    public int updateCodeSingleStatusBySingleId(long singleId,boolean flag) {
+        CodeSingle codeSingle = new CodeSingle();
+        codeSingle.setId(singleId);
+
+        //计算是否全部赋值完成
+        if(flag){//分段赋值
+            CodeSingle codeSingle1=selectCodeSingleById(singleId);
+            long totalNum=codeSingle1.getIndexEnd()-codeSingle1.getIndexStart()+1;//统计生码记录总码量
+            List<CodeAttr> codeSingle2=codeAttrService.selectCodeAttrBySingleId(singleId);
+            long countNum=0;//统计已赋值记录总码量
+            for(CodeAttr attr:codeSingle2){
+                countNum+=(attr.getIndexEnd()-attr.getIndexStart()+1);
+            }
+            if(totalNum!=countNum){//判断两个码量是否相等
+                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
+            }else {
+                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+            }
+        }else {
+            codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+        }
+        //更新生码记录赋值信息
+        return updateCodeSingle(codeSingle);
+    }
+
     /**
      * 批量删除生码记录
      *
@@ -144,8 +171,8 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @return
      */
     @Override
-    public int createCodeSingle(long companyId, long num, String remark) {
-        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, 0, num, remark);
+    public int createCodeSingle(long companyId,int isAcc, long num, String remark) {
+        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_SINGLE,isAcc, 0, num, remark);
         int res = codeSingleMapper.insertCodeSingle(codeSingle);
         if (res > 0) {
             //生码属性
@@ -166,6 +193,36 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         }
         return res;
     }
+    /**
+     * 生码-防伪码
+     *
+     * @param companyId 企业id
+     * @param num       生码数量
+     * @param remark    备注详情
+     * @return
+     */
+    @Override
+    public int createAccCodeSingle(long companyId, int isAcc, long num, String remark) {
+        CodeSingle codeSingle = buildCodeSingle(companyId, AccConstants.GEN_CODE_TYPE_ACC,isAcc, 0, num, remark);
+        codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+        int res = codeSingleMapper.insertCodeSingle(codeSingle);
+        if (res > 0) {
+            List<Map> codeList = new ArrayList<>();
+            Date createTime=DateUtils.getNowDate();
+            for (int i = 0; i < num; i++) {
+                Map<String,Object> code=new HashMap();
+                code.put("companyId",companyId);
+                code.put("codeAcc",CodeRuleUtils.buildAccCode(companyId));
+                code.put("singleId",codeSingle.getId());
+                code.put("createTime",createTime);
+                codeList.add(code);
+
+            }
+            res = codeMapper.insertAccCodeForBatch(codeList);
+        }
+        return res;
+    }
+
 
 
     /**
@@ -215,7 +272,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @param remark
      * @return
      */
-    public static CodeSingle buildCodeSingle(long companyId, int type, long boxCount, long num, String remark) {
+    public static CodeSingle buildCodeSingle(long companyId, int type,int isAcc, long boxCount, long num, String remark) {
         CodeSingle CodeSingle = new CodeSingle();
         //获取并更新生码记录流水号
         String codePrefix = null;
@@ -224,10 +281,13 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         } else if (type == AccConstants.GEN_CODE_TYPE_BOX) {
             codePrefix = CodeRuleUtils.CODE_PREFIX_B;
         }
-        String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, boxCount, num, codePrefix);
-        String[] codeIndexs = codeNoStr.split("-");
-        CodeSingle.setIndexStart(Long.parseLong(codeIndexs[0]) + 1);
-        CodeSingle.setIndexEnd(Long.parseLong(codeIndexs[1]));
+        if(codePrefix != null){
+            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, boxCount, num, codePrefix);
+            String[] codeIndexs = codeNoStr.split("-");
+            CodeSingle.setIndexStart(Long.parseLong(codeIndexs[0]) + 1);
+            CodeSingle.setIndexEnd(Long.parseLong(codeIndexs[1]));
+        }
+
         //基础属性
         CodeSingle.setCompanyId(companyId);
         long totalNum = num;
@@ -236,6 +296,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         }
         CodeSingle.setCount(totalNum);
         CodeSingle.setType(type);
+        CodeSingle.setIsAcc(isAcc);
         CodeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
         CodeSingle.setRemark(remark);
         CodeSingle.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());

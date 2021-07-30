@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.payment.mapper.PriceConfigMapper">
+    
+    <resultMap type="PriceConfig" id="PriceConfigResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="price"    column="price"    />
+        <result property="count"    column="count"    />
+        <result property="type"    column="type"    />
+        <result property="isOpen"    column="is_open"    />
+        <result property="remark"    column="remark"    />
+        <result property="userName"    column="nick_name"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPriceConfigVo">
+        select
+        a.id,
+        a.name,
+        a.price,
+        a.count,
+        a.type,
+        a.is_open,
+        a.remark,
+        u.nick_name,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time
+        from t_price_config a left join sys_user u on a.update_user = u.user_id
+    </sql>
+
+    <select id="selectPriceConfigList" parameterType="PriceConfig" resultMap="PriceConfigResult">
+        <include refid="selectPriceConfigVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="isOpen != null  and isOpen != ''"> and is_open = #{isOpen}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectPriceConfigById" parameterType="Long" resultMap="PriceConfigResult">
+        <include refid="selectPriceConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPriceConfig" parameterType="PriceConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into t_price_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="price != null">price,</if>
+            <if test="count != null">count,</if>
+            <if test="type != null">type,</if>
+            <if test="isOpen != null">is_open,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="price != null">#{price},</if>
+            <if test="count != null">#{count},</if>
+            <if test="type != null">#{type},</if>
+            <if test="isOpen != null">#{isOpen},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePriceConfig" parameterType="PriceConfig">
+        update t_price_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="isOpen != null">is_open = #{isOpen},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePriceConfigById" parameterType="Long">
+        delete from t_price_config where id = #{id}
+    </delete>
+
+    <delete id="deletePriceConfigByIds" parameterType="String">
+        delete from t_price_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

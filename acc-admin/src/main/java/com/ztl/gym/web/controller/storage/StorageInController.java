@@ -88,6 +88,7 @@ public class StorageInController extends BaseController {
     @Log(title = "入库", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Map<String, Object> map) {
+
         storageInService.insertStorageIn(map);
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", map.get("id").toString());
@@ -175,6 +176,8 @@ public class StorageInController extends BaseController {
         StorageVo storageVo = new StorageVo();
         if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, codeone)) {
             storageVo = storageService.selectLastStorageByCode(codeone);
+            //企业入库单号
+            storageVo.setInNo(commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN));
         }
         if(storageVo!=null){
             map.put("inNo",storageVo.getInNo());

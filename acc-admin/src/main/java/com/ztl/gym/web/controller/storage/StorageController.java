@@ -11,16 +11,21 @@ import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.storage.domain.Storage;
+import com.ztl.gym.storage.domain.vo.StorageVo;
 import com.ztl.gym.storage.service.IStorageService;
+import com.ztl.gym.web.controller.payment.PaymentRecordController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 仓库Controller
@@ -31,12 +36,17 @@ import java.util.Map;
 @RestController
 @RequestMapping("/storage/storage")
 public class StorageController extends BaseController {
+    /**
+     * 定义日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger(StorageController.class);
     @Autowired
     private IStorageService storageService;
     @Autowired
     private CommonService commonService;
     @Autowired
     private ICodeService codeService;
+    private static final String COMMA = ",";
 
     /**
      * 查询仓库列表
@@ -147,12 +157,40 @@ public class StorageController extends BaseController {
         if (SecurityUtils.getLoginUserCompany().getDeptId() != AccConstants.ADMIN_DEPT_ID) {
             companyId = SecurityUtils.getLoginUserTopCompanyId();
         }
-        if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, code)) {
-
-            return AjaxResult.success(storageService.selectLastStorageByCode(code));
+        //适配出库入库批量操作，如果code值用英文逗号隔开为批量操作,相同code值去重操作
+        List<String> codeList = new LinkedList<>();
+        if (code != null && code.contains(COMMA)) {
+            logger.info("多码入库流程");
+            codeList = Arrays.stream(code.split(COMMA)).filter(item -> StringUtils.isNotEmpty(item)).distinct().collect(Collectors.toList());
+        } else {
+            logger.info("单码入库流程");
+            codeList.add(code);
         }
-        return AjaxResult.error();
-
+        //企业入库单号
+        String inNo = commonService.getStorageNo(AccConstants.STORAGE_TYPE_IN);
+        StorageVo storageVo = null;
+        List<StorageVo> storageVos = new LinkedList<>();
+        for (String str : codeList) {
+            if (commonService.judgeStorageIsIllegalByValue(companyId, storageType, str)) {
+                //pc端暂时不做对未关联的产品的code做赋值，直接返回该产品未赋值
+                storageVo = storageService.selectLastStorageByCode(str);
+                if (Objects.isNull(storageVo.getProductId())) {
+                    logger.error("该{}码尚未赋值，请先赋值产品信息！", storageVo.getCode());
+                    return AjaxResult.error("该" + storageVo.getCode() + "码尚未赋值，请先赋值产品信息！");
+                }
+                storageVo.setInNo(inNo);
+                storageVos.add(storageVo);
+            } else {
+                return AjaxResult.error("批量码信息中的不正确：请检查" + str + "的有效性");
+            }
+        }
+        //判断是否是同一个产品
+        List<Long> productId = storageVos.stream().map(StorageVo::getProductId).distinct().collect(Collectors.toList());
+        if (productId.size() > 1) {
+            return AjaxResult.error(" 码中有不同类型的产品：请检查货码的产品信息");
+        }
+        //批量入库时，筛选出一个箱子里的单码剔除，界面只展示箱码
+        return AjaxResult.success(storageService.filterDuplicateSingleCode(storageVos));
     }
 
     /**

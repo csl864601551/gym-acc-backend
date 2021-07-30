@@ -94,5 +94,14 @@ public interface CodeRecordMapper {
      * @param map 部门信息
      * @return 结果
      */
-    public int selectcodenum(Map<String, Object> map);
+    public int selectCodeNum(Map<String, Object> map);
+
+
+    /**
+     * 产品出货量 本周
+     *
+     * @param map
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectCodeByDate(Map<String, Object> map);
 }

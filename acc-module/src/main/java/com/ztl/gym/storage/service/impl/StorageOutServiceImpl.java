@@ -1,5 +1,6 @@
 package com.ztl.gym.storage.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
@@ -24,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 出库Service业务层处理
@@ -104,7 +102,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
 
-        if (storageOut.getThirdPartyFlag() != null) {
+        if (!CollectionUtil.isEmpty(storageOut.getCodes()) && storageOut.getCodes().size() > 1) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
             long count=0;
@@ -257,13 +255,13 @@ public class StorageOutServiceImpl implements IStorageOutService {
             storageService.insertStorage(storage);
             storageId = storage.getId();
         }
-        //2、执行经销商入库动作
-        Map<String, Object> outMap = new HashMap<>();
-        outMap.put("tenantId", storageOut.getStorageTo());
-        outMap.put("actInNum", storageOut.getOutNum());
-        outMap.put("toStorageId", storageId);
-        outMap.put("id", inMap.get("id"));
-        storageInService.updateTenantIn(outMap);//需要处理tenant_id问题，仓库问题和addflow问题
+        //2、执行经销商入库动作，大艺项目用，南京暂不开启
+//        Map<String, Object> outMap = new HashMap<>();
+//        outMap.put("tenantId", storageOut.getStorageTo());
+//        outMap.put("actInNum", storageOut.getOutNum());
+//        outMap.put("toStorageId", storageId);
+//        outMap.put("id", inMap.get("id"));
+//        storageInService.updateTenantIn(outMap);//需要处理tenant_id问题，仓库问题和addflow问题
         return 1;
     }
 
@@ -327,5 +325,17 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Override
     public int selectCountByDept(Map<String, Object> map) {
         return storageOutMapper.selectCountByDept(map);
+    }
+
+
+    /**
+     * 产品出货量 本周
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectCountByWeek(Map<String, Object> map) {
+        return storageOutMapper.selectCountByWeek(map);
     }
 }

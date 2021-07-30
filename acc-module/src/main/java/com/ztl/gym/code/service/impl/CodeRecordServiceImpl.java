@@ -145,8 +145,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @return
      */
     @Override
-    public int createCodeRecord(long companyId, long num, String remark) {
-        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, 0, num, remark);
+    public int createCodeRecord(long companyId,int isAcc, long num, String remark) {
+        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_SINGLE, isAcc, 0, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             //生码属性
@@ -178,8 +178,8 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @return
      */
     @Override
-    public int createPCodeRecord(long companyId, long boxCount, long num, String remark) {
-        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX, boxCount, num, remark);
+    public int createPCodeRecord(long companyId,int isAcc, long boxCount, long num, String remark) {
+        CodeRecord codeRecord = buildCodeRecord(companyId, AccConstants.GEN_CODE_TYPE_BOX,isAcc, boxCount, num, remark);
         int res = codeRecordMapper.insertCodeRecord(codeRecord);
         if (res > 0) {
             //生码属性
@@ -254,7 +254,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @param remark
      * @return
      */
-    public static CodeRecord buildCodeRecord(long companyId, int type, long boxCount, long num, String remark) {
+    public static CodeRecord buildCodeRecord(long companyId, int type,int isAcc, long boxCount, long num, String remark) {
         CodeRecord codeRecord = new CodeRecord();
         //获取并更新生码记录流水号
         String codePrefix = null;
@@ -277,6 +277,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         }
         codeRecord.setCount(totalNum);
         codeRecord.setType(type);
+        codeRecord.setIsAcc(isAcc);
         codeRecord.setStatus(AccConstants.CODE_RECORD_STATUS_WAIT);
         codeRecord.setRemark(remark);
         codeRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
@@ -294,7 +295,19 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
      * @return 结果
      */
     @Override
-    public int selectcodenum(Map<String, Object> map) {
-        return codeRecordMapper.selectcodenum(map);
+    public int selectCodeNum(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeNum(map);
+    }
+
+
+    /**
+     * 生码总量统计图
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String,Object>> selectCodeByDate(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeByDate(map);
     }
 }

@@ -85,4 +85,11 @@ public interface IStorageService {
     int addCodeFlow(int storageType, long storageRecordId, String code);
 
     void updateProductStock(int storageType, long storageRecordId);
+
+    /**
+     * 筛选出既有箱码又有箱码里单码的情况，只保留箱码
+     * @param storageVos 集合
+     * @return 响应
+     */
+    List<StorageVo> filterDuplicateSingleCode(List<StorageVo> storageVos);
 }

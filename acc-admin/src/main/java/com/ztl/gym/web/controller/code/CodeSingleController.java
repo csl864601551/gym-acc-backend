@@ -1,9 +1,13 @@
 package com.ztl.gym.web.controller.code;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.primitives.Longs;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
+import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
+import com.ztl.gym.code.domain.vo.FuzhiVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
@@ -22,6 +26,12 @@ import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.domain.ProductBatch;
+import com.ztl.gym.product.domain.ProductCategory;
+import com.ztl.gym.product.service.IProductBatchService;
+import com.ztl.gym.product.service.IProductCategoryService;
+import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code/single")
@@ -44,6 +53,15 @@ public class CodeSingleController extends BaseController {
     private ICodeService codeService;
     @Autowired
     private ICodeAttrService codeAttrService;
+
+    @Autowired
+    private IProductService productService;
+    @Autowired
+    private IProductBatchService productBatchService;
+    @Autowired
+    private IProductCategoryService productCategoryService;
+    @Autowired
+    private IProductService tProductService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -171,8 +189,11 @@ public class CodeSingleController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody CodeSingle codeSingle) {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        return toAjax(codeSingleService.createCodeSingle(companyId, codeSingle.getCount(), codeSingle.getRemark()));
-
+        if (codeSingle.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
+            return toAjax(codeSingleService.createCodeSingle(companyId,codeSingle.getIsAcc(), codeSingle.getCount(), codeSingle.getRemark()));
+        } else{
+            return toAjax(codeSingleService.createAccCodeSingle(companyId, codeSingle.getIsAcc(),codeSingle.getCount(), codeSingle.getRemark()));
+        }
     }
 
     /**
@@ -233,6 +254,88 @@ public class CodeSingleController extends BaseController {
         return ajax;
     }
 
+    /**
+     * 生码赋值,按单赋值、分段赋值
+     *
+     * @return
+     */
+    @Log(title = "生码记录", businessType = BusinessType.OTHER)
+    @PostMapping("/fuzhi")
+    public AjaxResult fuzhi(@RequestBody FuzhiVo fuzhiVo) {
+        int res = 0;
+        Product product = productService.selectTProductById(fuzhiVo.getProductId());
+        ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
+        ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
+        ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        Long companyId=SecurityUtils.getLoginUserTopCompanyId();
+        String productCategory = category1.getCategoryName() + "-" + category2.getCategoryName();
+        Date inputTime = new Date();
+        CodeAttr codeAttr = new CodeAttr();
+        codeAttr = new CodeAttr();
+        codeAttr.setCompanyId(companyId);
+        codeAttr.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+        Long singleId=fuzhiVo.getRecordId();
+        Long indexStart=fuzhiVo.getIndexStart();
+        Long indexEnd=fuzhiVo.getIndexEnd();
+        // 处理分段赋值逻辑
+        if(singleId==0){
+            //判断流水号区间是否已赋值
+            //step1判断是否存在于两个生码记录
+            Map<String,Object> map =new HashMap<>();
+            map.put("companyId",companyId);
+            map.put("indexBegin",indexStart);
+            map.put("indexEnd",indexEnd);
+            List<Code> list=codeService.selectCodeListByIndex(map);
+            if(list.size()>0){
+                for (int i = 0; i < list.size(); i++) {
+                    if(list.get(i).getSingleId()==null){
+                        throw new CustomException("流水区间存在套标码，请重新输入流水区间！",HttpStatus.ERROR);
+                    }
+                    if(list.get(i).getCodeAttrId()!=null){
+                        throw new CustomException("流水区间存在已赋值产品码，请重新输入流水区间！",HttpStatus.ERROR);
+                    }
+                    if(i==list.size()){
+                        if(list.get(0).getSingleId()!=list.get(i).getSingleId()){
+                            throw new CustomException("不允许跨生码区间赋值，请缩小赋值范围！",HttpStatus.ERROR);
+                        }
+                    }
+                }
+                singleId=list.get(0).getSingleId();//正确赋值singleId
+            }else{
+                throw new CustomException("未查询到相关码数据，请检查流水号区间是否正确！",HttpStatus.ERROR);
+            }
+        }
+        codeAttr.setSingleId(singleId);
+        codeAttr.setIndexStart(indexStart);
+        codeAttr.setIndexEnd(indexEnd);
+
+        codeAttr.setProductId(fuzhiVo.getProductId());
+        codeAttr.setProductName(product.getProductName());
+        codeAttr.setProductNo(product.getProductNo());
+        codeAttr.setBarCode(product.getBarCode());
+        codeAttr.setProductCategory(productCategory);
+        codeAttr.setProductUnit(product.getUnit());
+        codeAttr.setProductIntroduce(product.getProductIntroduce());
+        codeAttr.setBatchId(fuzhiVo.getBatchId());
+        codeAttr.setBatchNo(productBatch.getBatchNo());
+        codeAttr.setRemark(fuzhiVo.getRemark());
+        codeAttr.setInputBy(userId);
+        codeAttr.setCreateUser(userId);
+        codeAttr.setInputTime(inputTime);
+        codeAttr.setUpdateTime(inputTime);
+        //插入编码属性表
+        Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+
+        //更新对应码的状态
+        res=codeService.updateStatusByIndex(companyId, codeAttrId,singleId,indexStart, indexEnd,AccConstants.CODE_STATUS_FINISH);
+
+
+        //计算是否全部赋值完成；更新生码记录赋值信息
+        res = codeSingleService.updateCodeSingleStatusBySingleId(singleId,fuzhiVo.getRecordId()==0);
+        return toAjax(res);
+
+    }
 
     /**
      * 查询该企业是否有状态为创建中的生码记录【用于前端生码记录页面自动刷新】
@@ -258,7 +361,7 @@ public class CodeSingleController extends BaseController {
      */
     @GetMapping("/checkPackageCode")
     @DataSource(DataSourceType.SHARDING)
-    public AjaxResult checkPackageCode(@RequestParam("code") String codeStr) {
+    public AjaxResult checkPackageCode(@RequestParam("code") String codeStr,@RequestParam("flag") Boolean flag) {
         AjaxResult ajax = AjaxResult.success();
         codeStr=codeStr.trim();
         if(!codeStr.equals("")){
@@ -273,6 +376,15 @@ public class CodeSingleController extends BaseController {
             }
             if(code.getpCode()!=null){
                 throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！", HttpStatus.ERROR);
+            }
+            if(code.getCodeAttrId()!=null){
+                throw new CustomException(code.getCode()+"该码已被赋值产品，请检查后重试！",HttpStatus.ERROR);
+            }
+            if(flag&&code.getCodeAcc()==null){
+                throw new CustomException(code.getCode()+"该码未开启防伪码，请检查后重试！",HttpStatus.ERROR);
+            }
+            if(!flag&&code.getCodeAcc()!=null){
+                throw new CustomException(code.getCode()+"该码已开启防伪码，请检查后重试！",HttpStatus.ERROR);
             }
             ajax.put("data", code);
             return ajax;
@@ -296,15 +408,11 @@ public class CodeSingleController extends BaseController {
             /**
              * 插入箱码，更新单码PCode
              */
-            //获取并更新生码记录流水号
-            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
-            String[] codeIndexs = codeNoStr.split("-");
-            long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
-
-            String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+            //最后一个码变成箱码
+            String oldCode=list.get(list.size()-1);
+            String pCode=oldCode.replaceFirst("3","2");
 
             Code temp = null;
-            long codeAttrId=0;
             long singleId=0;
 
             for (int i = 0; i < list.size(); i++) {
@@ -313,48 +421,41 @@ public class CodeSingleController extends BaseController {
                 temp.setCompanyId(companyId);
                 Code code=codeService.selectCode(temp);//查询单码数据
                 if(code==null){
-                    throw new CustomException("未查询到相关码数据！");
+                    throw new CustomException("未查询到相关码数据！",HttpStatus.ERROR);
                 }
                 if(code.getCodeAttrId()!=null){
-                    codeAttrId=code.getCodeAttrId();
+                    throw new CustomException("存在已赋值产品码，请重新扫码！",HttpStatus.ERROR);
                 }
                 if(code.getSingleId()!=null){
+                    if(i > 0&singleId!=code.getSingleId()){
+                        throw new CustomException("不允许跨生码区间装箱，请重新扫码！",HttpStatus.ERROR);
+                    }
                     singleId=code.getSingleId();
                 }
                 if(code.getpCode()!=null){
-                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
+                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！",HttpStatus.ERROR);
                 }
-                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
-            }//更新单码
-
-
-            Code boxCode = new Code();
-            boxCode.setCodeIndex(codeIndex);
-            boxCode.setCompanyId(companyId);
-            boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
-            boxCode.setCode(pCode);
-            boxCode.setCodeAttrId(codeAttrId);
-            boxCode.setSingleId(singleId);
-            codeService.insertCode(boxCode);//插入箱码
-
-
-            commonService.updateVal(companyId, codeIndex);//更新code_index
-            Map<String,Object> mapTemp = new HashMap<>();
-            mapTemp.put("companyId",companyId);
-            mapTemp.put("boxCode",pCode);
-            mapTemp.put("codeIndex",codeIndex);
-            commonService.insertPrintData(mapTemp);//插入打印数据
-
+                if(i<list.size()-1){//更新单码
+                    codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+                }else{//最后一个码变成箱码
+                    Code boxCode = new Code();
+                    boxCode.setCodeIndex(code.getCodeIndex());
+                    boxCode.setCompanyId(companyId);
+                    //boxCode.setCode(pCode);更新箱码后，原先码不可用
+                    boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
+                    codeService.updateCode(boxCode);
+                }
+            }
             ajax.put("data", pCode);
             return ajax;
         }else{
-            throw new CustomException("未接收到单码数据！");
+            throw new CustomException("未接收到单码数据！",HttpStatus.ERROR);
         }
 
     }
 
     /**
-     * 绑定产品信息
+     * 摄像头或者PDA扫码绑定产品信息
      * @param map
      * @return
      */
@@ -372,6 +473,7 @@ public class CodeSingleController extends BaseController {
             codeAttr.setBatchNo(map.get("batchNo").toString());
             //插入编码属性表
             Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+
             //更新编码信息表
             Map<String, Object> params = new HashMap<>();
             params.put("pCode", map.get("pCode"));
@@ -380,7 +482,8 @@ public class CodeSingleController extends BaseController {
             codeService.updateCodeAttrIdByPCode(params);
             return AjaxResult.success();
         } else {
-            throw new CustomException("产品信息为空！");
+            throw new CustomException("产品信息为空！",HttpStatus.ERROR);
         }
     }
+
 }

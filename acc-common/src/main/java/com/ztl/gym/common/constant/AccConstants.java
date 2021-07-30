@@ -88,6 +88,10 @@ public class AccConstants {
      * 生码记录状态-已赋值
      */
     public final static int CODE_RECORD_STATUS_EVA = 2;
+    /**
+     * 生码记录状态-部分赋值
+     */
+    public final static int CODE_RECORD_STATUS_ON = 3;
 
     /**
      * 生码类型-普通生码
@@ -97,6 +101,20 @@ public class AccConstants {
      * 生码类型-套标生码
      */
     public final static int GEN_CODE_TYPE_BOX = 2;
+    /**
+     * 生码类型-防伪码生码
+     */
+    public final static int GEN_CODE_TYPE_ACC = 3;
+
+
+    /**
+     * 生码-未开启防伪码
+     */
+    public final static int IS_ACC_FALSE = 1;
+    /**
+     * 生码-开启防伪码
+     */
+    public final static int IS_ACC_TRUE = 2;
 
     /*---------------------------- 仓库库存 ----------------------------*/
     /**
@@ -136,6 +154,10 @@ public class AccConstants {
     public final static int STOCK_LEVEL_TENANT = 20;
 
     /*---------------------------- 部门常量 ----------------------------*/
+    /**
+     * 系统ID
+     */
+    public final static Long XTADMIN_DEPT_ID = 99L;
     /**
      * 平台ID
      */
@@ -203,5 +225,21 @@ public class AccConstants {
      * 管理员角色
      */
     public final static long ADMIN_ROLE = 1;
+
+    /**
+     * 待支付
+     */
+    public final static int PAYMENT_STATUS_ZERO = 0;
+
+    /**
+     * 已支付
+     */
+    public final static int PAYMENT_STATUS_ONE = 1;
+
+    /**
+     * 取消支付
+     */
+    public final static int PAYMENT_STATUS_TWO = 2;
+
 
 }

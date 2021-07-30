@@ -28,6 +28,13 @@ public class CodeRecord extends BaseEntity
     /** 生码类型 */
     private Integer type;
 
+    /** 是否开启防伪码 */
+    private Integer isAcc;
+
+    /** 套标数量 */
+    @Excel(name = "套标数量", sort = 6)
+    private Long trayCount;
+
     /** 箱数量 */
     @Excel(name = "箱数量", sort = 6)
     private Long boxCount;
@@ -68,6 +75,14 @@ public class CodeRecord extends BaseEntity
     @Excel(name = "关联批次", sort = 8)
     private String batchNo;
 
+    public Integer getIsAcc() {
+        return isAcc;
+    }
+
+    public void setIsAcc(Integer isAcc) {
+        this.isAcc = isAcc;
+    }
+
     public void setId(Long id)
     {
         this.id = id;
@@ -107,6 +122,14 @@ public class CodeRecord extends BaseEntity
     public void setCount(Long count)
     {
         this.count = count;
+    }
+
+    public Long getTrayCount() {
+        return trayCount;
+    }
+
+    public void setTrayCount(Long trayCount) {
+        this.trayCount = trayCount;
     }
 
     public Long getBoxCount() {
