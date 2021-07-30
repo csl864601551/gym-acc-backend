@@ -80,6 +80,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateQuotaByAddCode" parameterType="Long">
+        update t_quota set param_value =param_value- #{paramValue} where company_id = #{companyId} and param_key='code'
+    </update>
+
     <delete id="deleteQuotaById" parameterType="Long">
         delete from t_quota where id = #{id}
     </delete>

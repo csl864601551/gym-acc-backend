@@ -67,4 +67,6 @@ public interface IQuotaService
      * @return 结果
      */
     public int deleteQuotaById(Long id);
+
+    int updateQuotaByAddCode(Long codeNum);
 }
