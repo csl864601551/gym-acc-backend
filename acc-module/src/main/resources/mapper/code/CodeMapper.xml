@@ -56,6 +56,19 @@
         </where>
     </select>
 
+    <select id="selectInCodesByCodeValList" parameterType="Map" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="codes != null  and codes != ''">and code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>)
+            </if>
+            and (code_type='box' or (code_type='single' and p_code is null))
+        </where>
+    </select>
+
     <select id="selectCodeList" parameterType="Code" resultMap="CodeResult">
         <include refid="selectCodeVo"/>
         <where>
