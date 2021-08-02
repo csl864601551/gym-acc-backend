@@ -55,6 +55,8 @@ public class CodeSingle extends BaseEntity
     private String statusName;
     @Excel(name = "生码类型", sort = 5)
     private String typeName;
+    /** 是否展示树形结构 */
+    private boolean hasChildren;
 
 
     private long productId;
@@ -198,6 +200,14 @@ public class CodeSingle extends BaseEntity
 
     public void setSingleCount(Long singleCount) {
         this.singleCount = singleCount;
+    }
+
+    public boolean getHasChildren() {
+        return hasChildren;
+    }
+
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 
     @Override
