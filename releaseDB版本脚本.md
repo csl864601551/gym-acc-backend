@@ -164,3 +164,6 @@ CREATE TABLE `t_payment_record` (
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='充值记录表 ';
 
+
+#### Beta V1.0.5 2021/07/31
+ALTER TABLE `t_product_category` ADD `product_num` int(20) NULL DEFAULT NULL COMMENT '产品数量';
