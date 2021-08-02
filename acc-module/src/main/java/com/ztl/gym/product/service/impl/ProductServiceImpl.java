@@ -1,6 +1,8 @@
 package com.ztl.gym.product.service.impl;
 
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.domain.Product;
@@ -101,12 +103,19 @@ public class ProductServiceImpl implements IProductService
         List<Map<String,Object>> list=product.getAttributeList();
         Map<String,Object> map=new HashMap<>();
         for(int i=0;i<list.size();i++){
-            map=list.get(i);
-            map.put("productId",id);
-            map.put("companyId",company_temp);
-            map.put("createUser",createUser);
-            map.put("createTime",DateUtils.getNowDate());
-            productMapper.insertProductAttr(map);
+            try {
+                map=list.get(i);
+                map.put("productId",id);
+                map.put("companyId",company_temp);
+                map.put("createUser",createUser);
+                map.put("createTime",DateUtils.getNowDate());
+                if(map.get("sort")==null||map.get("sort")==""){
+                    map.put("sort",0);
+                }
+                productMapper.insertProductAttr(map);
+            }catch (Exception e){
+                throw new CustomException("产品属性异常，请检查填写格式！", HttpStatus.ERROR);
+            }
         }
         return result;
     }
@@ -142,21 +151,23 @@ public class ProductServiceImpl implements IProductService
                 productMapper.deleteProductAttrById(id);//删除product_attr
                 Map<String,Object> map=new HashMap<>();
                 for(int i=0;i<list.size();i++){
-                    map=list.get(i);
-                    map.put("productId",id);
-                    map.put("companyId",company_temp);
-                    map.put("createUser",createUser);
-                    map.put("createTime",DateUtils.getNowDate());
-
-
                     try {
+                        map=list.get(i);
+                        map.put("productId",id);
+                        map.put("companyId",company_temp);
+                        map.put("createUser",createUser);
+                        map.put("createTime",DateUtils.getNowDate());
+                        if(map.get("sort")==null||map.get("sort")==""){
+                            map.put("sort",0);
+                        }
                         Long attr_id= Long.parseLong(map.get("attrNameCn").toString());
                         map.put("attrNameCn",attrMapper.selectAttrById(attr_id).getAttrNameCn());
+                        productMapper.insertProductAttr(map);//插入product_attr
                     }catch (Exception e){
-
+                        throw new CustomException("产品属性异常，请检查填写格式！", HttpStatus.ERROR);
                     }
 
-                    productMapper.insertProductAttr(map);//插入product_attr
+
                 }
             }
         }
