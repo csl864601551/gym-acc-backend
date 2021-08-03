@@ -103,11 +103,9 @@ public class SecurityCodeRecordController extends BaseController {
             securityCodeRecord.setCompanyId(companyId);
         }
         ScanSecurityCodeOutBean scanSecurityCodeOutBean = null;
-        if (StringUtils.isBlank(securityCodeRecord.getCode())) {
-            scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfo(securityCodeRecord);
-        } else {
-            scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfoByCode(securityCodeRecord);
-        }
+
+        scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfo(securityCodeRecord);
+
         logger.info("the method checkByAccCode end,result is {}", scanSecurityCodeOutBean);
         return AjaxResult.success(scanSecurityCodeOutBean);
     }
@@ -135,11 +133,9 @@ public class SecurityCodeRecordController extends BaseController {
             securityCodeRecord.setCompanyId(companyId);
         }
         ScanSecurityCodeOutBean scanSecurityCodeOutBean = null;
-        if (StringUtils.isBlank(securityCodeRecord.getCode())) {
-            scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfo(securityCodeRecord);
-        } else {
-            scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfoByCode(securityCodeRecord);
-        }
+
+        scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfoByCode(securityCodeRecord);
+
         logger.info("the method checkByCode end,result is {}", scanSecurityCodeOutBean);
         return AjaxResult.success(scanSecurityCodeOutBean);
     }
