@@ -140,12 +140,16 @@ public class SysDeptController extends BaseController {
                     String sql = "CREATE TABLE t_code_" + companyId + "(\n" +
                             "    code_index BIGINT NOT NULL AUTO_INCREMENT  COMMENT '流水号' ,\n" +
                             "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                            "    tenant_id BIGINT    COMMENT '经销商ID' ,\n" +
                             "    status INT    COMMENT '状态' ,\n" +
                             "    code VARCHAR(64)    COMMENT '码' ,\n" +
                             "    code_acc VARCHAR(64)    COMMENT '防窜码' ,\n" +
                             "    code_type VARCHAR(64)    COMMENT '码类型（箱码or单码）' ,\n" +
                             "    p_code VARCHAR(64)    COMMENT '所属箱码' ,\n" +
                             "    code_attr_id BIGINT    COMMENT '码属性id' ,\n" +
+                            "    single_id BIGINT    COMMENT '生码记录ID' ,\n" +
+                            "    storage_record_id BIGINT    COMMENT '最新流转id' ,\n" +
+                            "    storage_type int    COMMENT '最新流转类型' ,\n" +
                             "    PRIMARY KEY (code_index)\n" +
                             ") COMMENT = '码表 ';";
                     res = createTableByCompany(sql);
