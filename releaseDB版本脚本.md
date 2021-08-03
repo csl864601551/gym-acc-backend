@@ -191,3 +191,14 @@ PRIMARY KEY (`id`)
 
 #### Beta V1.0.5 2021/07/31
 ALTER TABLE `t_product_category` ADD `product_num` int(20) NULL DEFAULT NULL COMMENT '产品数量';
+
+
+
+#### Beta V1.0.5 2021/08/02
+ALTER TABLE `sys_dept` ADD `provinces` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '省市区';
+ALTER TABLE `sys_dept` ADD `province` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '省';
+ALTER TABLE `sys_dept` ADD `city` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '市';
+ALTER TABLE `sys_dept` ADD `area` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '区';
+ALTER TABLE `sys_dept` ADD `address` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '地址';
+ALTER TABLE `sys_dept` ADD `longitude` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '经度';
+ALTER TABLE `sys_dept` ADD `latitude` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '纬度';

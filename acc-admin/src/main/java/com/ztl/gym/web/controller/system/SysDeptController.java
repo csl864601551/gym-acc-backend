@@ -1,16 +1,10 @@
 package com.ztl.gym.web.controller.system;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Iterator;
-import java.util.List;
-
 import com.alibaba.druid.pool.DruidDataSource;
-import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.CodeTestService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.UserConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
@@ -18,24 +12,21 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
-import com.ztl.gym.framework.web.domain.server.Sys;
 import com.ztl.gym.product.domain.ProductStock;
 import com.ztl.gym.product.service.IProductStockService;
-import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.ztl.gym.common.constant.UserConstants;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 部门信息
@@ -91,7 +82,11 @@ public class SysDeptController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:dept:query')")
     @GetMapping(value = "/{deptId}")
     public AjaxResult getInfo(@PathVariable Long deptId) {
-        return AjaxResult.success(deptService.selectDeptById(deptId));
+        SysDept sysDept = deptService.selectDeptById(deptId);
+        if(sysDept.getProvinces()!=null){
+            sysDept.setSelectedOptions(Arrays.asList(sysDept.getProvinces().split(",")));
+        }
+        return AjaxResult.success(sysDept);
     }
 
     /**
@@ -126,6 +121,11 @@ public class SysDeptController extends BaseController {
             return AjaxResult.error("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
         }
         dept.setCreateBy(SecurityUtils.getUsername());
+        if(dept.getSelectedOptions().size()>0){
+            String  selectedOptions = dept.getSelectedOptions().toString().substring(1,dept.getSelectedOptions().toString().length()-1);
+            selectedOptions = selectedOptions.replaceAll(" ","");
+            dept.setProvinces(selectedOptions);
+        }
 
         int addres = (int) deptService.insertDept(dept);
         if (addres > 0) {
@@ -229,6 +229,11 @@ public class SysDeptController extends BaseController {
             return AjaxResult.error("该部门包含未停用的子部门！");
         }
         dept.setUpdateBy(SecurityUtils.getUsername());
+        if(dept.getSelectedOptions().size()>0){
+            String  selectedOptions = dept.getSelectedOptions().toString().substring(1,dept.getSelectedOptions().toString().length()-1);
+            selectedOptions = selectedOptions.replaceAll(" ","");
+            dept.setProvinces(selectedOptions);
+        }
         return toAjax(deptService.updateDept(dept));
     }
 
