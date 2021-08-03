@@ -195,4 +195,11 @@ public interface CodeMapper {
     int updateStatusByIndex(Map<String, Object> params);
 
     List<Code> selectInCodesByCodeValList(Map<String, Object> codeParam);
+
+    /**
+     * 查询防伪码绑定记录
+     * @param codeParam 入参
+     * @return 响应
+     */
+    List<Code> selectCodeRecordBySecurityCode(Map<String, Object> codeParam);
 }

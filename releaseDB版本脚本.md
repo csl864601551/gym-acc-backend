@@ -164,6 +164,30 @@ CREATE TABLE `t_payment_record` (
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='充值记录表 ';
 
+CREATE TABLE `t_security_code_record` (
+`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+`company_id` bigint(20) DEFAULT NULL COMMENT '企业ID',
+`code` varchar(128) DEFAULT NULL COMMENT '防窜码',
+`code_acc` varchar(64) DEFAULT NULL COMMENT '防伪码',
+`batch_id` bigint(20) DEFAULT NULL COMMENT '批次ID',
+`product_id` bigint(20) DEFAULT NULL COMMENT '产品Id',
+`longitude` decimal(10,5) DEFAULT NULL COMMENT '经度',
+`latitude` decimal(10,5) DEFAULT NULL COMMENT '纬度',
+`district_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '区编码',
+`city_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '市编码',
+`province_code` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '省编码',
+`province` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '省',
+`city` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '市',
+`district` varchar(128) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '区',
+`is_abnormal` varchar(1) COLLATE utf8mb4_bin DEFAULT '0' COMMENT '是否异常 1.异常 0.正常',
+`is_delete` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '是否删除',
+`create_user` bigint(20) DEFAULT NULL COMMENT '创建人',
+`create_time` datetime DEFAULT NULL COMMENT '创建时间',
+`update_user` bigint(20) DEFAULT NULL COMMENT '更新人',
+`update_time` datetime DEFAULT NULL COMMENT '更新时间',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='防伪记录';
+
 
 #### Beta V1.0.5 2021/07/31
 ALTER TABLE `t_product_category` ADD `product_num` int(20) NULL DEFAULT NULL COMMENT '产品数量';

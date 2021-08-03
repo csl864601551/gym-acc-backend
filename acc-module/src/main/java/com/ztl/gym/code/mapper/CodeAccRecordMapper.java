@@ -64,4 +64,11 @@ public interface CodeAccRecordMapper
     public int deleteCodeAccRecordByIds(Long[] ids);
 
     List<CodeAcc> selectAccCodeListByRecord(@Param("companyId") Long companyId, @Param("recordId")  Long recordId);
+
+    /**
+     * 根据防伪码查找防伪码生成记录
+     * @param codeAcc 防伪码
+     * @return 防伪记录
+     */
+    List<CodeAccRecord> selectRecordByAccCode(@Param("codeAcc")String codeAcc);
 }

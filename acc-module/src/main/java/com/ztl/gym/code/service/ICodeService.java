@@ -2,6 +2,7 @@ package com.ztl.gym.code.service;
 
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 
@@ -154,4 +155,13 @@ public interface ICodeService {
     Code selectCodeByCodeVal(String codeVal);
 
     List<Code> selectInCodesByCodeValList(Map<String,Object> map);
+
+
+    /**
+     * 查询防伪码绑定记录
+     * @param securityCode 防伪码
+     * @param companyId 企业id
+     * @return 响应
+     */
+    public List<Code> selectCodeRecordBySecurityCode(String securityCode, long companyId);
 }
