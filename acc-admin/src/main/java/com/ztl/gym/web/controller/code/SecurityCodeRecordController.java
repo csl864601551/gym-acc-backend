@@ -81,18 +81,19 @@ public class SecurityCodeRecordController extends BaseController {
     }*/
 
     /**
-     * check防伪码
+     * 通过accCodecheck防伪码
      *
      * @param securityCodeRecord 防伪扫描对象
      * @return 响应
      */
     @Log(title = "防伪记录", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult check(@RequestBody SecurityCodeRecord securityCodeRecord) {
-        logger.info("the method check enter,check SecurityCode param is {}", securityCodeRecord);
+    @PostMapping("/accCode")
+    public AjaxResult checkByAccCode(@RequestBody SecurityCodeRecord securityCodeRecord) {
+        logger.info("the method checkByAccCode enter,check SecurityCode param is {}", securityCodeRecord);
 
         //参数校验,code和accCode必须有一个不为空
-        if (StringUtils.isBlank(securityCodeRecord.getCode()) && StringUtils.isBlank(securityCodeRecord.getCodeAcc())) {
+        if (StringUtils.isBlank(securityCodeRecord.getCodeAcc())) {
+            logger.error("codeAcc字段不能为空");
             return AjaxResult.error("参数校验失败");
         }
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
@@ -107,7 +108,39 @@ public class SecurityCodeRecordController extends BaseController {
         } else {
             scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfoByCode(securityCodeRecord);
         }
-        logger.info("the method check end,result is {}", scanSecurityCodeOutBean);
+        logger.info("the method checkByAccCode end,result is {}", scanSecurityCodeOutBean);
+        return AjaxResult.success(scanSecurityCodeOutBean);
+    }
+
+    /**
+     * 通过Codecheck防伪码
+     *
+     * @param securityCodeRecord 防伪扫描对象
+     * @return 响应
+     */
+    @Log(title = "防伪记录", businessType = BusinessType.INSERT)
+    @PostMapping("/code")
+    public AjaxResult checkByCode(@RequestBody SecurityCodeRecord securityCodeRecord) {
+        logger.info("the method checkByCode enter,check SecurityCode param is {}", securityCodeRecord);
+
+        //参数校验,code和accCode必须有一个不为空
+        if (StringUtils.isBlank(securityCodeRecord.getCode())) {
+            logger.error("code字段不能为空");
+            return AjaxResult.error("参数校验失败");
+        }
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            securityCodeRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        } else {
+            securityCodeRecord.setCompanyId(companyId);
+        }
+        ScanSecurityCodeOutBean scanSecurityCodeOutBean = null;
+        if (StringUtils.isBlank(securityCodeRecord.getCode())) {
+            scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfo(securityCodeRecord);
+        } else {
+            scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfoByCode(securityCodeRecord);
+        }
+        logger.info("the method checkByCode end,result is {}", scanSecurityCodeOutBean);
         return AjaxResult.success(scanSecurityCodeOutBean);
     }
 
