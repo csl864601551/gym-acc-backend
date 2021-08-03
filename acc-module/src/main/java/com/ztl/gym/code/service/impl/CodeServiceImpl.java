@@ -489,6 +489,16 @@ public class CodeServiceImpl implements ICodeService {
     public List<Code> selectInCodesByCodeValList(Map<String, Object> codeParam) {
         return codeMapper.selectInCodesByCodeValList(codeParam);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeRecordBySecurityCode(String securityCode, long companyId) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("companyId", companyId);
+        params.put("codeAcc", securityCode);
+        return codeMapper.selectCodeRecordBySecurityCode(params);
+    }
+
     @Override
     @DataSource(DataSourceType.SHARDING)
     public void updateCodeStorageByPCode(Code codeTemp) {
