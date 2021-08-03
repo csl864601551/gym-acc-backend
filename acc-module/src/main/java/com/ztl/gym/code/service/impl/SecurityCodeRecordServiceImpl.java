@@ -188,7 +188,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         scanSecurityCodeOutBean.setCode(code.getCode());
         scanSecurityCodeOutBean.setCodeAcc(code.getCodeAcc());
         scanSecurityCodeOutBean.setCount(CollectionUtil.isEmpty(securityCodeRecords) ? 0 : securityCodeRecords.size());
-        scanSecurityCodeOutBean.setCompanyName(SecurityUtils.getLoginUserCompany().getDeptName());
+        scanSecurityCodeOutBean.setCompany(SecurityUtils.getLoginUserCompany().getDeptName());
         //判断是否存在扫防伪码记录
         if (!CollectionUtil.isEmpty(securityCodeRecords)) {
             scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(0).getCreateTime());
@@ -201,7 +201,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         logger.info("该防伪码对应的标识码没有生码记录！");
         Product product = productService.selectTProductById(codeRecord.getProductId());
         if (!Objects.isNull(product)) {
-            scanSecurityCodeOutBean.setProductName(product.getProductName());
+            scanSecurityCodeOutBean.setProduct(product.getProductName());
             scanSecurityCodeOutBean.setMoreContent(product.getContent2());
             scanSecurityCodeOutBean.setOnceContent(product.getContent1());
             scanSecurityCodeOutBean.setOnceTemplateContent(product.getTemplateContent1());
@@ -226,7 +226,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         ScanSecurityCodeOutBean scanSecurityCodeOutBean = new ScanSecurityCodeOutBean();
         scanSecurityCodeOutBean.setCodeAcc(securityCodeRecord.getCodeAcc());
         scanSecurityCodeOutBean.setCount(CollectionUtil.isEmpty(securityCodeRecords) ? 0 : securityCodeRecords.size());
-        scanSecurityCodeOutBean.setCompanyName(SecurityUtils.getLoginUserCompany().getDeptName());
+        scanSecurityCodeOutBean.setCompany(SecurityUtils.getLoginUserCompany().getDeptName());
         //判断是否存在扫防伪码记录
         if (!CollectionUtil.isEmpty(securityCodeRecords)) {
             scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(0).getCreateTime());

@@ -48,7 +48,7 @@ public class ScanSecurityCodeOutBean{
     /**
      * 产品名称
      */
-    private String productName;
+    private String product;
 
     /**
      * 首次查询时间
@@ -63,7 +63,7 @@ public class ScanSecurityCodeOutBean{
     /**
      * 企业名称
      */
-    private String companyName;
+    private String company;
 
     public Integer getCount() {
         return count;
@@ -81,14 +81,6 @@ public class ScanSecurityCodeOutBean{
         this.code = code;
     }
 
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
     public Date getFirstQueryTime() {
         return firstQueryTime;
     }
@@ -103,14 +95,6 @@ public class ScanSecurityCodeOutBean{
 
     public void setLastQueryTime(Date lastQueryTime) {
         this.lastQueryTime = lastQueryTime;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
     public String getCodeAcc() {
@@ -151,5 +135,21 @@ public class ScanSecurityCodeOutBean{
 
     public void setMoreContent(String moreContent) {
         this.moreContent = moreContent;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 }
