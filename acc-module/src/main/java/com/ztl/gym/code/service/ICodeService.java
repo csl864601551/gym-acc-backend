@@ -152,7 +152,7 @@ public interface ICodeService {
 
     int updateStatusByIndex(Long companyId, Long codeAttrId,Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
 
-    Code selectCodeByCodeVal(String codeVal);
+    Code selectCodeByCodeVal(String codeVal,Long companyId);
 
     List<Code> selectInCodesByCodeValList(Map<String,Object> map);
 

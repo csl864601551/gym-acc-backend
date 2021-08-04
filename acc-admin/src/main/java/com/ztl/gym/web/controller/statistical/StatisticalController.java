@@ -4,9 +4,13 @@ import cn.hutool.core.date.DateUtil;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.ConversionUtill;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.ServletUtils;
+import com.ztl.gym.framework.web.service.TokenService;
 import com.ztl.gym.mix.service.IMixRecordService;
 import com.ztl.gym.payment.domain.PurchaseRecord;
 import com.ztl.gym.payment.service.IPaymentRecordService;
@@ -41,6 +45,11 @@ public class StatisticalController {
      */
     private static Logger logger = LoggerFactory.getLogger(QuotaController.class);
 
+
+
+    @Autowired
+    private TokenService tokenService;
+
     @Autowired
     private ISysDeptService deptService;
 
@@ -74,11 +83,14 @@ public class StatisticalController {
         try {
             StatisticalBean statisticalBean = new StatisticalBean();
             boolean isadmin = false;
+            Long deptId = 0l;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             Map<String, Object> query = new HashMap<String, Object>();
@@ -361,10 +373,14 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            Long deptId = 0l;
+            //获取用户部门信息
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             Map<String, Object> query = new HashMap<String, Object>();
@@ -481,10 +497,14 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            Long deptId = 0l;
+            //获取用户部门信息
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             //折线图数据
@@ -739,10 +759,14 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            Long deptId = 0l;
+            //获取用户部门信息
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             //折线图数据
@@ -904,10 +928,14 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            Long deptId = 0l;
+            //获取用户部门信息
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             //折线图数据
@@ -923,8 +951,12 @@ public class StatisticalController {
                         if(top10Map.get("code")!=null){
                             Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
                             if(smxxMap!=null){
-                                top10Map.put("productName",smxxMap.get("productName"));
-                                top10Map.put("productImage",smxxMap.get("productName"));
+                                if(smxxMap.get("productName")!=null){
+                                    top10Map.put("productName",smxxMap.get("productName"));
+                                }
+                                if(smxxMap.get("productName")!=null){
+                                    top10Map.put("productImage",smxxMap.get("productName"));
+                                }
                             }
                         }
                         smList.add(top10Map);
@@ -941,8 +973,12 @@ public class StatisticalController {
                         if(top10Map.get("code")!=null){
                             Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
                             if(smxxMap!=null){
-                                top10Map.put("productName",smxxMap.get("productName"));
-                                top10Map.put("productImage",smxxMap.get("productName"));
+                                if(smxxMap.get("productName")!=null){
+                                    top10Map.put("productName",smxxMap.get("productName"));
+                                }
+                                if(smxxMap.get("productName")!=null){
+                                    top10Map.put("productImage",smxxMap.get("productName"));
+                                }
                             }
                         }
                         smList.add(top10Map);
@@ -1077,10 +1113,14 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            Long deptId = 0l;
+            //获取用户部门信息
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             Map<String, Object> query = new HashMap<String, Object>();
@@ -1262,10 +1302,14 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if (deptId.equals(AccConstants.ADMIN_DEPT_ID) || deptId.equals(AccConstants.XTADMIN_DEPT_ID) || deptId > 200) {
+            Long deptId = 0l;
+            //获取用户部门信息
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+            SysUser user = loginUser.getUser();
+            if(user.getRoles().get(0).getRoleId()==120){
                 isadmin = true;
-            } else {
+            }else if(user.getRoles().get(0).getRoleId()==101){
+                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
             }
             Map<String, Object> query = new HashMap<String, Object>();

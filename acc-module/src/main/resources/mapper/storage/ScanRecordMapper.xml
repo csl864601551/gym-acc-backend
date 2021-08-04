@@ -686,6 +686,7 @@
         <if test="deptId != null">
             and company_id  = #{deptId}
         </if>
+        and code is not null
         GROUP BY code ORDER BY value DESC LIMIT 10
     </select>
 </mapper>
