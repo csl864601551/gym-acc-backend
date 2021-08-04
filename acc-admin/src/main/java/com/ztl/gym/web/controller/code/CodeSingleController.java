@@ -486,4 +486,15 @@ public class CodeSingleController extends BaseController {
         }
     }
 
+    /**
+     * 根据singleId，查询分段赋值产品及相关信息
+     */
+    @GetMapping("/selectIndexListBySingleId/{singleId}")
+    public AjaxResult selectIndexListBySingleId(@PathVariable("singleId") long singleId) {
+        AjaxResult ajax = AjaxResult.success();
+        List<CodeAttr> codeAttr=codeAttrService.selectCodeAttrBySingleId(singleId);
+        ajax.put("data", codeAttr);
+        return ajax;
+    }
+
 }

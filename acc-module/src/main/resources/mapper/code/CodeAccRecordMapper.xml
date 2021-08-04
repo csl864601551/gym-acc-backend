@@ -139,5 +139,11 @@
 
     </select>
 
-
+    <select id="selectRecordByAccCode" parameterType="String" resultMap="CodeAccRecordResult">
+        select r.id, r.company_id, r.status, r.type, r.count, r.once_template_id, r.more_template_id, r.remark, r.create_user,
+        r.create_time, r.update_user, r.update_time,r.once_template_content, r.more_template_content, r.once_content, r.more_content
+        ,u.code_acc
+        from t_code_acc u
+        left join t_code_acc_record r on u.record_id = r.id where u.code_acc = #{codeAcc}
+    </select>
 </mapper>

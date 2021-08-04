@@ -19,6 +19,7 @@
         <result property="updateUser" column="update_user"/>
         <result property="updateTime" column="update_time"/>
         <result property="creatorName" column="nick_name"/>
+        <result property="hasChildren" column="has_children"/>
     </resultMap>
 
     <sql id="selectCodeSingleVo">
@@ -38,7 +39,8 @@
         r.create_time,
         r.update_user,
         r.update_time,
-        u.nick_name
+        u.nick_name,
+        case when r.status>1 then 'true' else 'false' end as has_children
         from t_code_single r
         left join sys_user u on r.create_user = u.user_id
     </sql>

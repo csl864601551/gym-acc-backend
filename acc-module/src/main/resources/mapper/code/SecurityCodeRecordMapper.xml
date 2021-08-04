@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.SecurityCodeRecordMapper">
+    
+    <resultMap type="SecurityCodeRecord" id="SecurityCodeRecordResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="code"    column="code"    />
+        <result property="codeAcc"    column="code_acc"    />
+        <result property="batchId"    column="batch_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="districtCode"    column="district_code"    />
+        <result property="cityCode"    column="city_code"    />
+        <result property="provinceCode"    column="province_code"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="district"    column="district"    />
+        <result property="isAbnormal"    column="is_abnormal"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityCodeRecordVo">
+        select id, company_id, code, code_acc, batch_id, product_id, longitude, latitude, district_code, city_code, province_code, province, city, district, is_abnormal, is_delete, create_user, create_time, update_user, update_time from t_security_code_record
+    </sql>
+
+    <select id="selectSecurityCodeRecordList" parameterType="SecurityCodeRecord" resultMap="SecurityCodeRecordResult">
+        <include refid="selectSecurityCodeRecordVo"/>
+        <where>  
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="code != null "> and code = #{code}</if>
+            <if test="codeAcc != null "> and code_acc = #{codeAcc}</if>
+            <if test="batchId != null "> and batch_id = #{batchId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="longitude != null "> and longitude = #{longitude}</if>
+            <if test="latitude != null "> and latitude = #{latitude}</if>
+            <if test="districtCode != null  and districtCode != ''"> and district_code = #{districtCode}</if>
+            <if test="cityCode != null  and cityCode != ''"> and city_code = #{cityCode}</if>
+            <if test="provinceCode != null  and provinceCode != ''"> and province_code = #{provinceCode}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="district != null  and district != ''"> and district = #{district}</if>
+            <if test="isAbnormal != null  and isAbnormal != ''"> and is_abnormal = #{isAbnormal}</if>
+            <if test="isDelete != null  and isDelete != ''"> and is_delete = #{isDelete}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityCodeRecordById" parameterType="Long" resultMap="SecurityCodeRecordResult">
+        <include refid="selectSecurityCodeRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSecurityCodeRecord" parameterType="SecurityCodeRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into t_security_code_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">company_id,</if>
+            <if test="code != null">code,</if>
+            <if test="codeAcc != null">code_acc,</if>
+            <if test="batchId != null">batch_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="districtCode != null">district_code,</if>
+            <if test="cityCode != null">city_code,</if>
+            <if test="provinceCode != null">province_code,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="district != null">district,</if>
+            <if test="isAbnormal != null">is_abnormal,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null">#{companyId},</if>
+            <if test="code != null">#{code},</if>
+            <if test="codeAcc != null">#{codeAcc},</if>
+            <if test="batchId != null">#{batchId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="districtCode != null">#{districtCode},</if>
+            <if test="cityCode != null">#{cityCode},</if>
+            <if test="provinceCode != null">#{provinceCode},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="district != null">#{district},</if>
+            <if test="isAbnormal != null">#{isAbnormal},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityCodeRecord" parameterType="SecurityCodeRecord">
+        update t_security_code_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="codeAcc != null">code_acc = #{codeAcc},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="districtCode != null">district_code = #{districtCode},</if>
+            <if test="cityCode != null">city_code = #{cityCode},</if>
+            <if test="provinceCode != null">province_code = #{provinceCode},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="district != null">district = #{district},</if>
+            <if test="isAbnormal != null">is_abnormal = #{isAbnormal},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityCodeRecordById" parameterType="Long">
+        delete from t_security_code_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityCodeRecordByIds" parameterType="String">
+        delete from t_security_code_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectRecordsByAccCode" parameterType="SecurityCodeRecord" resultMap="SecurityCodeRecordResult">
+        <include refid="selectSecurityCodeRecordVo"/>
+        <where>
+            <if test="codeAcc != null "> and code_acc = #{codeAcc}</if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>
