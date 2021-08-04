@@ -15,12 +15,14 @@ import com.ztl.gym.code.mapper.SecurityCodeRecordMapper;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.code.service.ISecurityCodeRecordService;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IProductService;
+import com.ztl.gym.system.mapper.SysDeptMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,8 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
     private CodeRecordMapper codeRecordMapper;
     @Autowired
     private IProductService productService;
+    @Autowired
+    private SysDeptMapper deptMapper;
 
     /**
      * 查询防伪记录 company_id字段分
@@ -160,12 +164,12 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
     public ScanSecurityCodeOutBean getSecurityCodeInfoByCode(SecurityCodeRecord securityCodeRecord) {
         logger.info("the method getSecurityCodeInfoByCode enter");
         //根据code去t_code表获取响应的防伪码
-        Code code = codeService.selectCodeByCodeVal(securityCodeRecord.getCode());
-        ScanSecurityCodeOutBean scanSecurityCodeOutBean = null;
+        Code code = codeService.selectCodeByCodeVal(securityCodeRecord.getCode(),securityCodeRecord.getCompanyId());
+        ScanSecurityCodeOutBean scanSecurityCodeOutBean = new ScanSecurityCodeOutBean();
         //如果没有对应防伪码，返回空
-        if (Objects.isNull(code) && StringUtils.isBlank(code.getCodeAcc())) {
+        if (StringUtils.isBlank(code.getCodeAcc())) {
             logger.info("没有对应的防伪码");
-            return null;
+            return scanSecurityCodeOutBean;
         }
         List<SecurityCodeRecord> securityCodeRecords = securityCodeRecordMapper.selectRecordsByAccCode(securityCodeRecord.getCodeAcc());
         scanSecurityCodeOutBean = buildScanResultBeanByCode(securityCodeRecord, code, securityCodeRecords);
@@ -188,7 +192,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         scanSecurityCodeOutBean.setCode(code.getCode());
         scanSecurityCodeOutBean.setCodeAcc(code.getCodeAcc());
         scanSecurityCodeOutBean.setCount(CollectionUtil.isEmpty(securityCodeRecords) ? 0 : securityCodeRecords.size());
-        scanSecurityCodeOutBean.setCompany(SecurityUtils.getLoginUserCompany().getDeptName());
+        scanSecurityCodeOutBean.setCompany(getCompanyName(securityCodeRecord.getCompanyId()));
         //判断是否存在扫防伪码记录
         if (!CollectionUtil.isEmpty(securityCodeRecords)) {
             scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(0).getCreateTime());
@@ -226,7 +230,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         ScanSecurityCodeOutBean scanSecurityCodeOutBean = new ScanSecurityCodeOutBean();
         scanSecurityCodeOutBean.setCodeAcc(securityCodeRecord.getCodeAcc());
         scanSecurityCodeOutBean.setCount(CollectionUtil.isEmpty(securityCodeRecords) ? 0 : securityCodeRecords.size());
-        scanSecurityCodeOutBean.setCompany(SecurityUtils.getLoginUserCompany().getDeptName());
+        scanSecurityCodeOutBean.setCompany(getCompanyName(securityCodeRecord.getCompanyId()));
         //判断是否存在扫防伪码记录
         if (!CollectionUtil.isEmpty(securityCodeRecords)) {
             scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(0).getCreateTime());
@@ -242,5 +246,18 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         //给防伪记录塞值
         securityCodeRecord.setCreateTime(DateUtils.getNowDate());
         return scanSecurityCodeOutBean;
+    }
+
+    /**
+     * 获取企业名称
+     * @param companyId 企业id
+     * @return 企业名称
+     */
+    private String getCompanyName(Long companyId){
+        SysDept sysDept =  deptMapper.selectDeptById(companyId);
+        if(Objects.isNull(sysDept)){
+            return "";
+        }
+        return sysDept.getDeptName();
     }
 }

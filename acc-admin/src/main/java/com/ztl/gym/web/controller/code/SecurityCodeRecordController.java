@@ -6,6 +6,7 @@ import com.ztl.gym.code.domain.SecurityCodeRecord;
 import com.ztl.gym.code.domain.vo.ScanSecurityCodeOutBean;
 import com.ztl.gym.code.service.ISecurityCodeRecordService;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.web.controller.payment.PaymentRecordController;
@@ -96,12 +97,8 @@ public class SecurityCodeRecordController extends BaseController {
             logger.error("codeAcc字段不能为空");
             return AjaxResult.error("参数校验失败");
         }
-        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            securityCodeRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-        } else {
-            securityCodeRecord.setCompanyId(companyId);
-        }
+        //不从登录信息获取企业id，根据防伪码解析
+        securityCodeRecord.setCompanyId(CodeRuleUtils.getCompanyIdBySecurityCode(securityCodeRecord.getCodeAcc()));
         ScanSecurityCodeOutBean scanSecurityCodeOutBean = null;
 
         scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfo(securityCodeRecord);
@@ -126,12 +123,7 @@ public class SecurityCodeRecordController extends BaseController {
             logger.error("code字段不能为空");
             return AjaxResult.error("参数校验失败");
         }
-        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            securityCodeRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-        } else {
-            securityCodeRecord.setCompanyId(companyId);
-        }
+        securityCodeRecord.setCompanyId(CodeRuleUtils.getCompanyIdByCode(securityCodeRecord.getCode()));
         ScanSecurityCodeOutBean scanSecurityCodeOutBean = null;
 
         scanSecurityCodeOutBean = securityCodeRecordService.getSecurityCodeInfoByCode(securityCodeRecord);

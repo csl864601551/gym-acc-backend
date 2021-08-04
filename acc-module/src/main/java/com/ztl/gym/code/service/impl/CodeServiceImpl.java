@@ -532,10 +532,10 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public Code selectCodeByCodeVal(String codeVal) {
+    public Code selectCodeByCodeVal(String codeVal,Long companyId) {
         Code code=new Code();
         code.setCode(codeVal);
-        code.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        code.setCompanyId(companyId);
         return codeMapper.selectCode(code);
     }
 
