@@ -37,17 +37,18 @@ public class SecurityCodeTemplateController extends BaseController
     public TableDataInfo list(SecurityCodeTemplate securityCodeTemplate)
     {
         List<SecurityCodeTemplate> lists = new ArrayList<SecurityCodeTemplate>();
+        List<SecurityCodeTemplate> listadd = new ArrayList<SecurityCodeTemplate>();
         Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
         if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
             securityCodeTemplate.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-        }
-        //查询系统的两条数据
-        SecurityCodeTemplate query = new SecurityCodeTemplate();
-        query.setType(0);
-        List<SecurityCodeTemplate> listadd = securityCodeTemplateService.selectSecurityCodeTemplateList(query);
-        if(listadd.size()>0){
-            for(SecurityCodeTemplate securityCodeTemplateadd :listadd){
-                lists.add(securityCodeTemplateadd);
+            //查询系统的两条数据
+            SecurityCodeTemplate query = new SecurityCodeTemplate();
+            query.setType(0);
+            listadd = securityCodeTemplateService.selectSecurityCodeTemplateList(query);
+            if(listadd.size()>0){
+                for(SecurityCodeTemplate securityCodeTemplateadd :listadd){
+                    lists.add(securityCodeTemplateadd);
+                }
             }
         }
         startPage();
@@ -58,7 +59,7 @@ public class SecurityCodeTemplateController extends BaseController
             }
         }
         int  count = securityCodeTemplateService.selectSecurityCodeTemplateListCount(securityCodeTemplate);
-        return getDataTables(lists,count+2);
+        return getDataTables(lists,count+listadd.size());
     }
 
     /**
