@@ -45,6 +45,19 @@ public class SecurityCodeTemplateServiceImpl implements ISecurityCodeTemplateSer
         return securityCodeTemplateMapper.selectSecurityCodeTemplateList(securityCodeTemplate);
     }
 
+
+    /**
+     * 查询template列表的总条数
+     *
+     * @param securityCodeTemplate template
+     * @return template
+     */
+    @Override
+    public int selectSecurityCodeTemplateListCount(SecurityCodeTemplate securityCodeTemplate)
+    {
+        return securityCodeTemplateMapper.selectSecurityCodeTemplateListCount(securityCodeTemplate);
+    }
+
     /**
      * 新增template
      *

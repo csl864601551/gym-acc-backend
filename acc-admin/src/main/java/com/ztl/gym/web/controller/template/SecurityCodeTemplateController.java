@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,9 +36,29 @@ public class SecurityCodeTemplateController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SecurityCodeTemplate securityCodeTemplate)
     {
+        List<SecurityCodeTemplate> lists = new ArrayList<SecurityCodeTemplate>();
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            securityCodeTemplate.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        //查询系统的两条数据
+        SecurityCodeTemplate query = new SecurityCodeTemplate();
+        query.setType(0);
+        List<SecurityCodeTemplate> listadd = securityCodeTemplateService.selectSecurityCodeTemplateList(query);
+        if(listadd.size()>0){
+            for(SecurityCodeTemplate securityCodeTemplateadd :listadd){
+                lists.add(securityCodeTemplateadd);
+            }
+        }
         startPage();
         List<SecurityCodeTemplate> list = securityCodeTemplateService.selectSecurityCodeTemplateList(securityCodeTemplate);
-        return getDataTable(list);
+        if(list.size()>0){
+            for(SecurityCodeTemplate securityCodeTemplates :list){
+                lists.add(securityCodeTemplates);
+            }
+        }
+        int  count = securityCodeTemplateService.selectSecurityCodeTemplateListCount(securityCodeTemplate);
+        return getDataTables(lists,count+2);
     }
 
     /**
