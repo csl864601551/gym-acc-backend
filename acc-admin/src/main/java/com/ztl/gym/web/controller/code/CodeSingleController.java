@@ -266,10 +266,9 @@ public class CodeSingleController extends BaseController {
         Product product = productService.selectTProductById(fuzhiVo.getProductId());
         ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
         ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
-        ProductCategory category2 = productCategoryService.selectProductCategoryById(product.getCategoryTwo());
         Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
         Long companyId=SecurityUtils.getLoginUserTopCompanyId();
-        String productCategory = category1.getCategoryName() + "-" + category2.getCategoryName();
+        String productCategory = category1.getCategoryName() ;
         Date inputTime = new Date();
         CodeAttr codeAttr = new CodeAttr();
         codeAttr = new CodeAttr();
