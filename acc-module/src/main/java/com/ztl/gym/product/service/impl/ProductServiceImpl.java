@@ -5,14 +5,17 @@ import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.product.domain.Attr;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.mapper.AttrMapper;
 import com.ztl.gym.product.mapper.ProductMapper;
+import com.ztl.gym.product.service.IAttrService;
 import com.ztl.gym.product.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,8 @@ public class ProductServiceImpl implements IProductService
     private ProductMapper productMapper;
     @Autowired
     private AttrMapper attrMapper;
+    @Autowired
+    private IAttrService attrService;
 
 
     /**
@@ -43,6 +48,22 @@ public class ProductServiceImpl implements IProductService
     {
         Product product=productMapper.selectTProductById(id);
         List<Map<String,Object>> list=productMapper.getAttributeList(id);
+        for (int i = 0; i < list.size(); i++) {
+            Attr attr=attrService.selectAttrByName(list.get(i).get("attrNameCn").toString());
+            String attrValue=attr.getAttrValue();
+            List<Map<String, Object>> listValues=new ArrayList<>();
+            if(attrValue!=null){
+                String[] sourceArray = attrValue.split("\n");
+                Map<String,Object> temp=new HashMap<>();
+                for (int j = 0; j < sourceArray.length; j++) {
+                    temp=new HashMap<>();
+                    temp.put("value",sourceArray[j]);
+                    temp.put("label",sourceArray[j]);
+                    listValues.add(temp);
+                }
+            }
+            list.get(i).put("arrList",listValues);
+        }
         product.setAttributeList(list);
         return product;
     }
