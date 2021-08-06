@@ -65,6 +65,8 @@ public class CodeSingleController extends BaseController {
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
+    @Value("${ruoyi.preAccUrl}")
+    private String preAccUrl;
     /**
      * 查询生码记录列表
      */
@@ -232,7 +234,7 @@ public class CodeSingleController extends BaseController {
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeSingle codeSingle, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListBySingle(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
-        String temp = "码" + "                                        " + "\r\n";
+        String temp = "流水号,码,防伪码" + "                                        " + "\r\n";
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -243,11 +245,12 @@ public class CodeSingleController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                temp += "        " + code.getCode() + "\r\n";
+                temp += "        " + code.getCodeIndex()+","+code.getCode();//流水号，码
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                temp += (code.getpCode() == null ? code.getCode() : code.getpCode()) + "\r\n";
+                temp += code.getCodeIndex()+","+(code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
             }
+            temp +=code.getCodeAcc()==null?"\r\n":","+preAccUrl+code.getCodeAcc()+ "\r\n";//防伪码
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);
