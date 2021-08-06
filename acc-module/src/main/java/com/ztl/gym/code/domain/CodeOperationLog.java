@@ -45,6 +45,8 @@ public class CodeOperationLog extends BaseEntity {
 
     private Long companyId;
 
+    private String userName;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -93,6 +95,14 @@ public class CodeOperationLog extends BaseEntity {
         this.companyId = companyId;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -107,6 +117,7 @@ public class CodeOperationLog extends BaseEntity {
                 .append("updateUser", getUpdateUser())
                 .append("updateTime", getUpdateTime())
                 .append("companyId", getCompanyId())
+                .append("userName", getUserName())
                 .toString();
     }
 }

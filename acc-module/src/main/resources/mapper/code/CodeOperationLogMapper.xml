@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="code"    column="code"    />
         <result property="companyId"    column="company_id"    />
+        <result property="userName"    column="nick_name"    />
         <result property="count"    column="count"    />
         <result property="type"    column="type"    />
         <result property="message"    column="message"    />
@@ -19,7 +20,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectCodeOperationLogVo">
-        select id, company_id, code, count, type, message, remark, create_user, create_time, update_user, update_time from t_code_operation_log
+        select a.id,
+        a.company_id,
+        a.code,
+        a.count,
+        a.type,
+        a.message,
+        a.remark,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        u.nick_name
+        from t_code_operation_log a
+        left join sys_user u on a.create_user = u.user_id
     </sql>
 
     <select id="selectCodeOperationLogList" parameterType="CodeOperationLog" resultMap="CodeOperationLogResult">
@@ -32,7 +46,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="message != null  and message != ''"> and message = #{message}</if>
             <if test="createUser != null "> and create_user = #{createUser}</if>
             <if test="updateUser != null "> and update_user = #{updateUser}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(a.create_time,'%Y%m%d%H%i%s') &gt;= str_to_date(#{params.beginTime}, '%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(a.create_time,'%Y%m%d%H%i%s') &lt;= str_to_date(#{params.endTime}, '%Y%m%d%H%i%s')
+            </if>
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectCodeOperationLogById" parameterType="Long" resultMap="CodeOperationLogResult">
