@@ -305,4 +305,8 @@
             <if test="codeAcc != null  and codes != ''">and code_acc = #{codeAcc}</if>
         </where>
     </select>
+
+    <update id="updatePcodeValIsNan" parameterType="Map" >
+        update t_code set p_code = null  where company_id=#{companyId} and p_code = #{pCode}
+    </update>
 </mapper>

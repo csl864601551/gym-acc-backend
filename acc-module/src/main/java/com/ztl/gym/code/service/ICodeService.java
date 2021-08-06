@@ -164,4 +164,12 @@ public interface ICodeService {
      * @return 响应
      */
     public List<Code> selectCodeRecordBySecurityCode(String securityCode, long companyId);
+
+    /**
+     * 拆除所属箱码的单码
+     * @param companyId 企业id
+     * @param pCode 所属箱码
+     */
+    void cleanSingleCodesInBox(long companyId,String pCode);
+
 }

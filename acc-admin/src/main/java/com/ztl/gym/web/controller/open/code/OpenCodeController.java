@@ -13,6 +13,7 @@ import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -139,6 +140,36 @@ public class OpenCodeController {
             return AjaxResult.success(codeList);
         } else {
             throw new CustomException("产品信息为空！",HttpStatus.ERROR);
+        }
+    }
+
+    /**
+     * 根据单码和箱码获取所有关联码
+     *
+     * @return 获取所有码
+     */
+    @GetMapping("/getCodeList/{code}")
+    public AjaxResult getCodeList(@PathVariable("code") String code) {
+        if(StringUtils.isBlank(code)){
+            throw new CustomException("请输入码值！", HttpStatus.ERROR);
+        }
+        Map<String,Object> map = new HashMap<>(2);
+        map.put("code",code);
+        map.put("companyId",Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        List<Code> codeList = codeService.selectCodeListByCodeOrIndex(map);
+        if(codeList.size()>0){
+            for (Code codes : codeList) {
+                String typeName = "未知";
+                if (codes.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
+                    typeName = "箱码";
+                } else {
+                    typeName = "单码";
+                }
+                codes.setCodeTypeName(typeName);
+            }
+            return AjaxResult.success(codeList);
+        }else{
+            throw new CustomException("未查询到码数据！", HttpStatus.ERROR);
         }
     }
 }
