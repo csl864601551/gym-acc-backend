@@ -316,4 +316,23 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     }
 
 
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Map<String,Object>> getFlowListByCode(Long companyId,String codeVal) {
+        Map<String, Object> returnMap = new HashMap<>();//返回数据
+        Code code = new Code();//码产品信息
+        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        code.setCode(codeVal);
+        scanRecord.setCode(codeVal);
+        if (companyId > 0) {
+            code.setCompanyId(companyId);
+            scanRecord.setCompanyId(companyId);
+        }else{
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+        List<Map<String,Object>> flowList=scanRecordMapper.selectFlowListAsc(companyId,codeVal);//查询物流记录
+        return flowList;
+    }
+
+
 }

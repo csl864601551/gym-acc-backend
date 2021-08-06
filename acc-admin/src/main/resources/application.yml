@@ -16,10 +16,13 @@ ruoyi:
   captchaType: math
   #测试项目 码下载前缀地址
   preFixUrl: https://acc.asun.cloud/c?c=
+  preAccUrl: http://acc.asun.cloud/d?d=
   #南京项目 码下载前缀地址
   #preFixUrl: http://fch.china-12365.com/c?c=
+  #preAccUrl: http://fch.china-12365.com/d?d=
   #正式项目 码下载前缀地址
   #preFixUrl: https://acs.gongyema.com/c?c=
+  #preAccUrl: http://acs.gongyema.com/d?d=
 
 # OBS配置
 obs:

@@ -499,6 +499,20 @@ public class CodeServiceImpl implements ICodeService {
         return codeMapper.selectCodeRecordBySecurityCode(params);
     }
 
+    /**
+     * 拆除所属箱码的单码
+     * @param companyId 企业id
+     * @param pCode 所属箱码
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void cleanSingleCodesInBox(long companyId, String pCode) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("companyId", companyId);
+        params.put("pCode", pCode);
+        codeMapper.updatePcodeValIsNan(params);
+    }
+
     @Override
     @DataSource(DataSourceType.SHARDING)
     public void updateCodeStorageByPCode(Code codeTemp) {

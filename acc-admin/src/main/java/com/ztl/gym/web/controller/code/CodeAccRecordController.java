@@ -8,6 +8,7 @@ import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,8 @@ public class CodeAccRecordController extends BaseController
     @Autowired
     private ICodeAccRecordService codeAccRecordService;
 
+    @Value("${ruoyi.preAccUrl}")
+    private String preAccUrl;
     /**
      * 查询生码记录列表
      */
@@ -156,7 +159,7 @@ public class CodeAccRecordController extends BaseController
         List<CodeAcc> list =  codeAccRecordService.selectAccCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeAccRecord.getId());
         String temp = "防伪码" + "                                        " + "\r\n";
         for (CodeAcc codeAcc : list) {
-            temp += "        " + codeAcc.getCodeAcc() + "\r\n";
+            temp += "        " + preAccUrl+codeAcc.getCodeAcc() + "\r\n";
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);

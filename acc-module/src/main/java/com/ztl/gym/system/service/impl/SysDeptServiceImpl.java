@@ -314,4 +314,16 @@ public class SysDeptServiceImpl implements ISysDeptService {
     public int selectCountBydept(Map<String, Object> map) {
         return deptMapper.selectCountBydept(map);
     }
+
+
+    /**
+     * 根据城市名称查询信息
+     *
+     * @param city 城市名称
+     * @return 部门信息
+     */
+    @Override
+    public SysDept selectDeptByCity(String city) {
+        return deptMapper.selectDeptByCity(city);
+    }
 }

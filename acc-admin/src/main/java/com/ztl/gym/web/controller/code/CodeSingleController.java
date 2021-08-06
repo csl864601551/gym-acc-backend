@@ -2,12 +2,10 @@ package com.ztl.gym.web.controller.code;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.primitives.Longs;
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
-import com.ztl.gym.code.domain.CodeRecord;
-import com.ztl.gym.code.domain.CodeSingle;
+import com.ztl.gym.code.domain.*;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
 import com.ztl.gym.code.domain.vo.FuzhiVo;
+import com.ztl.gym.code.mapper.CodeOperationLogMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
@@ -25,6 +23,7 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.domain.ProductBatch;
@@ -32,6 +31,8 @@ import com.ztl.gym.product.domain.ProductCategory;
 import com.ztl.gym.product.service.IProductBatchService;
 import com.ztl.gym.product.service.IProductCategoryService;
 import com.ztl.gym.product.service.IProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +46,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/code/single")
 public class CodeSingleController extends BaseController {
+
+    /**
+     * 定义日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger(CodeSingleController.class);
+
     @Autowired
     private CommonService commonService;
     @Autowired
@@ -62,9 +69,13 @@ public class CodeSingleController extends BaseController {
     private IProductCategoryService productCategoryService;
     @Autowired
     private IProductService tProductService;
+    @Autowired
+    private CodeOperationLogMapper codeOperationLogMapper;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
+    @Value("${ruoyi.preAccUrl}")
+    private String preAccUrl;
     /**
      * 查询生码记录列表
      */
@@ -232,7 +243,7 @@ public class CodeSingleController extends BaseController {
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeSingle codeSingle, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListBySingle(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
-        String temp = "码" + "                                        " + "\r\n";
+        String temp = "流水号,码,防伪码" + "                                        " + "\r\n";
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -243,11 +254,12 @@ public class CodeSingleController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                temp += "        " + code.getCode() + "\r\n";
+                temp += "        " + code.getCodeIndex()+","+code.getCode();//流水号，码
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                temp += (code.getpCode() == null ? code.getCode() : code.getpCode()) + "\r\n";
+                temp += code.getCodeIndex()+","+(code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
             }
+            temp +=code.getCodeAcc()==null?"\r\n":","+preAccUrl+code.getCodeAcc()+ "\r\n";//防伪码
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);
@@ -445,6 +457,7 @@ public class CodeSingleController extends BaseController {
                     codeService.updateCode(boxCode);
                 }
             }
+            recordOperationLogBean(pCode,list.size()-1,AccConstants.LOG_OPERATION_TYPE_PACKING,SecurityUtils.getLoginUserTopCompanyId());
             ajax.put("data", pCode);
             return ajax;
         }else{
@@ -496,4 +509,171 @@ public class CodeSingleController extends BaseController {
         return ajax;
     }
 
+    @PostMapping("/box/unpacking")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult unpackingBox(@RequestBody Map<String, Object> map) {
+        logger.info("the method unpackingBox enter, param is {}.", map);
+        //获取箱码
+        String pCode = (String) map.get("pCode");
+        if (StringUtils.isBlank(pCode)) {
+            throw new CustomException("请输入箱码！", HttpStatus.ERROR);
+        }
+        Long companyId = SecurityUtils.getLoginUserTopCompanyId();
+        Code temp = new Code();
+        temp.setCode(pCode);
+        temp.setCompanyId(companyId);
+        //查询单码数据
+        Code code = codeService.selectCode(temp);
+        if (code == null) {
+            throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
+        }
+        if(!code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)){
+            throw new CustomException("不是箱码，请重新扫描！", HttpStatus.ERROR);
+        }
+
+        Map<String, Object> query = new HashMap<>(2);
+        query.put("code", pCode);
+        query.put("companyId", companyId);
+        //判断是否查询到数据
+        List<Code> codeList = codeService.selectCodeListByCodeOrIndex(query);
+        //如果箱码里没有产品不让拆箱
+        if(codeList.size()<=1){
+            logger.error("空箱无须拆箱！");
+            throw new CustomException("空箱无须拆箱！", HttpStatus.ERROR);
+        }
+
+        logger.info("进行插箱操作，箱码为{}", pCode);
+        codeService.cleanSingleCodesInBox(companyId, pCode);
+        logger.info("进行插箱操作成功。");
+        //记录拆箱操作
+        recordOperationLogBean(pCode, codeList.size() - 1, AccConstants.LOG_OPERATION_TYPE_UNPACKING, SecurityUtils.getLoginUserTopCompanyId());
+        logger.info("the method unpackingBox end.");
+        return AjaxResult.success();
+    }
+
+    @PostMapping("/singleCode/add")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult addSingleCode(@RequestBody Map<String, Object> map) {
+        logger.info("the method addSingleCode enter, param is {}.", map);
+        //获取箱码
+        String pCode = (String) map.get("pCode");
+        if (StringUtils.isBlank(pCode)) {
+            throw new CustomException("请输入箱码！", HttpStatus.ERROR);
+        }
+        List<String> codes = (List) map.get("codes");
+        if (CollectionUtil.isEmpty(codes)) {
+            throw new CustomException("请输入单码！", HttpStatus.ERROR);
+        }
+        //校验操作
+        checkaddSingleCode(pCode, codes);
+        //记录补标操作
+        recordOperationLogBean(pCode, codes.size(), AccConstants.LOG_OPERATION_TYPE_ADD, SecurityUtils.getLoginUserTopCompanyId());
+        logger.info("the method addSingleCode end.");
+        return AjaxResult.success();
+    }
+
+    private void checkaddSingleCode(String pCode, List<String> codes) {
+        Code code = new Code();
+        //查询箱码数据
+        Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        code.setCode(pCode);
+        code.setCompanyId(companyId);
+        Code box = codeService.selectCode(code);
+        if (box == null) {
+            throw new CustomException("未查询到相关箱码数据！", HttpStatus.ERROR);
+        }
+        if (box.getCodeAttrId() == null) {
+            throw new CustomException("该箱码未赋值，请先赋值！", HttpStatus.ERROR);
+        }
+        Code single = null;
+        for (String str : codes) {
+            code.setCode(str);
+            single = codeService.selectCode(code);
+            if (single == null) {
+                throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
+            }
+            if (single.getCodeAttrId() == null) {
+                throw new CustomException("存在未赋值产品码，请重新扫码！", HttpStatus.ERROR);
+            }
+            //套标生码没有SingleId，所以无法判断生码区间，然后用CodeAttrId判断
+            if (single.getSingleId() == null) {
+                if(box.getCodeAttrId().longValue() !=single.getCodeAttrId()){
+                    throw new CustomException("不允许跨生码区间装箱，请重新扫码！", HttpStatus.ERROR);
+                }
+
+            } else if (box.getSingleId().longValue() != single.getSingleId()) {
+                throw new CustomException("不允许跨生码区间装箱，请重新扫码！", HttpStatus.ERROR);
+            }
+            if (single.getpCode() != null) {
+                throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！", HttpStatus.ERROR);
+            }
+            codeService.updatePCodeByCode(companyId, pCode, str);
+        }
+    }
+    @PostMapping("/singleCode/separate")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult separateSingleCode(@RequestBody Map<String, Object> map) {
+        logger.info("the method separateSingleCode enter, param is {}.", map);
+        //获取箱码
+        String pCode = (String) map.get("pCode");
+        if (StringUtils.isBlank(pCode)) {
+            throw new CustomException("请输入箱码！", HttpStatus.ERROR);
+        }
+
+        List<String> codes = (List) map.get("codes");
+        if (CollectionUtil.isEmpty(codes)) {
+            throw new CustomException("请输入单码！", HttpStatus.ERROR);
+        }
+        Code code = new Code();
+        ;
+        //查询箱码数据
+        Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        code.setCode(pCode);
+        code.setCompanyId(companyId);
+        Code box = codeService.selectCode(code);
+        if (box == null) {
+            logger.error("未查询到该箱码记录");
+            throw new CustomException("未查询到相关箱码数据！", HttpStatus.ERROR);
+        }
+        Code single = null;
+        for (String str : codes) {
+            code.setCode(str);
+            single = codeService.selectCode(code);
+            if (single == null) {
+                throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
+            }
+            if (!pCode.equals(single.getpCode())) {
+                logger.error(str + "不属于该箱码");
+                throw new CustomException("存在不属于该箱码的产品码,请重新扫描！", HttpStatus.ERROR);
+            }
+            codeService.updatePCodeByCode(companyId, null, str);
+        }
+        //记录拆标操作
+        recordOperationLogBean(pCode, codes.size(), AccConstants.LOG_OPERATION_TYPE_SEPARATE, companyId);
+        logger.info("the method separateSingleCode end.");
+        return AjaxResult.success();
+    }
+
+    /**
+     * 记录操作日志
+     *
+     * @param pCode     箱码
+     * @param count     标码数量
+     * @param type      操作类型
+     * @param companyId 企业id
+     */
+    private void recordOperationLogBean(String pCode, long count, int type, long companyId) {
+        CodeOperationLog codeOperationLog = new CodeOperationLog();
+        codeOperationLog.setCode(pCode);
+        codeOperationLog.setCount(count);
+        codeOperationLog.setCreateTime(DateUtils.getNowDate());
+        codeOperationLog.setType(type);
+        codeOperationLog.setCompanyId(companyId);
+        long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        codeOperationLog.setCreateUser(userId);
+        codeOperationLogMapper.insertCodeOperationLog(codeOperationLog);
+    }
 }

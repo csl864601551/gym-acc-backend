@@ -202,4 +202,10 @@ public interface CodeMapper {
      * @return 响应
      */
     List<Code> selectCodeRecordBySecurityCode(Map<String, Object> codeParam);
+
+    /**
+     * 将箱码中的单码pcode属性设置为null
+     * @param params
+     */
+    void updatePcodeValIsNan(Map<String, Object> params);
 }

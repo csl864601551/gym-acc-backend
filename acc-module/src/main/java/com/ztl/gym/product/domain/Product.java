@@ -205,7 +205,7 @@ public class Product extends BaseEntity {
     @Excel(name = "多次查询内容")
     private String content2;
 
-
+    private String photo;
     /**
      * 多次查询内容
      */
@@ -467,6 +467,14 @@ public class Product extends BaseEntity {
         this.updateType = updateType;
     }
 
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -501,6 +509,7 @@ public class Product extends BaseEntity {
                 .append("content1", getContent1())
                 .append("content2", getContent2())
                 .append("updateType", getUpdateType())
+                .append("photo", getPhoto())
                 .toString();
     }
 }

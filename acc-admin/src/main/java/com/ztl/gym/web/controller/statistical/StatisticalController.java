@@ -1,7 +1,9 @@
 package com.ztl.gym.web.controller.statistical;
 
 import cn.hutool.core.date.DateUtil;
+import com.ztl.gym.code.service.ICodeAccRecordService;
 import com.ztl.gym.code.service.ICodeRecordService;
+import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysUser;
@@ -74,6 +76,12 @@ public class StatisticalController {
     @Autowired
     private IPurchaseRecordService purchaseRecordService;
 
+    @Autowired
+    private ICodeSingleService codeSingleService;
+
+    @Autowired
+    private ICodeAccRecordService codeAccRecordService;
+
     /**
      * 查询首页信息
      */
@@ -85,15 +93,25 @@ public class StatisticalController {
             boolean isadmin = false;
             Long deptId = 0l;
             //获取用户部门信息
-            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-            SysUser user = loginUser.getUser();
-            if(user.getRoles().get(0).getRoleId()==120){
-                isadmin = true;
-            }else if(user.getRoles().get(0).getRoleId()==101){
+//            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+//            SysUser user = loginUser.getUser();
+//            if(user.getRoles().get(0).getRoleId()==120){
+//                isadmin = true;
+//            }else if(user.getRoles().get(0).getRoleId()==101){
+//                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
+//                isadmin = false;
+//            }
+            Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
+            }else{
+                isadmin = true;
             }
             Map<String, Object> query = new HashMap<String, Object>();
+            int codeNum = 0;
+            int singCodeNum = 0;
+            int AccCodeNum = 0;
             //平台方
             if (isadmin) {
                 //企业总数
@@ -107,7 +125,10 @@ public class StatisticalController {
                 statisticalBean.setChzlNum(mixRecordService.selectmixnum(query));
                 //生码总量
                 query.put("type", 2);
-                statisticalBean.setSmzlNum(codeRecordService.selectCodeNum(query));
+                codeNum = codeRecordService.selectCodeNum(query);
+                singCodeNum = codeSingleService.selectSingCodeNum(query);
+                AccCodeNum = codeAccRecordService.selectAccCodeNum(query);
+                statisticalBean.setSmzlNum(codeNum+singCodeNum+AccCodeNum);
                 //累计充值费用
                 statisticalBean.setLjczfyNum(paymentRecordService.getAllAmountNum(query));
                 //产品总览
@@ -195,10 +216,16 @@ public class StatisticalController {
                 query.put("type", 1);
                 query.put("beginTime", beginTime);
                 query.put("endTime", endTime);
-                statisticalBean.setJrsmNum(codeRecordService.selectCodeNum(query));
+                codeNum = codeRecordService.selectCodeNum(query);
+                singCodeNum = codeSingleService.selectSingCodeNum(query);
+                AccCodeNum = codeAccRecordService.selectAccCodeNum(query);
+                statisticalBean.setJrsmNum(codeNum+singCodeNum+AccCodeNum);
                 //累计生码总量
                 query.put("type", 2);
-                statisticalBean.setLjsmNum(codeRecordService.selectCodeNum(query));
+                codeNum = codeRecordService.selectCodeNum(query);
+                singCodeNum = codeSingleService.selectSingCodeNum(query);
+                AccCodeNum = codeAccRecordService.selectAccCodeNum(query);
+                statisticalBean.setLjsmNum(codeNum+singCodeNum+AccCodeNum);
                 //今日扫码总量
                 query.put("type", 1);
                 query.put("beginTime", beginTime);
@@ -329,10 +356,16 @@ public class StatisticalController {
                 query.put("type", 1);
                 query.put("beginTime", beginTime);
                 query.put("endTime", endTime);
-                statisticalBean.setJrsmNum(codeRecordService.selectCodeNum(query));
+                codeNum = codeRecordService.selectCodeNum(query);
+                singCodeNum = codeSingleService.selectSingCodeNum(query);
+                AccCodeNum = codeAccRecordService.selectAccCodeNum(query);
+                statisticalBean.setJrsmNum(codeNum+singCodeNum+AccCodeNum);
                 //累计生码总量
                 query.put("type", 2);
-                statisticalBean.setLjsmNum(codeRecordService.selectCodeNum(query));
+                codeNum = codeRecordService.selectCodeNum(query);
+                singCodeNum = codeSingleService.selectSingCodeNum(query);
+                AccCodeNum = codeAccRecordService.selectAccCodeNum(query);
+                statisticalBean.setLjsmNum(codeNum+singCodeNum+AccCodeNum);
                 //今日扫码总量
                 query.put("type", 1);
                 query.put("beginTime", beginTime);
@@ -375,13 +408,12 @@ public class StatisticalController {
             //获取用户部门信息
             Long deptId = 0l;
             //获取用户部门信息
-            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-            SysUser user = loginUser.getUser();
-            if(user.getRoles().get(0).getRoleId()==120){
-                isadmin = true;
-            }else if(user.getRoles().get(0).getRoleId()==101){
+            Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
+            }else{
+                isadmin = true;
             }
             Map<String, Object> query = new HashMap<String, Object>();
             //折线图数据
@@ -499,13 +531,12 @@ public class StatisticalController {
             //获取用户部门信息
             Long deptId = 0l;
             //获取用户部门信息
-            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-            SysUser user = loginUser.getUser();
-            if(user.getRoles().get(0).getRoleId()==120){
-                isadmin = true;
-            }else if(user.getRoles().get(0).getRoleId()==101){
+            Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
+            }else{
+                isadmin = true;
             }
             //折线图数据
             //生码数量
@@ -761,13 +792,12 @@ public class StatisticalController {
             //获取用户部门信息
             Long deptId = 0l;
             //获取用户部门信息
-            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-            SysUser user = loginUser.getUser();
-            if(user.getRoles().get(0).getRoleId()==120){
-                isadmin = true;
-            }else if(user.getRoles().get(0).getRoleId()==101){
+            Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
+            }else{
+                isadmin = true;
             }
             //折线图数据
             List<Object> smjlXlist = new ArrayList<Object>();
@@ -930,13 +960,12 @@ public class StatisticalController {
             //获取用户部门信息
             Long deptId = 0l;
             //获取用户部门信息
-            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-            SysUser user = loginUser.getUser();
-            if(user.getRoles().get(0).getRoleId()==120){
-                isadmin = true;
-            }else if(user.getRoles().get(0).getRoleId()==101){
+            Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 deptId = SecurityUtils.getLoginUserCompany().getDeptId();
                 isadmin = false;
+            }else{
+                isadmin = true;
             }
             //折线图数据
             List<Map<String, Object>> smList = new ArrayList<Map<String, Object>>();

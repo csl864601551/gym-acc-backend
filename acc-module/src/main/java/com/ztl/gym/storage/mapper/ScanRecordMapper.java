@@ -64,6 +64,12 @@ public interface ScanRecordMapper
 
     List<Map<String, Object>> selectFlowList(@Param("companyId")Long companyId,@Param("code") String code);
 
+    /**
+     * 查询顺时间物流信息
+     * @return 结果
+     */
+    List<Map<String, Object>> selectFlowListAsc(@Param("companyId")Long companyId,@Param("code") String code);
+
 
     /**
      * 查询热力图扫码记录

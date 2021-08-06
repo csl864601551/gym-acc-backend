@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.CodeOperationLogMapper">
+    
+    <resultMap type="CodeOperationLog" id="CodeOperationLogResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="userName"    column="nick_name"    />
+        <result property="count"    column="count"    />
+        <result property="type"    column="type"    />
+        <result property="message"    column="message"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCodeOperationLogVo">
+        select a.id,
+        a.company_id,
+        a.code,
+        a.count,
+        a.type,
+        a.message,
+        a.remark,
+        a.create_user,
+        a.create_time,
+        a.update_user,
+        a.update_time,
+        u.nick_name
+        from t_code_operation_log a
+        left join sys_user u on a.create_user = u.user_id
+    </sql>
+
+    <select id="selectCodeOperationLogList" parameterType="CodeOperationLog" resultMap="CodeOperationLogResult">
+        <include refid="selectCodeOperationLogVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="message != null  and message != ''"> and message = #{message}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(a.create_time,'%Y%m%d%H%i%s') &gt;= str_to_date(#{params.beginTime}, '%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(a.create_time,'%Y%m%d%H%i%s') &lt;= str_to_date(#{params.endTime}, '%Y%m%d%H%i%s')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCodeOperationLogById" parameterType="Long" resultMap="CodeOperationLogResult">
+        <include refid="selectCodeOperationLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCodeOperationLog" parameterType="CodeOperationLog" useGeneratedKeys="true" keyProperty="id">
+        insert into t_code_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null">code,</if>
+            <if test="companyId != null "> company_id,</if>
+            <if test="count != null">count,</if>
+            <if test="type != null">type,</if>
+            <if test="message != null">message,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null">#{code},</if>
+            <if test="companyId != null ">#{companyId},</if>
+            <if test="count != null">#{count},</if>
+            <if test="type != null">#{type},</if>
+            <if test="message != null">#{message},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCodeOperationLog" parameterType="CodeOperationLog">
+        update t_code_operation_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null">code = #{code},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="companyId != null ">company_id = #{companyId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="message != null">message = #{message},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCodeOperationLogById" parameterType="Long">
+        delete from t_code_operation_log where id = #{id}
+    </delete>
+
+    <delete id="deleteCodeOperationLogByIds" parameterType="String">
+        delete from t_code_operation_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
