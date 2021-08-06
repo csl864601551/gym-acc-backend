@@ -158,7 +158,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="selectmixnum" resultType="java.lang.Integer" parameterType="Map">
-        select count(distinct product_id)  from  t_mix_record  where mix_type='1'
+        select count(distinct code)  from  t_mix_record  where mix_type='1'
         <if test="deptId != null">
             and  company_id = #{deptId}
         </if>

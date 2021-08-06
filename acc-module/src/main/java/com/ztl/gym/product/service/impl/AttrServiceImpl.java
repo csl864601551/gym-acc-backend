@@ -49,7 +49,15 @@ public class AttrServiceImpl implements IAttrService
     @Override
     public Attr selectAttrByName(String name)
     {
-        return attrMapper.selectAttrByName(name);
+        Attr attr=new Attr();
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            attr.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            attr.setAttrNameCn(name);
+            return attrMapper.selectAttrByName(attr);
+        }else {
+            return attr;
+        }
     }
 
     /**

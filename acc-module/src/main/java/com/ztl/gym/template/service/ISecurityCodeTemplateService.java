@@ -28,6 +28,15 @@ public interface ISecurityCodeTemplateService
      */
     public List<SecurityCodeTemplate> selectSecurityCodeTemplateList(SecurityCodeTemplate securityCodeTemplate);
 
+
+    /**
+     * 查询template列表的总条数
+     *
+     * @param securityCodeTemplate template
+     * @return template集合
+     */
+    public int selectSecurityCodeTemplateListCount(SecurityCodeTemplate securityCodeTemplate);
+
     /**
      * 新增template
      * 

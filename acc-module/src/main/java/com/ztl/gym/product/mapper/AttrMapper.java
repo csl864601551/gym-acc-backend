@@ -25,10 +25,10 @@ public interface AttrMapper
     /**
      * 查询规格属性
      *
-     * @param name 规格属性ID
+     * @param attr 规格属性ID
      * @return 规格属性
      */
-    public Attr selectAttrByName(String name);
+    public Attr selectAttrByName(Attr attr);
 
     /**
      * 查询规格属性列表
