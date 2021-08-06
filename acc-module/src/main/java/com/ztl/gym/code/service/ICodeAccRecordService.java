@@ -1,10 +1,10 @@
 package com.ztl.gym.code.service;
 
-import java.util.List;
-
-import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAcc;
 import com.ztl.gym.code.domain.CodeAccRecord;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 生码记录Service接口
@@ -65,4 +65,12 @@ public interface ICodeAccRecordService
     int createAccCodeSingle(long companyId, long count, String remark);
 
     List<CodeAcc> selectAccCodeListByRecord(Long loginUserTopCompanyId, Long id);
+
+    /**
+     * 生防伪码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectAccCodeNum(Map<String, Object> map);
 }

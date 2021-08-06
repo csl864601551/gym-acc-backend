@@ -155,4 +155,18 @@
         </trim>
         where id = #{id}
     </update>
+
+
+    <select id="selectSingCodeNum" resultType="java.lang.Integer" parameterType="Map">
+        select IFNULL( SUM(count), 0 ) from  t_code_single where 1=1
+        <if test="deptId != null">
+            and  company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+
+        </if>
+    </select>
 </mapper>

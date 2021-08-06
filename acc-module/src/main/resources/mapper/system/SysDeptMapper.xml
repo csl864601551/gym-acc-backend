@@ -220,4 +220,10 @@
         </if>
     </select>
 
+
+    <select id="selectDeptByCity" parameterType="Long" resultMap="SysDeptResult">
+        <include refid="selectDeptVo"/>
+        where dept_id = #{deptId}
+    </select>
+
 </mapper>
