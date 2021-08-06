@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/open/code")
@@ -150,25 +147,31 @@ public class OpenCodeController {
      */
     @GetMapping("/getCodeList/{code}")
     public AjaxResult getCodeList(@PathVariable("code") String code) {
-        if(StringUtils.isBlank(code)){
+        if (StringUtils.isBlank(code)) {
             throw new CustomException("请输入码值！", HttpStatus.ERROR);
         }
-        Map<String,Object> map = new HashMap<>(2);
-        map.put("code",code);
-        map.put("companyId",Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("code", code);
+        map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
         List<Code> codeList = codeService.selectCodeListByCodeOrIndex(map);
-        if(codeList.size()>0){
+        Map<String, Object> result = new HashMap<>(3);
+        List<String> singleCodes = new LinkedList<>();
+        if (codeList.size() > 0) {
             for (Code codes : codeList) {
-                String typeName = "未知";
                 if (codes.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
-                    typeName = "箱码";
+                    result.put("pCode", codes.getCode());
                 } else {
-                    typeName = "单码";
+                    singleCodes.add(codes.getCode());
                 }
-                codes.setCodeTypeName(typeName);
             }
-            return AjaxResult.success(codeList);
-        }else{
+            if (StringUtils.isBlank((String) result.get("pCode"))) {
+                throw new CustomException("未查询到所属箱码！", HttpStatus.ERROR);
+            }
+            result.put("singleCodes", singleCodes);
+            //获取产品名称
+            result.put("productName", codeList.get(0).getCodeAttr().getProductName());
+            return AjaxResult.success(result);
+        } else {
             throw new CustomException("未查询到码数据！", HttpStatus.ERROR);
         }
     }
