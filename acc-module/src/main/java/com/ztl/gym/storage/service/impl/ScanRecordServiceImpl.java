@@ -15,6 +15,7 @@ import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.mapper.ScanRecordMapper;
 import com.ztl.gym.storage.service.IScanRecordService;
@@ -165,7 +166,12 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
         returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
         returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
-
+        String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
+        if (StringUtils.isNotBlank(photo)) {
+            returnMap.put("photo", photo.split(",")[0]);
+        } else {
+            returnMap.put("photo","");
+        }
         //TODO 判定是否窜货
 
         return returnMap;
