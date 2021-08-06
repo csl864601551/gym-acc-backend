@@ -983,9 +983,7 @@ public class StatisticalController {
                                 if(smxxMap.get("productName")!=null){
                                     top10Map.put("productName",smxxMap.get("productName"));
                                 }
-                                if(smxxMap.get("productName")!=null){
-                                    top10Map.put("productImage",smxxMap.get("productName"));
-                                }
+                                top10Map.put("photo",smxxMap.get("photo"));
                             }
                         }
                         smList.add(top10Map);
@@ -1004,9 +1002,6 @@ public class StatisticalController {
                             if(smxxMap!=null){
                                 if(smxxMap.get("productName")!=null){
                                     top10Map.put("productName",smxxMap.get("productName"));
-                                }
-                                if(smxxMap.get("productName")!=null){
-                                    top10Map.put("productImage",smxxMap.get("productName"));
                                 }
                                 top10Map.put("photo",smxxMap.get("photo"));
                             }
