@@ -1,11 +1,11 @@
 package com.ztl.gym.code.mapper;
 
-import java.util.List;
-
-import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAcc;
 import com.ztl.gym.code.domain.CodeAccRecord;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 生码记录Mapper接口
@@ -71,4 +71,13 @@ public interface CodeAccRecordMapper
      * @return 防伪记录
      */
     List<CodeAccRecord> selectRecordByAccCode(@Param("codeAcc")String codeAcc);
+
+
+    /**
+     * 生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public int selectAccCodeNum(Map<String, Object> map);
 }

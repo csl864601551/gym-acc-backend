@@ -124,4 +124,12 @@ public interface ISysDeptService
      * @return 子部门数
      */
     public int selectCountBydept(Map<String, Object> map);
+
+    /**
+     * 根据城市名称查询信息
+     *
+     * @param city 城市名称
+     * @return 部门信息
+     */
+    public SysDept selectDeptByCity(String city);
 }

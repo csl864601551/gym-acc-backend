@@ -305,4 +305,16 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         CodeSingle.setUpdateTime(new Date());
         return CodeSingle;
     }
+
+
+    /**
+     * 单码生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectSingCodeNum(Map<String, Object> map) {
+        return codeSingleMapper.selectSingCodeNum(map);
+    }
 }

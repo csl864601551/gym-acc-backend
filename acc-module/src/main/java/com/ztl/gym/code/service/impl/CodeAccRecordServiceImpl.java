@@ -152,4 +152,16 @@ public class CodeAccRecordServiceImpl implements ICodeAccRecordService
         params.put("recordId", recordId);
         return codeAccRecordMapper.selectAccCodeListByRecord(companyId, recordId);
     }
+
+
+    /**
+     * 生防伪码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectAccCodeNum(Map<String, Object> map) {
+        return codeAccRecordMapper.selectAccCodeNum(map);
+    }
 }

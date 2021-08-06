@@ -146,4 +146,18 @@
         from t_code_acc u
         left join t_code_acc_record r on u.record_id = r.id where u.code_acc = #{codeAcc}
     </select>
+
+
+    <select id="selectAccCodeNum" resultType="java.lang.Integer" parameterType="Map">
+        select IFNULL( SUM(count), 0 ) from  t_code_acc_record where 1=1
+        <if test="deptId != null">
+            and  company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+
+        </if>
+    </select>
 </mapper>
