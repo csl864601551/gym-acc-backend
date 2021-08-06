@@ -241,5 +241,24 @@ public class AccConstants {
      */
     public final static int PAYMENT_STATUS_TWO = 2;
 
+    /*--------------------------- 拆箱装箱操作类型------------------*/
+    /**
+     * 装箱
+     */
+    public final static int LOG_OPERATION_TYPE_PACKING = 0;
+    /**
+     * 拆箱
+     */
+    public final static int LOG_OPERATION_TYPE_UNPACKING = 1;
+    /**
+     * 补标
+     */
+    public final static int LOG_OPERATION_TYPE_ADD = 2;
+    /**
+     * 分离单标
+     */
+    public final static int LOG_OPERATION_TYPE_SEPARATE = 3;
+
+
 
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.CodeOperationLogMapper">
+    
+    <resultMap type="CodeOperationLog" id="CodeOperationLogResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="count"    column="count"    />
+        <result property="type"    column="type"    />
+        <result property="message"    column="message"    />
+        <result property="remark"    column="remark"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCodeOperationLogVo">
+        select id, company_id, code, count, type, message, remark, create_user, create_time, update_user, update_time from t_code_operation_log
+    </sql>
+
+    <select id="selectCodeOperationLogList" parameterType="CodeOperationLog" resultMap="CodeOperationLogResult">
+        <include refid="selectCodeOperationLogVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="message != null  and message != ''"> and message = #{message}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectCodeOperationLogById" parameterType="Long" resultMap="CodeOperationLogResult">
+        <include refid="selectCodeOperationLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCodeOperationLog" parameterType="CodeOperationLog" useGeneratedKeys="true" keyProperty="id">
+        insert into t_code_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null">code,</if>
+            <if test="companyId != null "> company_id,</if>
+            <if test="count != null">count,</if>
+            <if test="type != null">type,</if>
+            <if test="message != null">message,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null">#{code},</if>
+            <if test="companyId != null ">#{companyId},</if>
+            <if test="count != null">#{count},</if>
+            <if test="type != null">#{type},</if>
+            <if test="message != null">#{message},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCodeOperationLog" parameterType="CodeOperationLog">
+        update t_code_operation_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null">code = #{code},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="companyId != null ">company_id = #{companyId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="message != null">message = #{message},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCodeOperationLogById" parameterType="Long">
+        delete from t_code_operation_log where id = #{id}
+    </delete>
+
+    <delete id="deleteCodeOperationLogByIds" parameterType="String">
+        delete from t_code_operation_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
