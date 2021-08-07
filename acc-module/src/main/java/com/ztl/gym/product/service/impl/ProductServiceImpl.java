@@ -50,16 +50,18 @@ public class ProductServiceImpl implements IProductService
         List<Map<String,Object>> list=productMapper.getAttributeList(id);
         for (int i = 0; i < list.size(); i++) {
             Attr attr=attrService.selectAttrByName(list.get(i).get("attrNameCn").toString());
-            String attrValue=attr.getAttrValue();
             List<Map<String, Object>> listValues=new ArrayList<>();
-            if(attrValue!=null){
-                String[] sourceArray = attrValue.split("\n");
-                Map<String,Object> temp=new HashMap<>();
-                for (int j = 0; j < sourceArray.length; j++) {
-                    temp=new HashMap<>();
-                    temp.put("value",sourceArray[j]);
-                    temp.put("label",sourceArray[j]);
-                    listValues.add(temp);
+            if(attr!=null){
+                String attrValue=attr.getAttrValue();
+                if(attrValue!=null){
+                    String[] sourceArray = attrValue.split("\n");
+                    Map<String,Object> temp=new HashMap<>();
+                    for (int j = 0; j < sourceArray.length; j++) {
+                        temp=new HashMap<>();
+                        temp.put("value",sourceArray[j]);
+                        temp.put("label",sourceArray[j]);
+                        listValues.add(temp);
+                    }
                 }
             }
             list.get(i).put("arrList",listValues);
