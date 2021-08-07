@@ -79,10 +79,12 @@ public class ScanRecordController extends BaseController {
     @Log(title = "扫码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ScanRecord scanRecord) {
-        if(scanRecord.getProductId()>0){
-            Product product = tProductService.selectTProductById(scanRecord.getProductId());
-            if(product!=null){
-                scanRecord.setProductName(product.getProductName());
+        if(scanRecord.getProductId()!=null){
+            if(scanRecord.getProductId()>0){
+                Product product = tProductService.selectTProductById(scanRecord.getProductId());
+                if(product!=null){
+                    scanRecord.setProductName(product.getProductName());
+                }
             }
         }
         return toAjax(scanRecordService.insertScanRecord(scanRecord));
