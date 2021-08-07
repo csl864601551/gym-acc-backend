@@ -205,3 +205,8 @@ ALTER TABLE `sys_dept` ADD `latitude` varchar(255) COLLATE utf8mb4_bin DEFAULT N
 
 #### Beta V1.0.7 2021/08/06
 ALTER TABLE `t_product` ADD `photo` varchar(5000) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '产品图片' AFTER `content2`;
+
+
+#### Beta V1.0.7 2021/08/06
+ALTER TABLE `t_scan_record` ADD `product_id` bigint(20) NULL DEFAULT NULL COMMENT '产品id';
+ALTER TABLE `t_scan_record` ADD `product_name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '产品名称'

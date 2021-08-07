@@ -583,8 +583,8 @@ public class CodeSingleController extends BaseController {
      * @param pCode 箱码
      * @param code
      */
-    @GetMapping("/checkAddSingleCode")
-    private void checkAddSingleCode(String pCode, String code) {
+    @GetMapping("/checkAddSingleCode/{pCode}/{code}")
+    private void checkAddSingleCode(@PathVariable("pCode")String pCode, @PathVariable("code")String code) {
         //获取箱码
         if (StringUtils.isBlank(code)) {
             throw new CustomException("请输入单码！", HttpStatus.ERROR);
@@ -599,7 +599,6 @@ public class CodeSingleController extends BaseController {
      * @param pCode 箱码
      * @param codes 标码集合
      */
-    @DataSource(DataSourceType.SHARDING)
     private void verifyAddSingleCodeParams(String pCode, List<String> codes){
         //获取箱码
         if (StringUtils.isBlank(pCode)) {

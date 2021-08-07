@@ -9,6 +9,8 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.service.IProductService;
 import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.service.IScanRecordService;
 import com.ztl.gym.system.service.ISysDeptService;
@@ -35,6 +37,10 @@ public class ScanRecordController extends BaseController {
 
     @Autowired
     private ISysDeptService deptService;
+
+    @Autowired
+    private IProductService tProductService;
+
 
 
     /**
@@ -73,6 +79,12 @@ public class ScanRecordController extends BaseController {
     @Log(title = "扫码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ScanRecord scanRecord) {
+        if(scanRecord.getProductId()>0){
+            Product product = tProductService.selectTProductById(scanRecord.getProductId());
+            if(product!=null){
+                scanRecord.setProductName(product.getProductName());
+            }
+        }
         return toAjax(scanRecordService.insertScanRecord(scanRecord));
     }
 

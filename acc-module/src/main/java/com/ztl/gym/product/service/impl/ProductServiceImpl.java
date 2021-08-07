@@ -242,4 +242,18 @@ public class ProductServiceImpl implements IProductService
     {
         return productMapper.selectProductNum(map);
     }
+
+
+    /**
+     * 查询产品
+     *
+     * @param id 产品ID
+     * @return 产品
+     */
+    @Override
+    public Product selectTProductByIdOne(Long id)
+    {
+        Product product=productMapper.selectTProductById(id);
+        return product;
+    }
 }
