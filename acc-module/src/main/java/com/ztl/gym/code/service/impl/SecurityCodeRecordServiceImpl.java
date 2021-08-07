@@ -171,7 +171,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
             logger.info("没有对应的防伪码");
             return scanSecurityCodeOutBean;
         }
-        List<SecurityCodeRecord> securityCodeRecords = securityCodeRecordMapper.selectRecordsByAccCode(securityCodeRecord.getCodeAcc());
+        List<SecurityCodeRecord> securityCodeRecords = securityCodeRecordMapper.selectRecordsByAccCode(code.getCodeAcc());
         scanSecurityCodeOutBean = buildScanResultBeanByCode(securityCodeRecord, code, securityCodeRecords);
         securityCodeRecordMapper.insertSecurityCodeRecord(securityCodeRecord);
         logger.info("防伪码扫描记录入库成功。");
@@ -201,19 +201,24 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordByIndex(code.getCodeIndex(), code.getCompanyId());
         if (!Objects.isNull(codeRecord)) {
             securityCodeRecord.setProductId(codeRecord.getProductId());
-        }
-        logger.info("该防伪码对应的标识码没有生码记录！");
-        Product product = productService.selectTProductById(codeRecord.getProductId());
-        if (!Objects.isNull(product)) {
-            scanSecurityCodeOutBean.setProduct(product.getProductName());
-            scanSecurityCodeOutBean.setMoreContent(product.getContent2());
-            scanSecurityCodeOutBean.setOnceContent(product.getContent1());
-            scanSecurityCodeOutBean.setOnceTemplateContent(product.getTemplateContent1());
-            scanSecurityCodeOutBean.setMoreTemplateContent(product.getTemplateContent2());
+            Product product = productService.selectTProductById(codeRecord.getProductId());
+            if (!Objects.isNull(product)) {
+                scanSecurityCodeOutBean.setProduct(product.getProductName());
+                scanSecurityCodeOutBean.setMoreContent(product.getContent2());
+                scanSecurityCodeOutBean.setOnceContent(product.getContent1());
+                scanSecurityCodeOutBean.setOnceTemplateContent(product.getTemplateContent1());
+                scanSecurityCodeOutBean.setMoreTemplateContent(product.getTemplateContent2());
+            }
+            else{
+                logger.info("该防伪码对应的标识码没有关联产品！");
+            }
+        }else{
+            logger.info("该防伪码对应的标识码没有关联产品！");
         }
         logger.info("该防伪码对应的标识码没有关联产品！");
         //给防伪记录塞值
         securityCodeRecord.setCode(code.getCode());
+        securityCodeRecord.setCodeAcc(code.getCodeAcc());
         securityCodeRecord.setCreateTime(DateUtils.getNowDate());
         return scanSecurityCodeOutBean;
     }
