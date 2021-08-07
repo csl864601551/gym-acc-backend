@@ -168,9 +168,9 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
         String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
         if (StringUtils.isNotBlank(photo)) {
-            returnMap.put("photo", photo.split(",")[0]);
+            returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
         } else {
-            returnMap.put("photo","");
+            returnMap.put("photoShow","");
         }
         //TODO 判定是否窜货
 
