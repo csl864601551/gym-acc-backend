@@ -201,7 +201,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordByIndex(code.getCodeIndex(), code.getCompanyId());
         if (!Objects.isNull(codeRecord)) {
             securityCodeRecord.setProductId(codeRecord.getProductId());
-            Product product = productService.selectTProductById(codeRecord.getProductId());
+            Product product = productService.selectTProductByIdOne(codeRecord.getProductId());
             if (!Objects.isNull(product)) {
                 scanSecurityCodeOutBean.setProduct(product.getProductName());
                 scanSecurityCodeOutBean.setMoreContent(product.getContent2());
