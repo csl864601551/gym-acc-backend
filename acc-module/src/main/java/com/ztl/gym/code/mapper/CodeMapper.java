@@ -172,7 +172,7 @@ public interface CodeMapper {
     List<Code> selectCodeListByRecord(@Param("companyId") long companyId, @Param("recordId") long recordId);
     List<Code> selectCodeListBySingle(@Param("companyId") long companyId, @Param("singleId") long singleId);
 
-    void updatePCodeByCode(Map<String, Object> params);
+    void updatePCodeVal(Map<String, Object> params);
 
     List<Code> selectCodes(Map<String, Object> codeParam);
 

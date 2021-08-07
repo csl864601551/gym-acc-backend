@@ -425,7 +425,7 @@ public class CodeSingleController extends BaseController {
 
             Code temp = null;
             long singleId=0;
-
+            List<String> codeList = new LinkedList<>();
             for (int i = 0; i < list.size(); i++) {
                 temp = new Code();
                 temp.setCode(list.get(i));
@@ -446,8 +446,8 @@ public class CodeSingleController extends BaseController {
                 if(code.getpCode()!=null){
                     throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！",HttpStatus.ERROR);
                 }
-                if(i<list.size()-1){//更新单码
-                    codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+                if(i<list.size()-1){
+                    codeList.add(list.get(i));
                 }else{//最后一个码变成箱码
                     Code boxCode = new Code();
                     boxCode.setCodeIndex(code.getCodeIndex());
@@ -456,6 +456,8 @@ public class CodeSingleController extends BaseController {
                     boxCode.setCodeType(AccConstants.CODE_TYPE_BOX);
                     codeService.updateCode(boxCode);
                 }
+                //更新单码
+                codeService.updatePCodeVal(companyId,pCode,codeList);
             }
             recordOperationLogBean(pCode,list.size()-1,AccConstants.LOG_OPERATION_TYPE_PACKING,SecurityUtils.getLoginUserTopCompanyId());
             ajax.put("data", pCode);
@@ -567,14 +569,45 @@ public class CodeSingleController extends BaseController {
             throw new CustomException("请输入单码！", HttpStatus.ERROR);
         }
         //校验操作
-        checkaddSingleCode(pCode, codes);
+        verifyAddSingleCodeParams(pCode, codes);
+        Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        codeService.updatePCodeVal(companyId, pCode, codes);
         //记录补标操作
         recordOperationLogBean(pCode, codes.size(), AccConstants.LOG_OPERATION_TYPE_ADD, SecurityUtils.getLoginUserTopCompanyId());
         logger.info("the method addSingleCode end.");
         return AjaxResult.success();
     }
 
-    private void checkaddSingleCode(String pCode, List<String> codes) {
+    /**
+     * 单码补箱校验，端侧校验接口
+     * @param pCode 箱码
+     * @param code
+     */
+    @GetMapping("/checkAddSingleCode")
+    private void checkAddSingleCode(String pCode, String code) {
+        //获取箱码
+        if (StringUtils.isBlank(code)) {
+            throw new CustomException("请输入单码！", HttpStatus.ERROR);
+        }
+        List<String> codes = new LinkedList<>();
+        codes.add(code);
+        verifyAddSingleCodeParams(pCode, codes);
+    }
+
+    /**
+     * 补标入码参数校验
+     * @param pCode 箱码
+     * @param codes 标码集合
+     */
+    @DataSource(DataSourceType.SHARDING)
+    private void verifyAddSingleCodeParams(String pCode, List<String> codes){
+        //获取箱码
+        if (StringUtils.isBlank(pCode)) {
+            throw new CustomException("请输入箱码！", HttpStatus.ERROR);
+        }
+        if (CollectionUtil.isEmpty(codes)) {
+            throw new CustomException("请输入单码！", HttpStatus.ERROR);
+        }
         Code code = new Code();
         //查询箱码数据
         Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
@@ -609,9 +642,9 @@ public class CodeSingleController extends BaseController {
             if (single.getpCode() != null) {
                 throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！", HttpStatus.ERROR);
             }
-            codeService.updatePCodeByCode(companyId, pCode, str);
         }
     }
+
     @PostMapping("/singleCode/separate")
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
@@ -649,8 +682,8 @@ public class CodeSingleController extends BaseController {
                 logger.error(str + "不属于该箱码");
                 throw new CustomException("存在不属于该箱码的产品码,请重新扫描！", HttpStatus.ERROR);
             }
-            codeService.updatePCodeByCode(companyId, null, str);
         }
+        codeService.updatePCodeVal(companyId, null, codes);
         //记录拆标操作
         recordOperationLogBean(pCode, codes.size(), AccConstants.LOG_OPERATION_TYPE_SEPARATE, companyId);
         logger.info("the method separateSingleCode end.");

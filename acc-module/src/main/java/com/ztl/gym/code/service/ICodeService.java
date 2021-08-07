@@ -130,7 +130,7 @@ public interface ICodeService {
 
     List<Code> selectCodeListBySingle(Long companyId, Long recordId);
 
-    void updatePCodeByCode(Long companyId,String pCode, String s);
+    void updatePCodeVal(Long companyId,String pCode, List<String> codes);
 
     List<Code> selectCodes(Map<String, Object> codeParam);
 

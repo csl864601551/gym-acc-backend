@@ -404,7 +404,7 @@ public class CodeRecordController extends BaseController {
 
             Code temp = null;
             long codeAttrId=0;
-
+            List<String> codes = new LinkedList<>();
             for (int i = 0; i < list.size(); i++) {
                 temp = new Code();
                 temp.setCode(list.get(i));
@@ -417,10 +417,10 @@ public class CodeRecordController extends BaseController {
                 if(code.getpCode()!=null){
                     throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
                 }
-                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
-            }//更新单码
-
-
+                codes.add(list.get(i));
+            }
+            codeService.updatePCodeVal(companyId,pCode,codes);
+            //更新单码
             Code boxCode = new Code();
             boxCode.setCodeIndex(codeIndex);
             boxCode.setCompanyId(companyId);

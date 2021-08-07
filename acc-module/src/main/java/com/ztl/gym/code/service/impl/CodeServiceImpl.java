@@ -470,12 +470,12 @@ public class CodeServiceImpl implements ICodeService {
     }
 
     @Override
-    public void updatePCodeByCode(Long companyId,String pCode, String code) {
+    public void updatePCodeVal(Long companyId,String pCode, List<String> codes) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
         params.put("pCode", pCode);
-        params.put("code", code);
-        codeMapper.updatePCodeByCode(params);
+        params.put("codes", codes);
+        codeMapper.updatePCodeVal(params);
     }
 
     @Override

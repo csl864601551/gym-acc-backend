@@ -273,8 +273,11 @@
         order by code_index  asc
     </select>
 
-    <update id="updatePCodeByCode" parameterType="Map" >
-        update t_code set p_code = #{pCode}  where company_id=#{companyId} and code = #{code}
+    <update id="updatePCodeVal" parameterType="Map" >
+        update t_code set p_code = #{pCode}  where company_id=#{companyId} and code in
+        <foreach item="code" collection="codes" open="(" separator="," close=")">
+            #{code}
+        </foreach>
     </update>
 
     <update id="updateCodeAttrIdByPCode" parameterType="Map" >
