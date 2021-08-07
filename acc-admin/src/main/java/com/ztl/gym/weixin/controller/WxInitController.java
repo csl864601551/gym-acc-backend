@@ -238,7 +238,7 @@ public class WxInitController {
                 CodeRecord codeRecord = codeRecordService.selectCodeRecordByIndex(codeIndex,companyId);
                 if(codeRecord!=null){
                     long productId = codeRecord.getProductId();
-                    Product product = tProductService.selectTProductById(productId);
+                    Product product = tProductService.selectTProductByIdOne(productId);
                     if(product!=null){
                         String productDetailPc = product.getProductDetailPc();
                         //System.out.println("扫码详情进入成功  productDetailPc=="+productDetailPc);

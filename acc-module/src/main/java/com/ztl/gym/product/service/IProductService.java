@@ -21,6 +21,15 @@ public interface IProductService
      */
     public Product selectTProductById(Long id);
 
+
+    /**
+     * 只查询产品信息
+     *
+     * @param id 产品ID
+     * @return 产品
+     */
+    public Product selectTProductByIdOne(Long id);
+
     /**
      * 查询产品列表
      *

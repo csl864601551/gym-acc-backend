@@ -20,10 +20,12 @@
         <result property="createTime" column="create_time"/>
         <result property="updateUser" column="update_user"/>
         <result property="updateTime" column="update_time"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
     </resultMap>
 
     <sql id="selectScanRecordVo">
-        select id, company_id, code, longitude, latitude, terminal, ip, address, province, city, area, create_user, create_time, update_user, update_time from t_scan_record
+        select id, company_id, code, longitude, latitude, terminal, ip, address, province, city, area, create_user, create_time, update_user, update_time,product_id,product_name from t_scan_record
     </sql>
 
     <select id="selectScanRecordList" parameterType="ScanRecord" resultMap="ScanRecordResult">
@@ -41,6 +43,7 @@
             <if test="area != null  and area != ''">and area = #{area}</if>
             <if test="createUser != null ">and create_user = #{createUser}</if>
             <if test="updateUser != null ">and update_user = #{updateUser}</if>
+            <if test="productName != null ">and product_name = #{productName}</if>
         </where>
     </select>
 
@@ -66,6 +69,8 @@
             <if test="createTime != null">create_time,</if>
             <if test="updateUser != null">update_user,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null">product_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
@@ -82,6 +87,8 @@
             <if test="createTime != null">#{createTime},</if>
             <if test="updateUser != null">#{updateUser},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null">#{productName},</if>
         </trim>
     </insert>
 
@@ -102,6 +109,8 @@
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateUser != null">update_user = #{updateUser},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productName != null">product_name = #{productName},</if>
         </trim>
         where id = #{id}
     </update>
