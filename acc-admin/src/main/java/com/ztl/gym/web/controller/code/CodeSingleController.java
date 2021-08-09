@@ -573,6 +573,7 @@ public class CodeSingleController extends BaseController {
         Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
         codeService.updatePCodeVal(companyId, pCode, codes);
         //记录补标操作
+
         recordOperationLogBean(pCode, codes.size(), AccConstants.LOG_OPERATION_TYPE_ADD, SecurityUtils.getLoginUserTopCompanyId());
         logger.info("the method addSingleCode end.");
         return AjaxResult.success();
@@ -584,7 +585,10 @@ public class CodeSingleController extends BaseController {
      * @param code
      */
     @GetMapping("/checkAddSingleCode/{pCode}/{code}")
-    private void checkAddSingleCode(@PathVariable("pCode")String pCode, @PathVariable("code")String code) {
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult checkAddSingleCode(@PathVariable("pCode")String pCode, @PathVariable("code")String code) {
+        logger.info("the method checkAddSingleCode enter, pCode is {}  code is {}.", pCode, code);
         //获取箱码
         if (StringUtils.isBlank(code)) {
             throw new CustomException("请输入单码！", HttpStatus.ERROR);
@@ -592,6 +596,8 @@ public class CodeSingleController extends BaseController {
         List<String> codes = new LinkedList<>();
         codes.add(code);
         verifyAddSingleCodeParams(pCode, codes);
+        AjaxResult ajax = AjaxResult.success();
+        return ajax;
     }
 
     /**
