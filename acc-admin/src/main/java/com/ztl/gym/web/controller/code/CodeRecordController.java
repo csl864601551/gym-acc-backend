@@ -300,7 +300,7 @@ public class CodeRecordController extends BaseController {
                 code.setCodeTypeName("箱码");
                 temp += code.getCodeIndex()+","+(code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
             }
-            temp +=code.getCodeAcc()==null?"\r\n":","+preAccUrl+code.getCodeAcc()+ "\r\n";//防伪码
+            temp +=code.getCodeAcc()==null?"\r\n":","+code.getCodeAcc()+ "\r\n";//防伪码
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);
