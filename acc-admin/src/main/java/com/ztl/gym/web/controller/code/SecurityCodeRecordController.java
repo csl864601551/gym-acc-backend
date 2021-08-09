@@ -1,34 +1,23 @@
 package com.ztl.gym.web.controller.code;
 
-import java.util.List;
-
 import com.ztl.gym.code.domain.SecurityCodeRecord;
 import com.ztl.gym.code.domain.vo.ScanSecurityCodeOutBean;
 import com.ztl.gym.code.service.ISecurityCodeRecordService;
-import com.ztl.gym.common.constant.AccConstants;
-import com.ztl.gym.common.utils.CodeRuleUtils;
-import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.common.utils.StringUtils;
-import com.ztl.gym.web.controller.payment.PaymentRecordController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 防伪记录 Controller
@@ -51,18 +40,18 @@ public class SecurityCodeRecordController extends BaseController {
     /**
      * 查询防伪记录 company_id字段分列表
      */
-/*    @PreAuthorize("@ss.hasPermi('product:record:list')")
+    @PreAuthorize("@ss.hasPermi('product:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(SecurityCodeRecord securityCodeRecord) {
         startPage();
         List<SecurityCodeRecord> list = securityCodeRecordService.selectSecurityCodeRecordList(securityCodeRecord);
         return getDataTable(list);
-    }*/
+    }
 
     /**
      * 导出防伪记录 company_id字段分列表
      */
-    /*@PreAuthorize("@ss.hasPermi('product:record:export')")
+    @PreAuthorize("@ss.hasPermi('product:record:export')")
     @Log(title = "防伪记录 company_id字段分", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SecurityCodeRecord securityCodeRecord)
@@ -70,7 +59,7 @@ public class SecurityCodeRecordController extends BaseController {
         List<SecurityCodeRecord> list = securityCodeRecordService.selectSecurityCodeRecordList(securityCodeRecord);
         ExcelUtil<SecurityCodeRecord> util = new ExcelUtil<SecurityCodeRecord>(SecurityCodeRecord.class);
         return util.exportExcel(list, "record");
-    }*/
+    }
 
     /**
      * 获取防伪记录详细信息

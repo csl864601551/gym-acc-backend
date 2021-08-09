@@ -43,7 +43,7 @@
             <if test="area != null  and area != ''">and area = #{area}</if>
             <if test="createUser != null ">and create_user = #{createUser}</if>
             <if test="updateUser != null ">and update_user = #{updateUser}</if>
-            <if test="productName != null ">and product_name = #{productName}</if>
+            <if test="productName != null ">and product_name like concat('%', #{productName}, '%')</if>
         </where>
     </select>
 

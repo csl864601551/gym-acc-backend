@@ -28,35 +28,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSecurityCodeRecordVo">
-        select id, company_id, code, code_acc, batch_id, product_id, longitude, latitude, district_code, city_code, province_code, province, city, district, is_abnormal, is_delete, create_user, create_time, update_user, update_time from t_security_code_record
+        select a.id, a.company_id, a.code, a.code_acc, a.batch_id, a.product_id,b.product_name, a.longitude, a.latitude, a.district_code, a.city_code, a.province_code, a.province, a.city, a.district, a.is_abnormal, a.is_delete, a.create_user, a.create_time, a.update_user, a.update_time from t_security_code_record a
+        LEFT JOIN t_product b on a.product_id = b.id
     </sql>
 
     <select id="selectSecurityCodeRecordList" parameterType="SecurityCodeRecord" resultMap="SecurityCodeRecordResult">
         <include refid="selectSecurityCodeRecordVo"/>
         <where>  
-            <if test="companyId != null "> and company_id = #{companyId}</if>
-            <if test="code != null "> and code = #{code}</if>
-            <if test="codeAcc != null "> and code_acc = #{codeAcc}</if>
-            <if test="batchId != null "> and batch_id = #{batchId}</if>
-            <if test="productId != null "> and product_id = #{productId}</if>
-            <if test="longitude != null "> and longitude = #{longitude}</if>
-            <if test="latitude != null "> and latitude = #{latitude}</if>
-            <if test="districtCode != null  and districtCode != ''"> and district_code = #{districtCode}</if>
-            <if test="cityCode != null  and cityCode != ''"> and city_code = #{cityCode}</if>
-            <if test="provinceCode != null  and provinceCode != ''"> and province_code = #{provinceCode}</if>
-            <if test="province != null  and province != ''"> and province = #{province}</if>
-            <if test="city != null  and city != ''"> and city = #{city}</if>
-            <if test="district != null  and district != ''"> and district = #{district}</if>
-            <if test="isAbnormal != null  and isAbnormal != ''"> and is_abnormal = #{isAbnormal}</if>
-            <if test="isDelete != null  and isDelete != ''"> and is_delete = #{isDelete}</if>
-            <if test="createUser != null "> and create_user = #{createUser}</if>
-            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+            <if test="companyId != null "> and a.company_id = #{companyId}</if>
+            <if test="code != null "> and a.code = #{code}</if>
+            <if test="codeAcc != null "> and a.code_acc = #{codeAcc}</if>
+            <if test="batchId != null "> and a.batch_id = #{batchId}</if>
+            <if test="productId != null "> and a.product_id = #{productId}</if>
+            <if test="longitude != null "> and a.longitude = #{longitude}</if>
+            <if test="latitude != null "> and a.latitude = #{latitude}</if>
+            <if test="districtCode != null  and districtCode != ''"> and a.district_code = #{districtCode}</if>
+            <if test="cityCode != null  and cityCode != ''"> and a.city_code = #{cityCode}</if>
+            <if test="provinceCode != null  and provinceCode != ''"> and a.province_code = #{provinceCode}</if>
+            <if test="province != null  and province != ''"> and a.province = #{province}</if>
+            <if test="city != null  and city != ''"> and a.city = #{city}</if>
+            <if test="district != null  and district != ''"> and a.district = #{district}</if>
+            <if test="isAbnormal != null  and isAbnormal != ''"> and a.is_abnormal = #{isAbnormal}</if>
+            <if test="isDelete != null  and isDelete != ''"> and a.is_delete = #{isDelete}</if>
+            <if test="createUser != null "> and a.create_user = #{createUser}</if>
+            <if test="updateUser != null "> and a.update_user = #{updateUser}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
         </where>
     </select>
     
     <select id="selectSecurityCodeRecordById" parameterType="Long" resultMap="SecurityCodeRecordResult">
         <include refid="selectSecurityCodeRecordVo"/>
-        where id = #{id}
+        where a.id = #{id}
     </select>
         
     <insert id="insertSecurityCodeRecord" parameterType="SecurityCodeRecord" useGeneratedKeys="true" keyProperty="id">
@@ -144,7 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectRecordsByAccCode" parameterType="SecurityCodeRecord" resultMap="SecurityCodeRecordResult">
         <include refid="selectSecurityCodeRecordVo"/>
-        where code_acc = #{codeAcc}
-        order by create_time desc
+        where a.code_acc = #{codeAcc}
+        order by a.create_time desc
     </select>
 </mapper>
