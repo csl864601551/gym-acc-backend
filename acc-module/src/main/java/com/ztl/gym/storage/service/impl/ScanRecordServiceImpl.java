@@ -163,15 +163,22 @@ public class ScanRecordServiceImpl implements IScanRecordService {
             returnMap.put("baseBoxType","大标");
             returnMap.put("baseBox","箱码");
         }
-        returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
-        returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
-        returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
-        String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
-        if (StringUtils.isNotBlank(photo)) {
-            returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
-        } else {
+        if(codeEntity.getCodeAttr()!=null){
+            returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
+            returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
+            returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
+            String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
+            if (StringUtils.isNotBlank(photo)) {
+                returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
+            } else {
+                returnMap.put("photoShow","");
+            }
+        }else{
+            //throw new CustomException("该码处于初始状态，尚未赋值！",HttpStatus.ERROR);
             returnMap.put("photoShow","");
         }
+
+
         //TODO 判定是否窜货
 
         return returnMap;
