@@ -660,7 +660,6 @@ public class CodeSingleController extends BaseController {
             throw new CustomException("请输入单码！", HttpStatus.ERROR);
         }
         Code code = new Code();
-        ;
         //查询箱码数据
         Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
         code.setCode(pCode);
