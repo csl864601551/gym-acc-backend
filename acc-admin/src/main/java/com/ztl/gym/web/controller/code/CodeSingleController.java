@@ -622,6 +622,10 @@ public class CodeSingleController extends BaseController {
         if (box == null) {
             throw new CustomException("未查询到相关箱码数据！", HttpStatus.ERROR);
         }
+        //判断是否是箱码
+        if(!box.getCodeType().equals(AccConstants.CODE_TYPE_BOX)){
+            throw new CustomException("请先扫描箱码！", HttpStatus.ERROR);
+        }
         if (box.getCodeAttrId() == null) {
             throw new CustomException("该箱码未赋值，请先赋值！", HttpStatus.ERROR);
         }
@@ -631,6 +635,10 @@ public class CodeSingleController extends BaseController {
             single = codeService.selectCode(code);
             if (single == null) {
                 throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
+            }
+            //判断是否是标码
+            if(!single.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)){
+                throw new CustomException("码类型不属于单码！", HttpStatus.ERROR);
             }
             if (single.getCodeAttrId() == null) {
                 throw new CustomException("存在未赋值产品码，请重新扫码！", HttpStatus.ERROR);
