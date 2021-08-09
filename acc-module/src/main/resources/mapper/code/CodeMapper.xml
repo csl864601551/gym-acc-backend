@@ -36,8 +36,7 @@
     </sql>
 
     <select id="selectCode" parameterType="Code" resultMap="CodeResult">
-        select code_index, company_id,tenant_id, status, code, code_acc, code_type, p_code, code_attr_id,single_id,
-        case when code_type='box' then '箱码' else '单码' end as code_type_name,storage_type,storage_record_id from t_code_${companyId}
+        <include refid="selectCodeVo"/>
         <where>
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
             <if test="code != null  and code != ''">and code = #{code}</if>
