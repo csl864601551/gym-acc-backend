@@ -195,8 +195,8 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         scanSecurityCodeOutBean.setCompany(getCompanyName(securityCodeRecord.getCompanyId()));
         //判断是否存在扫防伪码记录
         if (!CollectionUtil.isEmpty(securityCodeRecords)) {
-            scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(0).getCreateTime());
-            scanSecurityCodeOutBean.setLastQueryTime(securityCodeRecords.get(securityCodeRecords.size() - 1).getCreateTime());
+            scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(securityCodeRecords.size() - 1).getCreateTime());
+            scanSecurityCodeOutBean.setLastQueryTime(securityCodeRecords.get(0).getCreateTime());
         }
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordByIndex(code.getCodeIndex(), code.getCompanyId());
         if (!Objects.isNull(codeRecord)) {
@@ -238,8 +238,8 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         scanSecurityCodeOutBean.setCompany(getCompanyName(securityCodeRecord.getCompanyId()));
         //判断是否存在扫防伪码记录
         if (!CollectionUtil.isEmpty(securityCodeRecords)) {
-            scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(0).getCreateTime());
-            scanSecurityCodeOutBean.setLastQueryTime(securityCodeRecords.get(securityCodeRecords.size() - 1).getCreateTime());
+            scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(securityCodeRecords.size() - 1).getCreateTime());
+            scanSecurityCodeOutBean.setLastQueryTime(securityCodeRecords.get(0).getCreateTime());
         }
         if (!Objects.isNull(codeAccRecord)) {
             scanSecurityCodeOutBean.setMoreContent(codeAccRecord.getOnceContent());

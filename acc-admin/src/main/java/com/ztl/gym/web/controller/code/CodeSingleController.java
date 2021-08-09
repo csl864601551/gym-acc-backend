@@ -636,13 +636,17 @@ public class CodeSingleController extends BaseController {
                 throw new CustomException("存在未赋值产品码，请重新扫码！", HttpStatus.ERROR);
             }
             //套标生码没有SingleId，所以无法判断生码区间，然后用CodeAttrId判断
-            if (single.getSingleId() == null) {
+            if (box.getSingleId() == null) {
                 if(box.getCodeAttrId().longValue() !=single.getCodeAttrId()){
                     throw new CustomException("不允许跨生码区间装箱，请重新扫码！", HttpStatus.ERROR);
                 }
-
-            } else if (box.getSingleId().longValue() != single.getSingleId()) {
-                throw new CustomException("不允许跨生码区间装箱，请重新扫码！", HttpStatus.ERROR);
+            } else {
+                if(single.getSingleId() == null){
+                    throw new CustomException("该码没有生码区间不允许装箱，请重新扫码！", HttpStatus.ERROR);
+                }
+                if (box.getSingleId().longValue() != single.getSingleId()) {
+                    throw new CustomException("不允许跨生码区间装箱，请重新扫码！", HttpStatus.ERROR);
+                }
             }
             if (single.getpCode() != null) {
                 throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！", HttpStatus.ERROR);
