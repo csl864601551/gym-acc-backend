@@ -44,6 +44,7 @@
             <if test="createUser != null ">and create_user = #{createUser}</if>
             <if test="updateUser != null ">and update_user = #{updateUser}</if>
             <if test="productName != null ">and product_name like concat('%', #{productName}, '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
         </where>
     </select>
 

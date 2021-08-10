@@ -2,12 +2,14 @@ package com.ztl.gym.web.controller.storage;
 
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IProductService;
@@ -48,6 +50,10 @@ public class ScanRecordController extends BaseController {
      */
     @GetMapping("/list")
     public TableDataInfo list(ScanRecord scanRecord) {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            scanRecord.setCompanyId(company_id);
+        }
         startPage();
         List<ScanRecord> list = scanRecordService.selectScanRecordList(scanRecord);
         return getDataTable(list);

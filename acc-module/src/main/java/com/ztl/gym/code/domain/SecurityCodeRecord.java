@@ -1,13 +1,11 @@
 package com.ztl.gym.code.domain;
 
-import java.math.BigDecimal;
-
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 /**
  * 防伪记录  t_security_code_record
@@ -112,6 +110,18 @@ public class SecurityCodeRecord extends BaseEntity {
      */
     @Excel(name = "是否删除")
     private String isDelete;
+
+    /**
+     * 详细地址
+     */
+    private String address;
+
+    private String ip;
+
+    /**
+     * 产品name
+     */
+    private String productName;
 
     public void setId(Long id) {
         this.id = id;
@@ -241,6 +251,30 @@ public class SecurityCodeRecord extends BaseEntity {
         return isDelete;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -259,11 +293,14 @@ public class SecurityCodeRecord extends BaseEntity {
                 .append("city", getCity())
                 .append("district", getDistrict())
                 .append("isAbnormal", getIsAbnormal())
+                .append("ip", getIp())
+                .append("address", getAddress())
                 .append("isDelete", getIsDelete())
                 .append("createUser", getCreateUser())
                 .append("createTime", getCreateTime())
                 .append("updateUser", getUpdateUser())
                 .append("updateTime", getUpdateTime())
+                .append("productName", getProductName())
                 .toString();
     }
 }

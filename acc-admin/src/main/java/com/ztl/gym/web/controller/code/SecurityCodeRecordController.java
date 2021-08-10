@@ -4,11 +4,13 @@ import com.ztl.gym.code.domain.SecurityCodeRecord;
 import com.ztl.gym.code.domain.vo.ScanSecurityCodeOutBean;
 import com.ztl.gym.code.service.ISecurityCodeRecordService;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import org.slf4j.Logger;
@@ -43,6 +45,10 @@ public class SecurityCodeRecordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('product:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(SecurityCodeRecord securityCodeRecord) {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            securityCodeRecord.setCompanyId(company_id);
+        }
         startPage();
         List<SecurityCodeRecord> list = securityCodeRecordService.selectSecurityCodeRecordList(securityCodeRecord);
         return getDataTable(list);

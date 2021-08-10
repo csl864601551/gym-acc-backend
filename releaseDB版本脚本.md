@@ -210,3 +210,7 @@ ALTER TABLE `t_product` ADD `photo` varchar(5000) COLLATE utf8mb4_bin DEFAULT NU
 #### Beta V1.0.7 2021/08/06
 ALTER TABLE `t_scan_record` ADD `product_id` bigint(20) NULL DEFAULT NULL COMMENT '产品id';
 ALTER TABLE `t_scan_record` ADD `product_name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '产品名称'
+
+### Beta V1.1.0 2021/08/09
+ALTER TABLE `t_security_code_record` ADD `ip` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'ip地址'
+ALTER TABLE `t_security_code_record` ADD `address` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '详细地址'
