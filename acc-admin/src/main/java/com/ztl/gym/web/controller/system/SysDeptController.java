@@ -150,7 +150,8 @@ public class SysDeptController extends BaseController {
                             "    single_id BIGINT    COMMENT '生码记录ID' ,\n" +
                             "    storage_record_id BIGINT    COMMENT '最新流转id' ,\n" +
                             "    storage_type int    COMMENT '最新流转类型' ,\n" +
-                            "    PRIMARY KEY (code_index)\n" +
+                            "    PRIMARY KEY (code_index) ,\n" +
+                            "    KEY `index_code_attr_id` (`code_attr_id`) USING BTREE"+
                             ") COMMENT = '码表 ';";
                     res = createTableByCompany(sql);
                 }
