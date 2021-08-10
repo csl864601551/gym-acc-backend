@@ -157,9 +157,10 @@ public class CodeAccRecordController extends BaseController
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeAccRecord codeAccRecord, HttpServletResponse response) {
         List<CodeAcc> list =  codeAccRecordService.selectAccCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeAccRecord.getId());
-        String temp = "防伪码" + "                                        " + "\r\n";
+        StringBuilder temp = new StringBuilder();
+        temp.append("防伪码                                        \r\n");
         for (CodeAcc codeAcc : list) {
-            temp += "        " + preAccUrl+codeAcc.getCodeAcc() + "\r\n";
+            temp.append("        ").append(preAccUrl+codeAcc.getCodeAcc()).append("\r\n");
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);
