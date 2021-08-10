@@ -107,6 +107,7 @@ public class ScanRecord extends BaseEntity {
      */
     private String productName;
 
+
     public void setId(Long id) {
         this.id = id;
     }

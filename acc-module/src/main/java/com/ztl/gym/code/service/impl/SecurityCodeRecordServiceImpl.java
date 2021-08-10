@@ -1,8 +1,5 @@
 package com.ztl.gym.code.service.impl;
 
-import java.util.List;
-import java.util.Objects;
-
 import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAccRecord;
@@ -18,7 +15,6 @@ import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
-import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IProductService;
@@ -27,6 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 防伪记录 company_id字段分Service业务层处理
@@ -264,5 +264,16 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
             return "";
         }
         return sysDept.getDeptName();
+    }
+
+
+    /**
+     * 查询热力图扫码记录
+     *
+     * @return 扫码记录集合
+     */
+    @Override
+    public List<Map<String,Object>> getSecurityCodeRecordXx(SecurityCodeRecord securityCodeRecord) {
+        return securityCodeRecordMapper.getSecurityCodeRecordXx(securityCodeRecord);
     }
 }

@@ -4,6 +4,7 @@ package com.ztl.gym.code.mapper;
 import com.ztl.gym.code.domain.SecurityCodeRecord;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 防伪记录 company_id字段分Mapper接口
@@ -68,4 +69,12 @@ public interface SecurityCodeRecordMapper
      * @return 防伪记录集合
      */
     public List<SecurityCodeRecord> selectRecordsByAccCode(String accCode);
+
+
+    /**
+     * 查询扫码地图
+     *
+     * @return 扫码记录集合
+     */
+    public List<Map<String,Object>> getSecurityCodeRecordXx(SecurityCodeRecord securityCodeRecord);
 }

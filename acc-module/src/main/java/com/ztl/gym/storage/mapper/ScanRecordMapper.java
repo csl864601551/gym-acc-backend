@@ -74,10 +74,18 @@ public interface ScanRecordMapper
     /**
      * 查询热力图扫码记录
      *
-     * @param map 扫码记录
      * @return 扫码记录集合
      */
     public List<ScanRecord> selectRLTList(Map<String,Object> map);
+
+
+
+    /**
+     * 查询热力图扫码记录
+     *
+     * @return 扫码记录集合
+     */
+    public List<Map<String,Object>> getScanRecordXx(ScanRecord scanRecord);
 
 
 

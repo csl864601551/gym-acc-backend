@@ -245,6 +245,19 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     /**
      * 查询热力图扫码记录
      *
+     * @return 扫码记录集合
+     */
+    @Override
+    public List<Map<String,Object>> getScanRecordXx(ScanRecord scanRecord) {
+        return scanRecordMapper.getScanRecordXx(scanRecord);
+    }
+
+
+
+
+    /**
+     * 查询热力图扫码记录
+     *
      * @param map 扫码记录
      * @return 扫码记录集合
      */

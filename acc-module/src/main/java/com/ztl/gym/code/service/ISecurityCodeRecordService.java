@@ -1,9 +1,10 @@
 package com.ztl.gym.code.service;
 
-import java.util.List;
-
 import com.ztl.gym.code.domain.SecurityCodeRecord;
 import com.ztl.gym.code.domain.vo.ScanSecurityCodeOutBean;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 防伪记录 company_id字段分Service接口
@@ -74,4 +75,13 @@ public interface ISecurityCodeRecordService
      * @return 响应
      */
     public ScanSecurityCodeOutBean getSecurityCodeInfoByCode(SecurityCodeRecord securityCodeRecord);
+
+
+
+    /**
+     * 查询扫码地图查验记录
+     *
+     * @return 扫码记录集合
+     */
+    public List<Map<String,Object>> getSecurityCodeRecordXx(SecurityCodeRecord securityCodeRecord);
 }

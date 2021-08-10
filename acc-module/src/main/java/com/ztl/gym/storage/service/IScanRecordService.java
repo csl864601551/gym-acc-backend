@@ -80,6 +80,14 @@ public interface IScanRecordService
 
 
     /**
+     * 查询扫码地图扫码记录
+     *
+     * @return 扫码记录集合
+     */
+    public List<Map<String,Object>> getScanRecordXx(ScanRecord scanRecord);
+
+
+    /**
      * 扫码总量
      *
      * @param map 部门信息

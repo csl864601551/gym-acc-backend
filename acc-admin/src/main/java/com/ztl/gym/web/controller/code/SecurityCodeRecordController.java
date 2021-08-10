@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * 防伪记录 Controller
@@ -42,7 +42,6 @@ public class SecurityCodeRecordController extends BaseController {
     /**
      * 查询防伪记录 company_id字段分列表
      */
-    @PreAuthorize("@ss.hasPermi('product:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(SecurityCodeRecord securityCodeRecord) {
         Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
@@ -146,4 +145,49 @@ public class SecurityCodeRecordController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(securityCodeRecordService.deleteSecurityCodeRecordByIds(ids));
     }*/
+
+
+    @GetMapping("/getSecurityCodeRecordXx")
+    public AjaxResult getSecurityCodeRecordXx(SecurityCodeRecord securityCodeRecord) {
+        logger.info("the method getInfoByKey enter, param is {}", securityCodeRecord);
+        try {
+            List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
+            Map<String, Object> map = new HashMap<String, Object>();
+            Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+                securityCodeRecord.setCompanyId(company_id);
+            }
+            //查询热力图数据
+            List<Map<String, Object>> list = securityCodeRecordService.getSecurityCodeRecordXx(securityCodeRecord);
+            if(list.size()>0){
+                for(int i=0;i<list.size();i++){
+                    Map<String, Object> mapinfo = list.get(i);
+                    map.put("id",mapinfo.get("id"));
+                    map.put("name",mapinfo.get("product_name"));
+                    map.put("desc",mapinfo.get("code"));
+                    map.put("descs",mapinfo.get("code_acc"));
+                    if(mapinfo.get("photo")!=null){
+                        String str[] = mapinfo.get("photo").toString().split(",");
+                        List<String> list1 = Arrays.asList(str);
+                        map.put("img",list1.get(0));
+                    }else{
+                        map.put("img",null);
+                    }
+                    map.put("lon",mapinfo.get("longitude"));
+                    map.put("lat",mapinfo.get("latitude"));
+                    lists.add(map);
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("lists", lists);
+            System.out.println(lists);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
+            return ajax;
+        }
+    }
 }
