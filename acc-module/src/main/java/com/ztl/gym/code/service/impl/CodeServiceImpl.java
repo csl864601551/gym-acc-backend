@@ -146,10 +146,11 @@ public class CodeServiceImpl implements ICodeService {
         //企业自增数
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
         long codeIndex = codeRecord.getIndexStart();
+        Date date=new Date();
         if (boxCount > 0) {
             for (int i = 0; i < boxCount; i++) {
                 //按箱来创建码属性
-                long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+                long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
 
                 //箱码
                 String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
@@ -188,7 +189,7 @@ public class CodeServiceImpl implements ICodeService {
                 }
             }
         } else {
-            long attrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd());
+            long attrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
             for (int i = 0; i < codeTotalNum; i++) {
                 Code code = new Code();
                 code.setCodeIndex(codeIndex + i);
@@ -454,7 +455,7 @@ public class CodeServiceImpl implements ICodeService {
      * @param indexStart
      * @param indexEnd
      */
-    private long saveCodeAttr(long companyId, long userId, long codeRecordId, long indexStart, long indexEnd) {
+    private long saveCodeAttr(long companyId, long userId, long codeRecordId, long indexStart, long indexEnd,Date date) {
         CodeAttr codeAttr = new CodeAttr();
         codeAttr.setCompanyId(companyId);
         codeAttr.setTenantId(companyId);
@@ -462,9 +463,9 @@ public class CodeServiceImpl implements ICodeService {
         codeAttr.setIndexStart(indexStart);
         codeAttr.setIndexEnd(indexEnd);
         codeAttr.setCreateUser(userId);
-        codeAttr.setCreateTime(new Date());
+        codeAttr.setCreateTime(date);
         codeAttr.setUpdateUser(userId);
-        codeAttr.setUpdateTime(new Date());
+        codeAttr.setUpdateTime(date);
         codeAttrService.insertCodeAttr(codeAttr);
         return codeAttr.getId();
     }
