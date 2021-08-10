@@ -100,10 +100,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cityCode != null">#{cityCode},</if>
             <if test="provinceCode != null">#{provinceCode},</if>
             <if test="province != null">#{province},</if>
-            <if test="ip != null">#{ip},</if>
-            <if test="address != null">#{address},</if>
             <if test="city != null">#{city},</if>
             <if test="district != null">#{district},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="address != null">#{address},</if>
             <if test="isAbnormal != null">#{isAbnormal},</if>
             <if test="isDelete != null">#{isDelete},</if>
             <if test="createUser != null">#{createUser},</if>
