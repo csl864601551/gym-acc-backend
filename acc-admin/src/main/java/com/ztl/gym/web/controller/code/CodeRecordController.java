@@ -36,7 +36,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -284,7 +289,8 @@ public class CodeRecordController extends BaseController {
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeRecord codeRecord, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
-        String temp = "流水号,码,防伪码" + "                                        " + "\r\n";
+        StringBuilder temp = new StringBuilder();
+        temp.append("流水号,码,防伪码                                        \r\n");
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -295,12 +301,12 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                temp += "        " + code.getCodeIndex()+","+code.getCode();//流水号，码
+                temp.append("        ").append(code.getCodeIndex()).append(",").append(code.getCode());//流水号，码
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                temp += code.getCodeIndex()+","+(code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
+                temp.append(code.getCodeIndex()).append(",").append((code.getpCode() == null ? code.getCode() : code.getpCode()));//流水号，码
             }
-            temp +=code.getCodeAcc()==null?"\r\n":","+code.getCodeAcc()+ "\r\n";//防伪码
+            temp.append(code.getCodeAcc()==null?"\r\n":","+code.getCodeAcc()+ "\r\n");//防伪码
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);
