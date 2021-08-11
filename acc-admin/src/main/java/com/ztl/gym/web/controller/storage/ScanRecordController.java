@@ -1,5 +1,8 @@
 package com.ztl.gym.web.controller.storage;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
@@ -232,9 +235,24 @@ public class ScanRecordController extends BaseController {
             if(list.size()>0){
                 for(int i=0;i<list.size();i++){
                     Map<String, Object> mapinfo = list.get(i);
+                    map = new HashMap<String, Object>();
                     map.put("id",mapinfo.get("id"));
                     map.put("name",mapinfo.get("product_name"));
-                    map.put("desc",mapinfo.get("code"));
+                    //弹框的数据
+                    JSONArray descList = new JSONArray();
+                    JSONObject descObject = new JSONObject();
+                    descObject.put("name","标识信息");
+                    descObject.put("value",mapinfo.get("code"));
+                    descList.add(descObject);
+                    descObject = new JSONObject();
+                    descObject.put("name","用户昵称");
+                    descObject.put("value",mapinfo.get("terminal"));
+                    descList.add(descObject);
+                    descObject = new JSONObject();
+                    descObject.put("name","扫码时间");
+                    descObject.put("value",mapinfo.get("create_time").toString());
+                    descList.add(descObject);
+                    map.put("desc", JSON.toJSONString(descList));
                     if(mapinfo.get("photo")!=null){
                         String str[] = mapinfo.get("photo").toString().split(",");
                         List<String> list1 = Arrays.asList(str);

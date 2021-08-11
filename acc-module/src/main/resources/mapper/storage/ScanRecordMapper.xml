@@ -779,7 +779,7 @@
         a.id,
         a.product_name,
         b.photo,
-        a.CODE,
+        a.code,
         a.longitude,
         a.latitude,
         a.terminal,

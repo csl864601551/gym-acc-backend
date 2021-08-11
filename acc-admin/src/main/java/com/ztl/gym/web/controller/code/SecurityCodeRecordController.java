@@ -1,5 +1,8 @@
 package com.ztl.gym.web.controller.code;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ztl.gym.code.domain.SecurityCodeRecord;
 import com.ztl.gym.code.domain.vo.ScanSecurityCodeOutBean;
 import com.ztl.gym.code.service.ISecurityCodeRecordService;
@@ -162,10 +165,24 @@ public class SecurityCodeRecordController extends BaseController {
             if(list.size()>0){
                 for(int i=0;i<list.size();i++){
                     Map<String, Object> mapinfo = list.get(i);
+                    map = new HashMap<String, Object>();
                     map.put("id",mapinfo.get("id"));
                     map.put("name",mapinfo.get("product_name"));
-                    map.put("desc",mapinfo.get("code"));
-                    map.put("descs",mapinfo.get("code_acc"));
+                    //弹框的数据
+                    JSONArray descList = new JSONArray();
+                    JSONObject descObject = new JSONObject();
+                    descObject.put("name","标识信息");
+                    descObject.put("value",mapinfo.get("code"));
+                    descList.add(descObject);
+                    descObject = new JSONObject();
+                    descObject.put("name","防伪码");
+                    descObject.put("value",mapinfo.get("code_acc"));
+                    descList.add(descObject);
+                    descObject = new JSONObject();
+                    descObject.put("name","扫码时间");
+                    descObject.put("value",mapinfo.get("create_time").toString());
+                    descList.add(descObject);
+                    map.put("desc", JSON.toJSONString(descList));
                     if(mapinfo.get("photo")!=null){
                         String str[] = mapinfo.get("photo").toString().split(",");
                         List<String> list1 = Arrays.asList(str);
