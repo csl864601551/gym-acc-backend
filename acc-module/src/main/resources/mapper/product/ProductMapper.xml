@@ -123,7 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
             <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
         </where>
-        order by sort
+        order by p.create_time desc
     </select>
 
 
@@ -159,7 +159,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
             <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
         </where>
-        order by sort
+        order by p.create_time desc
     </select>
 
     <select id="selectTProductById" parameterType="Long" resultMap="TProductResult">

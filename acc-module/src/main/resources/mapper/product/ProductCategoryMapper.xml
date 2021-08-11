@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectProductCategoryOneList" parameterType="ProductCategory" resultMap="ProductCategoryResult">
-        select b.id, b.company_id, b.category_no, b.category_name, b.category_level, b.p_id, b.unit, b.icon, b.keyword, b.category_introduce, b.sort, b.create_user, b.create_time, b.update_user, b.update_time, b.product_num from t_product_category b where b.id in (select a.p_id from t_product_category a where 1=1
+        select b.id, b.company_id, b.category_no, b.category_name, b.category_level, b.p_id, b.unit, b.icon, b.keyword, b.category_introduce, b.sort, b.create_user, b.create_time, b.update_user, b.update_time, b.product_num from t_product_category b where b.status=0 and b.id in (select a.p_id from t_product_category a where 1=1
         <if test="companyId != null "> and  b.company_id = #{companyId}</if>
          and a.p_id!= 0 )
     </select>
@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
     <select id="getCategoryDic" resultType="java.util.Map" parameterType="Long" >
-        select id as value,category_name as label from t_product_category where p_id=#{p_id}
+        select id as value,category_name as label from t_product_category where status=0 and p_id=#{p_id}
         <if test="companyId != null "> and company_id = #{companyId}</if> order by sort
     </select>
 
