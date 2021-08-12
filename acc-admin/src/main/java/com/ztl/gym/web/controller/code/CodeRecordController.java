@@ -261,21 +261,22 @@ public class CodeRecordController extends BaseController {
     @GetMapping("/download")
     public AjaxResult download(CodeRecord codeRecord) {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
-        for (Code code : list) {
+        long boxIndex=0;
+        Code code=new Code();
+        for (int i=0;i<list.size();i++) {
+            code=list.get(i);
+            if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
+                boxIndex=code.getCodeIndex();
+                list.remove(i);
+                code=list.get(i);
+            }
             code.setCode(preFixUrl + code.getCode());
+            code.setBoxIndex(boxIndex);
+            code.setpCode(preFixUrl + code.getpCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
                 code.setStatusName("待赋值");
             } else if (code.getStatus() == AccConstants.CODE_STATUS_FINISH) {
                 code.setStatusName("已赋值");
-            }
-
-            if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
-                code.setCodeTypeName("单码");
-                if(code.getpCode()!=null) {
-                    code.setpCode(preFixUrl + code.getpCode());
-                }
-            } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
-                code.setCodeTypeName("箱码");
             }
         }
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
@@ -290,7 +291,8 @@ public class CodeRecordController extends BaseController {
     public AjaxResult downloadTxt(CodeRecord codeRecord, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
         StringBuilder temp = new StringBuilder();
-        temp.append("流水号,码,防伪码                                        \r\n");
+        temp.append("大标流水号              二维码链接               小标流水号               二维码链接               防伪码  \r\n");
+        String boxTemp = "";
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -301,12 +303,13 @@ public class CodeRecordController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                temp.append("        ").append(code.getCodeIndex()).append(",").append(code.getCode());//流水号，码
+                temp.append(boxTemp).append(",").append(code.getCodeIndex()).append(",").append(code.getCode());//流水号，码
+                temp.append(code.getCodeAcc()==null?"\r\n":","+code.getCodeAcc()+ "\r\n");//防伪码
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                temp.append(code.getCodeIndex()).append(",").append((code.getpCode() == null ? code.getCode() : code.getpCode()));//流水号，码
+                boxTemp=code.getCodeIndex()+","+(code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
             }
-            temp.append(code.getCodeAcc()==null?"\r\n":","+code.getCodeAcc()+ "\r\n");//防伪码
+
         }
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", temp);

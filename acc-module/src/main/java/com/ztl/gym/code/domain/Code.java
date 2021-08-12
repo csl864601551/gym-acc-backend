@@ -16,10 +16,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class Code extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 流水号
-     */
-    private Long codeIndex;
+
 
     /**
      * 当前所属经销商id
@@ -36,6 +33,24 @@ public class Code extends BaseEntity {
      */
     private int status;
 
+
+    /**
+     * 码
+     */
+    @Excel(name = "大标流水号")
+    private Long boxIndex;
+
+    /**
+     * 所属箱码
+     */
+    @Excel(name = "所属箱码")
+    private String pCode;
+
+    /**
+     * 流水号
+     */
+    @Excel(name = "小标流水号")
+    private Long codeIndex;
     /**
      * 码
      */
@@ -53,11 +68,7 @@ public class Code extends BaseEntity {
      */
     private String codeType;
 
-    /**
-     * 所属箱码
-     */
-    @Excel(name = "所属箱码")
-    private String pCode;
+
 
     /**
      * 码属性id
@@ -84,7 +95,7 @@ public class Code extends BaseEntity {
     /*---------------------- 冗余字段 ----------------------*/
 //    @Excel(name = "码状态")
     private String statusName;
-    @Excel(name = "码类型")
+//    @Excel(name = "码类型")
     private String codeTypeName;
 
     private long codeBoxCount;
@@ -99,6 +110,14 @@ public class Code extends BaseEntity {
 
     public void setCodeBoxCount(long codeBoxCount) {
         this.codeBoxCount = codeBoxCount;
+    }
+
+    public Long getBoxIndex() {
+        return boxIndex;
+    }
+
+    public void setBoxIndex(Long boxIndex) {
+        this.boxIndex = boxIndex;
     }
 
     public void setCodeIndex(Long codeIndex) {
