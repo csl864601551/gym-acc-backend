@@ -189,7 +189,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         CompanyArea temp = new CompanyArea();
 
         if(area.getCode()==null){
-            throw new BaseException("未查询到相关销售区域");
+            throw new CustomException("未查询到相关销售区域",HttpStatus.ERROR);
         }else{
             //根据码属性ID获取对应的companyID和tenantID
             //CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());//V1.0.5之前
