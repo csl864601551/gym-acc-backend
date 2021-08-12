@@ -178,8 +178,10 @@ public class StatisticalController {
                 query.put("beginTime", beginTime);
                 query.put("endTime", endTime);
                 int sgyNum = storageOutService.selectCountByDept(query);
+                //上个月-这个月的量
+                int gapNum = statisticalBean.getBychzsNum()-sgyNum;
                 if (sgyNum > 0 && statisticalBean.getBychzsNum()>0) {
-                    statisticalBean.setTbsyNum(new BigDecimal((float) statisticalBean.getBychzsNum() / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    statisticalBean.setTbsyNum(new BigDecimal(((float) gapNum / sgyNum)*100).setScale(2, BigDecimal.ROUND_HALF_UP));
                 } else {
                     statisticalBean.setTbsyNum(new BigDecimal("0"));
                 }
@@ -196,8 +198,10 @@ public class StatisticalController {
                 query.put("beginTime", beginTime);
                 query.put("endTime", endTime);
                 int tbszNum = storageOutService.selectCountByDept(query);
+                //上周-这周
+                int gapWeekNum = statisticalBean.getBzchslNum()-tbszNum;
                 if (tbszNum > 0 && statisticalBean.getBzchslNum()>0) {
-                    statisticalBean.setTbszNum(new BigDecimal((float) statisticalBean.getBzchslNum() / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    statisticalBean.setTbszNum(new BigDecimal(((float) gapWeekNum/tbszNum )*100).setScale(2, BigDecimal.ROUND_HALF_UP));
                 } else {
                     statisticalBean.setTbszNum(new BigDecimal("0"));
                 }
@@ -318,8 +322,10 @@ public class StatisticalController {
                 query.put("beginTime", beginTime);
                 query.put("endTime", endTime);
                 int sgyNum = storageOutService.selectCountByDept(query);
+                //上个月-这个月的量
+                int gapNum = statisticalBean.getBychzsNum()-sgyNum;
                 if (sgyNum > 0 && statisticalBean.getBychzsNum()>0) {
-                    statisticalBean.setTbsyNum(new BigDecimal((float) statisticalBean.getBychzsNum() / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    statisticalBean.setTbsyNum(new BigDecimal(((float) gapNum / sgyNum)*100).setScale(2, BigDecimal.ROUND_HALF_UP));
                 } else {
                     statisticalBean.setTbsyNum(new BigDecimal("0"));
                 }
@@ -336,12 +342,13 @@ public class StatisticalController {
                 query.put("beginTime", beginTime);
                 query.put("endTime", endTime);
                 int tbszNum = storageOutService.selectCountByDept(query);
+                //上周-这周
+                int gapWeekNum = statisticalBean.getBzchslNum()-tbszNum;
                 if (tbszNum > 0 && statisticalBean.getBzchslNum()>0) {
-                    statisticalBean.setTbszNum(new BigDecimal((float) statisticalBean.getBzchslNum() / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    statisticalBean.setTbszNum(new BigDecimal(((float) gapWeekNum/tbszNum )*100).setScale(2, BigDecimal.ROUND_HALF_UP));
                 } else {
                     statisticalBean.setTbszNum(new BigDecimal("0"));
                 }
-
                 //今日生码总量
                 beginTime = DateUtil.beginOfDay(today);
                 endTime = DateUtil.endOfDay(today);
