@@ -91,16 +91,8 @@ public class StatisticalController {
         try {
             StatisticalBean statisticalBean = new StatisticalBean();
             boolean isadmin = false;
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
-//            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
-//            SysUser user = loginUser.getUser();
-//            if(user.getRoles().get(0).getRoleId()==120){
-//                isadmin = true;
-//            }else if(user.getRoles().get(0).getRoleId()==101){
-//                deptId = SecurityUtils.getLoginUserCompany().getDeptId();
-//                isadmin = false;
-//            }
             Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
             if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 deptId = SecurityUtils.getLoginUserCompany().getDeptId();
@@ -406,7 +398,7 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
             Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
             if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
@@ -529,7 +521,7 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
             Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
             if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
@@ -790,7 +782,7 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
             Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
             if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
@@ -958,7 +950,7 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
             Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
             if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
@@ -1035,7 +1027,6 @@ public class StatisticalController {
     /**
      * 热力图扫码信息
      */
-    //@Log(title = "热力图扫码信息", businessType = BusinessType.INSERT)
     @PostMapping("/getRltXx")
     public AjaxResult getRltXx(@RequestBody Map<String, Object> map) {
         logger.info("the method getInfoByKey enter, param is {}", map);
@@ -1050,8 +1041,6 @@ public class StatisticalController {
                     rltmap.put("lng", scanRecord.getLongitude());
                     rltmap.put("lat", scanRecord.getLatitude());
                     rltmap.put("count", i);
-//                    rltmap.put("code",scanRecord.getCode());
-//                    rltmap.put("id",scanRecord.getId());
                     lists.add(rltmap);
                 }
             }
@@ -1071,7 +1060,6 @@ public class StatisticalController {
     /**
      * 点聚合扫码信息
      */
-    //@Log(title = "点聚合扫码信息", businessType = BusinessType.INSERT)
     @RequestMapping(value = "getDjhXx", method = {RequestMethod.GET, RequestMethod.POST})
     public AjaxResult getDjhXx(HttpServletRequest request, HttpServletResponse response) {
         logger.info("the method getInfoByKey enter, param is {}", request+""+response);
@@ -1088,8 +1076,6 @@ public class StatisticalController {
                     list1.add(scanRecord.getLongitude());
                     list1.add(scanRecord.getLatitude());
                     rltmap.put("lnglat", list1);
-//                    rltmap.put("code",scanRecord.getCode());
-//                    rltmap.put("id",scanRecord.getId());
                     lists.add(rltmap);
                 }
             }
@@ -1112,10 +1098,6 @@ public class StatisticalController {
     @RequestMapping(value = "getDjhXxs", method = {RequestMethod.GET, RequestMethod.POST})
     public AjaxResult getDjhXxs(HttpServletRequest request, HttpServletResponse response) {
         logger.info("the method getInfoByKey enter, param is {}", request+""+response);
-        //String code = request.getParameter("code");
-        //System.out.println("扫码详情进入成功  code=="+code);
-//        String compant_id = WxUtil.splitData(code,"-","-");
-//        long  companyId = Integer.parseInt(compant_id)/5;
         String temp = "";
         List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
         AjaxResult ajax = AjaxResult.success();
@@ -1138,7 +1120,7 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             SysUser user = loginUser.getUser();
@@ -1154,13 +1136,13 @@ public class StatisticalController {
             //同比上月
             int sgyNum = 0;
             //差额
-            double tbsy = 0l;
+            double tbsy = 0L;
             //本周出货总数
             int bzchslNum = 0;
             //同比上周
             int tbszNum = 0;
             //差额
-            double tbsz = 0l;
+            double tbsz = 0L;
             //折线图数据
             List<Object> Xlist = new ArrayList<Object>();
             String xCode = null;
@@ -1187,7 +1169,7 @@ public class StatisticalController {
                 if (sgyNum > 0) {
                     tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsy = 100l;
+                    tbsy = 100L;
                 }
                 //本周出货总数
                 beginTime = DateUtil.beginOfWeek(today);
@@ -1205,7 +1187,7 @@ public class StatisticalController {
                 if (tbszNum > 0) {
                     tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsz = 100l;
+                    tbsz = 100L;
                 }
                 //统计图
                 if (map.get("tjType") != null) {
@@ -1253,7 +1235,7 @@ public class StatisticalController {
                 if (sgyNum > 0) {
                     tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsy = 100l;
+                    tbsy = 100L;
                 }
                 //本周出货总数
                 beginTime = DateUtil.beginOfWeek(today);
@@ -1271,7 +1253,7 @@ public class StatisticalController {
                 if (tbszNum > 0) {
                     tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsz = 100l;
+                    tbsz = 100L;
                 }
 
                 //统计图
@@ -1327,7 +1309,7 @@ public class StatisticalController {
         try {
             boolean isadmin = false;
             //获取用户部门信息
-            Long deptId = 0l;
+            Long deptId = 0L;
             //获取用户部门信息
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             SysUser user = loginUser.getUser();
@@ -1343,13 +1325,13 @@ public class StatisticalController {
             //同比上月
             int sgyNum = 0;
             //差额
-            double tbsy = 0l;
+            double tbsy = 0L;
             //本周出货总数
             int bzchslNum = 0;
             //同比上周
             int tbszNum = 0;
             //差额
-            double tbsz = 0l;
+            double tbsz = 0L;
             //折线图数据
             List<Object> Xlist = new ArrayList<Object>();
             String xCode = null;
@@ -1376,7 +1358,7 @@ public class StatisticalController {
                 if (sgyNum > 0) {
                     tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsy = 100l;
+                    tbsy = 100L;
                 }
                 //本周出货总数
                 beginTime = DateUtil.beginOfWeek(today);
@@ -1394,7 +1376,7 @@ public class StatisticalController {
                 if (tbszNum > 0) {
                     tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsz = 100l;
+                    tbsz = 100L;
                 }
                 //统计图
                 if (map.get("tjType") != null) {
@@ -1442,7 +1424,7 @@ public class StatisticalController {
                 if (sgyNum > 0) {
                     tbsy = new BigDecimal((float) bychzsNum / sgyNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsy = 100l;
+                    tbsy = 100L;
                 }
                 //本周出货总数
                 beginTime = DateUtil.beginOfWeek(today);
@@ -1460,7 +1442,7 @@ public class StatisticalController {
                 if (tbszNum > 0) {
                     tbsz = new BigDecimal((float) bzchslNum / tbszNum).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 } else {
-                    tbsz = 100l;
+                    tbsz = 100L;
                 }
 
                 //统计图

@@ -258,7 +258,7 @@ public class ScanRecordController extends BaseController {
                         List<String> list1 = Arrays.asList(str);
                         map.put("img",list1.get(0));
                     }else{
-                        map.put("img",null);
+                        map.put("img",AccConstants.DEFAULT_IMAGE);
                     }
                     map.put("lon",mapinfo.get("longitude"));
                     map.put("lat",mapinfo.get("latitude"));
@@ -267,7 +267,6 @@ public class ScanRecordController extends BaseController {
             }
             AjaxResult ajax = AjaxResult.success();
             ajax.put("lists", lists);
-            System.out.println(lists);
             logger.info("the method getInfoByKey end, result is {}", ajax);
             return ajax;
         } catch (Exception e) {

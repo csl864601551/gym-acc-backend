@@ -55,6 +55,7 @@
             <if test="isDelete != null  and isDelete != ''">and a.is_delete = #{isDelete}</if>
             <if test="createUser != null ">and a.create_user = #{createUser}</if>
             <if test="updateUser != null ">and a.update_user = #{updateUser}</if>
+            <if test="productName != null ">and b.product_name like concat('%', #{productName}, '%')</if>
             <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
                 and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
             </if>
@@ -178,7 +179,7 @@
         on
         a.product_id = b.id where a.longitude IS NOT NULL
         <if test="companyId != null ">and a.company_id = #{companyId}</if>
-        <if test="productName != null ">and a.product_name like concat('%', #{productName}, '%')</if>
+        <if test="productName != null ">and b.product_name like concat('%', #{productName}, '%')</if>
         <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
             and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
         </if>
