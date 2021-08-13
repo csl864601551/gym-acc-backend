@@ -91,6 +91,7 @@ public interface ICodeRecordService {
      */
     public CodeRecord selectCodeRecordByIndex(long codeIndex,long companyId);
 
+
     /**
      * 生码总量
      *

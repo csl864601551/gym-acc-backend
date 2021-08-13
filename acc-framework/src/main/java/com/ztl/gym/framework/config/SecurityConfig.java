@@ -121,7 +121,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/storage/record/getScanRecordByCode").permitAll()
                 .antMatchers("/storage/record/getIsMixInfo").permitAll()
                 .antMatchers("/mix/record").permitAll()
-                .antMatchers("/storage/record").permitAll()
+                .antMatchers("/storage/record/**").permitAll()
                 .antMatchers("/mix/record/addRecord").permitAll()
 
                 .antMatchers("/storage/transfer/**").permitAll()

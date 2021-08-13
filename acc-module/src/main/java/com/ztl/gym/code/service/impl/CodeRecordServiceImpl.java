@@ -79,6 +79,10 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
         return codeRecordMapper.selectCodeRecordByIndex(codeIndex,companyId);
     }
 
+
+
+
+
     /**
      * 查询生码记录列表
      *
