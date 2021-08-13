@@ -1,6 +1,7 @@
 package com.ztl.gym.common.mapper;
 
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.domain.GeneratorBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,4 +53,25 @@ public interface CommonMapper {
     List<SysUser> getTenantByParent(Map<String, Object> params);
 
     void insertPrintData(Map<String, Object> mapTemp);
+
+    /**
+     * 更新分布式id自增数
+     *
+     * @param params
+     */
+    int updateGeneratorVal(Map<String, Object> params);
+
+    /**
+     * 新增分布式id
+     *
+     * @param params
+     */
+    int insertGenerator(Map<String, Object> params);
+
+    /**
+     * 查询分布式id
+     *
+     * @param params
+     */
+    GeneratorBean selectIdGenerator(Map<String, Object> params);
 }

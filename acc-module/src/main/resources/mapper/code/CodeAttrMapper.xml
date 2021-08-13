@@ -226,4 +226,17 @@
             where id = #{item.id}
         </foreach>
     </update>
+
+    <insert id="insertCodeAttrBatch" parameterType="java.util.List">
+        insert into t_code_attr ( id, company_id, tenant_id, record_id, index_start, index_end, create_user,
+        create_time, update_user, update_time )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.companyId},#{item.tenantId},#{item.recordId},#{item.indexStart},#{item.indexEnd},#{item.createUser},#{item.createTime},#{item.updateUser},#{item.updateTime})
+        </foreach>
+    </insert>
+
+    <select id="getMaxAttrId" resultType="Long">
+        select max(id) from t_code_attr
+    </select>
 </mapper>

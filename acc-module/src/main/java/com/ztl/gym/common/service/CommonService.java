@@ -94,4 +94,10 @@ CommonService {
     void downloadTXT(String fileName, String content, HttpServletResponse response);
 
     void insertPrintData(Map<String, Object> mapTemp);
+
+    /**
+     * 更新企业自增数
+     *
+     */
+    int updateGeneratorVal(long companyId, long codeIndex, int type);
 }

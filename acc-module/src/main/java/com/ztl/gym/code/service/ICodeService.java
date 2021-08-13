@@ -172,4 +172,6 @@ public interface ICodeService {
      */
     void cleanSingleCodesInBox(long companyId,String pCode);
 
+    void executeBatchInsertCode(List<Code> list);
+
 }

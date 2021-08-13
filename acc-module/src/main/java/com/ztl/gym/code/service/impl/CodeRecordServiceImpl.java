@@ -240,6 +240,7 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId);
             }
         } catch (Exception e) {
+            log.error("Exception is {}", e);
             throw new CustomException("接收数据异常，请检查码数据格式！", HttpStatus.ERROR);
         }
 

@@ -86,4 +86,16 @@ public interface CodeAttrMapper {
     int updateCodeIndex(Map<String, Object> params);
 
     int updateCodeAttrBatch(List<CodeAttr> attrList);
+
+    /**
+     * 批量插入码属性
+     * @param attrList
+     */
+    void insertCodeAttrBatch(List<CodeAttr> attrList);
+
+    /**
+     * 获取最大的属性id
+     * @return
+     */
+    Long getMaxAttrId();
 }

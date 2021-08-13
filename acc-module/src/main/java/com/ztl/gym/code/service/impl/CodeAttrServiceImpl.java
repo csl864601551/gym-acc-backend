@@ -124,4 +124,9 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     public int updateCodeAttrBatch(List<CodeAttr> attrList) {
         return codeAttrMapper.updateCodeAttrBatch(attrList);
     }
+
+    @Override
+    public void insertCodeAttrBatch(List<CodeAttr> codeAttrs) {
+        codeAttrMapper.insertCodeAttrBatch(codeAttrs);
+    }
 }

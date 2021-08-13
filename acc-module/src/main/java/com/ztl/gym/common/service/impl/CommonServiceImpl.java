@@ -8,6 +8,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.domain.GeneratorBean;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.mapper.CommonMapper;
@@ -31,10 +32,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommonServiceImpl implements CommonService {
@@ -348,5 +346,21 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public void insertPrintData(Map<String, Object> mapTemp) {
         commonMapper.insertPrintData(mapTemp);
+    }
+
+    @Override
+    public int updateGeneratorVal(long companyId, long codeIndex, int type) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("type", type);
+        GeneratorBean generatorBean = commonMapper.selectIdGenerator(params);
+        params.put("maxId", codeIndex);
+        if (Objects.isNull(generatorBean)) {
+            params.put("version", 0);
+            return commonMapper.insertGenerator(params);
+        } else {
+            params.put("version", generatorBean.getVersion());
+            return commonMapper.updateGeneratorVal(params);
+        }
     }
 }

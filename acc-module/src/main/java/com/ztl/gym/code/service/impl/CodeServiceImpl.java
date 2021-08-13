@@ -5,11 +5,13 @@ import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.domain.vo.CodeVo;
+import com.ztl.gym.code.mapper.CodeAttrMapper;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.code.service.thread.CodeThreadByCallable;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.enums.DataSourceType;
@@ -20,6 +22,9 @@ import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.storage.domain.vo.FlowVo;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * 码 Service业务层处理
@@ -51,6 +58,12 @@ public class CodeServiceImpl implements ICodeService {
 
     @Autowired
     private ICodeAttrService codeAttrService;
+
+    @Autowired
+    private CodeAttrMapper codeAttrMapper;
+
+    @Autowired
+    private SqlSessionTemplate sqlSessionTemplate;
 
     @Override
     @DataSource(DataSourceType.SHARDING)
@@ -147,11 +160,19 @@ public class CodeServiceImpl implements ICodeService {
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
         long codeIndex = codeRecord.getIndexStart();
         Date date=new Date();
+        List<CodeAttr> codeAttrs = null;
         if (boxCount > 0) {
+            codeAttrs = new LinkedList<>();
+            CodeAttr codeAttr = null;
+            //获取当前最大码属性id值
+            Long attrId = codeAttrMapper.getMaxAttrId();
             for (int i = 0; i < boxCount; i++) {
+                codeAttr = new CodeAttr();
                 //按箱来创建码属性
-                long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
-
+                attrId = attrId + 1;
+                buildCodeAttr(codeAttr,attrId+1, companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
+                //long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
+                codeAttrs.add(codeAttr);
                 //箱码
                 String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
                 Code boxCode = new Code();
@@ -162,14 +183,15 @@ public class CodeServiceImpl implements ICodeService {
                 if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
                     boxCode.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
                 }
-                boxCode.setCodeAttrId(boxAttrId);
+                boxCode.setCodeAttrId(codeAttr.getId());
                 codeList.add(boxCode);
                 //单码流水号+1
                 codeIndex += 1;
 
                 //单码
+                Code singleCode = null;
                 for (int j = 0; j < codeTotalNum; j++) {
-                    Code singleCode = new Code();
+                    singleCode = new Code();
                     singleCode.setCodeIndex(codeIndex);
                     singleCode.setpCode(pCode);
                     singleCode.setCompanyId(companyId);
@@ -178,20 +200,32 @@ public class CodeServiceImpl implements ICodeService {
                     if(codeRecord.getIsAcc()==AccConstants.IS_ACC_TRUE){
                         singleCode.setCodeAcc(CodeRuleUtils.buildAccCode(companyId));
                     }
-                    singleCode.setCodeAttrId(boxAttrId);
+                    singleCode.setCodeAttrId(codeAttr.getId());
                     codeList.add(singleCode);
                     codeIndex += 1;
                 }
-
-                //更新自增数
-                if (i + 1 == boxCount) {
-                    commonService.updateVal(companyId, codeRecord.getIndexEnd());
+                //箱码5000条数据预处理一下
+                if(codeAttrs.size()==20000){
+                    executeBatchInsertAttr(codeAttrs);
+                    //codeAttrService.insertCodeAttrBatch(codeAttrs);
+                    codeAttrs.clear();
+                    try {
+                        System.gc();
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+            }
+            if(codeAttrs.size()>0){
+                executeBatchInsertAttr(codeAttrs);
+                codeAttrs = null;
             }
         } else {
             long attrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
+            Code code = null;
             for (int i = 0; i < codeTotalNum; i++) {
-                Code code = new Code();
+                code = new Code();
                 code.setCodeIndex(codeIndex + i);
                 code.setpCode(null);
                 code.setCompanyId(companyId);
@@ -202,15 +236,10 @@ public class CodeServiceImpl implements ICodeService {
                 }
                 code.setCodeAttrId(attrId);
                 codeList.add(code);
-
-                //更新自增数
-                if (i + 1 == codeTotalNum) {
-                    commonService.updateVal(companyId, codeRecord.getIndexEnd());
-                }
             }
         }
-
-        int res = codeMapper.insertCodeForBatch(codeList);
+        //最后异步批量新增码记录
+        int res = asynExcuteInsterCode(codeList);
         if (res > 0) {
             logger.info("生码记录ID：" + codeRecordId + "生码成功");
             Map<String, Object> params = new HashMap<>();
@@ -220,6 +249,8 @@ public class CodeServiceImpl implements ICodeService {
         } else {
             logger.error("生码记录ID：" + codeRecordId + "生码异常");
         }
+        //更新自增数
+        commonService.updateVal(companyId, codeRecord.getIndexEnd());
         return correct;
     }
     /**
@@ -470,6 +501,28 @@ public class CodeServiceImpl implements ICodeService {
         return codeAttr.getId();
     }
 
+    /**
+     * 构建生码属性
+     *
+     * @param companyId
+     * @param codeRecordId
+     * @param indexStart
+     * @param indexEnd
+     */
+    private CodeAttr buildCodeAttr(CodeAttr codeAttr, long id, long companyId, long userId, long codeRecordId, long indexStart, long indexEnd,Date date){
+        codeAttr.setId(id);
+        codeAttr.setCompanyId(companyId);
+        codeAttr.setTenantId(companyId);
+        codeAttr.setRecordId(codeRecordId);
+        codeAttr.setIndexStart(indexStart);
+        codeAttr.setIndexEnd(indexEnd);
+        codeAttr.setCreateUser(userId);
+        codeAttr.setCreateTime(date);
+        codeAttr.setUpdateUser(userId);
+        codeAttr.setUpdateTime(date);
+        return codeAttr;
+    }
+
     @Override
     public void updatePCodeVal(Long companyId,String pCode, List<String> codes) {
         Map<String, Object> params = new HashMap<>();
@@ -564,5 +617,71 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     public int selectCodeNum(Map<String, Object> map) {
         return codeMapper.selectCodeNum(map);
+    }
+    @DataSource(DataSourceType.SHARDING)
+    public void executeBatchInsertAttr(List<CodeAttr> codeAttrs) {
+        //关闭session的自动提交
+        SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+        //利用反射生成mapper对象
+        CodeAttrMapper excelMapper = session.getMapper(CodeAttrMapper.class);
+        try {
+            //手动每10000个一提交，提交后无法回滚
+            excelMapper.insertCodeAttrBatch(codeAttrs);
+            session.commit();
+            session.clearCache();//注意，如果没有这个动作，可能会导致内存崩溃。
+
+        } catch (Exception e) {
+            //没有提交的数据可以回滚
+            session.rollback();
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     * 批量执行生码入库操作
+     * @param list
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void executeBatchInsertCode(List<Code> list) {
+        //关闭session的自动提交
+        SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+        //利用反射生成mapper对象
+        CodeMapper excelMapper = session.getMapper(CodeMapper.class);
+        try {
+
+            //手动每10000个一提交，提交后无法回滚
+            excelMapper.insertCodeForBatch(list);
+            session.commit();
+            session.clearCache();//注意，如果没有这个动作，可能会导致内存崩溃。
+
+        } catch (Exception e) {
+            //没有提交的数据可以回滚
+            session.rollback();
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     * 异步执行批量生码入库操作
+     * @param codeList
+     * @return
+     */
+    private int asynExcuteInsterCode(List<Code> codeList){
+        FutureTask<Integer> futureTask = new FutureTask<>(new CodeThreadByCallable(codeList));
+        Thread thread = new Thread(futureTask, "CreateCodes");
+        thread.setDaemon(true);
+        thread.start();
+        int res = 0;
+        try {
+            res = futureTask.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

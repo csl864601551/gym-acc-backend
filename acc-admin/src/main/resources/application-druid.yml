@@ -6,7 +6,7 @@ spring:
         druid:
             # 测试主库数据源
             master:
-                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&rewriteBatchedStatements=true
                 username: tchina1234
                 password: TChina1234
             # 正式南通数据源

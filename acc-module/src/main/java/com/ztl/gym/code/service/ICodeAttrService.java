@@ -80,4 +80,12 @@ public interface ICodeAttrService {
      * @return 结果
      */
     public int updateCodeAttrBatch(List<CodeAttr> attrList);
+
+    /**
+     * 批量码属性
+     *
+     * @param codeAttrs 码属性
+     * @return 结果
+     */
+    public void insertCodeAttrBatch(List<CodeAttr> codeAttrs);
 }
