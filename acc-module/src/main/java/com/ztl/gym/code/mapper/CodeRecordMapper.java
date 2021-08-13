@@ -98,10 +98,20 @@ public interface CodeRecordMapper {
 
 
     /**
-     * 产品出货量 本周
+     * 套标生码总量统计图
      *
-     * @param map
+     * @param map 部门信息
      * @return 结果
      */
     public List<Map<String,Object>> selectCodeByDate(Map<String, Object> map);
+
+
+
+    /**
+     * 单码生码总量统计图
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    public List<Map<String,Object>> selectCodeSingByDate(Map<String, Object> map);
 }

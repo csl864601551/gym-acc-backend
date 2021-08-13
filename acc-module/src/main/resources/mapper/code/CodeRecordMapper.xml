@@ -309,8 +309,74 @@
         </if>
         <if test="type != null and type == 3">
             SELECT
+            days.countKey,
+            ifnull( datas.countValue, 0 ) AS countValue
+            FROM
+            (-- 数据查询
+            SELECT
+            date( tfi.create_time ) AS countKey,
+            ifnull( sum( tfi.count ), 0 )  AS countValue
+            FROM
+            t_code_record tfi
+            WHERE
+            tfi.create_time &lt;= #{endTime} AND tfi.create_time &gt;= #{beginTime}
+            <if test="deptId != null">
+                and tfi.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            date( tfi.create_time )
+            ORDER BY
+            date( tfi.create_time )
+            ) datas -- 右连接
+            RIGHT JOIN (-- 日期查询
+            SELECT
+            @date := date_add( @date, INTERVAL 1 DAY ) AS countKey
+            FROM
+            ( SELECT @date := date_add( #{beginTime}, INTERVAL - 1 DAY ) FROM t_scan_record tfi ) days
+            WHERE
+            @date &lt;= date_add( #{endTime}, INTERVAL - 1 DAY ) AND @date &gt;= date_add( #{beginTime}, INTERVAL - 1 DAY )
+            ) days ON datas.countKey = days.countKey
+            GROUP BY
+            days.countKey ASC;
+        </if>
+    </select>
+
+
+
+    <!--    type =1 最近7天 2 最近30天 3 选择时间  -->
+    <select id="selectCodeSingByDate" resultType="java.util.Map" parameterType="Map">
+        <if test="type != null and type == 1">
+            SELECT
             DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
-            ifnull( COUNT( pv.create_time ), 0 ) AS countValue
+            ifnull( sum( pv.count ), 0 ) AS countValue
+            FROM
+            (
+            SELECT
+            curdate( ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+            SELECT
+            date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+            ) AS total
+            LEFT JOIN t_code_single pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            <if test="deptId != null">
+                and pv.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            mycreatedate
+        </if>
+        <if test="type != null and type == 2">
+            SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS countKey,
+            ifnull( sum( pv.count ), 0 ) AS countValue
             FROM
             (
             SELECT
@@ -374,19 +440,44 @@
             SELECT
             date_sub( curdate( ), INTERVAL 29 DAY ) AS mycreatedate
             ) AS total
-            LEFT JOIN t_code_record pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
+            LEFT JOIN t_code_single pv ON DATE_FORMAT( pv.create_time, '%Y-%m-%d' ) = total.mycreatedate
             <if test="deptId != null">
                 and pv.company_id  = #{deptId}
             </if>
-            <if test="beginTime != null">
-                and pv.create_time &gt;= #{beginTime}
-            </if>
-            <if test="endTime != null">
-                and pv.create_time &lt;= #{endTime}
-            </if>
-            and pv.company_id  = #{deptId}
             GROUP BY
             mycreatedate
+        </if>
+        <if test="type != null and type == 3">
+            SELECT
+            days.countKey,
+            ifnull( datas.countValue, 0 ) AS countValue
+            FROM
+            (-- 数据查询
+            SELECT
+            date( tfi.create_time ) AS countKey,
+            ifnull( sum( tfi.count ), 0 )  AS countValue
+            FROM
+            t_code_single tfi
+            WHERE
+            tfi.create_time &lt;= #{endTime} AND tfi.create_time &gt;= #{beginTime}
+            <if test="deptId != null">
+                and tfi.company_id  = #{deptId}
+            </if>
+            GROUP BY
+            date( tfi.create_time )
+            ORDER BY
+            date( tfi.create_time )
+            ) datas -- 右连接
+            RIGHT JOIN (-- 日期查询
+            SELECT
+            @date := date_add( @date, INTERVAL 1 DAY ) AS countKey
+            FROM
+            ( SELECT @date := date_add( #{beginTime}, INTERVAL - 1 DAY ) FROM t_scan_record tfi ) days
+            WHERE
+            @date &lt;= date_add( #{endTime}, INTERVAL - 1 DAY ) AND @date &gt;= date_add( #{beginTime}, INTERVAL - 1 DAY )
+            ) days ON datas.countKey = days.countKey
+            GROUP BY
+            days.countKey ASC;
         </if>
     </select>
 </mapper>

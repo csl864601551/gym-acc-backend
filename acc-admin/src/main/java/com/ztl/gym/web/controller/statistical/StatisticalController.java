@@ -557,12 +557,16 @@ public class StatisticalController {
                         query.put("type", "1");
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        //单码
+                        List<Map<String, Object>> singSmslList = codeRecordService.selectCodeSingByDate(query);
                         if (smslList.size() > 0) {
                             for (int i = 0; i < smslList.size(); i++) {
                                 Map<String, Object> smslMap = new HashMap<String, Object>();
+                                Map<String, Object> singSmslMap = new HashMap<String, Object>();
                                 smslMap = smslList.get(i);
+                                singSmslMap = singSmslList.get(i);
                                 smslXlist.add(smslMap.get("countKey"));
-                                smslYlist.add(smslMap.get("countValue"));
+                                smslYlist.add(Integer.parseInt(smslMap.get("countValue").toString())+Integer.parseInt(singSmslMap.get("countValue").toString()));
                             }
                         }
                         //扫码数量
@@ -589,12 +593,16 @@ public class StatisticalController {
                         query.put("type", "2");
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        //单码
+                        List<Map<String, Object>> singSmslList = codeRecordService.selectCodeSingByDate(query);
                         if (smslList.size() > 0) {
                             for (int i = 0; i < smslList.size(); i++) {
                                 Map<String, Object> smslMap = new HashMap<String, Object>();
+                                Map<String, Object> singSmslMap = new HashMap<String, Object>();
                                 smslMap = smslList.get(i);
+                                singSmslMap = singSmslList.get(i);
                                 smslXlist.add(smslMap.get("countKey"));
-                                smslYlist.add(smslMap.get("countValue"));
+                                smslYlist.add(Integer.parseInt(smslMap.get("countValue").toString())+Integer.parseInt(singSmslMap.get("countValue").toString()));
                             }
                         }
                         //扫码数量
@@ -625,12 +633,16 @@ public class StatisticalController {
                         }
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        //单码
+                        List<Map<String, Object>> singSmslList = codeRecordService.selectCodeSingByDate(query);
                         if (smslList.size() > 0) {
                             for (int i = 0; i < smslList.size(); i++) {
                                 Map<String, Object> smslMap = new HashMap<String, Object>();
+                                Map<String, Object> singSmslMap = new HashMap<String, Object>();
                                 smslMap = smslList.get(i);
+                                singSmslMap = singSmslList.get(i);
                                 smslXlist.add(smslMap.get("countKey"));
-                                smslYlist.add(smslMap.get("countValue"));
+                                smslYlist.add(Integer.parseInt(smslMap.get("countValue").toString())+Integer.parseInt(singSmslMap.get("countValue").toString()));
                             }
                         }
                         //扫码数量
@@ -664,12 +676,16 @@ public class StatisticalController {
                         query.put("type", "1");
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        //单码
+                        List<Map<String, Object>> singSmslList = codeRecordService.selectCodeSingByDate(query);
                         if (smslList.size() > 0) {
                             for (int i = 0; i < smslList.size(); i++) {
                                 Map<String, Object> smslMap = new HashMap<String, Object>();
+                                Map<String, Object> singSmslMap = new HashMap<String, Object>();
                                 smslMap = smslList.get(i);
+                                singSmslMap = singSmslList.get(i);
                                 smslXlist.add(smslMap.get("countKey"));
-                                smslYlist.add(smslMap.get("countValue"));
+                                smslYlist.add(Integer.parseInt(smslMap.get("countValue").toString())+Integer.parseInt(singSmslMap.get("countValue").toString()));
                             }
                         }
                         //扫码数量
@@ -696,12 +712,16 @@ public class StatisticalController {
                         query.put("type", "2");
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        //单码
+                        List<Map<String, Object>> singSmslList = codeRecordService.selectCodeSingByDate(query);
                         if (smslList.size() > 0) {
                             for (int i = 0; i < smslList.size(); i++) {
                                 Map<String, Object> smslMap = new HashMap<String, Object>();
+                                Map<String, Object> singSmslMap = new HashMap<String, Object>();
                                 smslMap = smslList.get(i);
+                                singSmslMap = singSmslList.get(i);
                                 smslXlist.add(smslMap.get("countKey"));
-                                smslYlist.add(smslMap.get("countValue"));
+                                smslYlist.add(Integer.parseInt(smslMap.get("countValue").toString())+Integer.parseInt(singSmslMap.get("countValue").toString()));
                             }
                         }
                         //扫码数量
@@ -732,12 +752,16 @@ public class StatisticalController {
                         }
                         //生码数量
                         List<Map<String, Object>> smslList = codeRecordService.selectCodeByDate(query);
+                        //单码
+                        List<Map<String, Object>> singSmslList = codeRecordService.selectCodeSingByDate(query);
                         if (smslList.size() > 0) {
                             for (int i = 0; i < smslList.size(); i++) {
                                 Map<String, Object> smslMap = new HashMap<String, Object>();
+                                Map<String, Object> singSmslMap = new HashMap<String, Object>();
                                 smslMap = smslList.get(i);
+                                singSmslMap = singSmslList.get(i);
                                 smslXlist.add(smslMap.get("countKey"));
-                                smslYlist.add(smslMap.get("countValue"));
+                                smslYlist.add(Integer.parseInt(smslMap.get("countValue").toString())+Integer.parseInt(singSmslMap.get("countValue").toString()));
                             }
                         }
                         //扫码数量

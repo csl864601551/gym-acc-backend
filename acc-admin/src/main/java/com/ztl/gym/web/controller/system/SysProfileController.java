@@ -1,9 +1,9 @@
 package com.ztl.gym.web.controller.system;
 
-import java.io.IOException;
-
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.config.RuoYiConfig;
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.UserConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysUser;
@@ -12,19 +12,14 @@ import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.common.utils.StringUtils;
-import com.ztl.gym.framework.web.service.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import com.ztl.gym.common.constant.UserConstants;
 import com.ztl.gym.common.utils.file.FileUploadUtils;
+import com.ztl.gym.framework.web.service.TokenService;
 import com.ztl.gym.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * 个人信息 业务处理
@@ -49,9 +44,18 @@ public class SysProfileController extends BaseController
     {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         SysUser user = loginUser.getUser();
+        //获取用户部门信息
+        boolean isadmin = false;
+        Long company_id=SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            isadmin = false;
+        }else{
+            isadmin = true;
+        }
         AjaxResult ajax = AjaxResult.success(user);
         ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
         ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUsername()));
+        ajax.put("isadmin", isadmin);
         return ajax;
     }
 
