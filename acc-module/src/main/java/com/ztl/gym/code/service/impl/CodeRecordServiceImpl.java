@@ -9,8 +9,7 @@ import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
-import com.ztl.gym.common.domain.GeneratorBean;
-import com.ztl.gym.common.domain.GeneratorEnum;
+import com.ztl.gym.common.domain.GeneratorTypeConstants;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.mapper.CommonMapper;
 import com.ztl.gym.common.service.CommonService;
@@ -28,7 +27,6 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -256,9 +254,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 Long attrId = codeAttrMapper.getMaxAttrId();
                 //跟新生码属性序列
                 if(boxCount > 0){
-                    commonService.updateGeneratorVal(companyId, attrId,boxCount, GeneratorEnum.ATTR.getType());
+                    commonService.updateGeneratorVal(companyId, attrId,boxCount, 1);
                 }else{
-                    commonService.updateGeneratorVal(companyId, attrId,1, GeneratorEnum.ATTR.getType());
+                    commonService.updateGeneratorVal(companyId, attrId,1, 1);
                 }
                 codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId, attrId);
             }

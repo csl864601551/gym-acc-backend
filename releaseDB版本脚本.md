@@ -214,3 +214,14 @@ ALTER TABLE `t_scan_record` ADD `product_name` varchar(255) COLLATE utf8mb4_bin 
 ### Beta V1.1.0 2021/08/09
 ALTER TABLE `t_security_code_record` ADD `ip` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'ip地址'
 ALTER TABLE `t_security_code_record` ADD `address` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '详细地址'
+
+### Beta V1.1.0 2021/08/14
+CREATE TABLE `t_id_generator` (
+`id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id 主键',
+`company_id` bigint(20) DEFAULT NULL,
+`max_id` bigint(20) DEFAULT NULL COMMENT '当前最大id',
+`type` int(11) DEFAULT NULL COMMENT '业务类型',
+`step` int(11) DEFAULT NULL COMMENT '号段的布长',
+`version` int(11) DEFAULT NULL COMMENT '版本号',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='id号段生成表';
