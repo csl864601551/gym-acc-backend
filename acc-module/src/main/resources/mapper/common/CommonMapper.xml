@@ -81,7 +81,7 @@
     </insert>
 
     <update id="updateGeneratorVal" parameterType="Map">
-        UPDATE t_id_generator set max_id = #{maxId}, version = version + 1 where company_id = #{companyId} and version = # {version} and type = #{type}
+        UPDATE t_id_generator set max_id = #{maxId}, version = version + 1 where company_id = #{companyId} and version = #{version} and type = #{type}
     </update>
 
     <insert id="insertPrintData" parameterType="Map">

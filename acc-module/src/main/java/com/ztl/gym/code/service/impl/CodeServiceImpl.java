@@ -14,6 +14,7 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.code.service.thread.CodeThreadByCallable;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.domain.GeneratorEnum;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;

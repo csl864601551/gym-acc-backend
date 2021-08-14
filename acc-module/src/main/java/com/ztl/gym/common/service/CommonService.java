@@ -96,8 +96,10 @@ CommonService {
     void insertPrintData(Map<String, Object> mapTemp);
 
     /**
-     * 更新企业自增数
-     *
+     * 更新业务序列号
+     * @param companyId
+     * @param type
+     * @return
      */
-    int updateGeneratorVal(long companyId, long codeIndex, int type);
+    int updateGeneratorVal(long companyId,long originalMaxId, long num, int type);
 }

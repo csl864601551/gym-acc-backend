@@ -8,7 +8,10 @@ import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.domain.GeneratorBean;
+import com.ztl.gym.common.domain.GeneratorEnum;
 import com.ztl.gym.common.exception.CustomException;
+import com.ztl.gym.common.mapper.CommonMapper;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
@@ -24,6 +27,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +59,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private CommonMapper commonMapper;
 
     /**
      * 查询生码记录
@@ -237,6 +244,10 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 boxCount = Long.parseLong(codeGenMsgs[5]);
             }
             if (localIp.equals(ip)) {
+                CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
+                long codeIndex = codeRecord.getIndexStart();
+                //跟新生码属性序列
+                commonService.updateGeneratorVal(companyId, codeIndex,(codeTotalNum + 1)*boxCount, GeneratorEnum.ATTR.getType());
                 codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId);
             }
         } catch (Exception e) {
