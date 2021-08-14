@@ -144,6 +144,9 @@ public class ScanRecordServiceImpl implements IScanRecordService {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
+        if(codeEntity==null){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
         List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
         List<Map<String,Object>> flowList=scanRecordMapper.selectFlowList(companyId,codeVal);//查询物流记录
 
@@ -167,12 +170,17 @@ public class ScanRecordServiceImpl implements IScanRecordService {
             returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
             returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
             returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
-            String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
-            if (StringUtils.isNotBlank(photo)) {
-                returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
-            } else {
+            if(codeEntity.getCodeAttr().getProduct()==null){
                 returnMap.put("photoShow","");
+            }else{
+                String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
+                if (StringUtils.isNotBlank(photo)) {
+                    returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
+                } else {
+                    returnMap.put("photoShow","");
+                }
             }
+
         }else{
             //throw new CustomException("该码处于初始状态，尚未赋值！",HttpStatus.ERROR);
             returnMap.put("photoShow","");
@@ -197,6 +205,9 @@ public class ScanRecordServiceImpl implements IScanRecordService {
             codeTemp.setCompanyId(CodeRuleUtils.getCompanyIdByCode(area.getCode()));
             codeTemp.setCode(area.getCode());
             Code code=codeService.selectCode(codeTemp);
+            if(code==null){
+                throw new CustomException("未查询到相关销售区域",HttpStatus.ERROR);
+            }
             temp.setCompanyId(code.getCompanyId());
             temp.setTenantId(code.getTenantId());
         }

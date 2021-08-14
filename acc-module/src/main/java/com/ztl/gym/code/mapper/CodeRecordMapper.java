@@ -88,6 +88,8 @@ public interface CodeRecordMapper {
      */
     public CodeRecord selectCodeRecordByIndex(@Param("codeIndex")  long codeIndex, @Param("companyId") long companyId);
 
+
+
     /**
      * 生码总量
      *

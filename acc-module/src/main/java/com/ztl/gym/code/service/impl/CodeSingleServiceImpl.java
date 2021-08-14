@@ -1,13 +1,12 @@
 package com.ztl.gym.code.service.impl;
 
-import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
-import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.exception.CustomException;
@@ -316,5 +315,17 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
     @Override
     public int selectSingCodeNum(Map<String, Object> map) {
         return codeSingleMapper.selectSingCodeNum(map);
+    }
+
+
+    /**
+     * 查询单码生码记录
+     *
+     * @param codeIndex 生码记录ID
+     * @return 生码记录
+     */
+    @Override
+    public CodeSingle selectSingCodeRecordByIndex(long codeIndex, long companyId) {
+        return codeSingleMapper.selectSingCodeRecordByIndex(codeIndex,companyId);
     }
 }

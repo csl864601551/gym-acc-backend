@@ -169,4 +169,10 @@
 
         </if>
     </select>
+
+
+    <select id="selectSingCodeRecordByIndex" parameterType="long" resultMap="CodeSingleResult">
+        <include refid="selectCodeSingleVo"/>
+        where index_start &lt;= #{codeIndex} and index_end &gt;= #{codeIndex} and company_id  = #{companyId}
+    </select>
 </mapper>

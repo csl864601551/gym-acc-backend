@@ -3,7 +3,7 @@ package com.ztl.gym.code.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAccRecord;
-import com.ztl.gym.code.domain.CodeRecord;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.SecurityCodeRecord;
 import com.ztl.gym.code.domain.vo.ScanSecurityCodeOutBean;
 import com.ztl.gym.code.mapper.CodeAccRecordMapper;
@@ -16,9 +16,10 @@ import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.StringUtils;
-import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IProductService;
 import com.ztl.gym.system.mapper.SysDeptMapper;
+import com.ztl.gym.template.domain.SecurityCodeTemplate;
+import com.ztl.gym.template.service.ISecurityCodeTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
     private IProductService productService;
     @Autowired
     private SysDeptMapper deptMapper;
+
+    @Autowired
+    private ISecurityCodeTemplateService securityCodeTemplateService;
 
     /**
      * 查询防伪记录 company_id字段分
@@ -198,24 +202,39 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
             scanSecurityCodeOutBean.setFirstQueryTime(securityCodeRecords.get(securityCodeRecords.size() - 1).getCreateTime());
             scanSecurityCodeOutBean.setLastQueryTime(securityCodeRecords.get(0).getCreateTime());
         }
-        CodeRecord codeRecord = codeRecordMapper.selectCodeRecordByIndex(code.getCodeIndex(), code.getCompanyId());
-        if (!Objects.isNull(codeRecord)) {
-            securityCodeRecord.setProductId(codeRecord.getProductId());
-            Product product = productService.selectTProductByIdOne(codeRecord.getProductId());
-            if (!Objects.isNull(product)) {
-                scanSecurityCodeOutBean.setProduct(product.getProductName());
-                scanSecurityCodeOutBean.setMoreContent(product.getContent2());
-                scanSecurityCodeOutBean.setOnceContent(product.getContent1());
-                scanSecurityCodeOutBean.setOnceTemplateContent(product.getTemplateContent1());
-                scanSecurityCodeOutBean.setMoreTemplateContent(product.getTemplateContent2());
-            }
-            else{
+        //根据code获取相关数据
+        if(code.getCodeAttr()!=null){
+            CodeAttr codeAttr = code.getCodeAttr();
+            if(codeAttr.getProduct()!=null){
+                scanSecurityCodeOutBean.setProduct(codeAttr.getProduct().getProductName());
+                if(codeAttr.getProduct().getContent2()!=null&&codeAttr.getProduct().getContent1()!=null){
+                    scanSecurityCodeOutBean.setMoreContent(codeAttr.getProduct().getContent2());
+                    scanSecurityCodeOutBean.setOnceContent(codeAttr.getProduct().getContent1());
+                    scanSecurityCodeOutBean.setOnceTemplateContent(codeAttr.getProduct().getTemplateContent1());
+                    scanSecurityCodeOutBean.setMoreTemplateContent(codeAttr.getProduct().getTemplateContent2());
+                }else{
+                    //没有配置模板用系统模板展示
+                    SecurityCodeTemplate securityCodeTemplate = new SecurityCodeTemplate();
+                    securityCodeTemplate.setType(0);
+                    List<SecurityCodeTemplate> list = securityCodeTemplateService.selectSecurityCodeTemplateList(securityCodeTemplate);
+                    if(list.size()>0){
+                        for(SecurityCodeTemplate securityCodeTemplateinfo :list){
+                            if(securityCodeTemplateinfo.getScenario().equals("0")){
+                                scanSecurityCodeOutBean.setOnceContent(null);
+                                scanSecurityCodeOutBean.setOnceTemplateContent(securityCodeTemplateinfo.getContent());
+                            }else{
+                                scanSecurityCodeOutBean.setMoreContent(null);
+                                scanSecurityCodeOutBean.setMoreTemplateContent(securityCodeTemplateinfo.getContent());
+                            }
+                        }
+                    }
+                }
+            }else{
                 logger.info("该防伪码对应的标识码没有关联产品！");
             }
         }else{
             logger.info("该防伪码对应的标识码没有关联产品！");
         }
-        logger.info("该防伪码对应的标识码没有关联产品！");
         //给防伪记录塞值
         securityCodeRecord.setCode(code.getCode());
         securityCodeRecord.setCodeAcc(code.getCodeAcc());

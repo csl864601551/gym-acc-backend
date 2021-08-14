@@ -97,4 +97,14 @@ public interface CodeSingleMapper {
      * @return 结果
      */
     public int selectSingCodeNum(Map<String, Object> map);
+
+
+
+    /**
+     * 查询生码记录
+     *
+     * @param codeIndex 生码记录ID
+     * @return 生码记录
+     */
+    public CodeSingle selectSingCodeRecordByIndex(@Param("codeIndex")  long codeIndex, @Param("companyId") long companyId);
 }
