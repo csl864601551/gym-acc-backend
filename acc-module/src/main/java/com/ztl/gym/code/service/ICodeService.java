@@ -82,7 +82,7 @@ public interface ICodeService {
      * @param userId       用户id
      * @return
      */
-    int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId);
+    int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId, long attrId);
 
     /**
      * 根据属性id修改码状态

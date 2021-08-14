@@ -1,6 +1,7 @@
 package com.ztl.gym.code.service.impl;
 
 import com.ztl.gym.code.domain.CodeRecord;
+import com.ztl.gym.code.mapper.CodeAttrMapper;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
@@ -62,6 +63,9 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
     @Autowired
     private CommonMapper commonMapper;
+
+    @Autowired
+    private CodeAttrMapper codeAttrMapper;
 
     /**
      * 查询生码记录
@@ -248,11 +252,15 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 boxCount = Long.parseLong(codeGenMsgs[5]);
             }
             if (localIp.equals(ip)) {
-                CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
-                long codeIndex = codeRecord.getIndexStart();
+                //获取当前最大码属性id值
+                Long attrId = codeAttrMapper.getMaxAttrId();
                 //跟新生码属性序列
-                commonService.updateGeneratorVal(companyId, codeIndex,(codeTotalNum + 1)*boxCount, GeneratorEnum.ATTR.getType());
-                codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId);
+                if(boxCount > 0){
+                    commonService.updateGeneratorVal(companyId, attrId,boxCount, GeneratorEnum.ATTR.getType());
+                }else{
+                    commonService.updateGeneratorVal(companyId, attrId,1, GeneratorEnum.ATTR.getType());
+                }
+                codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId, attrId);
             }
         } catch (Exception e) {
             log.error("Exception is {}", e);

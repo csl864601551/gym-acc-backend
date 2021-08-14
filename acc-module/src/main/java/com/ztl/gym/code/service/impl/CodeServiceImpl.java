@@ -154,24 +154,21 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId) {
+    public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId, long attrId) {
         int correct = 0;
         List<Code> codeList = new ArrayList<>();
         //企业自增数
         CodeRecord codeRecord = codeRecordMapper.selectCodeRecordById(codeRecordId);
         long codeIndex = codeRecord.getIndexStart();
         Date date=new Date();
-        List<CodeAttr> codeAttrs = null;
+        List<CodeAttr> codeAttrs = new LinkedList<>();;
         if (boxCount > 0) {
-            codeAttrs = new LinkedList<>();
             CodeAttr codeAttr = null;
-            //获取当前最大码属性id值
-            Long attrId = codeAttrMapper.getMaxAttrId();
             for (int i = 0; i < boxCount; i++) {
                 codeAttr = new CodeAttr();
                 //按箱来创建码属性
                 attrId = attrId + 1;
-                buildCodeAttr(codeAttr,attrId+1, companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
+                buildCodeAttr(codeAttr,attrId, companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
                 //long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
                 codeAttrs.add(codeAttr);
                 //箱码
@@ -223,7 +220,12 @@ public class CodeServiceImpl implements ICodeService {
                 codeAttrs = null;
             }
         } else {
-            long attrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
+            CodeAttr codeAttr = new CodeAttr();
+            attrId = attrId + 1;
+            buildCodeAttr(codeAttr,attrId, companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
+            codeAttrs.add(codeAttr);
+            //插入码属性
+            executeBatchInsertAttr(codeAttrs);
             Code code = null;
             for (int i = 0; i < codeTotalNum; i++) {
                 code = new Code();
