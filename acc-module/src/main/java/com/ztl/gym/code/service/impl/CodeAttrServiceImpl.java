@@ -1,6 +1,9 @@
 package com.ztl.gym.code.service.impl;
 
 import java.util.List;
+
+import com.ztl.gym.common.constant.IdGeneratorConstants;
+import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,9 @@ public class CodeAttrServiceImpl implements ICodeAttrService
 {
     @Autowired
     private CodeAttrMapper codeAttrMapper;
+
+    @Autowired
+    private CommonService commonService;
 
     /**
      * 查询码属性
@@ -74,6 +80,9 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     public Long insertCodeAttr(CodeAttr codeAttr)
     {
         codeAttr.setCreateTime(DateUtils.getNowDate());
+        //获取属性id
+        Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
+        codeAttr.setId(attrId + 1);
         codeAttrMapper.insertCodeAttr(codeAttr);
         return codeAttr.getId();
     }

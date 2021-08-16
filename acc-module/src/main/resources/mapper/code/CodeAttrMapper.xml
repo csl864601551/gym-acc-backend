@@ -86,12 +86,10 @@
     </select>
 
 
-    <insert id="insertCodeAttr" parameterType="CodeAttr" useGeneratedKeys="true" keyProperty="id">
-        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
+    <insert id="insertCodeAttr" parameterType="CodeAttr" >
         insert into t_code_attr
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
             <if test="companyId != null">company_id,</if>
             <if test="tenantId != null">tenant_id,</if>
             <if test="storageType != null">storage_type,</if>
@@ -118,6 +116,7 @@
             <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
             <if test="companyId != null">#{companyId},</if>
             <if test="tenantId != null">#{tenantId},</if>
             <if test="storageType != null">#{storageType},</if>
