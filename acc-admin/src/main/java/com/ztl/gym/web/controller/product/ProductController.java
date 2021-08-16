@@ -7,7 +7,6 @@ import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.product.domain.Attr;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IAttrService;
 import com.ztl.gym.product.service.IProductService;
@@ -16,9 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 产品Controller
@@ -81,45 +78,12 @@ public class ProductController extends BaseController
     public AjaxResult add(@RequestBody Product product)
     {
         if(StrUtil.isNotEmpty(product.getProductName())&&StrUtil.isNotEmpty(product.getProductNo())){
-            Product productquery = new Product();
-            productquery.setProductName(product.getProductName());
-            productquery.setProductNo(product.getProductNo());
-            List<Product> list = tProductService.selectTProductList1(productquery);
+            Product productQuery = new Product();
+            productQuery.setProductName(product.getProductName());
+            productQuery.setProductNo(product.getProductNo());
+            List<Product> list = tProductService.selectTProductList1(productQuery);
             if(list.size()>0){
                 return error("该产品编号和产品名称已存在！！！");
-            }
-        }
-        //判断属性列表的值是否对应
-        boolean istrue = true;
-        if(product.getAttributeList()!=null){
-            if(product.getAttributeList().size()>0){
-                for(int i=0; i<product.getAttributeList().size(); i++){
-                    Map<String,Object> topmap = new HashMap<String,Object>();
-                    topmap = product.getAttributeList().get(i);
-                    String name = topmap.get("attrNameCn").toString();
-                    String value = topmap.get("attrValue").toString();
-                    Attr attrinfo = attrService.selectAttrByName(name);
-                    if(attrinfo!=null){
-                        if(attrinfo.getInputType()==1){
-
-                        }else if(attrinfo.getInputType()==2){
-                            List<Map<String,Object>> attlist = attrService.getAttrValuesById(attrinfo.getId());
-                            if(attlist.size()>0){
-                                for(int j=0; j<attlist.size(); j++){
-                                    Map<String,Object> secendmap = new HashMap<String,Object>();
-                                    secendmap = attlist.get(j);
-                                    String twovalue = secendmap.get("value").toString();
-                                    if(twovalue.equals(value)){
-                                        istrue = false;
-                                    }
-                                }
-                                if(istrue){
-                                    return error("产品属性类型和值不一致！！！");
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
         return toAjax(tProductService.insertTProduct(product));
@@ -133,39 +97,43 @@ public class ProductController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody Product product)
     {
-        //判断属性列表的值是否对应
-        boolean istrue = true;
-        if(product.getAttributeList()!=null) {
-            if (product.getAttributeList().size() > 0) {
-                for (int i = 0; i < product.getAttributeList().size(); i++) {
-                    Map<String, Object> topmap = new HashMap<String, Object>();
-                    topmap = product.getAttributeList().get(i);
-                    String name = topmap.get("attrNameCn").toString();
-                    String value = topmap.get("attrValue").toString();
-                    Attr attrinfo = attrService.selectAttrByName(name);
-                    if (attrinfo != null) {
-                        if (attrinfo.getInputType() == 1) {
-
-                        } else if (attrinfo.getInputType() == 2) {
-                            List<Map<String, Object>> attlist = attrService.getAttrValuesById(attrinfo.getId());
-                            if (attlist.size() > 0) {
-                                for (int j = 0; j < attlist.size(); j++) {
-                                    Map<String, Object> secendmap = new HashMap<String, Object>();
-                                    secendmap = attlist.get(j);
-                                    String twovalue = secendmap.get("value").toString();
-                                    if (twovalue.equals(value)) {
-                                        istrue = false;
-                                    }
-                                }
-                                if (istrue) {
-                                    return error("产品属性类型和值不一致！！！");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        if(StrUtil.isNotEmpty(product.getUpdateType())){
+//
+//        }else{
+//            //判断属性列表的值是否对应
+//            boolean istrue = true;
+//            if(product.getAttributeList()!=null) {
+//                if (product.getAttributeList().size() > 0) {
+//                    for (int i = 0; i < product.getAttributeList().size(); i++) {
+//                        Map<String, Object> topmap = new HashMap<String, Object>();
+//                        topmap = product.getAttributeList().get(i);
+//                        String name = topmap.get("attrNameCn").toString();
+//                        String value = topmap.get("attrValue").toString();
+//                        Attr attrinfo = attrService.selectAttrByName(name);
+//                        if (attrinfo != null) {
+//                            if (attrinfo.getInputType() == 1) {
+//
+//                            } else if (attrinfo.getInputType() == 2) {
+//                                List<Map<String, Object>> attlist = attrService.getAttrValuesById(attrinfo.getId());
+//                                if (attlist.size() > 0) {
+//                                    for (int j = 0; j < attlist.size(); j++) {
+//                                        Map<String, Object> secendmap = new HashMap<String, Object>();
+//                                        secendmap = attlist.get(j);
+//                                        String twovalue = secendmap.get("value").toString();
+//                                        if (twovalue.equals(value)) {
+//                                            istrue = false;
+//                                        }
+//                                    }
+//                                    if (istrue) {
+//                                        return error("产品属性类型和值不一致！！！");
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
         return toAjax(tProductService.updateTProduct(product));
     }
 
@@ -174,7 +142,7 @@ public class ProductController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:show:remove')")
     @Log(title = "产品", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(tProductService.deleteTProductByIds(ids));

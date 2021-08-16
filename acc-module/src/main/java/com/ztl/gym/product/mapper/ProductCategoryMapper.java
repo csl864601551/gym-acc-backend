@@ -31,6 +31,16 @@ public interface ProductCategoryMapper
     public List<ProductCategory> selectProductCategoryList(ProductCategory productCategory);
 
 
+
+    /**
+     * 查询产品分类列表
+     *
+     * @param productCategory 产品分类
+     * @return 产品分类集合
+     */
+    public int selectProductCategoryListCount(ProductCategory productCategory);
+
+
     /**
      * 查询产品分类列表
      *

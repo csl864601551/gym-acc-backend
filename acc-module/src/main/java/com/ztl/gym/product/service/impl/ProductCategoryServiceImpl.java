@@ -53,6 +53,24 @@ public class ProductCategoryServiceImpl implements IProductCategoryService
     }
 
 
+
+    /**
+     * 查询产品分类列表数量
+     *
+     * @param productCategory 产品分类
+     * @return 产品分类
+     */
+    @Override
+    public int selectProductCategoryListCount(ProductCategory productCategory)
+    {
+        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
+        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            productCategory.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        return productCategoryMapper.selectProductCategoryListCount(productCategory);
+    }
+
+
     /**
      * 查询产品分类列表
      *
