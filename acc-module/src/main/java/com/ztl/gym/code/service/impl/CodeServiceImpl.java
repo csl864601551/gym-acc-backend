@@ -4,7 +4,6 @@ import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.domain.CodeSingle;
-import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
@@ -16,9 +15,7 @@ import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
-import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -483,5 +480,24 @@ public class CodeServiceImpl implements ICodeService {
     @DataSource(DataSourceType.SHARDING)
     public void updateCodeAttrIdByPCode(Map<String, Object> param) {
         codeMapper.updateCodeAttrIdByPCode(param);
+    }
+
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Code selectCodeByCodeVal(String codeVal,Long companyId) {
+        Code code=new Code();
+        code.setCode(codeVal);
+        code.setCompanyId(companyId);
+        return codeMapper.selectCode(code);
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeRecordBySecurityCode(String securityCode, long companyId) {
+        Map<String, Object> params = new HashMap<>(2);
+        params.put("companyId", companyId);
+        params.put("codeAcc", securityCode);
+        return codeMapper.selectCodeRecordBySecurityCode(params);
     }
 }

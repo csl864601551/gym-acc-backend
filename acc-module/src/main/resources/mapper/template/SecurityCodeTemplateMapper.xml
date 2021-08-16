@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.template.mapper.SecurityCodeTemplateMapper">
+
+    <resultMap type="SecurityCodeTemplate" id="SecurityCodeTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="content"    column="content"    />
+        <result property="type"    column="type"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="scenario"    column="scenario"    />
+        <result property="isOpen"    column="is_open"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityCodeTemplateVo">
+        select id, name, content, type, company_id, scenario, is_open, create_user, create_time, update_user, update_time from t_security_code_template
+    </sql>
+
+    <select id="selectSecurityCodeTemplateList" parameterType="SecurityCodeTemplate" resultMap="SecurityCodeTemplateResult">
+        <include refid="selectSecurityCodeTemplateVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="scenario != null  and scenario != ''"> and scenario = #{scenario}</if>
+            <if test="isOpen != null  and isOpen != ''"> and is_open = #{isOpen}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+
+    <select id="selectSecurityCodeTemplateById" parameterType="Long" resultMap="SecurityCodeTemplateResult">
+        <include refid="selectSecurityCodeTemplateVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectSecurityCodeTemplateListCount" resultType="java.lang.Integer">
+        select count(id) from t_security_code_template
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="scenario != null  and scenario != ''"> and scenario = #{scenario}</if>
+            <if test="isOpen != null  and isOpen != ''"> and is_open = #{isOpen}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+
+    <insert id="insertSecurityCodeTemplate" parameterType="SecurityCodeTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into t_security_code_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!--            <if test="id != null">id,</if>-->
+            <if test="name != null">name,</if>
+            <if test="content != null">content,</if>
+            <if test="type != null">type,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="scenario != null">scenario,</if>
+            <if test="isOpen != null">is_open,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateUser != null">update_user,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <!--            <if test="id != null">#{id},</if>-->
+            <if test="name != null">#{name},</if>
+            <if test="content != null">#{content},</if>
+            <if test="type != null">#{type},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="scenario != null">#{scenario},</if>
+            <if test="isOpen != null">#{isOpen},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateUser != null">#{updateUser},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSecurityCodeTemplate" parameterType="SecurityCodeTemplate">
+        update t_security_code_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="scenario != null">scenario = #{scenario},</if>
+            <if test="isOpen != null">is_open = #{isOpen},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityCodeTemplateById" parameterType="Long">
+        delete from t_security_code_template where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityCodeTemplateByIds" parameterType="String">
+        delete from t_security_code_template where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,12 +1,12 @@
 package com.ztl.gym.code.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 码 Mapper接口
@@ -181,4 +181,14 @@ public interface CodeMapper {
     int updateCodeStorageByCode(Code codeRes);
 
     void updateCodeAttrIdByPCode(Map<String, Object> params);
+
+
+    int insertAccCodeForBatch(List<Map> codeList);
+
+    /**
+     * 查询防伪码绑定记录
+     * @param codeParam 入参
+     * @return 响应
+     */
+    List<Code> selectCodeRecordBySecurityCode(Map<String, Object> codeParam);
 }
