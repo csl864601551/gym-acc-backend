@@ -46,6 +46,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+
+
+    <select id="selectProductCategoryListCount" resultType="java.lang.Integer">
+        select count(id) from t_product_category
+        <where>  status=0
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="categoryNo != null  and categoryNo != ''"> and category_no = #{categoryNo}</if>
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="categoryLevel != null  and categoryLevel != ''"> and category_level = #{categoryLevel}</if>
+            <if test="pId != null "> and p_id = #{pId}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="icon != null  and icon != ''"> and icon = #{icon}</if>
+            <if test="keyword != null  and keyword != ''"> and keyword = #{keyword}</if>
+            <if test="categoryIntroduce != null  and categoryIntroduce != ''"> and category_introduce = #{categoryIntroduce}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="createUser != null "> and create_user = #{createUser}</if>
+            <if test="updateUser != null "> and update_user = #{updateUser}</if>
+        </where>
+        order by sort
+    </select>
+
+
     <select id="selectProductCategoryOneList" parameterType="ProductCategory" resultMap="ProductCategoryResult">
         select b.id, b.company_id, b.category_no, b.category_name, b.category_level, b.p_id, b.unit, b.icon, b.keyword, b.category_introduce, b.sort, b.create_user, b.create_time, b.update_user, b.update_time from t_product_category b where b.id in (select a.p_id from t_product_category a where 1=1
         <if test="companyId != null "> and  b.company_id = #{companyId}</if>

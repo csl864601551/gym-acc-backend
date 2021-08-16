@@ -71,6 +71,7 @@ public class ProductCategoryController extends BaseController
         List<ProductCategory> lists = new ArrayList<ProductCategory>();
         startPage();
         List<ProductCategory> list = roductCategoryService.selectProductCategoryList(productCategory);
+        int listNum = roductCategoryService.selectProductCategoryListCount(productCategory);
         if(list.size()>0){
             for(ProductCategory productCategoryinfo : list){
                 SysUser user = userService.selectUserById(productCategoryinfo.getCreateUser());
@@ -80,7 +81,7 @@ public class ProductCategoryController extends BaseController
                 }
             }
         }
-        return getDataTable(lists);
+        return getDataTables(lists,listNum);
     }
 
     /**
@@ -133,7 +134,7 @@ public class ProductCategoryController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('product:category:remove')")
     @Log(title = "产品分类", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(roductCategoryService.deleteProductCategoryByIds(ids));

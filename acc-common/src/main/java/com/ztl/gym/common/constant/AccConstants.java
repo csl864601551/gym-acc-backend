@@ -208,4 +208,12 @@ public class AccConstants {
      */
     public final static long ADMIN_ROLE = 1;
 
+
+    /**
+     * 默认图片
+     */
+    public final static String DEFAULT_IMAGE = "https://images.weserv.nl/?url=https://ztl-admin-gongyema-com.obs.cn-east-2.myhuaweicloud.com/acc/image/202108/1425612681095811072.png";
+
+
+
 }
