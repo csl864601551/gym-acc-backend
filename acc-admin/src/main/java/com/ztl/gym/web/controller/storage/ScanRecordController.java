@@ -87,7 +87,7 @@ public class ScanRecordController extends BaseController {
     public AjaxResult add(@RequestBody ScanRecord scanRecord) {
         if(scanRecord.getProductId()!=null){
             if(scanRecord.getProductId()>0){
-                Product product = tProductService.selectTProductById(scanRecord.getProductId());
+                Product product = tProductService.selectTProductByIdOne(scanRecord.getProductId());
                 if(product!=null){
                     scanRecord.setProductName(product.getProductName());
                 }
@@ -196,6 +196,95 @@ public class ScanRecordController extends BaseController {
                                     } else {
                                         inmap.put("name", sysDept.getCity());
                                         inmap.put("value", 1);
+                                        list.add(inmap);
+                                    }
+                                }
+                            }
+                        }
+                        lists.add(list);
+                    }
+                }
+            }
+            System.out.println(lists);
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("lists", lists);
+            logger.info("the method getInfoByKey end, result is {}", ajax);
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
+            return ajax;
+        }
+    }
+
+
+
+
+
+    /**
+     * 根据码号查询产品的物流信息
+     */
+    @PostMapping(value = "/getFlowListByCode1")
+    public AjaxResult getFlowListByCode1(@RequestParam("code") String code) {
+        try {
+            List<List<Map<String, String>>> lists = new ArrayList<List<Map<String, String>>>();
+            List<Map<String, Object>> flowList = scanRecordService.getFlowListByCode(CodeRuleUtils.getCompanyIdByCode(code.trim()), code.trim());
+            if (flowList.size() > 0) {
+                for (int i = 0; i < flowList.size(); i++) {
+                    List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+                    Map<String, String> frommap = new HashMap<String, String>();
+                    Map<String, String> inmap = new HashMap<String, String>();
+                    Map<String, Object> map = flowList.get(i);
+                    if (map.get("title_name").equals("入库")) {
+                        if (map.get("storage_to") != null) {
+                            SysDept sysDept = deptService.selectDeptById(Long.valueOf(String.valueOf(map.get("storage_to"))));
+                            if (sysDept != null) {
+                                boolean status = sysDept.getProvince().contains("市");
+                                if (status) {
+                                    frommap.put("name", sysDept.getProvince());
+                                    inmap.put("name", sysDept.getProvince());
+                                    inmap.put("value", "1");
+                                    list.add(frommap);
+                                    list.add(inmap);
+                                } else {
+                                    frommap.put("name", sysDept.getCity());
+                                    inmap.put("name", sysDept.getCity());
+                                    inmap.put("value", "1");
+                                    list.add(frommap);
+                                    list.add(inmap);
+                                }
+                            }
+                        }
+                        lists.add(list);
+                    } else {
+                        if (map.get("storage_from_id") != null) {
+                            SysDept sysDept = deptService.selectDeptById(Long.valueOf(String.valueOf(map.get("storage_from_id"))));
+                            if (sysDept != null) {
+                                if (sysDept.getProvince() != null) {
+                                    boolean status = sysDept.getProvince().contains("市");
+                                    if (status) {
+                                        frommap.put("name", sysDept.getProvince());
+                                        list.add(frommap);
+                                    } else {
+                                        frommap.put("name", sysDept.getCity());
+                                        list.add(frommap);
+                                    }
+                                }
+                            }
+                        }
+                        if (map.get("storage_to") != null) {
+                            SysDept sysDept = deptService.selectDeptById(Long.valueOf(String.valueOf(map.get("storage_to"))));
+                            if (sysDept != null) {
+                                if (sysDept.getProvince() != null) {
+                                    boolean status = sysDept.getProvince().contains("市");
+                                    if (status) {
+                                        inmap.put("name", sysDept.getProvince());
+                                        inmap.put("value", "1");
+                                        list.add(inmap);
+                                    } else {
+                                        inmap.put("name", sysDept.getCity());
+                                        inmap.put("value", "1");
                                         list.add(inmap);
                                     }
                                 }
