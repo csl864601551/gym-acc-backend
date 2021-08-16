@@ -101,5 +101,5 @@ CommonService {
      * @param type
      * @return
      */
-    int updateGeneratorVal(long companyId,long originalMaxId, long num, int type);
+    Long updateGeneratorVal(long companyId, long num, int type);
 }

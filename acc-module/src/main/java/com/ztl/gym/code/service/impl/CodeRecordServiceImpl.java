@@ -9,6 +9,7 @@ import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.constant.IdGeneratorConstants;
 import com.ztl.gym.common.domain.GeneratorTypeConstants;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.mapper.CommonMapper;
@@ -61,9 +62,6 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
 
     @Autowired
     private CommonMapper commonMapper;
-
-    @Autowired
-    private CodeAttrMapper codeAttrMapper;
 
     /**
      * 查询生码记录
@@ -250,13 +248,12 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
                 boxCount = Long.parseLong(codeGenMsgs[5]);
             }
             if (localIp.equals(ip)) {
-                //获取当前最大码属性id值
-                Long attrId = codeAttrMapper.getMaxAttrId();
+                long attrId = 0;
                 //跟新生码属性序列
                 if(boxCount > 0){
-                    commonService.updateGeneratorVal(companyId, attrId,boxCount, 1);
+                    attrId = commonService.updateGeneratorVal(companyId,boxCount, IdGeneratorConstants.TYPE_ATTR);
                 }else{
-                    commonService.updateGeneratorVal(companyId, attrId,1, 1);
+                    attrId = commonService.updateGeneratorVal(companyId,1, IdGeneratorConstants.TYPE_ATTR);
                 }
                 codeService.createCode(companyId, codeRecordId, codeTotalNum, boxCount, userId, attrId);
             }

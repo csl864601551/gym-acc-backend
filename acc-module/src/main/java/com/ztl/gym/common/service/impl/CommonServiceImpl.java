@@ -1,6 +1,7 @@
 package com.ztl.gym.common.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.mapper.CodeAttrMapper;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.code.service.impl.SecurityCodeRecordServiceImpl;
@@ -60,6 +61,8 @@ public class CommonServiceImpl implements CommonService {
     private IStorageBackService storageBackService;
     @Autowired
     private SqlSessionTemplate sqlSessionTemplate;
+    @Autowired
+    private CodeAttrMapper codeAttrMapper;
     /**
      * 定义日志对象
      */
@@ -361,21 +364,28 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public int updateGeneratorVal(long companyId, long originalMaxId, long num, int type) {
+    public Long updateGeneratorVal(long companyId, long num, int type) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
         params.put("type", type);
         GeneratorBean generatorBean = commonMapper.selectIdGenerator(params);
-        Long maxId = originalMaxId + num;
+        //获取当前最大码属性id值
+        Long attrId = codeAttrMapper.getMaxAttrId();
+        //如果id号段生成记录为空新建
         if (Objects.isNull(generatorBean)) {
-            return insertGeneratorMaxId(companyId, maxId, type);
+            insertGeneratorMaxId(companyId, attrId + num, type);
         }
+
+        attrId = generatorBean.getMaxId();
+
+        Long maxId = attrId + num;
         int result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
-        //轮训次数
+        //轮训次数，超过5次给客户返回生码中
         int count = 0;
         while (result == 0) {
 
             if (count > 5) {
+                logger.error("更新id号段生成记录表多次失败！");
                 throw new CustomException("生码等待中，请稍后重试！");
             }
             try {
@@ -392,7 +402,7 @@ public class CommonServiceImpl implements CommonService {
             result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
             count = count + 1;
         }
-        return result;
+        return attrId;
     }
 
     /**

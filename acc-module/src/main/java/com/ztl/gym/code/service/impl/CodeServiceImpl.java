@@ -151,6 +151,8 @@ public class CodeServiceImpl implements ICodeService {
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
     public int createCode(Long companyId, Long codeRecordId, Long codeTotalNum, long boxCount, Long userId, long attrId) {
+        logger.info("the method createCode start,companyId={},codeRecordId={},codeTotalNum={},boxCount={},userId={},attrId={}"
+                , companyId, codeRecordId, codeTotalNum, boxCount, userId, attrId);
         int correct = 0;
         List<Code> codeList = new ArrayList<>();
         //企业自增数
@@ -165,7 +167,6 @@ public class CodeServiceImpl implements ICodeService {
                 //按箱来创建码属性
                 attrId = attrId + 1;
                 buildCodeAttr(codeAttr,attrId, companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
-                //long boxAttrId = saveCodeAttr(companyId, userId, codeRecord.getId(), codeRecord.getIndexStart(), codeRecord.getIndexEnd(),date);
                 codeAttrs.add(codeAttr);
                 //箱码
                 String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
