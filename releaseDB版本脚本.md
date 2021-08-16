@@ -45,3 +45,18 @@ CREATE TABLE `t_code_single` (
 ALTER TABLE `t_code` ADD `single_id` bigint(20) NULL DEFAULT NULL COMMENT '生码记录ID' AFTER `code_attr_id`;
 ALTER TABLE `t_code_attr` ADD `single_id` bigint(20) NULL DEFAULT NULL COMMENT '生码记录ID' AFTER `record_id`;
 ```
+
+#### Beta V1.0.8 2021/07/21
+```sql
+CREATE TABLE `t_idis_record` (
+  `id` bigint(19) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `type` varchar(128) COMMENT '业务接口类型',
+  `code` varchar(255) COMMENT '同步的码',
+  `url` varchar(255) COMMENT '请求链接',
+  `param` text COMMENT '请求参数',
+  `resp_code` varchar(128) COMMENT '请求返回码',
+  `resp_msg` varchar(2000) COMMENT '请求返回信息',
+  `create_time` datetime(0) COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=217 DEFAULT CHARSET=utf8 COMMENT = 'idis请求记录表';
+```

@@ -35,6 +35,12 @@
             <artifactId>acc-common</artifactId>
         </dependency>
 
+        <!-- 系统模块-->
+        <dependency>
+            <groupId>com.ztl.gym</groupId>
+            <artifactId>acc-module</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
