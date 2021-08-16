@@ -258,4 +258,20 @@
     <update id="updateCodeAttrIdByPCode" parameterType="Map" >
         update t_code set code_attr_id = #{codeAttrId} where company_id=#{companyId} and (p_code = #{pCode} or code = #{pCode})
     </update>
+
+    <insert id="insertAccCodeForBatch">
+        insert into t_code_acc(  company_id,  code_acc, record_id, create_time)
+        values
+        <foreach collection="list" item="code" separator=",">
+            (  #{code.companyId},  #{code.codeAcc},  #{code.recordId}, #{code.createTime})
+        </foreach>
+    </insert>
+
+    <select id="selectCodeRecordBySecurityCode" parameterType="Map" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="codeAcc != null  and codes != ''">and code_acc = #{codeAcc}</if>
+        </where>
+    </select>
 </mapper>

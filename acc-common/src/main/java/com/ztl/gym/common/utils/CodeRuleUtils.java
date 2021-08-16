@@ -1,9 +1,10 @@
 package com.ztl.gym.common.utils;
 
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
@@ -132,9 +133,55 @@ public class CodeRuleUtils {
     }
 
 
+
+    /**
+     * 根据码获得该码所属企业id
+     *
+     * @param code
+     * @return
+     */
+    public static Long getCompanyIdBySecurityCode(String code) {
+        try {
+            if (code.length() > 1) {
+                String prefix = code.substring(0,5);
+                return Long.parseLong(prefix);
+            }
+        }catch (Exception e){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+
+        return 0L;
+    }
+
+
     public static void main(String[] args) {
         String code = buildCode(286L, "B", 1L);
         System.out.println(code);
         System.out.println("companyId : " + getCompanyIdByCode(code));
+    }
+
+    /**
+     * 创建防伪码 【生码规则：码类型前缀转换值+企业id+码自增数 】
+     *
+     * @return
+     */
+    public static String buildAccCode(Long companyId) {
+        String code = "";
+        if (companyId != null  ) {
+            //注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去
+            //企业id转换
+            String companyIdComplex = companyId.toString();
+            if(companyIdComplex.length()<5){
+                // 不够位数的在前面补0，保留num的长度位数字
+                companyIdComplex = String.format("%0" + 5 + "d", companyId);
+            }
+            code = companyIdComplex ;
+            //防伪码不够15位补足随机数
+            if(code.length()<15){
+                String random=CommonUtil.buildOrderNo(15-code.length());
+                code+=random;
+            }
+        }
+        return code;
     }
 }

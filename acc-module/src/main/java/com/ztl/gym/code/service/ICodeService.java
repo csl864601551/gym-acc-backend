@@ -2,7 +2,6 @@ package com.ztl.gym.code.service;
 
 
 import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.vo.CodeVo;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 
 import java.util.List;
@@ -138,4 +137,15 @@ public interface ICodeService {
     int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId);
 
     void updateCodeAttrIdByPCode(Map<String, Object> param);
+
+
+    Code selectCodeByCodeVal(String codeVal,Long companyId);
+
+    /**
+     * 查询防伪码绑定记录
+     * @param securityCode 防伪码
+     * @param companyId 企业id
+     * @return 响应
+     */
+    public List<Code> selectCodeRecordBySecurityCode(String securityCode, long companyId);
 }
