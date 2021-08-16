@@ -7,6 +7,7 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.constant.IdGeneratorConstants;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
@@ -112,7 +113,9 @@ public class OpenCodeController {
                     throw new CustomException("未获取到产品批次完整信息！", HttpStatus.ERROR);
                 }
                 if(codeStart.getCodeAttr()==null){//单码处理
-
+                    //获取属性id
+                    Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
+                    codeAttr.setId(attrId + 1);
                     //插入编码属性表
                     Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
                     //更新编码信息表

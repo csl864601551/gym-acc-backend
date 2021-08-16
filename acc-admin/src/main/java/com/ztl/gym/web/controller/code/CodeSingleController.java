@@ -13,6 +13,7 @@ import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.constant.IdGeneratorConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
@@ -336,6 +337,9 @@ public class CodeSingleController extends BaseController {
         codeAttr.setCreateUser(userId);
         codeAttr.setInputTime(inputTime);
         codeAttr.setUpdateTime(inputTime);
+        //获取属性id
+        Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
+        codeAttr.setId(attrId + 1);
         //插入编码属性表
         Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
 
@@ -486,6 +490,9 @@ public class CodeSingleController extends BaseController {
             codeAttr.setProductName(map.get("productName").toString());
             codeAttr.setBatchId(Long.valueOf(map.get("batchId").toString()));
             codeAttr.setBatchNo(map.get("batchNo").toString());
+            //获取属性id
+            Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
+            codeAttr.setId(attrId + 1);
             //插入编码属性表
             Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
 

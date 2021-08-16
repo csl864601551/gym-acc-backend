@@ -13,6 +13,7 @@ import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.code.service.thread.CodeThreadByCallable;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.IdGeneratorConstants;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
@@ -497,6 +498,9 @@ public class CodeServiceImpl implements ICodeService {
         codeAttr.setCreateTime(date);
         codeAttr.setUpdateUser(userId);
         codeAttr.setUpdateTime(date);
+        //获取属性id
+        Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
+        codeAttr.setId(attrId + 1);
         codeAttrService.insertCodeAttr(codeAttr);
         return codeAttr.getId();
     }

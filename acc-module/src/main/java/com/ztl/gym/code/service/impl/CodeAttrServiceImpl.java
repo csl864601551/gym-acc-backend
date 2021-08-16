@@ -80,9 +80,6 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     public Long insertCodeAttr(CodeAttr codeAttr)
     {
         codeAttr.setCreateTime(DateUtils.getNowDate());
-        //获取属性id
-        Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
-        codeAttr.setId(attrId + 1);
         codeAttrMapper.insertCodeAttr(codeAttr);
         return codeAttr.getId();
     }
