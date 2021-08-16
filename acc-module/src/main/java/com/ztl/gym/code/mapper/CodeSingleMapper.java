@@ -87,4 +87,12 @@ public interface CodeSingleMapper {
      * @return 生码记录
      */
     public CodeSingle selectCodeSingleByIndex(@Param("codeIndex")  long codeIndex, @Param("companyId") long companyId);
+
+    /**
+     * 单码生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    int selectSingCodeNum(Map<String, Object> map);
 }

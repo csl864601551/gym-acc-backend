@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.statistical.mapper.ScanCodeStatisticsMapper">
+
+    <select id="generateCount" resultType="java.lang.Long">
+        select sum(code) from
+        (
+            select sum(count) code from t_code_single where 1=1
+            <if test="deptId != null">
+                and company_id  = #{deptId}
+            </if>
+            union all
+            select sum(count) code from t_code_record where 1=1
+            <if test="deptId != null">
+                and company_id  = #{deptId}
+            </if>
+        ) sum
+    </select>
+
+    <select id="scanWeekAndDayCount" resultType="java.util.HashMap">
+        SELECT
+            ( SELECT count( * ) FROM t_scan_record WHERE YEARWEEK( date_format( create_time, '%Y-%m-%d' ) ) = YEARWEEK( now( ) )
+                                                     <if test="deptId != null">and company_id  = #{deptId}</if>) currentWeek,
+            ( SELECT count( * ) FROM t_scan_record WHERE YEARWEEK( date_format( create_time, '%Y-%m-%d' ) ) = YEARWEEK( now( ) ) - 1
+                                                     <if test="deptId != null">and company_id  = #{deptId}</if>) lastWeek,
+            ( SELECT count(*) FROM t_scan_record WHERE DATEDIFF(create_time,NOW())=0
+                                                   <if test="deptId != null">and company_id  = #{deptId}</if>) today,
+            ( SELECT count(*) FROM t_scan_record WHERE DATEDIFF(create_time,NOW())=-1
+                                                   <if test="deptId != null">and company_id  = #{deptId}</if>) yesterday,
+            ( SELECT DATEDIFF(max( create_time ),min( create_time )) + 1 AS DiffDate FROM t_scan_record where 1=1
+                                                    <if test="deptId != null">and company_id  = #{deptId}</if>) totalDay
+
+    </select>
+    <select id="mixRate" resultType="java.util.HashMap">
+        select
+            (select count(distinct code)  from  t_mix_record  where mix_type=1 <if test="deptId != null">and company_id  = #{deptId}</if>) mixCount,
+            (select sum(code) from
+                    (select sum(count) code from t_code_single where 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+                     union all
+                     select sum(count) code from t_code_record where 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>)
+                sum) totalCount,
+            (select count(distinct code)  from  t_mix_record WHERE mix_type=1 and YEARWEEK( date_format( create_time, '%Y-%m-%d' ) ) = YEARWEEK( now( ) ) <if test="deptId != null">and company_id  = #{deptId}</if>) currentWeek,
+            (select count(distinct code)  from  t_mix_record WHERE mix_type=1 and YEARWEEK( date_format( create_time, '%Y-%m-%d' ) ) = YEARWEEK( now( ) ) -1 <if test="deptId != null">and company_id  = #{deptId}</if>) lastWeek,
+            (select count(distinct code)  from  t_mix_record WHERE mix_type=1 and DATEDIFF(create_time,NOW())=0 <if test="deptId != null">and company_id  = #{deptId}</if>) today,
+            (select count(distinct code)  from  t_mix_record WHERE mix_type=1 and DATEDIFF(create_time,NOW())=-1 <if test="deptId != null">and company_id  = #{deptId}</if>) yesterday
+    </select>
+    <select id="scanEChartTime" resultType="com.ztl.gym.statistical.domain.vo.DateAndCountResp">
+        SELECT dt.date,IFNULL(t.count,0) AS count from
+        (SELECT
+        @s := @s + 1 AS  day,
+        DATE( DATE_SUB( CURRENT_DATE, INTERVAL @s DAY ) ) AS date
+        FROM
+        gen_table_column,
+        ( SELECT @s := - 1 ) temp
+        WHERE
+        @s &lt; #{day} - 1) dt
+        left join
+        (SELECT
+        DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,
+        count( * )  as count
+        FROM
+        t_scan_record t
+        WHERE
+        1=1
+        <if test="deptId != null">
+            and company_id  = #{deptId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( create_time, '%Y-%m-%d' )) t
+        on dt.date = t.daytime
+        ORDER BY
+        dt.date asc
+    </select>
+    <select id="selectSecurityTotalDay" resultType="java.lang.Integer">
+        SELECT
+            DATEDIFF( max( create_time ), min( create_time ) ) +1 AS DiffDate
+        FROM
+            t_security_code_record
+        where 1=1
+        <if test="deptId != null">
+            and company_id  = #{deptId}
+        </if>
+    </select>
+    <select id="selectGenerateTotalDay" resultType="java.lang.Integer">
+        select max(DiffDate) from
+            (
+                select DATEDIFF( max( create_time ), min( create_time ) ) + 1 AS DiffDate  from t_code_single where 1=1
+                <if test="deptId != null">
+                    and company_id  = #{deptId}
+                </if>
+                union all
+                select DATEDIFF( max( create_time ), min( create_time ) ) + 1 AS DiffDate  from t_code_record where 1=1
+                <if test="deptId != null">
+                    and company_id  = #{deptId}
+                </if>
+            ) total
+
+    </select>
+    <select id="selectRecordWeekCount" resultType="com.ztl.gym.statistical.domain.vo.DateAndCountResp">
+        SELECT
+            DATE_FORMAT( mycreatedate, '%m-%d' ) AS date,
+            ifnull( sum( t1.count ), 0 ) AS count
+        FROM
+            (
+                SELECT
+                    curdate( ) AS mycreatedate UNION ALL
+                SELECT
+                    date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+                SELECT
+                    date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+                SELECT
+                    date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+                SELECT
+                    date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+                SELECT
+                    date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+                SELECT
+                    date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+            ) AS total
+                LEFT JOIN t_code_record t1 ON DATE_FORMAT( t1.create_time, '%Y-%m-%d' ) = total.mycreatedate
+                <if test="deptId != null">
+                    and t1.company_id  = #{deptId}
+                </if>
+        GROUP BY
+            mycreatedate
+    </select>
+    <select id="selectSingleWeekCount" resultType="com.ztl.gym.statistical.domain.vo.DateAndCountResp">
+        SELECT
+        DATE_FORMAT( mycreatedate, '%m-%d' ) AS date,
+        ifnull( sum( t1.count ), 0 ) AS count
+        FROM
+        (
+        SELECT
+        curdate( ) AS mycreatedate UNION ALL
+        SELECT
+        date_sub( curdate( ), INTERVAL 1 DAY ) AS mycreatedate UNION ALL
+        SELECT
+        date_sub( curdate( ), INTERVAL 2 DAY ) AS mycreatedate UNION ALL
+        SELECT
+        date_sub( curdate( ), INTERVAL 3 DAY ) AS mycreatedate UNION ALL
+        SELECT
+        date_sub( curdate( ), INTERVAL 4 DAY ) AS mycreatedate UNION ALL
+        SELECT
+        date_sub( curdate( ), INTERVAL 5 DAY ) AS mycreatedate UNION ALL
+        SELECT
+        date_sub( curdate( ), INTERVAL 6 DAY ) AS mycreatedate
+        ) AS total
+        LEFT JOIN t_code_single t1 ON DATE_FORMAT( t1.create_time, '%Y-%m-%d' ) = total.mycreatedate
+        <if test="deptId != null">
+            and t1.company_id  = #{deptId}
+        </if>
+        GROUP BY
+        mycreatedate
+    </select>
+
+    <select id="selectScanCityCount" resultType="java.lang.Integer">
+        SELECT
+            count( DISTINCT city )
+        FROM
+            t_scan_record
+        WHERE
+            city IS NOT NULL
+        <if test="deptId != null">
+          and company_id  = #{deptId}
+        </if>
+    </select>
+    <select id="selectScanCityCodeCount" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
+        SELECT
+        city as name,
+        count( city ) as count
+        FROM
+        t_scan_record
+        where
+        1=1
+        <if test="deptId != null">
+            and company_id  = #{deptId}
+        </if>
+        GROUP BY
+        city
+        HAVING
+        COUNT( city ) >0
+    </select>
+    <select id="selectScanProvinceCodeCount" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
+        SELECT
+        province as name,
+        count( province ) as count
+        FROM
+        t_scan_record
+        where
+        1=1
+        <if test="deptId != null">
+            and company_id  = #{deptId}
+        </if>
+        GROUP BY
+        province
+        HAVING
+        COUNT( province ) >0
+    </select>
+    <select id="selectScanYesterdayTimeCount" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
+        SELECT HOUR
+            ( e.create_time ) + 1 AS name,
+            count( * ) AS count
+        FROM
+            t_scan_record e
+        WHERE
+            DATE_FORMAT(e.create_time,'%Y-%m-%d') = #{yesterday}
+        <if test="deptId != null">
+            and company_id  = #{deptId}
+        </if>
+        GROUP BY
+            HOUR ( e.create_time )
+        ORDER BY
+            HOUR ( e.create_time )
+    </select>
+    <select id="selectStatisticalDateEChart"
+            resultType="com.ztl.gym.statistical.domain.vo.StatisticalDateEChartResp">
+
+        SELECT
+        dt.date,
+        IFNULL( t2.count, 0 ) AS countRecord,
+        IFNULL( t3.count, 0 ) AS countSingle,
+        IFNULL( t1.count, 0 ) AS countScan,
+        IFNULL( t5.count, 0 ) AS countSecurity,
+        (IFNULL( t2.count, 0 ) +IFNULL( t3.count, 0 ) ) AS countGenerate
+        FROM
+        (
+        SELECT
+        @myDate := @myDate + 1 AS DAY,
+        DATE( DATE_ADD( #{startTime}, INTERVAL @myDate DAY ) ) AS date
+        FROM
+        gen_table_column,
+        ( SELECT @myDate := - 1 ) temp
+        WHERE
+        @myDate &lt; #{between}
+        ) dt
+        LEFT JOIN
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,count( * ) AS count FROM t_scan_record WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
+        ) t1 ON dt.date = t1.daytime
+        LEFT JOIN
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,sum( count ) AS count FROM t_code_record WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
+        ) t2 ON dt.date = t2.daytime
+        LEFT JOIN
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,sum( count ) AS count FROM t_code_single WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
+        ) t3 ON dt.date = t3.daytime
+        LEFT JOIN
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,count(*) AS count FROM t_security_code_record WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
+        ) t5 ON dt.date = t5.daytime
+
+        ORDER BY
+        dt.date ASC
+    </select>
+    <select id="generateCodeTop" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
+        SELECT
+            d.dept_name as name,
+            sum( temp.count ) AS count
+        FROM
+            (
+            SELECT
+                company_id,
+                sum( count ) AS count
+            FROM
+                t_code_record
+            GROUP BY
+                company_id
+            HAVING
+                COUNT( company_id ) > 0 UNION ALL
+            SELECT
+                company_id,
+                sum( count ) AS count
+            FROM
+                t_code_single
+            GROUP BY
+                company_id
+            HAVING
+                COUNT( company_id ) > 0
+            ) temp
+            LEFT JOIN sys_dept d ON temp.company_id = d.dept_id
+        WHERE
+            d.del_flag = 0
+        GROUP BY
+            temp.company_id
+        ORDER BY
+            count asc
+            LIMIT 10
+    </select>
+    <select id="scanCodeTop" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
+        SELECT
+            d.dept_name as name,
+            count(*) as count
+        FROM
+            t_scan_record t
+            LEFT JOIN sys_dept d ON t.company_id = d.dept_id
+        WHERE
+            d.del_flag = 0
+        GROUP BY
+            t.company_id
+        HAVING
+            COUNT( t.company_id ) > 0
+        ORDER BY
+            count asc
+            LIMIT 10
+    </select>
+    <select id="securityCodeTop" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
+        SELECT
+            d.dept_name as name,
+            count(*) as count
+        FROM
+            t_security_code_record t
+            LEFT JOIN sys_dept d ON t.company_id = d.dept_id
+        WHERE
+            d.del_flag = 0
+        GROUP BY
+            t.company_id
+        HAVING
+            COUNT( t.company_id ) > 0
+        ORDER BY
+            count asc
+            LIMIT 10
+    </select>
+
+</mapper>

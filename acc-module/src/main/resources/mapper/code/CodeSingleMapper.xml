@@ -67,6 +67,18 @@
         <include refid="selectCodeSingleVo"/>
         where index_start &lt;= #{codeIndex} and index_end &gt;= #{codeIndex} and company_id  = #{companyId}
     </select>
+    <select id="selectSingCodeNum" resultType="java.lang.Integer">
+        select IFNULL( SUM(count), 0 ) from  t_code_single where 1=1
+        <if test="deptId != null">
+            and  company_id = #{deptId}
+        </if>
+        <if test="type != null and type == 1">
+            and create_time &gt;= #{beginTime} and create_time &lt;=  #{endTime}
+        </if>
+        <if test="type != null and type == 2">
+
+        </if>
+    </select>
 
     <insert id="insertCodeSingle" parameterType="CodeSingle" useGeneratedKeys="true" keyProperty="id">
         insert into t_code_single

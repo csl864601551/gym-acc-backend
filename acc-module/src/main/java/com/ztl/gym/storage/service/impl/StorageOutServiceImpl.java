@@ -328,4 +328,15 @@ public class StorageOutServiceImpl implements IStorageOutService {
     public int selectCountByDept(Map<String, Object> map) {
         return storageOutMapper.selectCountByDept(map);
     }
+
+    /**
+     * 产品出货量 本周
+     *
+     * @param map
+     * @return 结果
+     */
+    @Override
+    public List<Map<String, Object>> selectCountByWeek(Map<String, Object> map) {
+        return storageOutMapper.selectCountByWeek(map);
+    }
 }

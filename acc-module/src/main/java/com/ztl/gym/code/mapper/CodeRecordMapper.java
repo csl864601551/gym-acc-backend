@@ -95,4 +95,28 @@ public interface CodeRecordMapper {
      * @return 结果
      */
     public int selectcodenum(Map<String, Object> map);
+
+    /**
+     * 套标生码总量统计图
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    List<Map<String, Object>> selectCodeByDate(Map<String, Object> map);
+
+    /**
+     * 单码生码总量统计图
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    List<Map<String, Object>> selectCodeSingByDate(Map<String, Object> map);
+
+    /**
+     * 生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    int selectCodeNum(Map<String, Object> map);
 }

@@ -92,4 +92,6 @@ public interface StorageOutMapper {
      * @return 结果
      */
     int selectCountByDept(Map<String, Object> map);
+
+    List<Map<String, Object>> selectCountByWeek(Map<String, Object> map);
 }

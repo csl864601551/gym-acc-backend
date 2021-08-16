@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -76,6 +77,17 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
     @Override
     public CodeSingle selectCodeSingleByIndex(long codeIndex, long companyId) {
         return codeSingleMapper.selectCodeSingleByIndex(codeIndex,companyId);
+    }
+
+    /**
+     * 单码生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectSingCodeNum(Map<String, Object> map) {
+        return codeSingleMapper.selectSingCodeNum(map);
     }
 
     /**

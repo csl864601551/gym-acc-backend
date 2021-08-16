@@ -297,4 +297,37 @@ public class CodeRecordServiceImpl implements ICodeRecordService {
     public int selectcodenum(Map<String, Object> map) {
         return codeRecordMapper.selectcodenum(map);
     }
+
+    /**
+     * 套标生码总量统计图
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public List<Map<String, Object>> selectCodeByDate(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeByDate(map);
+    }
+
+    /**
+     * 单码生码总量统计图
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public List<Map<String, Object>> selectCodeSingByDate(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeSingByDate(map);
+    }
+
+    /**
+     * 生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    @Override
+    public int selectCodeNum(Map<String, Object> map) {
+        return codeRecordMapper.selectCodeNum(map);
+    }
 }

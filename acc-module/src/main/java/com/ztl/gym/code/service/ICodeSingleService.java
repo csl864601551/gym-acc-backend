@@ -4,6 +4,7 @@ package com.ztl.gym.code.service;
 import com.ztl.gym.code.domain.CodeSingle;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 生码记录Service接口
@@ -79,4 +80,12 @@ public interface ICodeSingleService {
      * @return 生码记录
      */
     public CodeSingle selectCodeSingleByIndex(long codeIndex,long companyId);
+
+    /**
+     * 单码生码总量
+     *
+     * @param map 部门信息
+     * @return 结果
+     */
+    int selectSingCodeNum(Map<String, Object> map);
 }

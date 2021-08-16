@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.payment.mapper.PurchaseRecordMapper">
+
+    <select id="totalUsedCodeSum" parameterType="Long" resultType="Long">
+        select sum(code) from
+        (
+        (select sum(count) code from t_code_single where company_id = #{companyId}) union all
+        (select sum(count) code from t_code_record where company_id = #{companyId}) union all
+        (select sum(count) code from t_code_acc_record where company_id = #{companyId})
+        ) sum
+    </select>
+
+</mapper>
