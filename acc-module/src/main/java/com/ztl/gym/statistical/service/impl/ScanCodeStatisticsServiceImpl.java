@@ -97,7 +97,11 @@ public class ScanCodeStatisticsServiceImpl implements IScanCodeStatisticsService
         int count = scanRecordService.selectSecueityRecordNum(query);
         int totalDay = mapper.selectSecurityTotalDay(deptId);
         result.put("count",count);
-        result.put("dayAverage",count/totalDay);
+        if(count>0&&totalDay>0){
+            result.put("dayAverage",count/totalDay);
+        }else{
+            result.put("dayAverage",0);
+        }
         return result;
     }
 

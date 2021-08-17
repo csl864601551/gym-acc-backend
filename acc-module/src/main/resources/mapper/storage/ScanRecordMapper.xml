@@ -51,7 +51,7 @@
             AND longitude IS NOT NULL
             AND product_id IS NOT NULL
         </where>
-        GROUP BY create_time desc
+        order BY create_time desc
     </select>
 
     <select id="selectScanRecordById" parameterType="Long" resultMap="ScanRecordResult">
@@ -691,11 +691,36 @@
         LEFT JOIN t_product b ON a.product_id = b.id
         WHERE
         a.longitude IS NOT NULL
-        AND a.product_id IS NOT NULL
+--         AND a.product_id IS NOT NULL
         <if test="companyId != null ">and a.company_id = #{companyId}</if>
         <if test="productName != null ">and a.product_name like concat('%', #{productName}, '%')</if>
         <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
             and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
         </if>
     </select>
+
+
+
+    <update id="updateScanRecordByCode" parameterType="ScanRecord">
+        update t_scan_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="terminal != null">terminal = #{terminal},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productName != null">product_name = #{productName},</if>
+        </trim>
+        where code = #{code}
+    </update>
 </mapper>

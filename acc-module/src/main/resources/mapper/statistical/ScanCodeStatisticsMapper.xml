@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectSecurityTotalDay" resultType="java.lang.Integer">
         SELECT
-            DATEDIFF( max( create_time ), min( create_time ) ) +1 AS DiffDate
+        ifnull(DATEDIFF( max( create_time ), min( create_time ) ) +1,0) AS DiffDate
         FROM
             t_security_code_record
         where 1=1

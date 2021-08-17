@@ -366,4 +366,38 @@ public class ScanRecordController extends BaseController {
     }
 
 
+
+
+    @GetMapping("/updateScanRecordPrint")
+    public AjaxResult updateScanRecordPrint(ScanRecord scanRecord) {
+        logger.info("the method getInfoByKey enter, param is {}", scanRecord);
+        try {
+            //查询热力图数据
+            List<Map<String, Object>> list = scanRecordService.getScanRecordXx(scanRecord);
+            if(list.size()>0){
+                for(int i=0;i<list.size();i++){
+                    Map<String, Object> mapinfo = list.get(i);
+                    if(mapinfo.get("code")!=null){
+                        Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(mapinfo.get("code").toString().trim()), mapinfo.get("code").toString().trim());
+                        if(smxxMap!=null){
+                            ScanRecord scanRecordUpdate = new ScanRecord();
+                            scanRecordUpdate.setCode(mapinfo.get("code").toString());
+                            scanRecordUpdate.setProductId(Long.valueOf(smxxMap.get("productId").toString()));
+                            scanRecordUpdate.setProductName(smxxMap.get("productName").toString());
+                            scanRecordService.updateScanRecordByCode(scanRecordUpdate);
+                        }
+                    }
+                }
+            }
+            AjaxResult ajax = AjaxResult.success();
+            return ajax;
+        } catch (Exception e) {
+            System.out.println(e);
+            AjaxResult ajax = AjaxResult.error("查询信息错误！！！");
+            logger.info("the method getInfoByKey end, result is {}", ajax);
+            return ajax;
+        }
+    }
+
+
 }

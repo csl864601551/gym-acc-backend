@@ -10,7 +10,6 @@ import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
-import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
@@ -107,6 +106,20 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         return scanRecordMapper.updateScanRecord(scanRecord);
     }
 
+
+
+    /**
+     * 通过code修改扫码记录
+     *
+     * @param scanRecord 扫码记录
+     * @return 结果
+     */
+    @Override
+    public int updateScanRecordByCode(ScanRecord scanRecord) {
+        scanRecord.setUpdateTime(DateUtils.getNowDate());
+        return scanRecordMapper.updateScanRecordByCode(scanRecord);
+    }
+
     /**
      * 批量删除扫码记录
      *
@@ -168,6 +181,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         }
         if(codeEntity.getCodeAttr()!=null){
             returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
+            returnMap.put("productId",codeEntity.getCodeAttr().getProductId());
             returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
             returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
             if(codeEntity.getCodeAttr().getProduct()==null){

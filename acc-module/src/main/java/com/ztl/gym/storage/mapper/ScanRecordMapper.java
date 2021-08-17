@@ -46,6 +46,15 @@ public interface ScanRecordMapper
      */
     public int updateScanRecord(ScanRecord scanRecord);
 
+
+    /**
+     * 修改扫码记录
+     *
+     * @param scanRecord 扫码记录
+     * @return 结果
+     */
+    public int updateScanRecordByCode(ScanRecord scanRecord);
+
     /**
      * 删除扫码记录
      *

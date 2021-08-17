@@ -60,7 +60,7 @@
                 and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
             </if>
         </where>
-        GROUP BY a.create_time desc
+        order BY a.create_time desc
     </select>
 
     <select id="selectSecurityCodeRecordById" parameterType="Long" resultMap="SecurityCodeRecordResult">
