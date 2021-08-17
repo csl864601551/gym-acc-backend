@@ -301,17 +301,20 @@ public class CodeSingleController extends BaseController {
             map.put("indexEnd",indexEnd);
             List<Code> list=codeService.selectCodeListByIndex(map);
             if(list.size()>0){
+                //判断是否在同一生码区间
+                List<Long> singleIdList = list.stream().map(Code :: getSingleId).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+                if (singleIdList.size() > 1) {
+                    throw new CustomException("不允许跨生码区间赋值，请缩小赋值范围！", HttpStatus.ERROR);
+                }
+                if (list.get(list.size()-1).getCodeIndex()< indexEnd) {
+                    throw new CustomException("不允许跨生码区间赋值，请缩小赋值范围！", HttpStatus.ERROR);
+                }
                 for (int i = 0; i < list.size(); i++) {
                     if(list.get(i).getSingleId()==null){
                         throw new CustomException("流水区间存在套标码，请重新输入流水区间！",HttpStatus.ERROR);
                     }
                     if(list.get(i).getCodeAttrId()!=null){
                         throw new CustomException("流水区间存在已赋值产品码，请重新输入流水区间！",HttpStatus.ERROR);
-                    }
-                    if(i==list.size()){
-                        if(list.get(0).getSingleId()!=list.get(i).getSingleId()){
-                            throw new CustomException("不允许跨生码区间赋值，请缩小赋值范围！",HttpStatus.ERROR);
-                        }
                     }
                 }
                 singleId=list.get(0).getSingleId();//正确赋值singleId
