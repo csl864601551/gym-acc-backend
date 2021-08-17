@@ -114,22 +114,30 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
     }
 
     @Override
-    public int updateCodeSingleStatusBySingleId(long singleId,boolean flag) {
+    public int updateCodeSingleStatusBySingleId(long singleId, Long indexEnd, boolean flag) {
         CodeSingle codeSingle = new CodeSingle();
         codeSingle.setId(singleId);
 
         //计算是否全部赋值完成
-        if(flag){//分段赋值
+        //分段赋值
+        if(flag){
             CodeSingle codeSingle1=selectCodeSingleById(singleId);
             long totalNum=codeSingle1.getIndexEnd()-codeSingle1.getIndexStart()+1;//统计生码记录总码量
             List<CodeAttr> codeSingle2=codeAttrService.selectCodeAttrBySingleId(singleId);
-            long countNum=0;//统计已赋值记录总码量
+            //统计已赋值记录总码量
+            long countNum=0;
             for(CodeAttr attr:codeSingle2){
                 countNum+=(attr.getIndexEnd()-attr.getIndexStart()+1);
             }
-            if(totalNum!=countNum){//判断两个码量是否相等
-                codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
-            }else {
+            //判断两个码量是否相等
+            if(totalNum!=countNum){
+                if(indexEnd == codeSingle1.getIndexEnd().longValue()){
+                    codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
+                }else{
+                    codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_ON);
+                }
+            } else
+            {
                 codeSingle.setStatus(AccConstants.CODE_RECORD_STATUS_EVA);
             }
         }else {

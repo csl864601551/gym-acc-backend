@@ -51,7 +51,7 @@ public interface ICodeSingleService {
      * @param singleId 生码记录
      * @return 结果
      */
-    public int updateCodeSingleStatusBySingleId(long singleId,boolean flag);
+    public int updateCodeSingleStatusBySingleId(long singleId,Long indexEnd, boolean flag);
 
     /**
      * 批量删除生码记录

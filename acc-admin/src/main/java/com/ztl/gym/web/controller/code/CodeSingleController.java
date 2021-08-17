@@ -351,7 +351,7 @@ public class CodeSingleController extends BaseController {
 
 
         //计算是否全部赋值完成；更新生码记录赋值信息
-        res = codeSingleService.updateCodeSingleStatusBySingleId(singleId,fuzhiVo.getRecordId()==0);
+        res = codeSingleService.updateCodeSingleStatusBySingleId(singleId, indexEnd, fuzhiVo.getRecordId()==0);
         return toAjax(res);
 
     }
