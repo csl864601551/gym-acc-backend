@@ -151,7 +151,9 @@ public class SysDeptController extends BaseController {
                             "    storage_record_id BIGINT    COMMENT '最新流转id' ,\n" +
                             "    storage_type int    COMMENT '最新流转类型' ,\n" +
                             "    PRIMARY KEY (code_index) ,\n" +
-                            "    KEY `index_code_attr_id` (`code_attr_id`) USING BTREE"+
+                            "    KEY `index_code_attr_id` (`code_attr_id`) USING BTREE ,\n"+
+                            "    KEY `index_code` (`code`) USING BTREE ,\n"+
+                            "    KEY `index_p_code` (`p_code`) USING BTREE \n"+
                             ") COMMENT = '码表 ';";
                     res = createTableByCompany(sql);
                 }
@@ -165,7 +167,9 @@ public class SysDeptController extends BaseController {
                             "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
                             "    create_user BIGINT    COMMENT '创建人' ,\n" +
                             "    create_time DATETIME    COMMENT '创建时间' ,\n" +
-                            "    PRIMARY KEY (id)\n" +
+                            "    PRIMARY KEY (id),\n" +
+                            "    KEY `index_code` (`code`) USING BTREE ,\n"+
+                            "    KEY `index_storage_record_id` (`storage_record_id`) USING BTREE \n"+
                             ") COMMENT = '单码流转记录表 ';";
                     res = createTableByCompany(sql);
                 }
@@ -177,7 +181,9 @@ public class SysDeptController extends BaseController {
                             "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
                             "    create_user BIGINT    COMMENT '创建人' ,\n" +
                             "    create_time DATETIME    COMMENT '创建时间' ,\n" +
-                            "    PRIMARY KEY (id)\n" +
+                            "    PRIMARY KEY (id),\n" +
+                            "    KEY `index_code` (`code`) USING BTREE ,\n"+
+                            "    KEY `index_storage_record_id` (`storage_record_id`) USING BTREE \n"+
                             ") COMMENT = '单码流转记录表 ';";
                     res = createTableByCompany(sql);
                 }
@@ -189,7 +195,9 @@ public class SysDeptController extends BaseController {
                             "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
                             "    create_user BIGINT    COMMENT '创建人' ,\n" +
                             "    create_time DATETIME    COMMENT '创建时间' ,\n" +
-                            "    PRIMARY KEY (id)\n" +
+                            "    PRIMARY KEY (id),\n" +
+                            "    KEY `index_code` (`code`) USING BTREE ,\n"+
+                            "    KEY `index_storage_record_id` (`storage_record_id`) USING BTREE \n"+
                             ") COMMENT = '单码流转记录表 ';";
                     res = createTableByCompany(sql);
                 }
@@ -201,7 +209,9 @@ public class SysDeptController extends BaseController {
                             "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
                             "    create_user BIGINT    COMMENT '创建人' ,\n" +
                             "    create_time DATETIME    COMMENT '创建时间' ,\n" +
-                            "    PRIMARY KEY (id)\n" +
+                            "    PRIMARY KEY (id),\n" +
+                            "    KEY `index_code` (`code`) USING BTREE ,\n"+
+                            "    KEY `index_storage_record_id` (`storage_record_id`) USING BTREE \n"+
                             ") COMMENT = '单码流转记录表 ';";
                     res = createTableByCompany(sql);
                 }
