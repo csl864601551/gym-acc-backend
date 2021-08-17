@@ -107,6 +107,11 @@ public class ScanRecord extends BaseEntity {
      */
     private String productName;
 
+    /**
+     * 产品名称
+     */
+    private String type;
+
 
     public void setId(Long id) {
         this.id = id;
@@ -236,6 +241,14 @@ public class ScanRecord extends BaseEntity {
         this.productName = productName;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -256,6 +269,7 @@ public class ScanRecord extends BaseEntity {
                 .append("updateTime", getUpdateTime())
                 .append("productId", getProductId())
                 .append("productName", getProductName())
+                .append("type", getProductName())
                 .toString();
     }
 }

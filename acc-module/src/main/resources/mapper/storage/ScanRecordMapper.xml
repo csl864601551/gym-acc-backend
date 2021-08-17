@@ -42,14 +42,15 @@
             <if test="province != null  and province != ''">and province = #{province}</if>
             <if test="city != null  and city != ''">and city = #{city}</if>
             <if test="area != null  and area != ''">and area = #{area}</if>
-            <if test="createUser != null ">and create_user = #{createUser}</if>
+            <if test="createUser != null ">and create_user = #{createUser} </if>
             <if test="updateUser != null ">and update_user = #{updateUser}</if>
             <if test="productName != null ">and product_name like concat('%', #{productName}, '%')</if>
             <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
                 and create_time between #{params.beginCreateTime} and #{params.endCreateTime}
             </if>
-            AND longitude IS NOT NULL
-            AND product_id IS NOT NULL
+            <if test="type != null and type ==1 "> AND longitude IS NOT NULL
+                AND product_id IS NOT NULL </if>
+            <if test="type != null and type ==2 "> and create_user != 2  </if>
         </where>
         order BY create_time desc
     </select>
@@ -697,6 +698,11 @@
         <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
             and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
         </if>
+        <if test="createUser != null ">and a.create_user = #{createUser} </if>
+        <if test="type != null and type ==1 "> AND a.longitude IS NOT NULL
+            AND a.product_id IS NOT NULL </if>
+        <if test="type != null and type ==2 "> and a.create_user != 2  </if>
+
     </select>
 
 

@@ -53,6 +53,12 @@ public class ScanRecordController extends BaseController {
         if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
             scanRecord.setCompanyId(company_id);
         }
+        if(scanRecord.getCreateUser()==2){
+            scanRecord.setType("1");
+        }else{
+            scanRecord.setCreateUser(null);
+            scanRecord.setType("2");
+        }
         startPage();
         List<ScanRecord> list = scanRecordService.selectScanRecordList(scanRecord);
         return getDataTable(list);
@@ -317,6 +323,12 @@ public class ScanRecordController extends BaseController {
             Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
             if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
                 scanRecord.setCompanyId(company_id);
+            }
+            if(scanRecord.getCreateUser()==2){
+                scanRecord.setType("1");
+            }else{
+                scanRecord.setCreateUser(null);
+                scanRecord.setType("2");
             }
             //查询热力图数据
             List<Map<String, Object>> list = scanRecordService.getScanRecordXx(scanRecord);
