@@ -53,6 +53,8 @@ public class AttrController extends BaseController
                 if(user!=null){
                     attrinfo.setCreateUserName(user.getNickName());
                     lists.add(attrinfo);
+                }else{
+                    lists.add(attrinfo);
                 }
             }
         }
@@ -74,6 +76,8 @@ public class AttrController extends BaseController
                 SysUser user = userService.selectUserById(attrinfo.getCreateUser());
                 if(user!=null){
                     attrinfo.setCreateUserName(user.getNickName());
+                    lists.add(attrinfo);
+                }else{
                     lists.add(attrinfo);
                 }
             }

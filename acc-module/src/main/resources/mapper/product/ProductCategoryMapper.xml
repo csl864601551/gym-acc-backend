@@ -79,7 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
     <select id="getCategoryDic" resultType="java.util.Map" parameterType="Long" >
-        select id as value,category_name as label from t_product_category where p_id=#{p_id}
+        select id as value,category_name as label from t_product_category where p_id=#{p_id} and status=0
         <if test="companyId != null "> and company_id = #{companyId}</if> order by sort
     </select>
 
