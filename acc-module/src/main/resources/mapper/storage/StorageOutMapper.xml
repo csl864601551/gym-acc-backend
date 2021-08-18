@@ -235,7 +235,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and pv.company_id = #{deptId}
             </if>
             GROUP BY
-            mycreatedate
+            mycreatedate order by mycreatedate asc
         </if>
         <if test="type != null and type == 2">
             SELECT
@@ -309,7 +309,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and pv.company_id = #{deptId}
             </if>
             GROUP BY
-            mycreatedate
+            mycreatedate order by mycreatedate asc
         </if>
         <if test="type != null and type == 3">
             SELECT
@@ -383,7 +383,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and pv.company_id = #{deptId}
             </if>
             GROUP BY
-            mycreatedate
+            mycreatedate order by mycreatedate asc
         </if>
     </select>
 </mapper>
