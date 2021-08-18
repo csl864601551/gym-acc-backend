@@ -225,3 +225,10 @@ CREATE TABLE `t_id_generator` (
 `version` int(11) DEFAULT NULL COMMENT '版本号',
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='id号段生成表';
+
+### Beta V1.1.0 2021/08/18
+ALTER TABLE `sys_dept` ADD `host` varchar(255) NULL DEFAULT NULL COMMENT '二级节点地址';
+ALTER TABLE `sys_dept` ADD `port` varchar(255) NULL DEFAULT NULL COMMENT '端口号';
+ALTER TABLE `sys_dept` ADD `user` varchar(255) NULL DEFAULT NULL COMMENT '用户名';
+ALTER TABLE `sys_dept` ADD `pwd` varchar(255) NULL DEFAULT NULL COMMENT '密码';
+ALTER TABLE `sys_dept` ADD `prefix` varchar(255) NULL DEFAULT NULL COMMENT '企业前缀';

@@ -167,5 +167,20 @@ wx:
   #用第一步拿到的access_token 采用http GET方式请求获得jsapi_ticket（有效期7200秒，开发者必须在自己的服务全局缓存jsapi_ticket）
   jssdk_getticket_url: https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi
 
-
+# IDIS企业节点配置
+idis:
+#  自定义企业节点转移至企业新增页面
+#  host: 10.70.60.160
+#  port: 8090
+#  user: syncjob
+#  pwd: ztt#123456
+#  prefix: 88.118.19776
+  attr-list:
+    - PRODUCT_NAME
+    - BATCH_NO
+    - CATEGORY_NAME
+    - PRODUCT_NO
+    - BAR_CODE
+    - UNIT
+    - PRODUCT_INTRODUCE
 

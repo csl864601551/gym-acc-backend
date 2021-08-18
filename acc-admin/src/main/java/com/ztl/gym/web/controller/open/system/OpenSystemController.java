@@ -84,6 +84,8 @@ public class OpenSystemController {
         }else if(user.getDept().getParentId()!=100&&user.getDept().getDeptType()==2){
             map.put("roleName", "经销商");
         }
+        map.put("deptName", user.getDept().getDeptName());
+        map.put("nickName", user.getNickName());
         ajax.put("data", map);
         return ajax;
     }

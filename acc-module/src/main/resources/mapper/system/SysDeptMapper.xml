@@ -28,11 +28,16 @@
         <result property="address" column="address"/>
         <result property="longitude" column="longitude"/>
         <result property="latitude" column="latitude"/>
+        <result property="host" column="host"/>
+        <result property="port" column="port"/>
+        <result property="user" column="user"/>
+        <result property="pwd" column="pwd"/>
+        <result property="prefix" column="prefix"/>
     </resultMap>
 
     <sql id="selectDeptVo">
         select d.dept_id, d.dept_type, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time,d.provinces,d.province,d.city,
-        d.area,d.address,d.longitude,d.latitude from sys_dept d
+        d.area,d.address,d.longitude,d.latitude,d.host,d.port,d.user,d.pwd,d.prefix from sys_dept d
     </sql>
 
     <select id="selectDeptList" parameterType="SysDept" resultMap="SysDeptResult">
@@ -118,6 +123,11 @@
         <if test="longitude != null and longitude != ''">longitude,</if>
         <if test="latitude != null and latitude != ''">latitude,</if>
         <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="host != null and host != ''">host,</if>
+        <if test="port != null and port != ''">port,</if>
+        <if test="user != null and user != ''">user,</if>
+        <if test="pwd != null and pwd != ''">pwd,</if>
+        <if test="prefix != null and prefix != ''">prefix,</if>
         create_time
         )values(
         <if test="deptId != null and deptId != 0">#{deptId},</if>
@@ -138,6 +148,11 @@
         <if test="longitude != null and longitude != ''">#{longitude},</if>
         <if test="latitude != null and latitude != ''">#{latitude},</if>
         <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="host != null and host != ''">#{host},</if>
+        <if test="port != null and port != ''">#{port},</if>
+        <if test="user != null and user != ''">#{user},</if>
+        <if test="pwd != null and pwd != ''">#{pwd},</if>
+        <if test="prefix != null and prefix != ''">#{prefix},</if>
         sysdate()
         )
     </insert>
@@ -162,6 +177,11 @@
             <if test="longitude != null and longitude != ''">longitude = #{longitude},</if>
             <if test="latitude != null and latitude != ''">latitude = #{latitude},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="host != null and host != ''">host = #{host},</if>
+            <if test="port != null and port != ''">port = #{port},</if>
+            <if test="user != null and user != ''">user = #{user},</if>
+            <if test="pwd != null and pwd != ''">pwd = #{pwd},</if>
+            <if test="prefix != null and prefix != ''">prefix = #{prefix},</if>
             update_time = sysdate()
         </set>
         where dept_id = #{deptId}

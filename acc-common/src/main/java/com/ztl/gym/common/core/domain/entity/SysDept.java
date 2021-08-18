@@ -114,6 +114,27 @@ public class SysDept extends BaseEntity {
      */
     private String provinces;
 
+    /**
+     *二级节点地址
+     */
+    private String host;
+    /**
+     *端口号
+     */
+    private String port;
+    /**
+     *用户名
+     */
+    private String user;
+    /**
+     *密码
+     */
+    private String pwd;
+    /**
+     *企业前缀
+     */
+    private String prefix;
+
 
     /**
      * 纬度
@@ -293,6 +314,46 @@ public class SysDept extends BaseEntity {
 
     public void setSelectedOptions(List<String> selectedOptions) {
         this.selectedOptions = selectedOptions;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     @Override
