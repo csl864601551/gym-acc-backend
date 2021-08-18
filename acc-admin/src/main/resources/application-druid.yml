@@ -5,15 +5,15 @@ spring:
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             # 本地测试数据库（大艺）
-            master:
-                url: jdbc:mysql://localhost:3306/gym-acc?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: root
-                password: root
-            # 测试主库数据源
 #            master:
-#                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: tchina1234
-#                password: TChina1234
+#                url: jdbc:mysql://10.88.15.52:3306/gym-acc?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#                username: root
+#                password: root
+            # 测试主库数据源
+            master:
+                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: tchina1234
+                password: TChina1234
             # 正式南通数据源
 #            master:
 #                url: jdbc:mysql://10.70.150.100:3306/acs_prod?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
