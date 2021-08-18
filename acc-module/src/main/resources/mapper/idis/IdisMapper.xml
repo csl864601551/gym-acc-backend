@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.idis.mapper.IdisMapper">
+
+    <resultMap type="HashMap" id="idisCodeMap">
+        <result property="CODE" column="code"/>
+        <result property="PRODUCT_NAME" column="product_no"/>
+        <result property="BATCH_NO" column="batch_no"/>
+        <result property="CATEGORY_NAME" column="category_name"/>
+        <result property="PRODUCT_NO" column="product_name"/>
+        <result property="BAR_CODE" column="bar_code"/>
+        <result property="UNIT" column="unit"/>
+        <result property="PRODUCT_INTRODUCE" column="product_introduce"/>
+    </resultMap>
+
+    <select id="selectCodeNotSynced"  resultMap="idisCodeMap">
+        SELECT
+            c.code,
+            p.product_name,
+            pb.batch_no,
+            pc.category_name,
+            p.product_no,
+            p.bar_code,
+            p.unit,
+            p.product_introduce
+        FROM
+            (SELECT code, code_attr_id FROM t_code_${companyId} where status != 2 limit #{maxNum}) as c
+            LEFT JOIN t_code_attr ca ON ca.id = c.code_attr_id
+            LEFT JOIN t_product p ON p.id = ca.product_id
+            LEFT JOIN t_product_category pc ON pc.id = p.category_one
+            LEFT JOIN t_product_batch pb ON pb.id = ca.batch_id
+    </select>
+
+
+    <update id="updateStatusForSyncedCode">
+        UPDATE t_code_${companyId} SET status = 2 WHERE CODE IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

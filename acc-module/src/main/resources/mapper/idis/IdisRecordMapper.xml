@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.idis.mapper.IdisRecordMapper">
+    
+    <resultMap type="IdisRecord" id="IdisRecordResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="code"    column="code"    />
+        <result property="url"    column="url"    />
+        <result property="param"    column="param"    />
+        <result property="respCode"    column="resp_code"    />
+        <result property="respMsg"    column="resp_msg"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectIdisRecordVo">
+        select id, type, code, url, param, resp_code, resp_msg, create_time from t_idis_record
+    </sql>
+
+    <select id="selectIdisRecordList" parameterType="IdisRecord" resultMap="IdisRecordResult">
+        <include refid="selectIdisRecordVo"/>
+        <where>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="respCode != null  and respCode != ''"> and resp_code = #{respCode}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectIdisRecordById" parameterType="Long" resultMap="IdisRecordResult">
+        <include refid="selectIdisRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <delete id="deleteIdisRecordByIds" parameterType="String">
+        delete from t_idis_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <sql id="insertIdisRecordSql">
+        INSERT INTO t_idis_record (type, code, url, param, resp_code, resp_msg, create_time) values
+    </sql>
+
+    <insert id="insertIdisRecord" parameterType="IdisRecord">
+        <include refid="insertIdisRecordSql"/>
+        (#{type}, #{code}, #{url}, #{param}, #{respCode}, #{respMsg}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <insert id="batchInsertIdisRecord" >
+        <include refid="insertIdisRecordSql"/>
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.type}, #{item.code}, #{item.url}, #{item.param}, #{item.respCode}, #{item.respMsg}, CURRENT_TIMESTAMP)
+        </foreach>
+    </insert>
+
+</mapper>

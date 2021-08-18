@@ -15,6 +15,8 @@ import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.enums.DataSourceType;
@@ -23,13 +25,18 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.framework.web.service.TokenService;
+import com.ztl.gym.idis.prop.IdisProp;
+import com.ztl.gym.idis.service.IIdisService;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.domain.ProductBatch;
 import com.ztl.gym.product.domain.ProductCategory;
 import com.ztl.gym.product.service.IProductBatchService;
 import com.ztl.gym.product.service.IProductCategoryService;
 import com.ztl.gym.product.service.IProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +52,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/code/record")
 public class CodeRecordController extends BaseController {
@@ -64,6 +72,8 @@ public class CodeRecordController extends BaseController {
     private IProductCategoryService productCategoryService;
     @Autowired
     private IProductService tProductService;
+    @Autowired
+    private IIdisService idisService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -367,6 +377,25 @@ public class CodeRecordController extends BaseController {
         codeRecord.setBatchId(fuzhiVo.getBatchId());
         //更新生码记录赋值信息
         res = codeRecordService.updateCodeRecord(codeRecord);
+
+        /**
+         * 同步二级节点
+         */
+        SysDept dept=SecurityUtils.getLoginUser().getUser().getDept();
+        if(dept.getHost()!=null&&dept.getUser()!=null&&dept.getPwd()!=null&&dept.getPrefix()!=null){
+
+            IdisProp idisProp=new IdisProp();
+            idisProp.setCompanyId(dept.getDeptId());
+            idisProp.setHost(dept.getHost());
+            idisProp.setPort(dept.getPort());
+            idisProp.setUser(dept.getUser());
+            idisProp.setPwd(dept.getPwd());
+            idisProp.setPrefix(dept.getPrefix());
+            log.info("开始同步自建企业节点, 最大同步数量: {}", 1000000);
+            Integer syncNum = idisService.syncCode(1000000,idisProp);
+            log.info("结束同步自建企业节点, 实际同步数量: {}", syncNum);
+        }
+
         return toAjax(res);
     }
 
