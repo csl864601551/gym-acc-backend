@@ -344,7 +344,7 @@
                 and pv.company_id = #{deptId}
             </if>
             GROUP BY
-            mycreatedate
+            mycreatedate order by mycreatedate asc
         </if>
         <if test="type != null and type == 2">
             SELECT
@@ -418,12 +418,12 @@
                 and pv.company_id = #{deptId}
             </if>
             GROUP BY
-            mycreatedate
+            mycreatedate order by mycreatedate asc
         </if>
         <if test="type != null and type == 3">
             SELECT
             days.countKey,
-            ifnull( datas.countValue, 0 ) AS countValue
+            any_value(ifnull( datas.countValue, 0 )) AS countValue
             FROM
             (-- 数据查询
             SELECT
@@ -446,11 +446,13 @@
             @date := date_add( @date, INTERVAL 1 DAY ) AS countKey
             FROM
             ( SELECT @date := date_add( #{beginTime}, INTERVAL - 1 DAY ) FROM t_scan_record tfi ) days
-            WHERE
+            HAVING
             @date &lt;= date_add( #{endTime}, INTERVAL - 1 DAY ) AND @date &gt;= date_add( #{beginTime}, INTERVAL - 1 DAY )
             ) days ON datas.countKey = days.countKey
             GROUP BY
-            days.countKey ASC;
+            days.countKey
+            order by
+            days.countKey asc
         </if>
     </select>
 
