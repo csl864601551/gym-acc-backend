@@ -152,7 +152,7 @@ public class StatisticalController {
                 query.put("endTime", endTime);
                 statisticalBean.setByxzNum(deptService.selectCountBydept(query));
                 //经销商总数
-                query.put("type", 3);
+                query.put("type", 4);
                 statisticalBean.setJxszs(deptService.selectCountBydept(query));
 
                 //出货统计
@@ -230,7 +230,7 @@ public class StatisticalController {
             } else {
                 query.put("deptId", deptId);
                 //经销商总数
-                query.put("type", 3);
+                query.put("type", 4);
                 statisticalBean.setJxsNum(deptService.selectCountBydept(query));
                 //产品出货总量
                 query.put("type", null);
@@ -294,7 +294,7 @@ public class StatisticalController {
                 query.put("endTime", endTime);
                 statisticalBean.setByxzNum(deptService.selectCountBydept(query));
                 //经销商总数
-                query.put("type", 3);
+                query.put("type", 4);
                 statisticalBean.setJxszs(deptService.selectCountBydept(query));
 
                 //出货统计
