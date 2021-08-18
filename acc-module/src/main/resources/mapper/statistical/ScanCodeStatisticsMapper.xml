@@ -126,6 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 </if>
         GROUP BY
             mycreatedate
+        order by mycreatedate asc
     </select>
     <select id="selectSingleWeekCount" resultType="com.ztl.gym.statistical.domain.vo.DateAndCountResp">
         SELECT
@@ -154,6 +155,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         GROUP BY
         mycreatedate
+        order by mycreatedate asc
     </select>
 
     <select id="selectScanCityCount" resultType="java.lang.Integer">
