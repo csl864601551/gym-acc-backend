@@ -750,7 +750,7 @@ public class StatisticalController {
                             }
                         }
                         //扫码数量
-                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        List<Map<String, Object>> smslsList = scanRecordService.selectSecueityRecordByDate(query);
                         if (smslsList.size() > 0) {
                             for (int i = 0; i < smslsList.size(); i++) {
                                 Map<String, Object> smslsMap = new HashMap<String, Object>();
@@ -760,7 +760,7 @@ public class StatisticalController {
                             }
                         }
                         //查验数量
-                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        List<Map<String, Object>> cyslList = scanRecordService.selectCountByDate(query);
                         if (cyslList.size() > 0) {
                             for (int i = 0; i < cyslList.size(); i++) {
                                 Map<String, Object> cyslMap = new HashMap<String, Object>();
@@ -786,7 +786,7 @@ public class StatisticalController {
                             }
                         }
                         //扫码数量
-                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        List<Map<String, Object>> smslsList = scanRecordService.selectSecueityRecordByDate(query);
                         if (smslsList.size() > 0) {
                             for (int i = 0; i < smslsList.size(); i++) {
                                 Map<String, Object> smslsMap = new HashMap<String, Object>();
@@ -796,7 +796,7 @@ public class StatisticalController {
                             }
                         }
                         //查验数量
-                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        List<Map<String, Object>> cyslList = scanRecordService.selectCountByDate(query);
                         if (cyslList.size() > 0) {
                             for (int i = 0; i < cyslList.size(); i++) {
                                 Map<String, Object> cyslMap = new HashMap<String, Object>();
@@ -826,7 +826,7 @@ public class StatisticalController {
                             }
                         }
                         //扫码数量
-                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        List<Map<String, Object>> smslsList = scanRecordService.selectSecueityRecordByDate(query);
                         if (smslsList.size() > 0) {
                             for (int i = 0; i < smslsList.size(); i++) {
                                 Map<String, Object> smslsMap = new HashMap<String, Object>();
@@ -836,7 +836,7 @@ public class StatisticalController {
                             }
                         }
                         //查验数量
-                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        List<Map<String, Object>> cyslList = scanRecordService.selectCountByDate(query);
                         if (cyslList.size() > 0) {
                             for (int i = 0; i < cyslList.size(); i++) {
                                 Map<String, Object> cyslMap = new HashMap<String, Object>();
@@ -869,7 +869,7 @@ public class StatisticalController {
                             }
                         }
                         //扫码数量
-                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        List<Map<String, Object>> smslsList = scanRecordService.selectSecueityRecordByDate(query);
                         if (smslsList.size() > 0) {
                             for (int i = 0; i < smslsList.size(); i++) {
                                 Map<String, Object> smslsMap = new HashMap<String, Object>();
@@ -879,7 +879,7 @@ public class StatisticalController {
                             }
                         }
                         //查验数量
-                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        List<Map<String, Object>> cyslList = scanRecordService.selectCountByDate(query);
                         if (cyslList.size() > 0) {
                             for (int i = 0; i < cyslList.size(); i++) {
                                 Map<String, Object> cyslMap = new HashMap<String, Object>();
@@ -905,7 +905,7 @@ public class StatisticalController {
                             }
                         }
                         //扫码数量
-                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        List<Map<String, Object>> smslsList = scanRecordService.selectSecueityRecordByDate(query);
                         if (smslsList.size() > 0) {
                             for (int i = 0; i < smslsList.size(); i++) {
                                 Map<String, Object> smslsMap = new HashMap<String, Object>();
@@ -915,7 +915,7 @@ public class StatisticalController {
                             }
                         }
                         //查验数量
-                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        List<Map<String, Object>> cyslList = scanRecordService.selectCountByDate(query);
                         if (cyslList.size() > 0) {
                             for (int i = 0; i < cyslList.size(); i++) {
                                 Map<String, Object> cyslMap = new HashMap<String, Object>();
@@ -945,7 +945,7 @@ public class StatisticalController {
                             }
                         }
                         //扫码数量
-                        List<Map<String, Object>> smslsList = scanRecordService.selectCountByDate(query);
+                        List<Map<String, Object>> smslsList = scanRecordService.selectSecueityRecordByDate(query);
                         if (smslsList.size() > 0) {
                             for (int i = 0; i < smslsList.size(); i++) {
                                 Map<String, Object> smslsMap = new HashMap<String, Object>();
@@ -955,7 +955,7 @@ public class StatisticalController {
                             }
                         }
                         //查验数量
-                        List<Map<String, Object>> cyslList = scanRecordService.selectSecueityRecordByDate(query);
+                        List<Map<String, Object>> cyslList = scanRecordService.selectCountByDate(query);
                         if (cyslList.size() > 0) {
                             for (int i = 0; i < cyslList.size(); i++) {
                                 Map<String, Object> cyslMap = new HashMap<String, Object>();

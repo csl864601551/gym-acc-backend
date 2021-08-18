@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM
         gen_table_column,
         ( SELECT @s := - 1 ) temp
-        WHERE
+        HAVING
         @s &lt; #{day} - 1) dt
         left join
         (SELECT
@@ -77,8 +77,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
         ifnull(DATEDIFF( max( create_time ), min( create_time ) ) +1,0) AS DiffDate
         FROM
-            t_security_code_record
+        t_scan_record
         where 1=1
+        AND create_user != 2
         <if test="deptId != null">
             and company_id  = #{deptId}
         </if>
@@ -232,7 +233,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM
         gen_table_column,
         ( SELECT @myDate := - 1 ) temp
-        WHERE
+        HAVING
         @myDate &lt; #{between}
         ) dt
         LEFT JOIN
@@ -248,7 +249,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
         ) t3 ON dt.date = t3.daytime
         LEFT JOIN
-        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,count(*) AS count FROM t_security_code_record WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,count(*) AS count FROM t_scan_record WHERE 1=1 AND create_user != 2 <if test="deptId != null">and company_id  = #{deptId}</if>
         GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
         ) t5 ON dt.date = t5.daytime
 
@@ -311,10 +312,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             d.dept_name as name,
             count(*) as count
         FROM
-            t_security_code_record t
+            t_scan_record t
             LEFT JOIN sys_dept d ON t.company_id = d.dept_id
         WHERE
             d.del_flag = 0
+            AND
+            t.create_user != 2
         GROUP BY
             t.company_id
         HAVING
