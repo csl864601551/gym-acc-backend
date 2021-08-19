@@ -428,8 +428,8 @@ public class CodeSingleController extends BaseController {
              * 插入箱码，更新单码PCode
              */
             //最后一个码变成箱码
-            String oldCode=list.get(list.size()-1);
-            String pCode=oldCode.replaceFirst("3","2");
+            String pCode=list.get(list.size()-1);
+            //String pCode=oldCode.replaceFirst("3","2");
 
             Code temp = null;
             long singleId=0;
