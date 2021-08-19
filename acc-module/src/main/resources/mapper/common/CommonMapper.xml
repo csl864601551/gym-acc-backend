@@ -41,6 +41,11 @@
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
+        <result property="host" column="host"/>
+        <result property="port" column="port"/>
+        <result property="user" column="user"/>
+        <result property="pwd" column="pwd"/>
+        <result property="prefix" column="prefix"/>
     </resultMap>
 
     <resultMap type="GeneratorBean" id="GeneratorResult">
