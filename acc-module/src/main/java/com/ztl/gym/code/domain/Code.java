@@ -99,6 +99,8 @@ public class Code extends BaseEntity {
     private String codeTypeName;
 
     private long codeBoxCount;
+
+    private long productId;
     /**
      * 码属性
      */
@@ -238,6 +240,14 @@ public class Code extends BaseEntity {
 
     public void setSingleId(Long singleId) {
         this.singleId = singleId;
+    }
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
     }
 
     @Override

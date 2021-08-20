@@ -391,9 +391,10 @@ public class CodeRecordController extends BaseController {
             idisProp.setUser(dept.getUser());
             idisProp.setPwd(dept.getPwd());
             idisProp.setPrefix(dept.getPrefix());
-            log.info("开始同步自建企业节点, 最大同步数量: {}", 1000000);
-            Integer syncNum = idisService.syncCode(1000000,idisProp);
-            log.info("结束同步自建企业节点, 实际同步数量: {}", syncNum);
+//            log.info("开始同步自建企业节点, 最大同步数量: {}", 1000000);
+//            Integer syncNum = idisService.syncCode(1000000,idisProp);
+//            log.info("结束同步自建企业节点, 实际同步数量: {}", syncNum);
+//            TODO 处理赋值生码逻辑
         }
 
         return toAjax(res);

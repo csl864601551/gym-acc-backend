@@ -46,13 +46,11 @@ public class OpenCodeController {
                 throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
             }
             for (Code codes : codeList) {
-                String typeName = "未知";
                 if (codes.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
-                    typeName = "箱码";
+                    codes.setCodeTypeName("箱码");
                 } else {
-                    typeName = "单码";
+                    codes.setCodeTypeName("单码");
                 }
-                codes.setCodeTypeName(typeName);
             }
             return AjaxResult.success(codeList);
         }else{
@@ -91,8 +89,14 @@ public class OpenCodeController {
                     if(codeStart.getCodeAttr().getProductId()==null){
                         throw new CustomException("该码尚未赋值！", HttpStatus.ERROR);
                     }
-                    if(Long.valueOf(map.get("productId").toString())!=codeStart.getCodeAttr().getProductId()){
-                        throw new CustomException("该码属性赋值产品与选择产品不一致！", HttpStatus.ERROR);
+                    if(Long.valueOf(map.get("productId").toString())!=0){
+                        if(Long.valueOf(map.get("productId").toString())!=codeStart.getCodeAttr().getProductId()){
+                            throw new CustomException("该码属性赋值产品与选择产品不一致！", HttpStatus.ERROR);
+                        }
+                    }
+                    //返回productId
+                    for (Code codes : codeList) {
+                        codes.setProductId(codeStart.getCodeAttr().getProductId());
                     }
                 }
             }else {
@@ -132,6 +136,10 @@ public class OpenCodeController {
                     }else{
                         throw new CustomException("该码已赋值！", HttpStatus.ERROR);
                     }
+                }
+                //返回productId
+                for (Code codes : codeList) {
+                    codes.setProductId(Long.valueOf(map.get("productId").toString()));
                 }
             }
 
