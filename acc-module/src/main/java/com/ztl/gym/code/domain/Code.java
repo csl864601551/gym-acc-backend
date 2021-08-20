@@ -101,6 +101,7 @@ public class Code extends BaseEntity {
     private long codeBoxCount;
 
     private long productId;
+    private String productName;
     /**
      * 码属性
      */
@@ -248,6 +249,14 @@ public class Code extends BaseEntity {
 
     public void setProductId(long productId) {
         this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     @Override
