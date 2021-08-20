@@ -1,17 +1,24 @@
 package com.ztl.gym.web.controller.storage;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.mapper.CodeMapper;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.enums.DataSourceType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.vo.StorageVo;
+import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +48,12 @@ public class StorageInController extends BaseController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private StorageInMapper storageInMapper;
+
+    @Autowired
+    private CodeMapper codeMapper;
 
     /**
      * 查询入库列表
@@ -194,5 +207,32 @@ public class StorageInController extends BaseController {
         }
         int show = storageInService.insertStorageIn(map);
         return AjaxResult.success(show);
+    }
+
+
+    /**
+     * 判断是否存在入库记录
+     *
+     * @return 获取所有码
+     */
+    @GetMapping("/ifExit/{code}")
+    @DataSource(DataSourceType.SHARDING)
+    public AjaxResult ifExitStorageInRecord(@PathVariable("code") String code) {
+        if (StringUtils.isBlank(code)) {
+            throw new CustomException("请输入码值！", HttpStatus.ERROR);
+        }
+        Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        Code temp = new Code();
+        temp.setCode(code);
+        temp.setCompanyId(companyId);
+        Code code1 = codeMapper.selectCode(temp);//查询单码数据
+        if (code1 == null) {
+            throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
+        }
+        //判断入库表是否有数据
+        if (code1.getStorageType() == null) {
+            return AjaxResult.success(false);
+        }
+        return AjaxResult.success(true);
     }
 }

@@ -396,7 +396,7 @@ public class CodeSingleController extends BaseController {
             if(code.getpCode()!=null){
                 throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！", HttpStatus.ERROR);
             }
-            if(code.getCodeAttrId()!=null){
+            if(code.getCodeAttrId()!=null && code.getCodeAttr().getProductId() != null){
                 throw new CustomException(code.getCode()+"该码已被赋值产品，请检查后重试！",HttpStatus.ERROR);
             }
             if(flag&&code.getCodeAcc()==null){
@@ -545,6 +545,10 @@ public class CodeSingleController extends BaseController {
             throw new CustomException("不是箱码，请重新扫描！", HttpStatus.ERROR);
         }
 
+        if ( Objects.isNull(code.getCodeAttrId()) || code.getCodeAttr().getProductId() == null) {
+            throw new CustomException("该箱码未赋值，请先赋值！", HttpStatus.ERROR);
+        }
+
         Map<String, Object> query = new HashMap<>(2);
         query.put("code", pCode);
         query.put("companyId", companyId);
@@ -637,7 +641,7 @@ public class CodeSingleController extends BaseController {
         if(!box.getCodeType().equals(AccConstants.CODE_TYPE_BOX)){
             throw new CustomException("请先扫描箱码！", HttpStatus.ERROR);
         }
-        if (box.getCodeAttrId() == null) {
+        if ( Objects.isNull(box.getCodeAttrId()) || box.getCodeAttr().getProductId() == null) {
             throw new CustomException("该箱码未赋值，请先赋值！", HttpStatus.ERROR);
         }
         Code single = null;
@@ -651,7 +655,7 @@ public class CodeSingleController extends BaseController {
             if(!single.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)){
                 throw new CustomException("码类型不属于单码！", HttpStatus.ERROR);
             }
-            if (single.getCodeAttrId() == null) {
+            if (Objects.isNull(box.getCodeAttrId()) || box.getCodeAttr().getProductId() == null) {
                 throw new CustomException("存在未赋值产品码，请重新扫码！", HttpStatus.ERROR);
             }
             //套标生码没有SingleId，所以无法判断生码区间，然后用CodeAttrId判断
@@ -697,6 +701,10 @@ public class CodeSingleController extends BaseController {
         if (box == null) {
             logger.error("未查询到该箱码记录");
             throw new CustomException("未查询到相关箱码数据！", HttpStatus.ERROR);
+        }
+
+        if ( Objects.isNull(box.getCodeAttrId()) || box.getCodeAttr().getProductId() == null) {
+            throw new CustomException("该箱码未赋值，请先赋值！", HttpStatus.ERROR);
         }
         Code single = null;
         for (String str : codes) {
