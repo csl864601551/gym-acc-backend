@@ -102,6 +102,7 @@ public class Code extends BaseEntity {
 
     private long productId;
     private String productName;
+    private String productNo;
     /**
      * 码属性
      */
@@ -257,6 +258,14 @@ public class Code extends BaseEntity {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     @Override

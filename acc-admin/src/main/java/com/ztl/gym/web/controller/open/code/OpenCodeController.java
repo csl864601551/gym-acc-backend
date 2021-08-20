@@ -98,6 +98,7 @@ public class OpenCodeController {
                     for (Code codes : codeList) {
                         codes.setProductId(codeStart.getCodeAttr().getProductId());
                         codes.setProductName(codeStart.getCodeAttr().getProductName());
+                        codes.setProductNo(codeStart.getCodeAttr().getProductNo());
                     }
                 }
             }else {
@@ -142,6 +143,7 @@ public class OpenCodeController {
                 for (Code codes : codeList) {
                     codes.setProductId(Long.valueOf(map.get("productId").toString()));
                     codes.setProductName(map.get("productName").toString());
+                    codes.setProductNo(map.get("productNo").toString());
                 }
             }
 
