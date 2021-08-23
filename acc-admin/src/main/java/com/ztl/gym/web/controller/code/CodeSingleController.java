@@ -482,35 +482,39 @@ public class CodeSingleController extends BaseController {
      * @return
      */
     @PostMapping("/bindCodeAttr")
-    @DataSource(DataSourceType.SHARDING)
-    @Transactional(rollbackFor = Exception.class)
     public AjaxResult bindProductAttr(@RequestBody Map<String,Object> map) {
         if(map != null) {
-            CodeAttr codeAttr = new CodeAttr();
-            codeAttr.setCompanyId(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
-            codeAttr.setProductId(Long.valueOf(map.get("productId").toString()));
-            codeAttr.setProductNo(map.get("productNo").toString());
-            codeAttr.setProductName(map.get("productName").toString());
-            codeAttr.setBatchId(Long.valueOf(map.get("batchId").toString()));
-            codeAttr.setBatchNo(map.get("batchNo").toString());
             //获取属性id
-            Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(),1, IdGeneratorConstants.TYPE_ATTR);
-            codeAttr.setId(attrId + 1);
-            //插入编码属性表
-            Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
-
-            //更新编码信息表
-            Map<String, Object> params = new HashMap<>();
-            params.put("pCode", map.get("pCode"));
-            params.put("codeAttrId", Long.valueOf(codeAttrId));
-            params.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
-            codeService.updateCodeAttrIdByPCode(params);
+            Long attrId = commonService.updateGeneratorVal(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()),1, IdGeneratorConstants.TYPE_ATTR);
+            bindProductAttrImpl(map, attrId + 1);
             return AjaxResult.success();
         } else {
             throw new CustomException("产品信息为空！",HttpStatus.ERROR);
         }
     }
 
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public void bindProductAttrImpl(Map<String,Object> map, Long attrId){
+        CodeAttr codeAttr = new CodeAttr();
+        codeAttr.setCompanyId(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        codeAttr.setProductId(Long.valueOf(map.get("productId").toString()));
+        codeAttr.setProductNo(map.get("productNo").toString());
+        codeAttr.setProductName(map.get("productName").toString());
+        codeAttr.setBatchId(Long.valueOf(map.get("batchId").toString()));
+        codeAttr.setBatchNo(map.get("batchNo").toString());
+
+        codeAttr.setId(attrId + 1);
+        //插入编码属性表
+        Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+
+        //更新编码信息表
+        Map<String, Object> params = new HashMap<>();
+        params.put("pCode", map.get("pCode"));
+        params.put("codeAttrId", Long.valueOf(codeAttrId));
+        params.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        codeService.updateCodeAttrIdByPCode(params);
+    }
     /**
      * 根据singleId，查询分段赋值产品及相关信息
      */

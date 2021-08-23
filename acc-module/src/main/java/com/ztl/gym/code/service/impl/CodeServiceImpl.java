@@ -638,6 +638,8 @@ public class CodeServiceImpl implements ICodeService {
             //没有提交的数据可以回滚
             session.rollback();
             logger.error(e.getMessage());
+            //为了食物捕获异常，回滚数据
+            throw e;
         } finally {
             session.close();
         }
