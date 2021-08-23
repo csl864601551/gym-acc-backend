@@ -637,6 +637,7 @@ public class CodeServiceImpl implements ICodeService {
         } catch (Exception e) {
             //没有提交的数据可以回滚
             session.rollback();
+            logger.error(e.getMessage());
         } finally {
             session.close();
         }
@@ -663,6 +664,7 @@ public class CodeServiceImpl implements ICodeService {
         } catch (Exception e) {
             //没有提交的数据可以回滚
             session.rollback();
+            logger.error(e.getMessage());
         } finally {
             session.close();
         }
