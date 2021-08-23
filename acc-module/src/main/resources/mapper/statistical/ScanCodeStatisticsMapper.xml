@@ -5,14 +5,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ztl.gym.statistical.mapper.ScanCodeStatisticsMapper">
 
     <select id="generateCount" resultType="java.lang.Long">
-        select sum(code) from
+        select IFNULL(sum(code),0) from
         (
-            select sum(count) code from t_code_single where 1=1
+            select IFNULL(sum(count),0) code from t_code_single where 1=1
             <if test="deptId != null">
                 and company_id  = #{deptId}
             </if>
             union all
-            select sum(count) code from t_code_record where 1=1
+            select IFNULL(sum(count),0) code from t_code_record where 1=1
             <if test="deptId != null">
                 and company_id  = #{deptId}
             </if>
@@ -29,17 +29,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                                                    <if test="deptId != null">and company_id  = #{deptId}</if>) today,
             ( SELECT count(*) FROM t_scan_record WHERE DATEDIFF(create_time,NOW())=-1
                                                    <if test="deptId != null">and company_id  = #{deptId}</if>) yesterday,
-            ( SELECT DATEDIFF(max( create_time ),min( create_time )) + 1 AS DiffDate FROM t_scan_record where 1=1
+            ( SELECT IFNULL(DATEDIFF( max( create_time ), min( create_time ) ) + 1,0) AS DiffDate FROM t_scan_record where 1=1
                                                     <if test="deptId != null">and company_id  = #{deptId}</if>) totalDay
 
     </select>
     <select id="mixRate" resultType="java.util.HashMap">
         select
             (select count(distinct code)  from  t_mix_record  where mix_type=1 <if test="deptId != null">and company_id  = #{deptId}</if>) mixCount,
-            (select sum(code) from
-                    (select sum(count) code from t_code_single where 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+            (select IFNULL(sum(code),0) from
+                    (select IFNULL(sum(count),0) code from t_code_single where 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
                      union all
-                     select sum(count) code from t_code_record where 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>)
+                     select IFNULL(sum(count),0) code from t_code_record where 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>)
                 sum) totalCount,
             (select count(distinct code)  from  t_mix_record WHERE mix_type=1 and YEARWEEK( date_format( create_time, '%Y-%m-%d' ) ) = YEARWEEK( now( ) ) <if test="deptId != null">and company_id  = #{deptId}</if>) currentWeek,
             (select count(distinct code)  from  t_mix_record WHERE mix_type=1 and YEARWEEK( date_format( create_time, '%Y-%m-%d' ) ) = YEARWEEK( now( ) ) -1 <if test="deptId != null">and company_id  = #{deptId}</if>) lastWeek,
@@ -75,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectSecurityTotalDay" resultType="java.lang.Integer">
         SELECT
-        ifnull(DATEDIFF( max( create_time ), min( create_time ) ) +1,0) AS DiffDate
+            IFNULL(DATEDIFF( max( create_time ), min( create_time ) ) +1,0) AS DiffDate
         FROM
         t_scan_record
         where 1=1
@@ -87,12 +87,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectGenerateTotalDay" resultType="java.lang.Integer">
         select max(DiffDate) from
             (
-                select DATEDIFF( max( create_time ), min( create_time ) ) + 1 AS DiffDate  from t_code_single where 1=1
+                select IFNULL(DATEDIFF( max( create_time ), min( create_time ) ) + 1,0) AS DiffDate  from t_code_single where 1=1
                 <if test="deptId != null">
                     and company_id  = #{deptId}
                 </if>
                 union all
-                select DATEDIFF( max( create_time ), min( create_time ) ) + 1 AS DiffDate  from t_code_record where 1=1
+                select IFNULL(DATEDIFF( max( create_time ), min( create_time ) ) + 1,0) AS DiffDate  from t_code_record where 1=1
                 <if test="deptId != null">
                     and company_id  = #{deptId}
                 </if>
@@ -243,11 +243,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
         ) t1 ON dt.date = t1.daytime
         LEFT JOIN
-        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,sum( count ) AS count FROM t_code_record WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,IFNULL(sum(count),0) AS count FROM t_code_record WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
         GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
         ) t2 ON dt.date = t2.daytime
         LEFT JOIN
-        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,sum( count ) AS count FROM t_code_single WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
+        (	SELECT DATE_FORMAT( create_time, '%Y-%m-%d' ) AS daytime,IFNULL(sum(count),0) AS count FROM t_code_single WHERE 1=1 <if test="deptId != null">and company_id  = #{deptId}</if>
         GROUP BY DATE_FORMAT( create_time, '%Y-%m-%d' )
         ) t3 ON dt.date = t3.daytime
         LEFT JOIN
@@ -261,12 +261,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="generateCodeTop" resultType="com.ztl.gym.statistical.domain.vo.NameAndCountResp">
         SELECT
             d.dept_name as name,
-            sum( temp.count ) AS count
+            IFNULL(sum(temp.count),0) AS count
         FROM
             (
             SELECT
                 company_id,
-                sum( count ) AS count
+                IFNULL(sum( count ),0) AS count
             FROM
                 t_code_record
             GROUP BY
@@ -275,7 +275,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 COUNT( company_id ) > 0 UNION ALL
             SELECT
                 company_id,
-                sum( count ) AS count
+                IFNULL(sum( count ),0) AS count
             FROM
                 t_code_single
             GROUP BY
