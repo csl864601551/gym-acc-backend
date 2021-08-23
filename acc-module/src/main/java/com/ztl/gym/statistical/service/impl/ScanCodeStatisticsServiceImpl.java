@@ -40,7 +40,12 @@ public class ScanCodeStatisticsServiceImpl implements IScanCodeStatisticsService
         result.put("count",count);
         //日均生码,查询三个表最大的天数
         int totalDay = mapper.selectGenerateTotalDay(deptId);
-        result.put("dayAverage",count/totalDay);
+        if (totalDay == 0) {
+            result.put("dayAverage",0);
+        } else {
+            result.put("dayAverage",count/totalDay);
+        }
+
         return result;
     }
 
@@ -84,7 +89,12 @@ public class ScanCodeStatisticsServiceImpl implements IScanCodeStatisticsService
         result.put("count",count);
         result.put("weekRate",weekRate);
         result.put("dayRate",dayRate);
-        result.put("dayAverage",count/totalDay.intValue());
+        if (today == 0L) {
+            result.put("dayAverage",0);
+        } else {
+            result.put("dayAverage",count/totalDay.intValue());
+        }
+
         return result;
     }
 
@@ -97,7 +107,11 @@ public class ScanCodeStatisticsServiceImpl implements IScanCodeStatisticsService
         int count = scanRecordService.selectSecueityRecordNum(query);
         int totalDay = mapper.selectSecurityTotalDay(deptId);
         result.put("count",count);
-        result.put("dayAverage",count/totalDay);
+        if (totalDay == 0) {
+            result.put("dayAverage",0);
+        } else {
+            result.put("dayAverage",count/totalDay);
+        }
         return result;
     }
 
