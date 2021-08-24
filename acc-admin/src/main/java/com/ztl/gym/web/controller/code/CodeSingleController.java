@@ -211,7 +211,8 @@ public class CodeSingleController extends BaseController {
     @GetMapping("/downloadTxt")
     public AjaxResult downloadTxt(CodeSingle codeSingle, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListBySingle(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
-        String temp = "码" + "                                        " + "\r\n";
+        StringBuilder temp = new StringBuilder();
+        temp.append("流水号,码                                     \r\n");
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -222,10 +223,10 @@ public class CodeSingleController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                temp += "        " + code.getCode() + "\r\n";
+                temp.append("        ").append(code.getCodeIndex()).append(",").append(code.getCode()).append("\r\n");//流水号，码
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                temp += (code.getpCode() == null ? code.getCode() : code.getpCode()) + "\r\n";
+                temp.append(code.getCodeIndex()).append(",").append((code.getpCode() == null ? code.getCode() : code.getpCode())).append("\r\n");//流水号，码
             }
         }
         AjaxResult ajax = AjaxResult.success();

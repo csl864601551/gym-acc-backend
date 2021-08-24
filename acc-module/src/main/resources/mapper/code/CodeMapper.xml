@@ -23,6 +23,22 @@
         </association>
     </resultMap>
 
+    <resultMap type="Code" id="CodeResultNoAttr">
+        <result property="codeIndex" column="code_index"/>
+        <result property="companyId" column="company_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="status" column="status"/>
+        <result property="code" column="code"/>
+        <result property="codeAcc" column="code_acc"/>
+        <result property="codeType" column="code_type"/>
+        <result property="pCode" column="p_code"/>
+        <result property="codeAttrId" column="code_attr_id"/>
+        <result property="singleId" column="single_id"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="storageRecordId" column="storage_record_id"/>
+        <result property="codeTypeName" column="code_type_name"/>
+    </resultMap>
+
     <resultMap type="CodeVo" id="CodeComplex">
         <result property="codeStr" column="code"/>
         <association property="code" column="code"
@@ -238,7 +254,7 @@
     </select>
 
 
-    <select id="selectCodeListByRecord" resultMap="CodeResult">
+    <select id="selectCodeListByRecord" resultMap="CodeResultNoAttr">
         <include refid="selectCodeVo"/>
         where company_id = #{companyId} and  code_attr_id in
         (select id from t_code_attr where record_id = #{recordId} and company_id = #{companyId})
