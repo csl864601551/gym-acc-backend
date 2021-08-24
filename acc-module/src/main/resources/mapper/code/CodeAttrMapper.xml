@@ -75,9 +75,14 @@
         where id = #{id}
     </select>
 
-    <select id="selectCodeAttrBysingleId" parameterType="Long" resultMap="CodeAttrResult">
+    <select id="selectCodeAttrByRecordId" parameterType="Long" resultMap="CodeAttrResult">
         <include refid="selectCodeAttrVo"/>
         where record_id = #{value}
+    </select>
+
+    <select id="selectCodeAttrBySingleId" parameterType="Long" resultMap="CodeAttrResult">
+        <include refid="selectCodeAttrVo"/>
+        where single_id = #{value}
     </select>
 
 
