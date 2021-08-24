@@ -124,6 +124,15 @@ public class ScanRecordController extends BaseController {
 
 
     /**
+     * 根据码号查询相关产品是否开启输入
+     */
+    @GetMapping(value = "/getIsOpenByCode")
+    public AjaxResult getIsOpenByCode(@RequestParam("code") String code) {
+        return AjaxResult.success(scanRecordService.getIsOpenByCode(CodeRuleUtils.getCompanyIdByCode(code.trim()), code.trim()));
+    }
+
+
+    /**
      * 判断是否窜货
      */
     @GetMapping("/getIsMixInfo")

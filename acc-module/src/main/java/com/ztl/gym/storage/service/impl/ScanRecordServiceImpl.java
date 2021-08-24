@@ -10,7 +10,6 @@ import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.enums.DataSourceType;
-import com.ztl.gym.common.exception.BaseException;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
@@ -179,16 +178,64 @@ public class ScanRecordServiceImpl implements IScanRecordService {
                 } else {
                     returnMap.put("photoShow","");
                 }
+                //是否启用手输
+                String isopen = codeEntity.getCodeAttr().getProduct().getIsOpen();
+                if (StringUtils.isNotBlank(isopen)) {
+                    returnMap.put("isOpen", isopen);//扫码排名显示第一张
+                } else {
+                    returnMap.put("isOpen","0");
+                }
             }
 
         }else{
             //throw new CustomException("该码处于初始状态，尚未赋值！",HttpStatus.ERROR);
             returnMap.put("photoShow","");
+            returnMap.put("isOpen","0");
         }
 
 
         //TODO 判定是否窜货
 
+        return returnMap;
+    }
+
+
+
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Map<String, Object> getIsOpenByCode(Long companyId,String codeVal) {
+        Map<String, Object> returnMap = new HashMap<>();//返回数据
+        Code code = new Code();//码产品信息
+        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        code.setCode(codeVal);
+        scanRecord.setCode(codeVal);
+        if (companyId > 0) {
+            code.setCompanyId(companyId);
+            scanRecord.setCompanyId(companyId);
+        }else{
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+        Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
+        if(codeEntity==null){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+        if(codeEntity.getCodeAttr()!=null){
+            if(codeEntity.getCodeAttr().getProduct()==null){
+                returnMap.put("isOpen","0");
+            }else{
+                //是否启用手输
+                String isopen = codeEntity.getCodeAttr().getProduct().getIsOpen();
+                if (StringUtils.isNotBlank(isopen)) {
+                    returnMap.put("isOpen", isopen);//扫码排名显示第一张
+                } else {
+                    returnMap.put("isOpen","0");
+                }
+            }
+        }else{
+            returnMap.put("isOpen","0");
+        }
+        //TODO 判定是否窜货
         return returnMap;
     }
 

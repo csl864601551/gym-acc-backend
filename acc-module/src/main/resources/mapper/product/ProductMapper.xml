@@ -40,7 +40,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="content1"    column="content1"    />
         <result property="content2"    column="content2"    />
         <result property="photo"    column="photo"    />
+        <result property="isOpen"    column="is_open"    />
     </resultMap>
+
     <resultMap type="Map" id="map">
         <result property="id"    column="id"    />
         <result property="companyId"    column="company_id"    />
@@ -77,6 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="content1"    column="content1"    />
         <result property="content2"    column="content2"    />
         <result property="photo"    column="photo"    />
+        <result property="isOpen"    column="is_open"    />
     </resultMap>
 
     <sql id="selectTProductVo">
@@ -84,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         p.sale_price, p.market_price, p.product_introduce, p.product_detail_pc, p.product_detail_mobile, p.storage_id,
         p.stock, p.stock_limit, p.unit, p.sort, p.sales_num, p.create_user, p.create_time, p.update_user, p.update_time,
         p.template_id1, p.template_id2, p.template_content1, p.template_content2, p.content1, p.content2,u.nick_name createUserName
-        ,p.photo
+        ,p.photo,p.is_open
         from t_product p
         left join t_product_category pc on pc.id=p.category_two
         left join sys_user u on p.create_user = u.user_id
@@ -122,6 +125,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateContent2 != null  and templateContent2 != ''"> and p.template_content2 = #{templateContent2}</if>
             <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
             <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
+            <if test="isOpen != null  and isOpen != ''"> and p.is_open = #{isOpen}</if>
         </where>
         order by p.create_time desc
     </select>
@@ -158,6 +162,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateContent2 != null  and templateContent2 != ''"> and p.template_content2 = #{templateContent2}</if>
             <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
             <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
+            <if test="isOpen != null  and isOpen != ''"> and p.is_open = #{isOpen}</if>
         </where>
         order by p.create_time desc
     </select>
@@ -205,6 +210,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null">content1,</if>
             <if test="content2 != null">content2,</if>
             <if test="photo != null">photo,</if>
+            <if test="isOpen != null">is_open,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
@@ -236,6 +242,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null">#{content1},</if>
             <if test="content2 != null">#{content2},</if>
             <if test="photo != null">#{photo},</if>
+            <if test="isOpen != null">#{isOpen},</if>
          </trim>
     </insert>
 
@@ -301,6 +308,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null">content1 = #{content1},</if>
             <if test="content2 != null">content2 = #{content2},</if>
             <if test="photo != null">photo = #{photo},</if>
+            <if test="isOpen != null">is_open = #{isOpen},</if>
         </trim>
         where id = #{id}
     </update>

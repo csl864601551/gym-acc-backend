@@ -22,6 +22,8 @@
         <result property="moreTemplateContent"    column="more_template_content"    />
         <result property="onceContent"    column="once_content"    />
         <result property="moreContent"    column="more_content"    />
+        <result property="isOpen"    column="is_open"    />
+
     </resultMap>
 
     <resultMap type="CodeAcc" id="CodeAccResult">
@@ -36,7 +38,7 @@
 
     <sql id="selectCodeAccRecordVo">
         select r.id, r.company_id, r.status, r.type, r.count, r.once_template_id, r.more_template_id, r.remark, r.create_user,
-        r.create_time, r.update_user, r.update_time,r.once_template_content, r.more_template_content, r.once_content, r.more_content,
+        r.create_time, r.update_user, r.update_time,r.once_template_content, r.more_template_content, r.once_content, r.more_content,r.is_open,
         u.nick_name
         from t_code_acc_record r
         left join sys_user u on r.create_user = u.user_id
@@ -53,6 +55,7 @@
             <if test="moreTemplateId != null ">and r.more_template_id = #{moreTemplateId}</if>
             <if test="createUser != null ">and r.create_user = #{createUser}</if>
             <if test="updateUser != null ">and r.update_user = #{updateUser}</if>
+            <if test="isOpen != null ">and r.is_open = #{isOpen}</if>
         </where>
         order by r.create_time desc
     </select>
@@ -80,6 +83,7 @@
             <if test="moreTemplateContent != null">more_template_content,</if>
             <if test="onceContent != null">once_content,</if>
             <if test="moreContent != null">more_content,</if>
+            <if test="isOpen != null">is_open,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyId != null">#{companyId},</if>
@@ -97,6 +101,7 @@
             <if test="moreTemplateContent != null">#{moreTemplateContent},</if>
             <if test="onceContent != null">#{onceContent},</if>
             <if test="moreContent != null">#{moreContent},</if>
+            <if test="isOpen != null">#{isOpen},</if>
         </trim>
     </insert>
 
@@ -118,6 +123,7 @@
             <if test="moreTemplateContent != null">more_template_content = #{moreTemplateContent},</if>
             <if test="onceContent != null">once_content = #{onceContent},</if>
             <if test="moreContent != null">more_content = #{moreContent},</if>
+            <if test="isOpen != null">is_open = #{isOpen},</if>
         </trim>
         where id = #{id}
     </update>
@@ -141,7 +147,7 @@
 
     <select id="selectRecordByAccCode" parameterType="String" resultMap="CodeAccRecordResult">
         select r.id, r.company_id, r.status, r.type, r.count, r.once_template_id, r.more_template_id, r.remark, r.create_user,
-        r.create_time, r.update_user, r.update_time,r.once_template_content, r.more_template_content, r.once_content, r.more_content
+        r.create_time, r.update_user, r.update_time,r.once_template_content, r.more_template_content, r.once_content, r.more_content,r.is_open
         ,u.code_acc
         from t_code_acc u
         left join t_code_acc_record r on u.record_id = r.id where u.code_acc = #{codeAcc}

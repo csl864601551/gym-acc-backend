@@ -211,6 +211,11 @@ public class Product extends BaseEntity {
      */
     private String updateType;
 
+    /**
+     * 是否开启
+     */
+    private String isOpen;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -475,6 +480,14 @@ public class Product extends BaseEntity {
         this.photo = photo;
     }
 
+    public String getIsOpen() {
+        return isOpen;
+    }
+
+    public void setIsOpen(String isOpen) {
+        this.isOpen = isOpen;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -510,6 +523,7 @@ public class Product extends BaseEntity {
                 .append("content2", getContent2())
                 .append("updateType", getUpdateType())
                 .append("photo", getPhoto())
+                .append("isOpen", getIsOpen())
                 .toString();
     }
 }
