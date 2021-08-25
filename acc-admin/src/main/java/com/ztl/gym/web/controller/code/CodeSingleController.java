@@ -9,6 +9,7 @@ import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.controller.BaseController;
@@ -21,9 +22,14 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +42,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/code/single")
 public class CodeSingleController extends BaseController {
+    private static final Logger log = LoggerFactory.getLogger(CodeRecordController.class);
     @Autowired
     private CommonService commonService;
     @Autowired
@@ -178,11 +185,11 @@ public class CodeSingleController extends BaseController {
     /**
      * 码下载
      */
-    @PreAuthorize("@ss.hasPermi('code:single:download')")
     @Log(title = "生码记录", businessType = BusinessType.EXPORT)
+    @CrossOrigin
     @GetMapping("/download")
-    public AjaxResult download(CodeSingle codeSingle) {
-        List<Code> list = codeService.selectCodeListBySingle(SecurityUtils.getLoginUserTopCompanyId(), codeSingle.getId());
+    public void download(long id,long companyId, HttpServletResponse response) {
+        List<Code> list = codeService.selectCodeListBySingle(companyId, id);
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
             if (code.getStatus() == AccConstants.CODE_STATUS_WAIT) {
@@ -201,7 +208,22 @@ public class CodeSingleController extends BaseController {
             }
         }
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
-        return util.exportExcel(list,"-"+DateUtils.getDate()+"码");
+        String fileName=util.exportExcel(list,"-"+DateUtils.getDate()+"码").get("msg").toString();
+
+        try {
+            if (!FileUtils.checkAllowDownload(fileName)) {
+                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            String filePath = RuoYiConfig.getDownloadPath() + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, realFileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+            FileUtils.deleteFile(filePath);
+        } catch (Exception e) {
+            log.error("下载文件失败", e);
+        }
     }
 
     /**
