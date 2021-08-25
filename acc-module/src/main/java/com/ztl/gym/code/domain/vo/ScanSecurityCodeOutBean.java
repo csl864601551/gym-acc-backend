@@ -1,6 +1,5 @@
 package com.ztl.gym.code.domain.vo;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -64,6 +63,12 @@ public class ScanSecurityCodeOutBean{
      * 企业名称
      */
     private String company;
+
+
+    /**
+     * 企业名称
+     */
+    private Long SecurityRecordId;
 
     public Integer getCount() {
         return count;
@@ -151,5 +156,13 @@ public class ScanSecurityCodeOutBean{
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public Long getSecurityRecordId() {
+        return SecurityRecordId;
+    }
+
+    public void setSecurityRecordId(Long securityRecordId) {
+        SecurityRecordId = securityRecordId;
     }
 }

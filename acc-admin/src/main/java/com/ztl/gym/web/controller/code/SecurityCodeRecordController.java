@@ -129,6 +129,28 @@ public class SecurityCodeRecordController extends BaseController {
         return AjaxResult.success(scanSecurityCodeOutBean);
     }
 
+
+
+    /**
+     * 防伪记录更新
+     *
+     * @param securityCodeRecord 防伪扫描对象
+     * @return 响应
+     */
+    @Log(title = "防伪记录", businessType = BusinessType.INSERT)
+    @PostMapping("/updateSecurityByCode")
+    public AjaxResult updateSecurityByCode(@RequestBody SecurityCodeRecord securityCodeRecord) {
+        logger.info("the method checkByCode enter,check SecurityCode param is {}", securityCodeRecord);
+        //参数校验,code和accCode必须有一个不为空
+        if (securityCodeRecord.getId()<=0) {
+            logger.error("id字段不能为空");
+            return AjaxResult.error("参数校验失败");
+        }
+        securityCodeRecord.setCompanyId(CodeRuleUtils.getCompanyIdByCode(securityCodeRecord.getCode()));
+        logger.info("the method checkByCode end,result is {}", securityCodeRecord);
+        return toAjax(securityCodeRecordService.updateSecurityCodeRecord(securityCodeRecord));
+    }
+
     /**
      * 修改防伪记录
      */

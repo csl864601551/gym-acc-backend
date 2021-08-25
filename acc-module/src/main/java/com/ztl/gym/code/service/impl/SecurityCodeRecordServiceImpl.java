@@ -154,6 +154,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
             scanSecurityCodeOutBean = buildScanResultBeanByAccCode(securityCodeRecord, codeAccRecords.get(0), securityCodeRecords);
         }
         securityCodeRecordMapper.insertSecurityCodeRecord(securityCodeRecord);
+        scanSecurityCodeOutBean.setSecurityRecordId(securityCodeRecord.getId());
         logger.info("防伪码扫描记录入库成功。");
         return scanSecurityCodeOutBean;
     }
@@ -178,9 +179,12 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
         List<SecurityCodeRecord> securityCodeRecords = securityCodeRecordMapper.selectRecordsByAccCode(code.getCodeAcc());
         scanSecurityCodeOutBean = buildScanResultBeanByCode(securityCodeRecord, code, securityCodeRecords);
         securityCodeRecordMapper.insertSecurityCodeRecord(securityCodeRecord);
+        scanSecurityCodeOutBean.setSecurityRecordId(securityCodeRecord.getId());
         logger.info("防伪码扫描记录入库成功。");
         return scanSecurityCodeOutBean;
     }
+
+
 
 
     /**
