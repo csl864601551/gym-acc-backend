@@ -33,11 +33,12 @@
         <result property="user" column="user"/>
         <result property="pwd" column="pwd"/>
         <result property="prefix" column="prefix"/>
+        <result property="version" column="version"/>
     </resultMap>
 
     <sql id="selectDeptVo">
         select d.dept_id, d.dept_type, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time,d.provinces,d.province,d.city,
-        d.area,d.address,d.longitude,d.latitude,d.host,d.port,d.user,d.pwd,d.prefix from sys_dept d
+        d.area,d.address,d.longitude,d.latitude,d.host,d.port,d.user,d.pwd,d.prefix,d.version from sys_dept d
     </sql>
 
     <select id="selectDeptList" parameterType="SysDept" resultMap="SysDeptResult">
@@ -128,6 +129,7 @@
         <if test="user != null and user != ''">user,</if>
         <if test="pwd != null and pwd != ''">pwd,</if>
         <if test="prefix != null and prefix != ''">prefix,</if>
+        <if test="version != null and version != ''">version,</if>
         create_time
         )values(
         <if test="deptId != null and deptId != 0">#{deptId},</if>
@@ -153,6 +155,7 @@
         <if test="user != null and user != ''">#{user},</if>
         <if test="pwd != null and pwd != ''">#{pwd},</if>
         <if test="prefix != null and prefix != ''">#{prefix},</if>
+        <if test="version != null and version != ''">#{version},</if>
         sysdate()
         )
     </insert>
@@ -182,6 +185,7 @@
             <if test="user != null and user != ''">user = #{user},</if>
             <if test="pwd != null and pwd != ''">pwd = #{pwd},</if>
             <if test="prefix != null and prefix != ''">prefix = #{prefix},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
             update_time = sysdate()
         </set>
         where dept_id = #{deptId}

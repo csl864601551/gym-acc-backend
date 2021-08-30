@@ -1,6 +1,6 @@
 package com.ztl.gym.quartz.task;
 
-import com.ztl.gym.idis.service.IIdisService;
+import com.ztl.gym.idis.service.IdisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class IdisTask {
 
     @Autowired
-    private IIdisService idisService;
+    private IdisService idisService;
 
     /**
      * 同步标识至自建企业节点

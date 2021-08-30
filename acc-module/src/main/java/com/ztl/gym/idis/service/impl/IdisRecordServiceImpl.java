@@ -1,12 +1,15 @@
 package com.ztl.gym.idis.service.impl;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+import com.ztl.gym.common.utils.ThreadPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ztl.gym.idis.mapper.IdisRecordMapper;
 import com.ztl.gym.idis.domain.IdisRecord;
-import com.ztl.gym.idis.service.IIdisRecordService;
+import com.ztl.gym.idis.service.IdisRecordService;
 
 /**
  * IDIS同步记录Service业务层处理
@@ -16,10 +19,14 @@ import com.ztl.gym.idis.service.IIdisRecordService;
  */
 @Slf4j
 @Service
-public class IdisRecordServiceImpl implements IIdisRecordService {
+public class IdisRecordServiceImpl implements IdisRecordService {
 
     @Autowired
     private IdisRecordMapper idisRecordMapper;
+
+
+    private ExecutorService threadPool = ThreadPoolUtil.newFixedExecutor("idis-log", 8);
+
 
     /**
      * 查询IDIS同步记录

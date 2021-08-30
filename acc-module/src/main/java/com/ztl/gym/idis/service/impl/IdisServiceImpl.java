@@ -8,6 +8,10 @@ import cn.hutool.http.Header;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.redis.RedisCache;
 import com.ztl.gym.common.exception.CustomException;
@@ -17,19 +21,20 @@ import com.ztl.gym.idis.domain.vo.IdisCodeParam;
 import com.ztl.gym.idis.domain.vo.IdisCodeParamValue;
 import com.ztl.gym.idis.domain.vo.IdisRespBody;
 import com.ztl.gym.idis.mapper.IdisMapper;
+import com.ztl.gym.idis.model.result.IdisBatchResult;
+import com.ztl.gym.idis.model.result.IdisResult;
 import com.ztl.gym.idis.prop.IdisProp;
-import com.ztl.gym.idis.service.IIdisRecordService;
-import com.ztl.gym.idis.service.IIdisService;
+import com.ztl.gym.idis.service.IdisRecordService;
+import com.ztl.gym.idis.service.IdisService;
+import com.ztl.gym.idis.util.IDISConst;
+import com.ztl.gym.idis.util.OkHttpCli;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -42,10 +47,9 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class IdisServiceImpl implements IIdisService {
+public class IdisServiceImpl implements IdisService {
 
     private static final String IDIS_TOKEN_CACHE_KEY = "idis:token";
-
 
 
     @Autowired
@@ -55,16 +59,18 @@ public class IdisServiceImpl implements IIdisService {
     private RedisCache redisCache;
 
     @Autowired
-    private IIdisRecordService idisRecordService;
+    private IdisRecordService idisRecordService;
+
+    @Autowired
+    private OkHttpCli okHttpCli;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer syncCode(Integer maxNum,IdisProp idisProp) {
-
+    public Integer syncCode(Integer maxNum, IdisProp idisProp) {
 
 
         // 查询需要同步的标识
-        List<Map<String, String>> codeList = idisMapper.selectCodeNotSynced(maxNum,idisProp.getCompanyId());
+        List<Map<String, String>> codeList = idisMapper.selectCodeNotSynced(maxNum, idisProp.getCompanyId());
         if (CollectionUtil.isEmpty(codeList)) {
             log.info("没有需要同步的标识");
             return 0;
@@ -72,7 +78,7 @@ public class IdisServiceImpl implements IIdisService {
 
         // 开始多线程同步
         List<CompletableFuture<IdisRecord>> recordFutureList =
-                codeList.stream().map(code -> SpringUtils.getAopProxy(this).doOnceSyncCode(code,idisProp)).collect(Collectors.toList());
+                codeList.stream().map(code -> SpringUtils.getAopProxy(this).doOnceSyncCode(code, idisProp)).collect(Collectors.toList());
 
         // 等待多线程全部结束
         List<IdisRecord> recordList = recordFutureList.stream().map(CompletableFuture::join).collect(Collectors.toList());
@@ -84,7 +90,7 @@ public class IdisServiceImpl implements IIdisService {
         List<String> successCodeList =
                 recordList.stream().filter(r -> "1".equals(r.getRespCode())).map(IdisRecord::getCode).collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(successCodeList)) {
-            idisMapper.updateStatusForSyncedCode(successCodeList,idisProp.getCompanyId());
+            idisMapper.updateStatusForSyncedCode(successCodeList, idisProp.getCompanyId());
         }
 
         return codeList.size();
@@ -96,7 +102,7 @@ public class IdisServiceImpl implements IIdisService {
      * 因为企业节点不稳定, 所以暂时单线程跑
      */
     @Override
-    public CompletableFuture<IdisRecord> doOnceSyncCode(Map<String, String> codeInfo,IdisProp idisProp) {
+    public CompletableFuture<IdisRecord> doOnceSyncCode(Map<String, String> codeInfo, IdisProp idisProp) {
         // 获取token
         String token = "Bearer " + getIdisToken(idisProp);
         log.debug("token = {}", token);
@@ -123,9 +129,9 @@ public class IdisServiceImpl implements IIdisService {
         HttpResponse resp;
         try {
             resp = HttpUtil.createPost(url)
-                           .header(Header.AUTHORIZATION, token)
-                           .body(jsonReqBody, ContentType.JSON.getValue())
-                           .execute();
+                    .header(Header.AUTHORIZATION, token)
+                    .body(jsonReqBody, ContentType.JSON.getValue())
+                    .execute();
         } catch (Exception e) {
             log.error("请求idis创建标识接口失败", e);
             return CompletableFuture.completedFuture(record.respMsg(e.getMessage()).build());
@@ -196,5 +202,52 @@ public class IdisServiceImpl implements IIdisService {
             throw new CustomException(errMsg, HttpStatus.ERROR);
         }
     }
+
+    /**
+     * 托管
+     */
+
+    @Override
+    public void release(IdisProp idisProp) {
+        //获取token
+        JSONObject jsonObject = new JSONObject();
+        String username = idisProp.getUser();
+        String password = idisProp.getPwd();
+        jsonObject.put("username", username);
+        jsonObject.put("password", password);
+        String json = jsonObject.toJSONString();
+        String idisToken = okHttpCli.doPostJson(IDISConst.URL_TOKEN, json);
+        //查询模板
+        Map<String, String> map = new HashMap<>();
+        map.put("prefix", idisProp.getPrefix());
+        map.put("version", idisProp.getVersion());
+        String retStr = okHttpCli.doGetWithBearerToken(IDISConst.URL_TEMPLATE_DETAIL, map, idisToken);
+        JSONObject ret = JSON.parseObject(retStr);
+        // 整合获取模板名称与index对应关系
+        if ((Integer) ret.get("status") == 1) {
+            JSONObject data = (JSONObject) ret.get("data");
+            if (null == ret.get("data")) {
+                log.info("获取数据模板：prefix={}, templateVersion={}, 为空", idisProp.getPrefix(), idisProp.getVersion());
+                //没有模板，则创建模板
+
+            }
+            JSONArray items = (JSONArray) ((JSONObject) ret.get("data")).get("items");
+            Map<String, String> indexMap = new HashMap<String, String>();//模板
+            for (int i = 0; i < items.size(); i++) {
+                JSONObject item = (JSONObject) items.get(i);
+                indexMap.put(item.getString("name"),
+                        item.getInteger("idIndex") + IDISConst.SPLITE_INDEX_TYPE + item.getString("idType"));
+            }
+        }
+
+
+        //同步标识
+        String retStrs = okHttpCli.doPostJsonWithBearerToken(idisProp.getPrefix() + IDISConst.URL_DATA_DETAIL, json, idisToken);
+        IdisResult<List<IdisBatchResult>> res = JSON.parseObject(retStr, new TypeReference<IdisResult<List<IdisBatchResult>>>() {
+        });
+        log.info("同步标识", res);
+
+    }
+
 
 }

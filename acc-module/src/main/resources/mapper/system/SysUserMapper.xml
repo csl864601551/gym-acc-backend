@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="user" column="user"/>
 		<result property="pwd" column="pwd"/>
 		<result property="prefix" column="prefix"/>
+		<result property="version" column="version"/>
 	</resultMap>
 
 	<resultMap id="RoleResult" type="SysRole">
@@ -55,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<sql id="selectUserVo">
         select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
         d.dept_id, d.dept_type, d.parent_id, d.dept_name, d.ancestors, d.order_num, d.leader, d.status as dept_status,
-		d.host,d.port,d.user,d.pwd,d.prefix,
+		d.host,d.port,d.user,d.pwd,d.prefix,d.version,
         r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
         from sys_user u
 		    left join sys_dept d on u.dept_id = d.dept_id

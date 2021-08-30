@@ -1,5 +1,6 @@
 package com.ztl.gym.idis.prop;
 
+import com.ztl.gym.code.domain.Code;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -48,8 +49,17 @@ public class IdisProp {
     private String prefix;
 
     /**
+     * 模板版本
+     */
+    private String version;
+
+    /**
      * 标识属性
      */
     private List<String> attrList;
+    /**
+     * 标识属性
+     */
+    private List<Code> codeList;
 
 }

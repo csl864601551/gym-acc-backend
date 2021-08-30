@@ -13,7 +13,7 @@ import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.idis.domain.IdisRecord;
-import com.ztl.gym.idis.service.IIdisRecordService;
+import com.ztl.gym.idis.service.IdisRecordService;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.common.core.page.TableDataInfo;
 
@@ -28,7 +28,7 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 public class IdisRecordController extends BaseController {
 
     @Autowired
-    private IIdisRecordService idisRecordService;
+    private IdisRecordService idisRecordService;
 
     /**
      * 查询IDIS同步记录列表

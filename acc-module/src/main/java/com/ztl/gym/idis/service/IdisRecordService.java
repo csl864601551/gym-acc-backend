@@ -3,13 +3,15 @@ package com.ztl.gym.idis.service;
 import java.util.List;
 import com.ztl.gym.idis.domain.IdisRecord;
 
+
 /**
  * IDIS同步记录Service接口
  * 
  * @author zt_sly
  * @date 2021-07-21
  */
-public interface IIdisRecordService {
+public interface IdisRecordService {
+
 
     /**
      * 查询IDIS同步记录

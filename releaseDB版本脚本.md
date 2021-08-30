@@ -232,3 +232,4 @@ ALTER TABLE `sys_dept` ADD `port` varchar(255) NULL DEFAULT NULL COMMENT '端口
 ALTER TABLE `sys_dept` ADD `user` varchar(255) NULL DEFAULT NULL COMMENT '用户名';
 ALTER TABLE `sys_dept` ADD `pwd` varchar(255) NULL DEFAULT NULL COMMENT '密码';
 ALTER TABLE `sys_dept` ADD `prefix` varchar(255) NULL DEFAULT NULL COMMENT '企业前缀';
+ALTER TABLE `sys_dept` ADD `version` varchar(255) NULL DEFAULT NULL COMMENT '版本号';

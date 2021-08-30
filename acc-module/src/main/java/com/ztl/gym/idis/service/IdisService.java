@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
  * @author zt_sly
  * @date 2021-07-21
  */
-public interface IIdisService {
+public interface IdisService {
 
     /**
      * 同步标识至自建企业节点
@@ -28,4 +28,6 @@ public interface IIdisService {
      */
     CompletableFuture<IdisRecord> doOnceSyncCode(Map<String, String> codeInfo,IdisProp idisProp);
 
+
+    void release(IdisProp idisProp);
 }

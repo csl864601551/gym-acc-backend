@@ -29,7 +29,7 @@ import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.framework.web.service.TokenService;
 import com.ztl.gym.idis.prop.IdisProp;
-import com.ztl.gym.idis.service.IIdisService;
+import com.ztl.gym.idis.service.IdisService;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.domain.ProductBatch;
 import com.ztl.gym.product.domain.ProductCategory;
@@ -73,7 +73,7 @@ public class CodeRecordController extends BaseController {
     @Autowired
     private IProductService tProductService;
     @Autowired
-    private IIdisService idisService;
+    private IdisService idisService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -382,6 +382,7 @@ public class CodeRecordController extends BaseController {
          * 同步二级节点
          */
         SysDept dept=SecurityUtils.getLoginUser().getUser().getDept();
+        List<Code> idisCodes = codeService.selectCodeListByRecord(dept.getDeptId(),fuzhiVo.getRecordId());
         if(dept.getHost()!=null&&dept.getUser()!=null&&dept.getPwd()!=null&&dept.getPrefix()!=null){
 
             IdisProp idisProp=new IdisProp();
@@ -391,6 +392,9 @@ public class CodeRecordController extends BaseController {
             idisProp.setUser(dept.getUser());
             idisProp.setPwd(dept.getPwd());
             idisProp.setPrefix(dept.getPrefix());
+            idisProp.setCodeList(idisCodes);
+//            idisService.release(idisProp);
+
 //            log.info("开始同步自建企业节点, 最大同步数量: {}", 1000000);
 //            Integer syncNum = idisService.syncCode(1000000,idisProp);
 //            log.info("结束同步自建企业节点, 实际同步数量: {}", syncNum);
