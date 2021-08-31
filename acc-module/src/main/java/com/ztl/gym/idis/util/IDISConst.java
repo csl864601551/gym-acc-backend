@@ -40,6 +40,10 @@ public class IDISConst {
      * 标识添加
      */
     public static String URL_DATA_ADD;
+    /**
+     * 批量标识添加
+     */
+    public static String URL_DATA_ADD_BATCH;
 
     /**
      * 标识更新
@@ -77,6 +81,7 @@ public class IDISConst {
         URL_TOKEN = urlPrefix + "/identity/token";
         URL_DATA_DETAIL = urlPrefix + "/identityv2/data/detail";
         URL_DATA_ADD = urlPrefix + "/identityv2/data";
+        URL_DATA_ADD_BATCH = urlPrefix + "/identityv2/data/batchCreate";
         URL_DATA_UPDATE = urlPrefix + "/identityv2/data";
         URL_TEMPLATE_ADD = urlPrefix + "/snms/api/template/v1";
         URL_TEMPLATE_DELETE = urlPrefix + "/snms/api/template/v1";

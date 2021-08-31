@@ -2,6 +2,8 @@ package com.ztl.gym.idis.model.result;
 
 import lombok.Data;
 
+import java.lang.reflect.Array;
+
 /**
  * IDIS 模板的items (模板内容)
  */
@@ -38,4 +40,8 @@ public class IdisTemplateItemDetail {
      */
     private Object authorizationKey;
 
+    /**
+     * 数据限制
+     */
+    private Array metadata;
 }

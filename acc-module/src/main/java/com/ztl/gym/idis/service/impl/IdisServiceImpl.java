@@ -216,34 +216,114 @@ public class IdisServiceImpl implements IdisService {
         jsonObject.put("username", username);
         jsonObject.put("password", password);
         String json = jsonObject.toJSONString();
-        String idisToken = okHttpCli.doPostJson(IDISConst.URL_TOKEN, json);
+        String idisTokenObj = okHttpCli.doPostJson(IDISConst.URL_TOKEN, json);
+        String idisToken = JSON.parseObject(JSON.parseObject(idisTokenObj).getString("data")).getString("token");
         //查询模板
         Map<String, String> map = new HashMap<>();
-        map.put("prefix", idisProp.getPrefix());
-        map.put("version", idisProp.getVersion());
+        map.put("prefix", idisProp.getPrefix());//前缀
+        map.put("version", "V1.0.0");//版本号
         String retStr = okHttpCli.doGetWithBearerToken(IDISConst.URL_TEMPLATE_DETAIL, map, idisToken);
         JSONObject ret = JSON.parseObject(retStr);
         // 整合获取模板名称与index对应关系
+        Map<String, Object> indexMap = new HashMap<String, Object>();//模板
         if ((Integer) ret.get("status") == 1) {
             JSONObject data = (JSONObject) ret.get("data");
-            if (null == ret.get("data")) {
-                log.info("获取数据模板：prefix={}, templateVersion={}, 为空", idisProp.getPrefix(), idisProp.getVersion());
-                //没有模板，则创建模板
 
-            }
             JSONArray items = (JSONArray) ((JSONObject) ret.get("data")).get("items");
-            Map<String, String> indexMap = new HashMap<String, String>();//模板
+            indexMap = new HashMap<String, Object>();//模板
             for (int i = 0; i < items.size(); i++) {
                 JSONObject item = (JSONObject) items.get(i);
                 indexMap.put(item.getString("name"),
                         item.getInteger("idIndex") + IDISConst.SPLITE_INDEX_TYPE + item.getString("idType"));
             }
+        } else {
+            if (null == ret.get("data")) {
+                log.info("获取数据模板：prefix={}, templateVersion={}, 为空", idisProp.getPrefix(), idisProp.getVersion());
+                //没有模板，则创建模板
+
+                Map<String, Object> metadata = new HashMap<String, Object>();//模板数据限制
+                metadata.put("minLength", 0);
+                metadata.put("type", "String");
+                metadata.put("maxLength", 10000);
+
+                Map<String, Object> item1 = new HashMap<String, Object>();//模板内容
+                item1.put("name", "产品名称");
+                item1.put("idType", "productName");
+                item1.put("metadata", metadata);
+                Map<String, Object> item2 = new HashMap<String, Object>();//模板内容
+                item2.put("name", "产品编号");
+                item2.put("idType", "productNo");
+                item2.put("metadata", metadata);
+                Map<String, Object> item3 = new HashMap<String, Object>();//模板内容
+                item3.put("name", "码");
+                item3.put("idType", "code");
+                item3.put("metadata", metadata);
+                JSONArray items = new JSONArray();//模板内容汇总
+                items.add(item1);
+                items.add(item2);
+                items.add(item3);
+
+                indexMap = new HashMap<String, Object>();//模板
+                indexMap.put("prefix", idisProp.getPrefix());//前缀
+                indexMap.put("version", "V1.0.0");//版本号
+                indexMap.put("items", items);//版本号
+
+                String jsonTemp = JSON.toJSON(indexMap).toString();
+                log.info(jsonTemp);
+                String retStrTemp = okHttpCli.doPostJsonWithBearerToken(IDISConst.URL_TEMPLATE_ADD, jsonTemp, idisToken);
+
+
+            }
         }
 
-
         //同步标识
-        String retStrs = okHttpCli.doPostJsonWithBearerToken(idisProp.getPrefix() + IDISConst.URL_DATA_DETAIL, json, idisToken);
-        IdisResult<List<IdisBatchResult>> res = JSON.parseObject(retStr, new TypeReference<IdisResult<List<IdisBatchResult>>>() {
+        JSONArray items = new JSONArray();//标识内容汇总
+        Map<String, Object> codeData = null;//每条标识记录
+        JSONArray codeJson = null;//每条标识属性记录
+        Map<String, Object> codeMap = null;//每条标识属性map
+        Map<String, Object> dataMap = null;//每条标识属性数据map
+        for (int i = 0; i < idisProp.getCodeList().size(); i++) {
+            //产品名称
+            dataMap=new HashMap<String, Object>();
+            dataMap.put("format","string");
+            dataMap.put("value",idisProp.getCodeList().get(i).getProductName());
+            codeMap=new HashMap<String, Object>();
+            codeMap.put("index",2000);
+            codeMap.put("type","productName");
+            codeMap.put("data",dataMap);
+            codeJson = new JSONArray();//标识内容汇总
+            codeJson.add(codeMap);
+            //产品编号
+            dataMap=new HashMap<String, Object>();
+            dataMap.put("format","string");
+            dataMap.put("value",idisProp.getCodeList().get(i).getProductNo());
+            codeMap=new HashMap<String, Object>();
+            codeMap.put("index",2001);
+            codeMap.put("type","productNo");
+            codeMap.put("data",dataMap);
+            codeJson.add(codeMap);
+            //码
+            dataMap=new HashMap<String, Object>();
+            dataMap.put("format","string");
+            dataMap.put("value",idisProp.getCodeList().get(i).getCode());
+            codeMap=new HashMap<String, Object>();
+            codeMap.put("index",2002);
+            codeMap.put("type","code");
+            codeMap.put("data",dataMap);
+            codeJson.add(codeMap);
+
+            codeData = new HashMap<String, Object>();
+            codeData.put("handle", idisProp.getPrefix()+"/"+idisProp.getCodeList().get(i).getCode());//标识
+            codeData.put("templateVersion", "V1.0.0");//数据模板的产品型号
+            codeData.put("value", codeJson);//标识属性
+            items.add(codeData);
+
+        }
+
+        String jsonList = JSON.toJSONString(items);
+        log.info(jsonList);
+        String retStrCode = okHttpCli.doPostJsonWithBearerToken(IDISConst.URL_DATA_ADD_BATCH, jsonList, idisToken);
+        IdisResult<List<IdisBatchResult>> res = JSON.parseObject(retStrCode, new TypeReference<IdisResult<List<IdisBatchResult>>>() {
         });
         log.info("同步标识", res);
 

@@ -383,6 +383,10 @@ public class CodeRecordController extends BaseController {
          */
         SysDept dept=SecurityUtils.getLoginUser().getUser().getDept();
         List<Code> idisCodes = codeService.selectCodeListByRecord(dept.getDeptId(),fuzhiVo.getRecordId());
+        for (Code code : idisCodes) {
+            code.setProductName(product.getProductName());
+            code.setProductNo(product.getProductNo());
+        }
         if(dept.getHost()!=null&&dept.getUser()!=null&&dept.getPwd()!=null&&dept.getPrefix()!=null){
 
             IdisProp idisProp=new IdisProp();
@@ -393,7 +397,7 @@ public class CodeRecordController extends BaseController {
             idisProp.setPwd(dept.getPwd());
             idisProp.setPrefix(dept.getPrefix());
             idisProp.setCodeList(idisCodes);
-//            idisService.release(idisProp);
+            idisService.release(idisProp);
 
 //            log.info("开始同步自建企业节点, 最大同步数量: {}", 1000000);
 //            Integer syncNum = idisService.syncCode(1000000,idisProp);

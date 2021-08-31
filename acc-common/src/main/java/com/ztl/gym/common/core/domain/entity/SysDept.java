@@ -115,26 +115,30 @@ public class SysDept extends BaseEntity {
     private String provinces;
 
     /**
-     *二级节点地址
+     * 二级节点地址
      */
     private String host;
     /**
-     *端口号
+     * 端口号
      */
     private String port;
     /**
-     *用户名
+     * 用户名
      */
     private String user;
     /**
-     *密码
+     * 密码
      */
     private String pwd;
     /**
-     *企业前缀
+     * 企业前缀
      */
     private String prefix;
 
+    /**
+     * 企业前缀
+     */
+    private String version;
 
     /**
      * 纬度
@@ -354,6 +358,14 @@ public class SysDept extends BaseEntity {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     @Override
