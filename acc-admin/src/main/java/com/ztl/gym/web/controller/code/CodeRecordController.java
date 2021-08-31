@@ -79,6 +79,7 @@ public class CodeRecordController extends BaseController {
     private String preFixUrl;
     @Value("${ruoyi.preAccUrl}")
     private String preAccUrl;
+
     /**
      * 查询生码记录列表
      */
@@ -257,9 +258,9 @@ public class CodeRecordController extends BaseController {
     public AjaxResult add(@RequestBody CodeRecord codeRecord) {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         if (codeRecord.getType().equals(AccConstants.GEN_CODE_TYPE_SINGLE)) {
-            return toAjax(codeRecordService.createCodeRecord(companyId,codeRecord.getIsAcc(), codeRecord.getCount(), codeRecord.getRemark()));
+            return toAjax(codeRecordService.createCodeRecord(companyId, codeRecord.getIsAcc(), codeRecord.getCount(), codeRecord.getRemark()));
         } else {
-            return toAjax(codeRecordService.createPCodeRecord(companyId,codeRecord.getIsAcc(), codeRecord.getBoxCount(), codeRecord.getCount(), codeRecord.getRemark()));
+            return toAjax(codeRecordService.createPCodeRecord(companyId, codeRecord.getIsAcc(), codeRecord.getBoxCount(), codeRecord.getCount(), codeRecord.getRemark()));
         }
     }
 
@@ -271,14 +272,14 @@ public class CodeRecordController extends BaseController {
     @GetMapping("/download")
     public AjaxResult download(CodeRecord codeRecord) {
         List<Code> list = codeService.selectCodeListByRecord(SecurityUtils.getLoginUserTopCompanyId(), codeRecord.getId());
-        long boxIndex=0;
-        Code code=new Code();
-        for (int i=0;i<list.size();i++) {
-            code=list.get(i);
+        long boxIndex = 0;
+        Code code = new Code();
+        for (int i = 0; i < list.size(); i++) {
+            code = list.get(i);
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
-                boxIndex=code.getCodeIndex();
+                boxIndex = code.getCodeIndex();
                 list.remove(i);
-                code=list.get(i);
+                code = list.get(i);
             }
             code.setCode(preFixUrl + code.getCode());
             code.setBoxIndex(boxIndex);
@@ -290,7 +291,7 @@ public class CodeRecordController extends BaseController {
             }
         }
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
-        return util.exportExcel(list,"-"+DateUtils.getDate()+"码");
+        return util.exportExcel(list, "-" + DateUtils.getDate() + "码");
     }
 
     /**
@@ -314,10 +315,10 @@ public class CodeRecordController extends BaseController {
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
                 temp.append(boxTemp).append(",").append(code.getCodeIndex()).append(",").append(code.getCode());//流水号，码
-                temp.append(code.getCodeAcc()==null?"\r\n":","+code.getCodeAcc()+ "\r\n");//防伪码
+                temp.append(code.getCodeAcc() == null ? "\r\n" : "," + code.getCodeAcc() + "\r\n");//防伪码
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
                 code.setCodeTypeName("箱码");
-                boxTemp=code.getCodeIndex()+","+(code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
+                boxTemp = code.getCodeIndex() + "," + (code.getpCode() == null ? code.getCode() : code.getpCode());//流水号，码
             }
 
         }
@@ -364,7 +365,7 @@ public class CodeRecordController extends BaseController {
             codeAttrList.add(attrParam);
         }
         //批量更新
-        if(!CollectionUtil.isEmpty(codeAttrList)){
+        if (!CollectionUtil.isEmpty(codeAttrList)) {
             codeAttrService.updateCodeAttrBatch(codeAttrList);
             //更新对应码的状态
             List idList = codeAttrList.stream().map(CodeAttr::getId).collect(Collectors.toList());
@@ -381,28 +382,29 @@ public class CodeRecordController extends BaseController {
         /**
          * 同步二级节点
          */
-        SysDept dept=SecurityUtils.getLoginUser().getUser().getDept();
-        List<Code> idisCodes = codeService.selectCodeListByRecord(dept.getDeptId(),fuzhiVo.getRecordId());
+        SysDept dept = SecurityUtils.getLoginUser().getUser().getDept();
+        List<Code> idisCodes = codeService.selectCodeListByRecord(dept.getDeptId(), fuzhiVo.getRecordId());
         for (Code code : idisCodes) {
             code.setProductName(product.getProductName());
             code.setProductNo(product.getProductNo());
         }
-        if(dept.getHost()!=null&&dept.getUser()!=null&&dept.getPwd()!=null&&dept.getPrefix()!=null){
+        if (dept.getHost() != null && dept.getUser() != null && dept.getPwd() != null && dept.getPrefix() != null) {
 
-            IdisProp idisProp=new IdisProp();
+            IdisProp idisProp = new IdisProp();
             idisProp.setCompanyId(dept.getDeptId());
             idisProp.setHost(dept.getHost());
             idisProp.setPort(dept.getPort());
             idisProp.setUser(dept.getUser());
             idisProp.setPwd(dept.getPwd());
             idisProp.setPrefix(dept.getPrefix());
-            idisProp.setCodeList(idisCodes);
-            idisService.release(idisProp);
-
-//            log.info("开始同步自建企业节点, 最大同步数量: {}", 1000000);
-//            Integer syncNum = idisService.syncCode(1000000,idisProp);
-//            log.info("结束同步自建企业节点, 实际同步数量: {}", syncNum);
-//            TODO 处理赋值生码逻辑
+            for (int i = 0; i < idisCodes.size(); i=i+2000) {//批量注册标识最大2000
+                if(i+2000<idisCodes.size()){
+                    idisProp.setCodeList(idisCodes.subList(i,i+2000));
+                }else{
+                    idisProp.setCodeList(idisCodes.subList(i,idisCodes.size()));
+                }
+                idisService.release(idisProp);
+            }
         }
 
         return toAjax(res);
@@ -433,40 +435,40 @@ public class CodeRecordController extends BaseController {
     @PostMapping("/packageCode")
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult packageCode(@RequestBody Map<String,Object> map) {
+    public AjaxResult packageCode(@RequestBody Map<String, Object> map) {
         AjaxResult ajax = AjaxResult.success();
 
-        List<String> list=(List)map.get("codes");
-        if(list.size()>0){
+        List<String> list = (List) map.get("codes");
+        if (list.size() > 0) {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
             /**
              * 插入箱码，更新单码PCode
              */
             //获取并更新生码记录流水号
-            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
+            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
             String[] codeIndexs = codeNoStr.split("-");
-            long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
+            long codeIndex = Long.parseLong(codeIndexs[0]) + 1;
 
-            String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+            String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
 
             Code temp = null;
-            long codeAttrId=0;
+            long codeAttrId = 0;
             List<String> codes = new LinkedList<>();
             for (int i = 0; i < list.size(); i++) {
                 temp = new Code();
                 temp.setCode(list.get(i));
                 temp.setCompanyId(companyId);
-                Code code=codeService.selectCode(temp);//查询单码数据
-                if(code==null){
+                Code code = codeService.selectCode(temp);//查询单码数据
+                if (code == null) {
                     throw new CustomException("未查询到相关码数据！");
                 }
-                codeAttrId=code.getCodeAttrId();
-                if(code.getpCode()!=null){
-                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
+                codeAttrId = code.getCodeAttrId();
+                if (code.getpCode() != null) {
+                    throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！");
                 }
                 codes.add(list.get(i));
             }
-            codeService.updatePCodeVal(companyId,pCode,codes);
+            codeService.updatePCodeVal(companyId, pCode, codes);
             //更新单码
             Code boxCode = new Code();
             boxCode.setCodeIndex(codeIndex);
@@ -478,15 +480,15 @@ public class CodeRecordController extends BaseController {
 
 
             commonService.updateVal(companyId, codeIndex);//更新code_index
-            Map<String,Object> mapTemp = new HashMap<>();
-            mapTemp.put("companyId",companyId);
-            mapTemp.put("boxCode",pCode);
-            mapTemp.put("codeIndex",codeIndex);
+            Map<String, Object> mapTemp = new HashMap<>();
+            mapTemp.put("companyId", companyId);
+            mapTemp.put("boxCode", pCode);
+            mapTemp.put("codeIndex", codeIndex);
             commonService.insertPrintData(mapTemp);//插入打印数据
 
             ajax.put("data", pCode);
             return ajax;
-        }else{
+        } else {
             throw new CustomException("未接收到单码数据！");
         }
 
