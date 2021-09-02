@@ -233,3 +233,7 @@ ALTER TABLE `sys_dept` ADD `user` varchar(255) NULL DEFAULT NULL COMMENT '用户
 ALTER TABLE `sys_dept` ADD `pwd` varchar(255) NULL DEFAULT NULL COMMENT '密码';
 ALTER TABLE `sys_dept` ADD `prefix` varchar(255) NULL DEFAULT NULL COMMENT '企业前缀';
 ALTER TABLE `sys_dept` ADD `version` varchar(255) NULL DEFAULT NULL COMMENT '版本号';
+
+### Beta V1.1.0 2021/09/02
+ALTER TABLE `t_product` ADD `is_open` varchar(2) NULL DEFAULT NULL COMMENT '是否开启';
+ALTER TABLE `t_code_acc_record` ADD `is_open` varchar(5) NULL DEFAULT NULL COMMENT '是否开启';
