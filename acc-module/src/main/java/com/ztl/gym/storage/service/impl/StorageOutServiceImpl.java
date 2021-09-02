@@ -102,7 +102,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
 
-        if (!CollectionUtil.isEmpty(storageOut.getCodes()) && storageOut.getCodes().size() > 1) {
+        if (!CollectionUtil.isEmpty(storageOut.getCodes()) && storageOut.getCodes().size() > 0) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
             long count=0;
