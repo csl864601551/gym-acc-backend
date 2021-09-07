@@ -43,7 +43,19 @@ public class OpenCodeController {
         if(codeList.size()>0){
             String code=codeList.get(0).getCode();
             if (!commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), Integer.valueOf(map.get("storageType").toString()), code)) {
+                if(Integer.valueOf(map.get("storageType").toString())==AccConstants.STORAGE_TYPE_OUT){
+                    for (Code codes : codeList) {
+                        if (codes.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
+                            codes.setCodeTypeName("箱码");
+                        } else {
+                            codes.setCodeTypeName("单码");
+                        }
+                        codes.setStatusName("未入库");
+                    }
+                    return AjaxResult.success(codeList);
+                }
                 throw new CustomException("该码不在当前流转节点！", HttpStatus.ERROR);
+
             }
             for (Code codes : codeList) {
                 if (codes.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {

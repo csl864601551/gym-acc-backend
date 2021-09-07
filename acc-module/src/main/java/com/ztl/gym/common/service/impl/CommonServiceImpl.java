@@ -202,7 +202,7 @@ public class CommonServiceImpl implements CommonService {
         }
 
         //除入库以外的流转都需要有状态 【所有产品必须先入库，所以其他流转状态时需判断是否已入库或是否有其他状态】
-        if (storageType != AccConstants.STORAGE_TYPE_IN) {
+        if (storageType != AccConstants.STORAGE_TYPE_IN&&storageType != AccConstants.STORAGE_TYPE_OUT) {
             if (codeResult.getStorageType() == null) {
                 throw new CustomException("该码当前未入库！", HttpStatus.ERROR);
             }
@@ -240,7 +240,9 @@ public class CommonServiceImpl implements CommonService {
                 }
                 break;
             case AccConstants.STORAGE_TYPE_OUT:
-                if (codeResult.getStorageType() == AccConstants.STORAGE_TYPE_IN) {
+                if (codeResult.getStorageType() == null) {
+                    return false;//0906需求，出库判断未入库，进行入库动作，所作改动
+                }else if (codeResult.getStorageType() == AccConstants.STORAGE_TYPE_IN) {
                     if (codeResult.getTenantId() != currentUserDeptId) {
                         throw new CustomException("该码不属于当前部门！", HttpStatus.ERROR);
                     }
