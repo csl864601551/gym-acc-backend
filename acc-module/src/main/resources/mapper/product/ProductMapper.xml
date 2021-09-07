@@ -355,4 +355,48 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         </if>
     </select>
+
+
+    <select id="selectCompanyByTProduct" resultType="java.lang.Long">
+        select company_id from t_product GROUP BY company_id
+    </select>
+
+
+    <select id="selectAllProductList" parameterType="Product" resultMap="TProductResult">
+        SELECT
+        id,
+        company_id,
+        product_no,
+        STATUS,
+        product_name,
+        bar_code,
+        category_one,
+        category_two,
+        sale_price,
+        market_price,
+        product_introduce,
+        storage_id,
+        stock,
+        stock_limit,
+        unit,
+        sort,
+        sales_num,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        template_id1,
+        template_id2,
+        template_content1,
+        template_content2,
+        content1,
+        content2,
+        photo,
+        is_open
+        FROM
+        t_product
+        <where>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+        </where>
+    </select>
 </mapper>

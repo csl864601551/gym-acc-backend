@@ -86,6 +86,18 @@ public class ProductServiceImpl implements IProductService
         return productMapper.selectTProductList(product);
     }
 
+
+    /**
+     * 查询产品列表
+     *
+     * @param product 产品
+     * @return 产品
+     */
+    @Override
+    public List<Product> selectAllProductList(Product product)
+    {
+        return productMapper.selectAllProductList(product);
+    }
     /**
      * 查询产品列表
      *
@@ -255,5 +267,15 @@ public class ProductServiceImpl implements IProductService
     {
         Product product=productMapper.selectTProductById(id);
         return product;
+    }
+
+
+    /**
+     *查询产品列表中所有的企业
+     */
+    @Override
+    public List<Long> selectCompanyByTProduct()
+    {
+        return productMapper.selectCompanyByTProduct();
     }
 }

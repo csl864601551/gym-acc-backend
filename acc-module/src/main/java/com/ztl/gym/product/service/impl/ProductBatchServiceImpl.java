@@ -1,17 +1,16 @@
 package com.ztl.gym.product.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.domain.ProductBatch;
+import com.ztl.gym.product.mapper.ProductBatchMapper;
+import com.ztl.gym.product.service.IProductBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ztl.gym.product.mapper.ProductBatchMapper;
-import com.ztl.gym.product.domain.ProductBatch;
-import com.ztl.gym.product.service.IProductBatchService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品批次Service业务层处理
@@ -72,6 +71,20 @@ public class ProductBatchServiceImpl implements IProductBatchService
         }
         productBatch.setCreateTime(DateUtils.getNowDate());
         productBatch.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        return productBatchMapper.insertProductBatch(productBatch);
+    }
+
+
+
+    /**
+     * 新增产品批次
+     *
+     * @param productBatch 产品批次
+     * @return 结果
+     */
+    @Override
+    public int insertProductBatchOne(ProductBatch productBatch)
+    {
         return productBatchMapper.insertProductBatch(productBatch);
     }
 

@@ -36,6 +36,15 @@ public interface ProductMapper
      * @param product 产品
      * @return 产品集合
      */
+    public List<Product> selectAllProductList(Product product);
+
+
+    /**
+     * 查询产品列表
+     *
+     * @param product 产品
+     * @return 产品集合
+     */
     public List<Product> selectTProductList1(Product product);
 
     /**
@@ -85,5 +94,11 @@ public interface ProductMapper
      * @return 结果
      */
     public int selectProductNum(Map<String, Object> map);
+
+
+    /**
+     * 查询产品列表中所有的企业
+     */
+    public List<Long> selectCompanyByTProduct();
 
 }

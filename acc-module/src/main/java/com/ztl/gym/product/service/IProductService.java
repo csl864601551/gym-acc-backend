@@ -38,6 +38,16 @@ public interface IProductService
      */
     public List<Product> selectTProductList(Product product);
 
+
+
+    /**
+     * 查询产品列表
+     *
+     * @param product 产品
+     * @return 产品集合
+     */
+    public List<Product> selectAllProductList(Product product);
+
     /**
      * 查询产品列表
      *
@@ -87,4 +97,12 @@ public interface IProductService
      * @return 结果
      */
     public int selectProductNum(Map<String, Object> map);
+
+
+    /**
+     * 查询产品列表中所有的企业
+     *
+     * @return 产品集合
+     */
+    public List<Long> selectCompanyByTProduct();
 }

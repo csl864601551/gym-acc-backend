@@ -1,9 +1,9 @@
 package com.ztl.gym.product.service;
 
+import com.ztl.gym.product.domain.ProductBatch;
+
 import java.util.List;
 import java.util.Map;
-
-import com.ztl.gym.product.domain.ProductBatch;
 
 /**
  * 产品批次Service接口
@@ -28,6 +28,8 @@ public interface IProductBatchService
      * @return 产品批次集合
      */
     public List<Map<String,Object>> selectProductBatchList(Map<String, Object> param);
+
+
     public List<ProductBatch> selectProductBatchList(ProductBatch productBatch);
 
     /**
@@ -37,6 +39,15 @@ public interface IProductBatchService
      * @return 结果
      */
     public int insertProductBatch(ProductBatch productBatch);
+
+
+    /**
+     * 新增产品批次(不获取登录信息)
+     *
+     * @param productBatch 产品批次
+     * @return 结果
+     */
+    public int insertProductBatchOne(ProductBatch productBatch);
 
     /**
      * 修改产品批次

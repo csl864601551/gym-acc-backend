@@ -1,21 +1,18 @@
 package com.ztl.gym.web.controller.product;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.product.domain.ProductBatch;
 import com.ztl.gym.product.service.IProductBatchService;
-import com.ztl.gym.common.utils.poi.ExcelUtil;
-import com.ztl.gym.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 产品批次Controller
@@ -62,6 +59,11 @@ public class ProductBatchController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody ProductBatch productBatch)
     {
+        //根据企业查询改企业的产品
+        List<ProductBatch> productBatchList = productBatchService.selectProductBatchList(productBatch);
+        if(productBatchList.size()>0){
+            return error("该批次号已存在!!!");
+        }
         return toAjax(productBatchService.insertProductBatch(productBatch));
     }
 
