@@ -50,7 +50,7 @@
         <where>
             s.storage_id = #{storageId}
             and s.product_id = #{productId}
-        </where>
+        </where> limit 1 for update
     </select>
 
     <select id="selectProductStockList" parameterType="ProductStock" resultMap="ProductStockResult">
