@@ -373,15 +373,16 @@ public class CommonServiceImpl implements CommonService {
         GeneratorBean generatorBean = commonMapper.selectIdGenerator(params);
         //获取当前最大码属性id值
         Long attrId = codeAttrMapper.getMaxAttrId();
+        int result = 0;
+
         //如果id号段生成记录为空新建
         if (Objects.isNull(generatorBean)) {
-            insertGeneratorMaxId(companyId, attrId + num, type);
+            result = insertGeneratorMaxId(companyId, attrId + num, type);
+        }else{
+            Long maxId = attrId + num;
+            result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
+            attrId = generatorBean.getMaxId();
         }
-
-        attrId = generatorBean.getMaxId();
-
-        Long maxId = attrId + num;
-        int result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
         //轮训次数，超过5次给客户返回生码中
         int count = 0;
         while (result == 0) {
@@ -401,6 +402,9 @@ public class CommonServiceImpl implements CommonService {
             param.put("companyId", companyId);
             param.put("type", type);
             generatorBean = commonMapper.selectIdGenerator(param);
+            //获取当前最大码属性id值
+            attrId = codeAttrMapper.getMaxAttrId();
+            Long maxId = attrId + num;
             result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
             count = count + 1;
         }
