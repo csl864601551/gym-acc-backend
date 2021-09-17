@@ -381,7 +381,6 @@ public class CommonServiceImpl implements CommonService {
         }else{
             Long maxId = generatorBean.getMaxId() + num;
             result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
-            attrId = generatorBean.getMaxId();
         }
         //轮训次数，超过5次给客户返回生码中
         int count = 0;
