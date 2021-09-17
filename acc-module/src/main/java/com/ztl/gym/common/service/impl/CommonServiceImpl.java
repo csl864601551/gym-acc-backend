@@ -379,7 +379,7 @@ public class CommonServiceImpl implements CommonService {
         if (Objects.isNull(generatorBean)) {
             result = insertGeneratorMaxId(companyId, attrId + num, type);
         }else{
-            Long maxId = attrId + num;
+            Long maxId = generatorBean.getMaxId() + num;
             result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
             attrId = generatorBean.getMaxId();
         }
