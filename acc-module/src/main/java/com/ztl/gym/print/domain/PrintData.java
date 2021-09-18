@@ -26,6 +26,10 @@ public class PrintData extends BaseEntity {
     @Excel(name = "打印状态（0：未打印，1：已打印）")
     private int printStatus;
 
+    /** 产线 */
+    @Excel(name = "产线")
+    private String productLine;
+
     public Long getId() {
         return id;
     }
@@ -66,6 +70,14 @@ public class PrintData extends BaseEntity {
         this.printStatus = printStatus;
     }
 
+    public String getProductLine() {
+        return productLine;
+    }
+
+    public void setProductLine(String productLine) {
+        this.productLine = productLine;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -74,6 +86,7 @@ public class PrintData extends BaseEntity {
                 .append("boxCode", getBoxCode())
                 .append("codeIndex", getCodeIndex())
                 .append("printStatus", getPrintStatus())
+                .append("productLine", getProductLine())
                 .toString();
     }
 }

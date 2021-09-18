@@ -5,7 +5,7 @@
 <mapper namespace="com.ztl.gym.print.mapper.PrintDataMapper">
 
     <select id="selectPrintData" resultType="com.ztl.gym.print.domain.PrintData">
-        select id, box_code boxCode, code_index codeIndex from t_print_data where print_status = 0
+        select id, box_code boxCode, code_index codeIndex from t_print_data where print_status = 0 and product_line = #{line}
     </select>
 
     <update id="updatePrint">
@@ -13,5 +13,4 @@
         set print_status = 1
         where id = #{id}
     </update>
-
 </mapper>
