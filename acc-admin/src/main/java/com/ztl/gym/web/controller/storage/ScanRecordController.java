@@ -60,7 +60,7 @@ public class ScanRecordController extends BaseController {
             scanRecord.setType("2");
         }
         startPage();
-        List<ScanRecord> list = scanRecordService.selectScanRecordList(scanRecord);
+        List<ScanRecord> list = scanRecordService.selectScanRecordMixList(scanRecord);
         return getDataTable(list);
     }
 
@@ -351,6 +351,14 @@ public class ScanRecordController extends BaseController {
                     descObject = new JSONObject();
                     descObject.put("name","扫码时间");
                     descObject.put("value",mapinfo.get("create_time").toString());
+                    descList.add(descObject);
+                    descObject = new JSONObject();
+                    descObject.put("name","是否窜货");
+                    if(mapinfo.get("mix_type").toString()!=null&&mapinfo.get("mix_type").toString().equals("0")){
+                        descObject.put("value","未窜货");
+                    }else if(mapinfo.get("mix_type").toString()!=null&&mapinfo.get("mix_type").toString().equals("1")){
+                        descObject.put("value","窜货");
+                    }
                     descList.add(descObject);
                     map.put("desc", JSON.toJSONString(descList));
                     if(mapinfo.get("photo")!=null){

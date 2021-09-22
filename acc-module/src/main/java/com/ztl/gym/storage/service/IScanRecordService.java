@@ -30,6 +30,15 @@ public interface IScanRecordService
      */
     public List<ScanRecord> selectScanRecordList(ScanRecord scanRecord);
 
+
+    /**
+     * 查询扫码记录列表
+     *
+     * @param scanRecord 扫码记录
+     * @return 扫码记录集合
+     */
+    public List<ScanRecord> selectScanRecordMixList(ScanRecord scanRecord);
+
     /**
      * 新增扫码记录
      *
@@ -90,7 +99,7 @@ public interface IScanRecordService
 
 
     /**
-     * 查询扫码地图扫码记录
+     * 查询扫码记录
      *
      * @return 扫码记录集合
      */

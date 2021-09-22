@@ -22,6 +22,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="productId" column="product_id"/>
         <result property="productName" column="product_name"/>
+        <result property="mixType" column="mix_type"/>
     </resultMap>
 
     <sql id="selectScanRecordVo">
@@ -53,6 +54,39 @@
             <if test="type != null and type ==2 "> and create_user != 2  </if>
         </where>
         order BY create_time desc
+    </select>
+
+
+
+    <select id="selectScanRecordMixList" parameterType="ScanRecord" resultMap="ScanRecordResult">
+        select a.id, a.company_id, a.code, a.longitude, a.latitude, a.terminal, a.ip, a.address, a.province, a.city, a.area, a.create_user, a.create_time, a.update_user, a.update_time,a.product_id,a.product_name, b.mix_type from t_scan_record a
+        LEFT JOIN t_mix_record b ON a.code = b.code
+        <where>
+            1=1 and a.longitude IS NOT NULL
+            AND a.product_id IS NOT NULL
+            AND b.mix_type is NOT NULL
+            <if test="companyId != null ">and a.company_id = #{companyId}</if>
+            <if test="code != null  and code != ''">and a.code = #{code}</if>
+            <if test="longitude != null  and longitude != ''">and a.longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''">and a.latitude = #{latitude}</if>
+            <if test="terminal != null  and terminal != ''">and a.terminal = #{terminal}</if>
+            <if test="ip != null  and ip != ''">and a.ip = #{ip}</if>
+            <if test="address != null  and address != ''">and a.address = #{address}</if>
+            <if test="province != null  and province != ''">and a.province = #{province}</if>
+            <if test="city != null  and city != ''">and a.city = #{city}</if>
+            <if test="mixType != null  and city != ''">and b.mix_type = #{mixType}</if>
+            <if test="area != null  and area != ''">and a.area = #{area}</if>
+            <if test="createUser != null ">and a.create_user = #{createUser} </if>
+            <if test="updateUser != null ">and a.update_user = #{updateUser}</if>
+            <if test="productName != null ">and a.product_name like concat('%', #{productName}, '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
+                and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
+            </if>
+            <if test="type != null and type ==1 "> AND a.longitude IS NOT NULL
+                AND a.product_id IS NOT NULL </if>
+            <if test="type != null and type ==2 "> and a.create_user != 2  </if>
+        </where>
+        order BY a.create_time desc
     </select>
 
     <select id="selectScanRecordById" parameterType="Long" resultMap="ScanRecordResult">
@@ -691,13 +725,16 @@
         a.longitude,
         a.latitude,
         a.terminal,
-        a.create_time
+        a.create_time,
+        c.mix_type
         FROM
         t_scan_record a
         LEFT JOIN t_product b ON a.product_id = b.id
+        LEFT JOIN t_mix_record c ON a.code = c.code
         WHERE
         a.longitude IS NOT NULL
---         AND a.product_id IS NOT NULL
+        AND a.product_id IS NOT NULL
+        AND c.mix_type is NOT NULL
         <if test="companyId != null ">and a.company_id = #{companyId}</if>
         <if test="productName != null ">and a.product_name like concat('%', #{productName}, '%')</if>
         <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">

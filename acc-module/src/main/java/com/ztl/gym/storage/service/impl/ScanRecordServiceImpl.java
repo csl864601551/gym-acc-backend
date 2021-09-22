@@ -65,6 +65,18 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         return scanRecordMapper.selectScanRecordList(scanRecord);
     }
 
+
+    /**
+     * 查询扫码记录列表
+     *
+     * @param scanRecord 扫码记录
+     * @return 扫码记录
+     */
+    @Override
+    public List<ScanRecord> selectScanRecordMixList(ScanRecord scanRecord) {
+        return scanRecordMapper.selectScanRecordMixList(scanRecord);
+    }
+
     /**
      * 新增扫码记录
      *
