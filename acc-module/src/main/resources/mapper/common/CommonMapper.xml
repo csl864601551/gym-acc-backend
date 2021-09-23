@@ -68,7 +68,7 @@
     </update>
 
     <insert id="insertPrintData" parameterType="Map">
-        INSERT INTO t_print_data( company_id,box_code, code_index, product_line) VALUES (#{companyId},#{boxCode}, #{codeIndex}, #{productLine});
+        INSERT INTO t_print_data( company_id,box_code, code_index, product_line, box_num) VALUES (#{companyId},#{boxCode}, #{codeIndex}, #{productLine}, #{boxNum});
     </insert>
 
 </mapper>
