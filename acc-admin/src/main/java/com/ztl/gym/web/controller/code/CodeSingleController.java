@@ -367,6 +367,7 @@ public class CodeSingleController extends BaseController {
             mapTemp.put("boxCode",pCode);
             mapTemp.put("codeIndex",codeIndex);
             mapTemp.put("productLine",map.get("productLine"));
+            mapTemp.put("boxNum",map.get("boxCount"));
             commonService.insertPrintData(mapTemp);//插入打印数据
 
             ajax.put("data", pCode);
