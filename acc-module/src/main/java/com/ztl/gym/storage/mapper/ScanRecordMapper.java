@@ -30,6 +30,15 @@ public interface ScanRecordMapper
      */
     public List<ScanRecord> selectScanRecordList(ScanRecord scanRecord);
 
+
+    /**
+     * 查询扫码记录列表
+     *
+     * @param scanRecord 扫码记录
+     * @return 扫码记录集合
+     */
+    public List<ScanRecord> selectScanRecordMixList(ScanRecord scanRecord);
+
     /**
      * 新增扫码记录
      *

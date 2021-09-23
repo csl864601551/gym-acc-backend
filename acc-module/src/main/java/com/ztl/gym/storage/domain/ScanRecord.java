@@ -112,6 +112,11 @@ public class ScanRecord extends BaseEntity {
      */
     private String type;
 
+    /**
+     * 是否窜货
+     */
+    private String mixType;
+
 
     public void setId(Long id) {
         this.id = id;
@@ -249,6 +254,14 @@ public class ScanRecord extends BaseEntity {
         this.type = type;
     }
 
+    public String getMixType() {
+        return mixType;
+    }
+
+    public void setMixType(String mixType) {
+        this.mixType = mixType;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -270,6 +283,7 @@ public class ScanRecord extends BaseEntity {
                 .append("productId", getProductId())
                 .append("productName", getProductName())
                 .append("type", getProductName())
+                .append("mixType", getMixType())
                 .toString();
     }
 }
