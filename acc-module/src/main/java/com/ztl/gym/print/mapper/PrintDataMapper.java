@@ -10,4 +10,6 @@ public interface PrintDataMapper {
     List<PrintData> selectPrintData(@RequestParam("line") String line);
 
     int updatePrint(@RequestParam("id") Long id);
+
+    PrintData getPrintBoxData(Map<String, Object> params);
 }

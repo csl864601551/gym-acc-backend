@@ -9,4 +9,6 @@ public interface PrintDataService {
     List<PrintData> getData(String line);
 
     int updatePrint(Long boxCode);
+
+    PrintData getPrintBoxData(Map<String, Object> params);
 }

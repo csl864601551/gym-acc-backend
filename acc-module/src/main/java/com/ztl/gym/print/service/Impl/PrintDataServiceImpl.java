@@ -29,4 +29,9 @@ public class PrintDataServiceImpl implements PrintDataService {
     public int updatePrint(Long id) {
         return printDataMapper.updatePrint(id);
     }
+
+    @Override
+    public PrintData getPrintBoxData(Map<String, Object> params) {
+        return printDataMapper.getPrintBoxData(params);
+    }
 }

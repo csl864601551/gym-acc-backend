@@ -24,9 +24,6 @@ public class PrintDataController {
     public PrintDataService printDataService;
 
     @Autowired
-    private CommonService commonService;
-
-    @Autowired
     private ICodeService codeService;
 
     /**
@@ -83,14 +80,12 @@ public class PrintDataController {
                 if(codeResult.getCode() == null) {
                     return AjaxResult.error("扫描单码未装箱");
                 }
-                //添加箱码打印数据
-                Map<String, Object> mapTemp = new HashMap<>();
-                mapTemp.put("companyId", companyId);
-                mapTemp.put("boxCode", codeResult.getCode());
-                mapTemp.put("codeIndex", codeResult.getCode().split("-")[2]);
-                mapTemp.put("productLine", map.get("line"));
-                commonService.insertPrintData(mapTemp);//插入打印数据
-                return AjaxResult.success();
+                Map<String, Object> params = new HashMap<>();
+                params.put("boxCode", codeResult.getpCode());
+                params.put("productLine", map.get("productLine").toString());
+                //获取箱码补打信息
+                PrintData printData = printDataService.getPrintBoxData(params);
+                return AjaxResult.success(printData);
             } else {
                 return AjaxResult.error("扫描单码不存在");
             }

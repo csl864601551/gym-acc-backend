@@ -18,6 +18,10 @@ public class PrintData extends BaseEntity {
     @Excel(name = "箱码")
     private String boxCode;
 
+    /** 箱号 */
+    @Excel(name = "箱号")
+    private String boxNum;
+
     /** 流水号 */
     @Excel(name = "流水号")
     private Long codeIndex;
@@ -54,6 +58,14 @@ public class PrintData extends BaseEntity {
         this.boxCode = boxCode;
     }
 
+    public String getBoxNum() {
+        return boxNum;
+    }
+
+    public void setBoxNum(String boxNum) {
+        this.boxNum = boxNum;
+    }
+
     public Long getCodeIndex() {
         return codeIndex;
     }
@@ -84,6 +96,7 @@ public class PrintData extends BaseEntity {
                 .append("id", getId())
                 .append("companyId", getCompanyId())
                 .append("boxCode", getBoxCode())
+                .append("boxNum", getBoxNum())
                 .append("codeIndex", getCodeIndex())
                 .append("printStatus", getPrintStatus())
                 .append("productLine", getProductLine())
