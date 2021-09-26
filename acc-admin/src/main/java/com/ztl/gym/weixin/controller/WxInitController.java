@@ -2,6 +2,7 @@ package com.ztl.gym.weixin.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.code.domain.CodeRecord;
 import com.ztl.gym.code.service.ICodeRecordService;
 import com.ztl.gym.code.service.ICodeService;
@@ -234,18 +235,18 @@ public class WxInitController {
             codequery.setCode(code.trim());
             Code codeEntity = codeService.selectCode(codequery);
             if(codeEntity!=null){
-                long codeIndex = codeEntity.getCodeIndex();
-                CodeRecord codeRecord = codeRecordService.selectCodeRecordByIndex(codeIndex,companyId);
-                if(codeRecord!=null){
-                    long productId = codeRecord.getProductId();
-                    Product product = tProductService.selectTProductById(productId);
-                    if(product!=null){
-                        String productDetailPc = product.getProductDetailPc();
-                        //System.out.println("扫码详情进入成功  productDetailPc=="+productDetailPc);
+                if(codeEntity.getCodeAttr()!=null){
+                    CodeAttr codeAttr = codeEntity.getCodeAttr();
+                    if(codeAttr.getProduct()!=null){
+                        String productDetailPc = codeAttr.getProduct().getProductDetailPc();
                         if(StrUtil.isNotEmpty(productDetailPc)){
                             temp = productDetailPc;
                         }
+                    }else{
+                        return AjaxResult.error("该码还没有赋值！！！");
                     }
+                }else{
+                    return AjaxResult.error("该码还没有赋值！！！");
                 }
             }
         }
