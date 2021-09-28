@@ -9,6 +9,7 @@ import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.common.utils.ip.IpUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.mix.domain.MixRecord;
+import com.ztl.gym.mix.domain.vo.MixRecordVo;
 import com.ztl.gym.mix.service.IMixRecordService;
 import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.service.IScanRecordService;
@@ -61,13 +62,14 @@ public class MixRecordController extends BaseController
     /**
      * 导出窜货记录列表
      */
+    @PreAuthorize("@ss.hasPermi('mix:record:export')")
     @Log(title = "窜货记录", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(MixRecord mixRecord)
     {
-        List<MixRecord> list = mixRecordService.selectMixRecordList(mixRecord);
-        ExcelUtil<MixRecord> util = new ExcelUtil<MixRecord>(MixRecord.class);
-        return util.exportExcel(list, "record");
+        List<MixRecordVo> list = mixRecordService.selectMixRecordExport(mixRecord);
+        ExcelUtil<MixRecordVo> util = new ExcelUtil<MixRecordVo>(MixRecordVo.class);
+        return util.exportExcel(list, "窜货记录");
     }
 
     /**

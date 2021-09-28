@@ -1,6 +1,7 @@
 package com.ztl.gym.mix.service;
 
 import com.ztl.gym.mix.domain.MixRecord;
+import com.ztl.gym.mix.domain.vo.MixRecordVo;
 
 import java.util.List;
 import java.util.Map;
@@ -69,5 +70,11 @@ public interface IMixRecordService
      */
     public int selectmixnum(Map<String, Object> map);
 
-
+    /**
+     * 窜货记录导出
+     *
+     * @param mixRecord
+     * @return
+     */
+    List<MixRecordVo> selectMixRecordExport(MixRecord mixRecord);
 }

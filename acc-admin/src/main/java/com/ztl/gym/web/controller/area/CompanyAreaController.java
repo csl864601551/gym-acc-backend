@@ -2,6 +2,7 @@ package com.ztl.gym.web.controller.area;
 
 import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.area.domain.CompanyArea;
+import com.ztl.gym.area.domain.vo.CompanyAreaVo;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
@@ -70,9 +71,9 @@ public class CompanyAreaController extends BaseController {
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
             companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
-        List<CompanyArea> list = companyAreaService.selectCompanyAreaList(companyArea);
-        ExcelUtil<CompanyArea> util = new ExcelUtil<CompanyArea>(CompanyArea.class);
-        return util.exportExcel(list, "area");
+        List<CompanyAreaVo> list = companyAreaService.selectCompanyAreaExport(companyArea);
+        ExcelUtil<CompanyAreaVo> util = new ExcelUtil<CompanyAreaVo>(CompanyAreaVo.class);
+        return util.exportExcel(list, "经销商销售区域");
     }
 
     /**

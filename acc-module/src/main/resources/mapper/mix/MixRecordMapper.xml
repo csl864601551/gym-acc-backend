@@ -163,4 +163,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and  company_id = #{deptId}
         </if>
     </select>
+
+    <select id="selectMixRecordExport" parameterType="MixRecord" resultType="com.ztl.gym.mix.domain.vo.MixRecordVo">
+        select
+        mr.code,
+        case when mr.mix_type = 1 then '已窜货'
+        when mr.mix_type = 0 then '未窜货' else '' end as mixType,
+        mr.area_old as areaOld,
+        mr.area_mix as areaMix,
+        p.product_name as productName,
+        p.product_no as productNo,
+        pb.batch_no as batchNo,
+        sd.dept_name as tenantName,
+        sd2.dept_name as companyName
+        from t_mix_record mr
+        left join t_product p on p.id=mr.product_id
+        left join t_product_batch pb on pb.id=mr.batch_id
+        left join sys_dept sd on sd.dept_id=mr.tenant_id
+        left join sys_dept sd2 on sd2.dept_id=sd.parent_id
+        left join sys_user su on su.user_id=mr.create_user
+        <where>
+            <if test="id != null "> and mr.id = #{id}</if>
+            <if test="companyId != null "> and mr.company_id = #{companyId}</if>
+            <if test="tenantId != null "> and mr.tenant_id = #{tenantId}</if>
+            <if test="code != null  and code != ''"> and mr.code = #{code}</if>
+            <if test="mixType != null  "> and mr.mix_type = #{mixType}</if>
+            <if test="mixFrom != null  "> and mr.mix_from = #{mixFrom}</if>
+            <if test="productId != null "> and mr.product_id = #{productId}</if>
+            <if test="batchId != null "> and mr.batch_id = #{batchId}</if>
+            <if test="provinceOld != null  and provinceOld != ''"> and mr.province_old = #{provinceOld}</if>
+            <if test="cityOld != null  and cityOld != ''"> and mr.city_old = #{cityOld}</if>
+            <if test="areaOld != null  and areaOld != ''"> and mr.area_old = #{areaOld}</if>
+            <if test="provinceMix != null  and provinceMix != ''"> and mr.province_mix = #{provinceMix}</if>
+            <if test="cityMix != null  and cityMix != ''"> and mr.city_mix = #{cityMix}</if>
+            <if test="areaMix != null  and areaMix != ''"> and mr.area_mix = #{areaMix}</if>
+            <if test="createUser != null "> and mr.create_user = #{createUser}</if>
+            <if test="updateUser != null "> and mr.update_user = #{updateUser}</if>
+            <if test='productName != null and productName != ""'>
+                <bind name="productNameLike" value="'%'+productName+'%'"/>
+                and p.product_name like #{productNameLike}
+            </if>
+            <if test='productNo != null and productNo != ""'>
+                <bind name="product_noLike" value="'%'+productNo+'%'"/>
+                and p.product_no like #{product_noLike}
+            </if>
+        </where>
+        order by mr.create_time desc
+    </select>
 </mapper>

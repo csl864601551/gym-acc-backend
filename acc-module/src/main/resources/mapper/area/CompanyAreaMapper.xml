@@ -134,4 +134,29 @@ FROM
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectCompanyAreaExport" parameterType="CompanyArea" resultType="com.ztl.gym.area.domain.vo.CompanyAreaVo">
+        SELECT
+            a.province,
+            a.city,
+            a.area,
+            u.nick_name creatorName,
+            b.dept_name companyName,
+            c.dept_name tenantName
+        FROM
+            t_company_area a
+        LEFT JOIN sys_user u ON a.create_user = u.user_id
+        LEFT JOIN sys_dept b ON a.company_id = b.dept_id
+        LEFT JOIN sys_dept c ON a.tenant_id = c.dept_id
+        <where>
+            <if test="companyId != null ">and a.company_id = #{companyId}</if>
+            <if test="tenantId != null ">and a.tenant_id = #{tenantId}</if>
+            <if test="province != null  and province != ''">and a.province = #{province}</if>
+            <if test="city != null  and city != ''">and a.city = #{city}</if>
+            <if test="area != null  and area != ''">and a.area = #{area}</if>
+            <if test="createUser != null ">and a.create_user = #{createUser}</if>
+            <if test="updateUser != null ">and a.update_user = #{updateUser}</if>
+            <if test="tenantName != null ">and c.dept_name like concat('%', #{tenantName}, '%')</if>
+        </where>
+    </select>
 </mapper>

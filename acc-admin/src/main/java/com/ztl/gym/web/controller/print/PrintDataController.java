@@ -35,6 +35,8 @@ public class PrintDataController {
     @GetMapping("/getData")
     public AjaxResult getData(@RequestParam(value = "productLine") String productLine) {
         try {
+            Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+
             List<PrintData> lsPrint =  printDataService.getData(productLine);
             return AjaxResult.success(lsPrint);
         } catch (Exception err) {

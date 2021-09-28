@@ -5,6 +5,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.mix.domain.MixRecord;
+import com.ztl.gym.mix.domain.vo.MixRecordVo;
 import com.ztl.gym.mix.mapper.MixRecordMapper;
 import com.ztl.gym.mix.service.IMixRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +130,10 @@ public class MixRecordServiceImpl implements IMixRecordService
     public int selectmixnum(Map<String, Object> map)
     {
         return mixRecordMapper.selectmixnum(map);
+    }
+
+    @Override
+    public List<MixRecordVo> selectMixRecordExport(MixRecord mixRecord) {
+        return mixRecordMapper.selectMixRecordExport(mixRecord);
     }
 }

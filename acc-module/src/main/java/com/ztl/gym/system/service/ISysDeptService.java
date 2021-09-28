@@ -2,6 +2,7 @@ package com.ztl.gym.system.service;
 
 import com.ztl.gym.common.core.domain.TreeSelect;
 import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.vo.SysDeptVo;
 
 import java.util.List;
 import java.util.Map;
@@ -124,4 +125,12 @@ public interface ISysDeptService
      * @return 子部门数
      */
     public int selectCountBydept(Map<String, Object> map);
+
+    /**
+     * 导出部门信息列表
+     *
+     * @param dept
+     * @return
+     */
+    List<SysDeptVo> selectDeptExport(SysDept dept);
 }

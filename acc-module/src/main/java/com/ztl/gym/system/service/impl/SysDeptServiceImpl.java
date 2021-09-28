@@ -5,6 +5,7 @@ import com.ztl.gym.common.constant.UserConstants;
 import com.ztl.gym.common.core.domain.TreeSelect;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysRole;
+import com.ztl.gym.common.core.domain.vo.SysDeptVo;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.system.mapper.SysDeptMapper;
@@ -313,5 +314,16 @@ public class SysDeptServiceImpl implements ISysDeptService {
     @Override
     public int selectCountBydept(Map<String, Object> map) {
         return deptMapper.selectCountBydept(map);
+    }
+
+    /**
+     * 导出部门信息列表
+     *
+     * @param dept
+     * @return
+     */
+    @Override
+    public List<SysDeptVo> selectDeptExport(SysDept dept) {
+        return deptMapper.selectDeptExport(dept);
     }
 }

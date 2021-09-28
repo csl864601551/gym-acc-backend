@@ -1,6 +1,7 @@
 package com.ztl.gym.area.mapper;
 
 import com.ztl.gym.area.domain.CompanyArea;
+import com.ztl.gym.area.domain.vo.CompanyAreaVo;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -71,4 +72,12 @@ public interface CompanyAreaMapper {
      * @return 结果
      */
     public int deleteCompanyAreaByIds(Long[] ids);
+
+    /**
+     * 批量导出经销商销售区域
+     *
+     * @param companyArea
+     * @return
+     */
+    List<CompanyAreaVo> selectCompanyAreaExport(CompanyArea companyArea);
 }

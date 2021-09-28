@@ -2,6 +2,7 @@ package com.ztl.gym.area.service;
 
 import java.util.List;
 import com.ztl.gym.area.domain.CompanyArea;
+import com.ztl.gym.area.domain.vo.CompanyAreaVo;
 
 /**
  * 经销商销售区域 Service接口
@@ -71,4 +72,11 @@ public interface ICompanyAreaService
      * @return 结果
      */
     public int deleteCompanyAreaById(Long id);
+
+    /**
+     * 导出经销商销售区域 信息
+     * @param companyArea
+     * @return
+     */
+    List<CompanyAreaVo> selectCompanyAreaExport(CompanyArea companyArea);
 }

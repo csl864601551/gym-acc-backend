@@ -1,6 +1,7 @@
 package com.ztl.gym.mix.mapper;
 
 import com.ztl.gym.mix.domain.MixRecord;
+import com.ztl.gym.mix.domain.vo.MixRecordVo;
 
 import java.util.List;
 import java.util.Map;
@@ -68,4 +69,12 @@ public interface MixRecordMapper
      * @return 结果
      */
     public int selectmixnum(Map<String, Object> map);
+
+    /**
+     * 窜货记录导出
+     *
+     * @param mixRecord
+     * @return
+     */
+    List<MixRecordVo> selectMixRecordExport(MixRecord mixRecord);
 }

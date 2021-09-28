@@ -14,11 +14,15 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.vo.SysDeptVo;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.framework.web.domain.server.Sys;
+import com.ztl.gym.mix.domain.MixRecord;
+import com.ztl.gym.mix.domain.vo.MixRecordVo;
 import com.ztl.gym.product.domain.ProductStock;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.StorageBack;
@@ -279,5 +283,18 @@ public class SysDeptController extends BaseController {
         productStock.setTenantId(dept.getDeptId());
         List<ProductStock> list = productStockService.selectProductStockList(productStock);
         return getDataTable(list);
+    }
+
+    /**
+     * 导出经销商记录
+     */
+    @PreAuthorize("@ss.hasPermi('system:dept:export')")
+    @Log(title = "经销商记录", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(SysDept dept)
+    {
+        List<SysDeptVo> list = deptService.selectDeptExport(dept);
+        ExcelUtil<SysDeptVo> util = new ExcelUtil<SysDeptVo>(SysDeptVo.class);
+        return util.exportExcel(list, "经销商信息");
     }
 }

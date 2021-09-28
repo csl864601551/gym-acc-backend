@@ -2,6 +2,7 @@ package com.ztl.gym.area.service.impl;
 
 import java.util.List;
 
+import com.ztl.gym.area.domain.vo.CompanyAreaVo;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.model.LoginUser;
@@ -114,5 +115,16 @@ public class CompanyAreaServiceImpl implements ICompanyAreaService
     public int deleteCompanyAreaById(Long id)
     {
         return companyAreaMapper.deleteCompanyAreaById(id);
+    }
+
+    /**
+     * 导出经销商销售区域 信息
+     *
+     * @param companyArea
+     * @return
+     */
+    @Override
+    public List<CompanyAreaVo> selectCompanyAreaExport(CompanyArea companyArea) {
+        return companyAreaMapper.selectCompanyAreaExport(companyArea);
     }
 }
