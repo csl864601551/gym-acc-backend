@@ -34,6 +34,18 @@ public class PrintData extends BaseEntity {
     @Excel(name = "产线")
     private String productLine;
 
+    /** 产品 */
+    @Excel(name = "产品")
+    private String productName;
+
+    /** 型号 */
+    @Excel(name = "型号")
+    private String productModel;
+
+    /** 批次 */
+    @Excel(name = "批次")
+    private String batchName;
+
     public Long getId() {
         return id;
     }
@@ -90,6 +102,30 @@ public class PrintData extends BaseEntity {
         this.productLine = productLine;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductModel() {
+        return productModel;
+    }
+
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
+    }
+
+    public String getBatchName() {
+        return batchName;
+    }
+
+    public void setBatchName(String batchName) {
+        this.batchName = batchName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -100,6 +136,9 @@ public class PrintData extends BaseEntity {
                 .append("codeIndex", getCodeIndex())
                 .append("printStatus", getPrintStatus())
                 .append("productLine", getProductLine())
+                .append("productName", getProductName())
+                .append("productModel", getProductModel())
+                .append("batchName", getBatchName())
                 .toString();
     }
 }
