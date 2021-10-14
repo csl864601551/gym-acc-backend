@@ -5,6 +5,7 @@ import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.domain.vo.CompanyAreaVo;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -14,11 +15,19 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.mix.domain.vo.MixRecordVo;
+import com.ztl.gym.web.controller.mix.MixRecordController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +42,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/area/area")
 public class CompanyAreaController extends BaseController {
+
+    private static final Logger log = LoggerFactory.getLogger(CompanyAreaController.class);
+
     @Autowired
     private ICompanyAreaService companyAreaService;
 
@@ -63,17 +75,33 @@ public class CompanyAreaController extends BaseController {
     /**
      * 导出经销商销售区域 列表
      */
-    @PreAuthorize("@ss.hasPermi('system:area:export')")
     @Log(title = "经销商销售区域 ", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(CompanyArea companyArea) {
-        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
-            companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+    @CrossOrigin
+    @GetMapping("/download")
+    public void download(String tenantName, long companyId, HttpServletResponse response) {
+        CompanyArea companyArea = new CompanyArea();
+        if(!tenantName.equals("null") && tenantName !="") {
+            companyArea.setTenantName(tenantName);
         }
+        companyArea.setCompanyId(companyId);
         List<CompanyAreaVo> list = companyAreaService.selectCompanyAreaExport(companyArea);
         ExcelUtil<CompanyAreaVo> util = new ExcelUtil<CompanyAreaVo>(CompanyAreaVo.class);
-        return util.exportExcel(list, "经销商销售区域");
+        String fileName = util.exportExcel(list, "-"+ DateUtils.getDate()+"销售区域").get("msg").toString();
+
+        try {
+            if (!FileUtils.checkAllowDownload(fileName)) {
+                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            String filePath = RuoYiConfig.getDownloadPath() + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, realFileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+            FileUtils.deleteFile(filePath);
+        } catch (Exception e) {
+            log.error("下载文件失败", e);
+        }
     }
 
     /**

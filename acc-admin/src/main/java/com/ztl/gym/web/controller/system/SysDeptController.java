@@ -10,6 +10,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.CodeTestService;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
@@ -17,8 +18,10 @@ import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.vo.SysDeptVo;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.framework.web.domain.server.Sys;
 import com.ztl.gym.mix.domain.MixRecord;
@@ -27,8 +30,12 @@ import com.ztl.gym.product.domain.ProductStock;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.system.service.ISysDeptService;
+import com.ztl.gym.web.controller.area.CompanyAreaController;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +48,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ztl.gym.common.constant.UserConstants;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 部门信息
  *
@@ -49,6 +58,9 @@ import com.ztl.gym.common.constant.UserConstants;
 @RestController
 @RequestMapping("/system/dept")
 public class SysDeptController extends BaseController {
+
+    private static final Logger log = LoggerFactory.getLogger(SysDeptController.class);
+
     @Autowired
     private DruidDataSource dataSource;
 
@@ -288,13 +300,35 @@ public class SysDeptController extends BaseController {
     /**
      * 导出经销商记录
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:export')")
     @Log(title = "经销商记录", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(SysDept dept)
+    @GetMapping("/download")
+    public void download(String deptName, String status, Long companyId, HttpServletResponse response)
     {
+        SysDept dept = new SysDept();
+        if(!deptName.equals("null") && deptName !="" && !deptName.equals("undefined")) {
+            dept.setDeptName(deptName);
+        }
+        if(!status.equals("null") && status !="" && !status.equals("undefined")) {
+            dept.setStatus(status);
+        }
+        dept.setDeptType(0);
         List<SysDeptVo> list = deptService.selectDeptExport(dept);
         ExcelUtil<SysDeptVo> util = new ExcelUtil<SysDeptVo>(SysDeptVo.class);
-        return util.exportExcel(list, "经销商信息");
+        String fileName = util.exportExcel(list, "-"+ DateUtils.getDate()+"经销商信息").get("msg").toString();
+
+        try {
+            if (!FileUtils.checkAllowDownload(fileName)) {
+                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            String filePath = RuoYiConfig.getDownloadPath() + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, realFileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+            FileUtils.deleteFile(filePath);
+        } catch (Exception e) {
+            log.error("下载文件失败", e);
+        }
     }
 }

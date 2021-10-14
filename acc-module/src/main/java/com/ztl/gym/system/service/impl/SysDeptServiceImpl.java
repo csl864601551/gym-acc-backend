@@ -323,6 +323,7 @@ public class SysDeptServiceImpl implements ISysDeptService {
      * @return
      */
     @Override
+    @DataScope(deptAlias = "d")
     public List<SysDeptVo> selectDeptExport(SysDept dept) {
         return deptMapper.selectDeptExport(dept);
     }
