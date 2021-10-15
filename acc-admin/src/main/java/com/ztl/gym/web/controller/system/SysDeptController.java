@@ -3,8 +3,10 @@ package com.ztl.gym.web.controller.system;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.ztl.gym.code.domain.Code;
@@ -311,7 +313,9 @@ public class SysDeptController extends BaseController {
         if(!status.equals("null") && status !="" && !status.equals("undefined")) {
             dept.setStatus(status);
         }
-        dept.setDeptType(0);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("dataScope","AND (d.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = " + companyId + " or find_in_set( " + companyId + " , ancestors ) ))");
+        dept.setParams(params);
         List<SysDeptVo> list = deptService.selectDeptExport(dept);
         ExcelUtil<SysDeptVo> util = new ExcelUtil<SysDeptVo>(SysDeptVo.class);
         String fileName = util.exportExcel(list, "-"+ DateUtils.getDate()+"经销商信息").get("msg").toString();
