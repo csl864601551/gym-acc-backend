@@ -200,12 +200,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectCountByDept" resultType="java.lang.Integer" parameterType="Map">
-        select sum(act_out_num) from  t_storage_out where status=1
+        select case when sum( act_out_num ) is null then 0 else sum( act_out_num ) end count from  t_storage_out where status=1
         <if test="deptId != null">
             and company_id = #{deptId}
         </if>
         <if test="type != null and type == 1">
             and company_id = #{deptId}
+        </if>
+        <if test="beginTime !=null">
+            and out_time &gt;= #{beginTime}
+        </if>
+        <if test="endTime !=null">
+            and out_time &lt;= #{endTime}
         </if>
     </select>
     <select id="selectCountByWeek" resultType="java.util.Map">
