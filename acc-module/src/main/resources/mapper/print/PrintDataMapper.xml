@@ -15,6 +15,9 @@
     </update>
 
     <select id="getPrintBoxData" resultType="com.ztl.gym.print.domain.PrintData">
-        select id, box_code boxCode, box_num boxNum, code_index codeIndex, product_name productName, product_model productModel, batch_name batchName from t_print_data where print_status = 1 and product_line = #{productLine} and box_code = #{boxCode}
+        select id, box_code boxCode, box_num boxNum, code_index codeIndex, product_name productName, product_model productModel, batch_name batchName,
+               produce_date produceDate, code_count codeCount, gross_weight grossWeight, net_weight netWeight, order_no orderNo, bar_code barCode
+        from t_print_data
+        where print_status = 1 and product_line = #{productLine} and box_code = #{boxCode}
     </select>
 </mapper>

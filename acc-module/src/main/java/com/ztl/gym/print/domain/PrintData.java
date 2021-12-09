@@ -46,6 +46,30 @@ public class PrintData extends BaseEntity {
     @Excel(name = "批次")
     private String batchName;
 
+    /** 生产日期 */
+    @Excel(name = "生产日期")
+    private String produceDate;
+
+    /** 装箱数 */
+    @Excel(name = "装箱数")
+    private String codeCount;
+
+    /** 毛重 */
+    @Excel(name = "毛重")
+    private String grossWeight;
+
+    /** 净重 */
+    @Excel(name = "净重")
+    private String netWeight;
+
+    /** 定货号 */
+    @Excel(name = "定货号")
+    private String orderNo;
+
+    /** 条形码 */
+    @Excel(name = "条形码")
+    private String barCode;
+
     public Long getId() {
         return id;
     }
@@ -126,6 +150,54 @@ public class PrintData extends BaseEntity {
         this.batchName = batchName;
     }
 
+    public String getProduceDate() {
+        return produceDate;
+    }
+
+    public void setProduceDate(String produceDate) {
+        this.produceDate = produceDate;
+    }
+
+    public String getCodeCount() {
+        return codeCount;
+    }
+
+    public void setCodeCount(String codeCount) {
+        this.codeCount = codeCount;
+    }
+
+    public String getGrossWeight() {
+        return grossWeight;
+    }
+
+    public void setGrossWeight(String grossWeight) {
+        this.grossWeight = grossWeight;
+    }
+
+    public String getNetWeight() {
+        return netWeight;
+    }
+
+    public void setNetWeight(String netWeight) {
+        this.netWeight = netWeight;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -139,6 +211,12 @@ public class PrintData extends BaseEntity {
                 .append("productName", getProductName())
                 .append("productModel", getProductModel())
                 .append("batchName", getBatchName())
+                .append("produceDate", getProduceDate())
+                .append("codeCount", getCodeCount())
+                .append("grossWeight", getGrossWeight())
+                .append("netWeight", getNetWeight())
+                .append("orderNo", getOrderNo())
+                .append("barCode", getBarCode())
                 .toString();
     }
 }
