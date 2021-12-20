@@ -68,7 +68,7 @@ public class AntiValidateController {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String firstTime = "";
         String lastTime = "";
-        String msg ="您好，你所查询的标识(88.118.8/" + map.get("idisCode").toString() + ")对应防伪码(" + map.get("checkCode").toString() + ")";
+        String msg ="您好，你所查询的标识(" + map.get("idisCode").toString() + ")对应防伪码(" + map.get("checkCode").toString() + ")";
         if (bean.getCount() != 0) {
             firstTime = formatter.format(bean.getFirstQueryTime());
             lastTime = formatter.format(bean.getLastQueryTime());
