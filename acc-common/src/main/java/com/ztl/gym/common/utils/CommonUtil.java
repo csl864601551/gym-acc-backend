@@ -29,14 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 
-@Slf4j
 @Component
 public class CommonUtil {
     /**
      * 定义日志对象
      */
-    private static Logger logger = LoggerFactory.getLogger(CommonUtil.class);
-
+    private static Logger log = LoggerFactory.getLogger(CommonUtil.class);
     /**
      * 雪花算法18位
      */
@@ -313,7 +311,7 @@ public class CommonUtil {
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
         } catch (NoSuchAlgorithmException e) {
-            logger.error("生成随机数失败");
+            log.error("生成随机数失败");
             throw new CustomException("系统内部错误.", HttpStatus.ERROR);
         }
         StringBuffer num = new StringBuffer();
@@ -333,7 +331,7 @@ public class CommonUtil {
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
         } catch (NoSuchAlgorithmException e) {
-            logger.error("生成随机数失败");
+            log.error("生成随机数失败");
             throw new CustomException("系统内部错误.", HttpStatus.ERROR);
         }
         StringBuffer num = new StringBuffer();
