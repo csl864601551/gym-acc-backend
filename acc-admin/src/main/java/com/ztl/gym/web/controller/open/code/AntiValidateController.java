@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,7 +55,13 @@ public class AntiValidateController {
         SecurityCodeRecord securityCodeRecord = new SecurityCodeRecord();
         securityCodeRecord.setCodeAcc(map.get("checkCode").toString());
         securityCodeRecord.setCode(map.get("idisCode").toString());
-
+        securityCodeRecord.setLatitude(map.get("latitude")==null?new BigDecimal(0):new BigDecimal(map.get("latitude").toString()));
+        securityCodeRecord.setLongitude(map.get("longitude")==null?new BigDecimal(0):new BigDecimal(map.get("longitude").toString()));
+        securityCodeRecord.setAddress(map.get("accessAddress")==null?"":map.get("accessAddress").toString());
+        securityCodeRecord.setIp(map.get("ip")==null?"":map.get("ip").toString());
+        securityCodeRecord.setProvince(map.get("provinceName")==null?"":map.get("provinceName").toString());
+        securityCodeRecord.setCity(map.get("cityName")==null?"":map.get("cityName").toString());
+        securityCodeRecord.setDistrict(map.get("districtName")==null?"":map.get("districtName").toString());
         //不从登录信息获取企业id，根据防伪码解析
         securityCodeRecord.setCompanyId(CodeRuleUtils.getCompanyIdBySecurityCode(securityCodeRecord.getCodeAcc()));
         ScanSecurityCodeOutBean bean = securityCodeRecordService.getSecurityCodeInfo(securityCodeRecord);
