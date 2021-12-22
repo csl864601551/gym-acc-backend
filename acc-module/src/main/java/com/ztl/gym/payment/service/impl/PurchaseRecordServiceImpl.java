@@ -147,7 +147,7 @@ public class PurchaseRecordServiceImpl implements IPurchaseRecordService {
         Quota money = moneyList.get(0);
         BigDecimal balance = money.getParamValue();
         //如果配额表没有金额记录或者余额不足不允许购买
-        if (balance.compareTo(purchaseRecord.getPurchaseAmount()) <= 0) {
+        if (balance.compareTo(purchaseRecord.getPurchaseAmount()) < 0) {
             logger.error("余额不足无法购买");
             throw new CustomException("余额不足无法购买.", HttpStatus.ERROR);
         }
