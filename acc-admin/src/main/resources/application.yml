@@ -15,18 +15,18 @@ ruoyi:
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
   #测试项目 码下载前缀地址
-  preFixUrl: https://acc.asun.cloud/c?c=
+  #preFixUrl: https://acc.asun.cloud/c?c=
   #正式项目 码下载前缀地址
-  #preFixUrl: https://acs.gongyema.com/c?c=
+  preFixUrl: https://acs.jsdayi.cn/c?c=
   #南京项目 码下载前缀地址
   #preFixUrl: http://122.112.243.253/c?c=
 
 # OBS配置
 obs:
   endPoint: obs.cn-east-2.myhuaweicloud.com
-  ak: KFZVCZNTUUNWX9ZU7QKX
-  sk: XnPq0E64aYc2DUob6Ms9WSqcNOQ57TcP9JTpuhJX
-  bucketName: ztl-admin-gongyema-com
+  ak: BCVDEDD6BKLAHA0UYC56
+  sk: jhyxQt8Fj43B2iv3byEvsHVWmZ2tRtHkBNP6Epzt
+  bucketName: data-ir
 
 
 # 开发环境配置
@@ -83,15 +83,15 @@ spring:
     #password:
 
     #测试数据源15+南京10
-    host: 10.70.150.14
+    #host: 10.70.150.14
     #南通数据源15
-    #host: 10.70.150.69
+    host: 10.10.7.21
 
     #测试数据源
     database: 15
     #防窜系统-万务通南京数据源
     #database: 10
-    password: Ztt12345
+    password: JSdayi@2021
 
 
 

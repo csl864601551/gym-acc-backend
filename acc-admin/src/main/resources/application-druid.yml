@@ -4,32 +4,18 @@ spring:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
-            # 本地测试数据库（大艺）
-#            master:
-#                url: jdbc:mysql://10.88.15.52:3306/gym-acc?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: root
-#                password: root
-            # 测试主库数据源
-            master:
-                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: tchina1234
-                password: TChina1234
-            # 正式南通数据源
-#            master:
-#                url: jdbc:mysql://10.70.150.100:3306/acs_prod?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: acsprod
-#                password: acs+prod
-            # 防窜系统-万务通南京数据源
-#            master:
-#                url: jdbc:mysql://10.70.150.4:3306/acc_china12345?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: acc_china12345
-#                password: Acc+China12345
 
-# 本地数据库
+            # 测试主库数据源
 #            master:
-#                url: jdbc:mysql://10.70.151.109:3306/gym-acc?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: root
-#                password: ztt12345
+#                url: jdbc:mysql://10.70.150.100:3306/gcc_t_china1234?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#                username: tchina1234
+#                password: TChina1234
+            # 正式南通数据源
+            master:
+                url: jdbc:mysql://10.10.7.20:3306/acs_prod?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: root
+                password: JSdayi@2021
+
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -37,18 +23,7 @@ spring:
                 url:
                 username:
                 password:
-#            # 订单库1
-#            order1:
-#                enabled: true
-#                url: jdbc:mysql://localhost:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: root
-#                password: root
-#            # 订单库2
-#            order2:
-#                enabled: true
-#                url: jdbc:mysql://localhost:3306/ruoyi?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: root
-#                password: root
+
             # 初始连接数
             initialSize: 5
             # 最小连接池数量
