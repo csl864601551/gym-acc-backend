@@ -153,7 +153,43 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     public int deleteScanRecordById(Long id) {
         return scanRecordMapper.deleteScanRecordById(id);
     }
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Map<String, Object> getScanMapByCode(Long companyId,String codeVal) {
+        Map<String, Object> returnMap = new HashMap<>();//返回数据
+        Code code = new Code();//码产品信息
+        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        code.setCode(codeVal);
+        scanRecord.setCode(codeVal);
+        if (companyId > 0) {
+            code.setCompanyId(companyId);
+            scanRecord.setCompanyId(companyId);
+        }else{
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+        Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
+        if(codeEntity.getCodeAttr()!=null){
+            returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
+            returnMap.put("productId",codeEntity.getCodeAttr().getProductId());
+            returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
+            returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
+            if(codeEntity.getCodeAttr().getProduct()==null){
+                returnMap.put("photoShow","");
+            }else{
+                String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
+                if (StringUtils.isNotBlank(photo)) {
+                    returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
+                } else {
+                    returnMap.put("photoShow","");
+                }
+            }
 
+        }else{
+            //throw new CustomException("该码处于初始状态，尚未赋值！",HttpStatus.ERROR);
+            returnMap.put("photoShow","");
+        }
+        return returnMap;
+    }
     @Override
     @DataSource(DataSourceType.SHARDING)
     public Map<String, Object> getScanRecordByCode(Long companyId,String codeVal) {

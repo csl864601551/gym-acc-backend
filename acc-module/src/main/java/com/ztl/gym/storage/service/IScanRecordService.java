@@ -83,6 +83,7 @@ public interface IScanRecordService
 
     Map<String,Object> getScanRecordByCode(Long companyId, String code);
 
+    Map<String,Object> getScanMapByCode(Long companyId, String code);
 
     List<Map<String,Object>> getFlowListByCode(Long companyId, String code);
 

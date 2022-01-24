@@ -533,7 +533,7 @@ public class StatisticalController {
                         Map<String, Object> top10Map = new HashMap<String, Object>();
                         top10Map = top10List.get(i);
                         if(top10Map.get("code")!=null){
-                            Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
+                            Map<String,Object> smxxMap =  scanRecordService.getScanMapByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
                             if(smxxMap!=null){
                                 if(smxxMap.get("productName")!=null){
                                     top10Map.put("productName",smxxMap.get("productName"));
@@ -553,7 +553,7 @@ public class StatisticalController {
                         Map<String, Object> top10Map = new HashMap<String, Object>();
                         top10Map = top10List.get(i);
                         if(top10Map.get("code")!=null){
-                            Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
+                            Map<String,Object> smxxMap =  scanRecordService.getScanMapByCode(CodeRuleUtils.getCompanyIdByCode(top10Map.get("code").toString().trim()), top10Map.get("code").toString().trim());
                             if(smxxMap!=null){
                                 if(smxxMap.get("productName")!=null){
                                     top10Map.put("productName",smxxMap.get("productName"));
