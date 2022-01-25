@@ -45,12 +45,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storageType != null and storageType != 0 "> and f.storage_type = #{storageType}</if>
             <if test="storageRecordId != null "> and f.storage_record_id = #{storageRecordId}</if>
             <if test="createUser != null "> and f.create_user = #{createUser}</if>
-        </where>
+        </where> order by f.create_time desc
     </select>
 
     <select id="selectProductStockFlowById" parameterType="Long" resultMap="ProductStockFlowResult">
         <include refid="selectProductStockFlowVo"/>
-        where id = #{id}
+        where id = #{id} order by f.create_time desc
     </select>
 
     <insert id="insertProductStockFlow" parameterType="ProductStockFlow" useGeneratedKeys="true" keyProperty="id">
