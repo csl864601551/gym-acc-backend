@@ -74,7 +74,7 @@
             <if test="address != null  and address != ''">and a.address = #{address}</if>
             <if test="province != null  and province != ''">and a.province = #{province}</if>
             <if test="city != null  and city != ''">and a.city = #{city}</if>
-            <if test="mixType != null  and city != ''">and b.mix_type = #{mixType}</if>
+            <if test="mixType != null  and mixType != ''">and b.mix_type = #{mixType}</if>
             <if test="area != null  and area != ''">and a.area = #{area}</if>
             <if test="createUser != null ">and a.create_user = #{createUser} </if>
             <if test="updateUser != null ">and a.update_user = #{updateUser}</if>
@@ -741,6 +741,7 @@
             and a.create_time between #{params.beginCreateTime} and #{params.endCreateTime}
         </if>
         <if test="createUser != null ">and a.create_user = #{createUser} </if>
+        <if test="mixType != null  and mixType != ''">and c.mix_type = #{mixType}</if>
         <if test="type != null and type ==1 "> AND a.longitude IS NOT NULL
             AND a.product_id IS NOT NULL </if>
         <if test="type != null and type ==2 "> and a.create_user != 2  </if>
