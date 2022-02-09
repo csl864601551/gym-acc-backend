@@ -24,8 +24,8 @@ ruoyi:
 # OBS配置
 obs:
   endPoint: obs.cn-east-2.myhuaweicloud.com
-  ak: BCVDEDD6BKLAHA0UYC56
-  sk: jhyxQt8Fj43B2iv3byEvsHVWmZ2tRtHkBNP6Epzt
+  ak: 78VT6EOY6UZBOEGKXO15
+  sk: J376lR3rLcCDS9cgXxmjuWdQI0g9XyAZ1zyMnryi
   bucketName: data-ir
 
 
