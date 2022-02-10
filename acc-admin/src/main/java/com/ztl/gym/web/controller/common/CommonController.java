@@ -80,7 +80,7 @@ public class CommonController extends BaseController {
             String url = CommonUtil.uploadPic(file, Constants.IMG);
             AjaxResult ajax = AjaxResult.success();
             ajax.put("fileName", file.getName());
-            ajax.put("url", "https://images.weserv.nl/?url="+url);
+            ajax.put("url", url);
             return ajax;
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
