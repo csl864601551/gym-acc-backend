@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -41,6 +42,8 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     private ICompanyAreaService companyAreaService;
     @Autowired
     private ICodeAttrService codeAttrService;
+    @Autowired
+    private CodeMapper codeMapper;
 
 
     /**
@@ -204,13 +207,22 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         }else{
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
-        Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
+        Code codeEntity = codeService.selectCode(code);//查询码产品基本信息
         if(codeEntity==null){
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
         List<Map<String,Object>> flowList=scanRecordMapper.selectFlowList(companyId,codeVal);//查询物流记录
 
+        Map<String, Object> map = new HashMap<>();//返回数据
+        map.put("companyId",companyId);
+        map.put("code",codeVal);
+        List<Code> codes = codeService.selectCodeListByCodeOrIndex(map);;//查询码信息
+        if(codes==null){
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+
+        returnMap.put("codes",codes);
         returnMap.put("codeEntity",codeEntity);
         returnMap.put("scanList",scanList);
         returnMap.put("flowList",flowList);
