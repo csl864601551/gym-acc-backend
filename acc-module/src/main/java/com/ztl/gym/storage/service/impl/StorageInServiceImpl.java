@@ -18,6 +18,7 @@ import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageService;
 import com.ztl.gym.storage.service.IStorageTransferService;
 import com.ztl.gym.system.service.ISysDeptService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -324,6 +325,16 @@ public class StorageInServiceImpl implements IStorageInService {
             return storageIn.getId();
         }
         return 0L;
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void unBindStorageInByInId(Long companyId, Long inId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("inId", inId);
+        map.put("companyId", companyId);
+        storageInMapper.deleteInCodeFlowByInId(map);
+        storageInMapper.deleteStorageInById(inId);
     }
 
 }

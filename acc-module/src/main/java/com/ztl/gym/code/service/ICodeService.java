@@ -148,4 +148,15 @@ public interface ICodeService {
      * @return 响应
      */
     public List<Code> selectCodeRecordBySecurityCode(String securityCode, long companyId);
+
+    /**
+     * 扫码解绑操作
+     * @param param
+     */
+    int unBindCodes(Map<String, Object> param);
+
+    /**
+     * 解除绑定关系(t_code)
+     */
+    void unBindCodeByAttrId(Long companyId,Long attrId);
 }

@@ -275,6 +275,15 @@
         update t_code set code_attr_id = #{codeAttrId} where company_id=#{companyId} and (p_code = #{pCode} or code = #{pCode})
     </update>
 
+
+    <delete id="deletePCodeByAttrId">
+        delete from t_code_${companyId} where code_type='box' and code_attr_id=#{codeAttrId}
+    </delete>
+
+    <update id="unBindCodeByAttrId">
+        update t_code_${companyId} set code_attr_id=null,tenant_id=null,storage_type = null, storage_record_id = null,p_code=null where code_attr_id=#{codeAttrId}
+    </update>
+
     <insert id="insertAccCodeForBatch">
         insert into t_code_acc(  company_id,  code_acc, record_id, create_time)
         values

@@ -2,6 +2,7 @@ package com.ztl.gym.product.mapper;
 
 import java.util.List;
 import com.ztl.gym.product.domain.ProductStockFlow;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -60,4 +61,11 @@ public interface ProductStockFlowMapper
      * @return 结果
      */
     public int deleteProductStockFlowByIds(Long[] ids);
+
+    /**
+     * 解绑更新库存
+     * @param stockId
+     * @param flowNum
+     */
+    void updateStockNum(@Param("stockId")Long stockId,@Param("flowNum") Integer flowNum);
 }

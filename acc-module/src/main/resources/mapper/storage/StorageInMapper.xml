@@ -167,7 +167,7 @@
         order by code
     </select>
 
-    <select id="selectStorageInByExtraNo" parameterType="String">
+    <select id="selectStorageInByExtraNo" parameterType="String" resultType="com.ztl.gym.storage.domain.StorageIn">
         <include refid="selectStorageInVo"/>
         where extra_no=#{value}
     </select>
@@ -346,13 +346,16 @@
     </update>
 
     <delete id="deleteStorageInById">
-        update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_DELETE} where id = #{id}
+        delete  from t_storage_in where id = #{id}
     </delete>
 
     <delete id="deleteStorageInByIds" parameterType="String">
-        update t_storage_in set status=${@com.ztl.gym.storage.domain.StorageIn@STATUS_DELETE} where id in
+        delete  from  t_storage_in where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+    <delete id="deleteInCodeFlowByInId" parameterType="Map">
+        delete from t_in_code_flow_${companyId} where company_id=#{companyId} and storage_record_id=#{inId}
     </delete>
 </mapper>

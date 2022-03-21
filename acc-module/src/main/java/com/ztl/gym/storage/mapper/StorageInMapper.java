@@ -95,4 +95,6 @@ public interface StorageInMapper
     void updateInStatusById(Long map);
 
     Long selectInIdByCode(Map<String, Object> map);
+
+    void deleteInCodeFlowByInId(Map<String, Object> map);
 }

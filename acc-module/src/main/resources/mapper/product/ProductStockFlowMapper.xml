@@ -98,6 +98,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateStockNum">
+        update t_product_stock set in_num=in_num - #{flowNum},remain_num=remain_num - #{flowNum} where id=#{stockId}
+    </update>
+
     <delete id="deleteProductStockFlowById" parameterType="Long">
         delete from t_product_stock_flow where id = #{id}
     </delete>

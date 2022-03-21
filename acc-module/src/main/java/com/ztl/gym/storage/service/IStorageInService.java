@@ -112,4 +112,6 @@ public interface IStorageInService {
      * @return
      */
     long insertStorageInForBack(StorageBack storageBack);
+
+    void unBindStorageInByInId(Long companyId, Long inId);
 }

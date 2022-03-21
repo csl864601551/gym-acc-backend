@@ -16,7 +16,11 @@ import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.product.domain.ProductStockFlow;
+import com.ztl.gym.product.service.IProductStockFlowService;
 import com.ztl.gym.storage.domain.vo.FlowVo;
+import com.ztl.gym.storage.mapper.StorageInMapper;
+import com.ztl.gym.storage.service.IStorageInService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +46,19 @@ public class CodeServiceImpl implements ICodeService {
     private CodeRecordMapper codeRecordMapper;
     @Autowired
     private CodeSingleMapper codeSingleMapper;
+    @Autowired
+    private StorageInMapper storageInMapper;
 
     @Autowired
     private CommonService commonService;
 
     @Autowired
     private ICodeAttrService codeAttrService;
+    @Autowired
+    private IProductStockFlowService productStockFlowService;
+    @Autowired
+    private IStorageInService storageInService;
+
 
     @Override
     @DataSource(DataSourceType.SHARDING)
@@ -209,6 +220,7 @@ public class CodeServiceImpl implements ICodeService {
         }
         return correct;
     }
+
     /**
      * 生码
      *
@@ -410,6 +422,7 @@ public class CodeServiceImpl implements ICodeService {
         params.put("recordId", recordId);
         return codeMapper.selectCodeListByRecord(companyId, recordId);
     }
+
     /**
      * 根据生码记录id查询码集合
      *
@@ -450,7 +463,7 @@ public class CodeServiceImpl implements ICodeService {
     }
 
     @Override
-    public void updatePCodeByCode(Long companyId,String pCode, String code) {
+    public void updatePCodeByCode(Long companyId, String pCode, String code) {
         Map<String, Object> params = new HashMap<>();
         params.put("companyId", companyId);
         params.put("pCode", pCode);
@@ -485,8 +498,8 @@ public class CodeServiceImpl implements ICodeService {
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public Code selectCodeByCodeVal(String codeVal,Long companyId) {
-        Code code=new Code();
+    public Code selectCodeByCodeVal(String codeVal, Long companyId) {
+        Code code = new Code();
         code.setCode(codeVal);
         code.setCompanyId(companyId);
         return codeMapper.selectCode(code);
@@ -500,4 +513,44 @@ public class CodeServiceImpl implements ICodeService {
         params.put("codeAcc", securityCode);
         return codeMapper.selectCodeRecordBySecurityCode(params);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public int unBindCodes(Map<String, Object> parmMap) {
+        try {
+            Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+            String codeVal = parmMap.get("code").toString();
+            Code code = new Code();
+            code.setCode(codeVal);
+            code.setCompanyId(companyId);
+            Code codeEntity = selectCode(code);//查询码产品基本信息
+
+            if(codeEntity.getStorageRecordId()!=null){
+                //解除库存(t_product_stock、t_product_stock_flow)
+                Long inId = codeEntity.getStorageRecordId(); //查询入库表ID
+                productStockFlowService.unBindProductStockFlowByInId(companyId, inId);
+                //解除物流明细、解除出入库明细(t_in_code_flow、t_storage_in)
+                storageInService.unBindStorageInByInId(companyId, inId);
+            }
+            if(codeEntity.getCodeAttrId()!=null){
+                Long attrId = codeEntity.getCodeAttrId();//属性ID
+                //解除码属性(t_code_attr)
+                codeAttrService.deleteCodeAttrById(attrId);
+                //解除绑定关系(t_code)
+                unBindCodeByAttrId(companyId, attrId);
+            }
+            return 1;
+        }catch (Exception e){
+            throw new CustomException("请输入正确的码！");
+        }
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void unBindCodeByAttrId(Long companyId, Long attrId) {
+        codeMapper.deletePCodeByAttrId(companyId, attrId);
+        codeMapper.unBindCodeByAttrId(companyId, attrId);
+    }
+
 }

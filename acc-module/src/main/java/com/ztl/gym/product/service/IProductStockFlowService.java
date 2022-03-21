@@ -58,4 +58,6 @@ public interface IProductStockFlowService
      * @return 结果
      */
     public int deleteProductStockFlowById(Long id);
+
+    int unBindProductStockFlowByInId(Long companyId,Long inId);
 }

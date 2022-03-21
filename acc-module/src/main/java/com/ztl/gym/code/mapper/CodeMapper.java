@@ -170,6 +170,7 @@ public interface CodeMapper {
      * @return
      */
     List<Code> selectCodeListByRecord(@Param("companyId") long companyId, @Param("recordId") long recordId);
+
     List<Code> selectCodeListBySingle(@Param("companyId") long companyId, @Param("singleId") long singleId);
 
     void updatePCodeByCode(Map<String, Object> params);
@@ -187,8 +188,13 @@ public interface CodeMapper {
 
     /**
      * 查询防伪码绑定记录
+     *
      * @param codeParam 入参
      * @return 响应
      */
     List<Code> selectCodeRecordBySecurityCode(Map<String, Object> codeParam);
+
+    void unBindCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long codeAttrId);
+
+    void deletePCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long attrId);
 }

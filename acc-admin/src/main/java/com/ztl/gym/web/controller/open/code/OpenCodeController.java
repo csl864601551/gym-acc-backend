@@ -52,4 +52,13 @@ public class OpenCodeController {
         }
 
     }
+    /**
+     * 扫码解绑
+     *
+     * @return
+     */
+    @PostMapping("unBindCodes")
+    public AjaxResult unBindCodes(@RequestBody Map<String,Object> map) {
+        return AjaxResult.success(codeService.unBindCodes(map));
+    }
 }

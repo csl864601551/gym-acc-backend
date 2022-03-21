@@ -92,4 +92,19 @@ public class ProductStockFlowServiceImpl implements IProductStockFlowService
     {
         return productStockFlowMapper.deleteProductStockFlowById(id);
     }
+
+
+    @Override
+    public int unBindProductStockFlowByInId(Long companyId,Long inId) {
+        ProductStockFlow productStockFlow=new ProductStockFlow();
+        productStockFlow.setCompanyId(companyId);
+        productStockFlow.setStorageRecordId(inId);
+        List<ProductStockFlow> productStockFlowList= selectProductStockFlowList(productStockFlow);
+        Long stockId=productStockFlowList.get(0).getStockId();
+        Long stockFlowId=productStockFlowList.get(0).getId();
+        Integer flowNum=productStockFlowList.get(0).getFlowNum();
+        productStockFlowMapper.updateStockNum(stockId,flowNum);//更新库存
+        productStockFlowMapper.deleteProductStockFlowById(stockFlowId);//删除库存明细
+        return 0;
+    }
 }
