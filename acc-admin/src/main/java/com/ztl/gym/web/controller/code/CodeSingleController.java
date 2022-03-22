@@ -2,6 +2,7 @@ package com.ztl.gym.web.controller.code;
 
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeAttr;
+import com.ztl.gym.code.domain.CodeRule;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
 import com.ztl.gym.code.service.ICodeAttrService;
@@ -54,6 +55,7 @@ public class CodeSingleController extends BaseController {
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
+
     /**
      * 查询生码记录列表
      */
@@ -146,8 +148,6 @@ public class CodeSingleController extends BaseController {
     }
 
 
-
-
     /**
      * 修改生码记录
      */
@@ -183,12 +183,33 @@ public class CodeSingleController extends BaseController {
     }
 
     /**
+     * 生码2022-03-21
+     *
+     * @return
+     */
+    @PostMapping("/addSingleCode")
+    public AjaxResult addSingleCode(@RequestBody CodeRule codeRule) {
+        if (codeRule.getCodeNo() == null || codeRule.getCodeNo() == "") {
+            throw new CustomException("成品物料编码不能为空！");
+        } else if (codeRule.getCodeDate() == null || codeRule.getCodeDate() == "") {
+            throw new CustomException("生产日期不能为空！");
+        } else if (codeRule.getLineNo() == null || codeRule.getLineNo() == "") {
+            throw new CustomException("线别不能为空！");
+        } else if (codeRule.getFactoryNo() == null || codeRule.getFactoryNo() == "") {
+            throw new CustomException("工厂代码不能为空！");
+        }
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        return AjaxResult.success(codeSingleService.createCodeSingleByRule(companyId, codeRule));
+
+    }
+
+    /**
      * 码下载
      */
     @Log(title = "生码记录", businessType = BusinessType.EXPORT)
     @CrossOrigin
     @GetMapping("/download")
-    public void download(long id,long companyId, HttpServletResponse response) {
+    public void download(long id, long companyId, HttpServletResponse response) {
         List<Code> list = codeService.selectCodeListBySingle(companyId, id);
         for (Code code : list) {
             code.setCode(preFixUrl + code.getCode());
@@ -200,7 +221,7 @@ public class CodeSingleController extends BaseController {
 
             if (code.getCodeType().equals(AccConstants.CODE_TYPE_SINGLE)) {
                 code.setCodeTypeName("单码");
-                if(code.getpCode()!=null){
+                if (code.getpCode() != null) {
                     code.setpCode(preFixUrl + code.getpCode());
                 }
             } else if (code.getCodeType().equals(AccConstants.CODE_TYPE_BOX)) {
@@ -208,7 +229,7 @@ public class CodeSingleController extends BaseController {
             }
         }
         ExcelUtil<Code> util = new ExcelUtil<Code>(Code.class);
-        String fileName=util.exportExcel(list,"-"+DateUtils.getDate()+"码").get("msg").toString();
+        String fileName = util.exportExcel(list, "-" + DateUtils.getDate() + "码").get("msg").toString();
 
         try {
             if (!FileUtils.checkAllowDownload(fileName)) {
@@ -283,71 +304,72 @@ public class CodeSingleController extends BaseController {
     @DataSource(DataSourceType.SHARDING)
     public AjaxResult checkPackageCode(@RequestParam("code") String codeStr) {
         AjaxResult ajax = AjaxResult.success();
-        codeStr=codeStr.trim();
-        if(!codeStr.equals("")){
+        codeStr = codeStr.trim();
+        if (!codeStr.equals("")) {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
 
             Code temp = new Code();
             temp.setCode(codeStr);
             temp.setCompanyId(companyId);
-            Code code=codeService.selectCode(temp);//查询单码数据
-            if(code==null){
+            Code code = codeService.selectCode(temp);//查询单码数据
+            if (code == null) {
                 throw new CustomException("未查询到相关码数据！", HttpStatus.ERROR);
             }
-            if(code.getpCode()!=null){
-                throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！", HttpStatus.ERROR);
+            if (code.getpCode() != null) {
+                throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！", HttpStatus.ERROR);
             }
             ajax.put("data", code);
             return ajax;
-        }else{
+        } else {
             throw new CustomException("未接收到单码数据！", HttpStatus.ERROR);
         }
 
     }
+
     /**
      * 普通生码，单码List装箱
      */
     @PostMapping("/packageCode")
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult packageCode(@RequestBody Map<String,Object> map) {
+    public AjaxResult packageCode(@RequestBody Map<String, Object> map) {
         AjaxResult ajax = AjaxResult.success();
 
-        List<String> list=(List)map.get("codes");
-        if(list.size()>0){
+        List<String> list = (List) map.get("codes");
+        if (list.size() > 0) {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
             /**
              * 插入箱码，更新单码PCode
              */
             //获取并更新生码记录流水号
-            String codeNoStr= CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
+            String codeNoStr = CodeRuleUtils.getCodeIndex(companyId, 1, 0, CodeRuleUtils.CODE_PREFIX_B);
             String[] codeIndexs = codeNoStr.split("-");
-            long codeIndex =Long.parseLong(codeIndexs[0]) + 1;
+            long codeIndex = Long.parseLong(codeIndexs[0]) + 1;
 
-            String pCode=CodeRuleUtils.buildCode(companyId,CodeRuleUtils.CODE_PREFIX_B,codeIndex);
+            String pCode = CodeRuleUtils.buildCode(companyId, CodeRuleUtils.CODE_PREFIX_B, codeIndex);
 
             Code temp = null;
-            long codeAttrId=0;
-            long singleId=0;
+            long codeAttrId = 0;
+            long singleId = 0;
 
             for (int i = 0; i < list.size(); i++) {
                 temp = new Code();
                 temp.setCode(list.get(i));
                 temp.setCompanyId(companyId);
-                Code code=codeService.selectCode(temp);//查询单码数据
-                if(code==null){
+                Code code = codeService.selectCode(temp);//查询单码数据
+                if (code == null) {
                     throw new CustomException("未查询到相关码数据！");
                 }
-                if(code.getCodeAttrId()!=null){
-                    codeAttrId=code.getCodeAttrId();
+                if (code.getCodeAttrId() != null) {
+                    codeAttrId = code.getCodeAttrId();
                 }
-                if(code.getSingleId()!=null){
-                    singleId=code.getSingleId();
+                if (code.getSingleId() != null) {
+                    singleId = code.getSingleId();
                 }
-                if(code.getpCode()!=null){
-                    throw new CustomException(code.getCode()+"该码已被扫描，请检查后重试！");
+                if (code.getpCode() != null) {
+                    throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！");
                 }
-                codeService.updatePCodeByCode(companyId,pCode,list.get(i));
+                codeService.updatePCodeByCode(companyId, pCode, list.get(i));
             }//更新单码
 
 
@@ -362,27 +384,27 @@ public class CodeSingleController extends BaseController {
 
 
             commonService.updateVal(companyId, codeIndex);//更新code_index
-            Map<String,Object> mapTemp = new HashMap<>();
-            mapTemp.put("companyId",companyId);
-            mapTemp.put("boxCode",pCode);
-            mapTemp.put("codeIndex",codeIndex);
-            mapTemp.put("productLine",map.get("productLine"));
-            mapTemp.put("boxNum",map.get("boxCount"));
-            mapTemp.put("productName",map.get("productName"));
-            mapTemp.put("productModel",map.get("productModel"));
-            mapTemp.put("batchName",map.get("batchName"));
-            mapTemp.put("printStatus",map.get("printStatus"));
-            mapTemp.put("produceDate",map.get("date"));
-            mapTemp.put("codeCount",map.get("codeCount"));
-            mapTemp.put("grossWeight",map.get("grossWeight"));
-            mapTemp.put("netWeight",map.get("netWeight"));
-            mapTemp.put("orderNo",map.get("orderNo"));
-            mapTemp.put("barCode",map.get("barCode"));
+            Map<String, Object> mapTemp = new HashMap<>();
+            mapTemp.put("companyId", companyId);
+            mapTemp.put("boxCode", pCode);
+            mapTemp.put("codeIndex", codeIndex);
+            mapTemp.put("productLine", map.get("productLine"));
+            mapTemp.put("boxNum", map.get("boxCount"));
+            mapTemp.put("productName", map.get("productName"));
+            mapTemp.put("productModel", map.get("productModel"));
+            mapTemp.put("batchName", map.get("batchName"));
+            mapTemp.put("printStatus", map.get("printStatus"));
+            mapTemp.put("produceDate", map.get("date"));
+            mapTemp.put("codeCount", map.get("codeCount"));
+            mapTemp.put("grossWeight", map.get("grossWeight"));
+            mapTemp.put("netWeight", map.get("netWeight"));
+            mapTemp.put("orderNo", map.get("orderNo"));
+            mapTemp.put("barCode", map.get("barCode"));
             commonService.insertPrintData(mapTemp);//插入打印数据
 
             ajax.put("data", pCode);
             return ajax;
-        }else{
+        } else {
             throw new CustomException("未接收到单码数据！");
         }
 
@@ -390,14 +412,15 @@ public class CodeSingleController extends BaseController {
 
     /**
      * 绑定产品信息
+     *
      * @param map
      * @return
      */
     @PostMapping("/bindCodeAttr")
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult bindProductAttr(@RequestBody Map<String,Object> map) {
-        if(map != null) {
+    public AjaxResult bindProductAttr(@RequestBody Map<String, Object> map) {
+        if (map != null) {
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setCompanyId(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
             codeAttr.setProductId(Long.valueOf(map.get("productId").toString()));

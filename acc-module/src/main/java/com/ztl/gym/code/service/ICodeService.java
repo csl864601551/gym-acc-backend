@@ -2,6 +2,7 @@ package com.ztl.gym.code.service;
 
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeRule;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 
 import java.util.List;
@@ -159,4 +160,11 @@ public interface ICodeService {
      * 解除绑定关系(t_code)
      */
     void unBindCodeByAttrId(Long companyId,Long attrId);
+
+    /**
+     * 2022-03-21生码规则
+     * @param companyId
+     * @param codeRule
+     */
+    void createCodeSingleByRule(Long companyId, CodeRule codeRule);
 }

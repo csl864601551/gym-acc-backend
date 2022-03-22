@@ -74,7 +74,21 @@ public class CodeRuleUtils {
         }
         return code;
     }
-
+    /**
+     * 创建码 【生码规则：码类型前缀转换值+企业id+码自增数 】
+     *
+     * @return
+     */
+    public static String buildCodeByRule(Long companyId, String codePrefix, String codeIndex) {
+        String code = "";
+        if (companyId != null && StringUtils.isNotBlank(codePrefix) && codeIndex != null) {
+            //注意：客户扫码时没办法知道码所属企业，无法从对应分表查询，这里设置规则的时候需要把企业id带进去
+            //企业id转换
+            long companyIdComplex = companyId * 5;
+            code = CODE_PREFIX_MAP.get(codePrefix) + "-" + companyIdComplex + "-"  + codeIndex;
+        }
+        return code;
+    }
 
     /**
      * 根据码获得该码类型

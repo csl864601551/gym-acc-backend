@@ -1,6 +1,7 @@
 package com.ztl.gym.code.service;
 
 
+import com.ztl.gym.code.domain.CodeRule;
 import com.ztl.gym.code.domain.CodeSingle;
 
 import java.util.List;
@@ -88,4 +89,12 @@ public interface ICodeSingleService {
      * @return 结果
      */
     int selectSingCodeNum(Map<String, Object> map);
+
+    /**
+     * 2022-03-21生码规则
+     * @param companyId
+     * @param codeRule
+     * @return
+     */
+    String createCodeSingleByRule(Long companyId, CodeRule codeRule);
 }

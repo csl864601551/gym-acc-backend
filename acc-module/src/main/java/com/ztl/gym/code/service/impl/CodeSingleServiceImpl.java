@@ -1,16 +1,23 @@
 package com.ztl.gym.code.service.impl;
 
+import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeRule;
+import com.ztl.gym.code.domain.CodeSequenceNew;
 import com.ztl.gym.code.domain.CodeSingle;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
+import com.ztl.gym.code.service.ICodeSequenceNewService;
 import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
+import com.ztl.gym.common.utils.CommonUtil;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.slf4j.Logger;
@@ -18,11 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +65,9 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private ICodeSequenceNewService codeSequenceNewService;
+
     /**
      * 查询生码记录
      *
@@ -76,7 +88,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      */
     @Override
     public CodeSingle selectCodeSingleByIndex(long codeIndex, long companyId) {
-        return codeSingleMapper.selectCodeSingleByIndex(codeIndex,companyId);
+        return codeSingleMapper.selectCodeSingleByIndex(codeIndex, companyId);
     }
 
     /**
@@ -89,6 +101,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
     public int selectSingCodeNum(Map<String, Object> map) {
         return codeSingleMapper.selectSingCodeNum(map);
     }
+
 
     /**
      * 查询生码记录列表
@@ -210,7 +223,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
             //ip
             String ip = codeGenMsgs[4];
             if (localIp.equals(ip)) {
-                codeService.createCodeSingle(companyId, CodeSingleId, codeTotalNum,  userId);
+                codeService.createCodeSingle(companyId, CodeSingleId, codeTotalNum, userId);
             }
         } catch (Exception e) {
             throw new CustomException("接收数据异常，请检查码数据格式！", HttpStatus.ERROR);
@@ -256,4 +269,48 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         CodeSingle.setUpdateTime(new Date());
         return CodeSingle;
     }
+
+    /**
+     * 2022-03-21生码规则
+     *
+     * @param companyId
+     * @param codeRule
+     * @return
+     */
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public String createCodeSingleByRule(Long companyId, CodeRule codeRule) {
+        CodeSequenceNew codeSequenceNew = new CodeSequenceNew();
+        codeSequenceNew.setCompanyId(companyId);
+        codeSequenceNew.setCodeNo(codeRule.getCodeNo());
+        codeSequenceNew.setCodeDate(codeRule.getCodeDate());
+        codeSequenceNew.setLineNo(codeRule.getLineNo());
+        codeSequenceNew.setFactoryNo(codeRule.getFactoryNo());
+        List<CodeSequenceNew> list = codeSequenceNewService.selectCodeSequenceNewList(codeSequenceNew);
+        if (list.size() > 0) {
+            codeSequenceNew.setId(list.get(0).getId());
+            codeSequenceNew.setCurrentValue(list.get(0).getCurrentValue()+1);
+            codeSequenceNewService.updateCodeSequenceNew(codeSequenceNew);
+        } else {
+            codeSequenceNew.setIncrement(1L);
+            codeSequenceNew.setCurrentValue(1L);
+            codeSequenceNewService.insertCodeSequenceNew(codeSequenceNew);
+        }
+        String codeVal = codeSequenceNew.getCodeNo() + codeSequenceNew.getCodeDate() + codeSequenceNew.getLineNo() + String.format("%04d", codeSequenceNew.getCurrentValue()) + codeSequenceNew.getFactoryNo();
+        Code code = new Code();
+        code.setCodeIndex(Long.valueOf(CommonUtil.snowflake()));
+        code.setpCode(null);
+        code.setCompanyId(companyId);
+        code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
+        code.setCode(CodeRuleUtils.buildCodeByRule(companyId, CodeRuleUtils.CODE_PREFIX_S, codeVal));
+        code.setSingleId(codeRule.getCodeSingleId());
+
+        int res = codeMapper.insertCode(code);
+        log.error("产线生码成功", res);
+
+        return code.getCode();
+
+    }
+
 }

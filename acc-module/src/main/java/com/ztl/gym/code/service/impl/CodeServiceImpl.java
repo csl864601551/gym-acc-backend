@@ -1,9 +1,6 @@
 package com.ztl.gym.code.service.impl;
 
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
-import com.ztl.gym.code.domain.CodeRecord;
-import com.ztl.gym.code.domain.CodeSingle;
+import com.ztl.gym.code.domain.*;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
@@ -551,6 +548,34 @@ public class CodeServiceImpl implements ICodeService {
     public void unBindCodeByAttrId(Long companyId, Long attrId) {
         codeMapper.deletePCodeByAttrId(companyId, attrId);
         codeMapper.unBindCodeByAttrId(companyId, attrId);
+    }
+
+    @Override
+    public void createCodeSingleByRule(Long companyId, CodeRule codeRule) {
+        int correct = 0;
+        List<Code> codeList = new ArrayList<>();
+        //企业自增数
+        CodeSingle codeSingle = codeSingleMapper.selectCodeSingleById(codeRule.getCodeSingleId());
+        long codeIndex = codeSingle.getIndexStart();
+
+
+        Code code = new Code();
+        code.setCodeIndex(codeIndex + 1);
+        code.setpCode(null);
+        code.setCompanyId(companyId);
+        code.setCodeType(AccConstants.CODE_TYPE_SINGLE);
+        code.setCode(CodeRuleUtils.buildCodeByRule(companyId, CodeRuleUtils.CODE_PREFIX_S, code.getCode()));
+        code.setSingleId(codeRule.getCodeSingleId());
+        codeList.add(code);
+
+
+        commonService.updateVal(companyId, codeSingle.getIndexEnd());
+
+
+
+
+        int res = codeMapper.insertCodeForBatch(codeList);
+
     }
 
 }
