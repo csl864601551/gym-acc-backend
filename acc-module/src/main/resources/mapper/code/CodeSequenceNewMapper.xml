@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.code.mapper.CodeSequenceNewMapper">
+    
+    <resultMap type="CodeSequenceNew" id="CodeSequenceNewResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="currentValue"    column="current_value"    />
+        <result property="increment"    column="increment"    />
+        <result property="codeNo"    column="code_no"    />
+        <result property="codeDate"    column="code_date"    />
+        <result property="lineNo"    column="line_no"    />
+        <result property="factoryNo"    column="factory_no"    />
+    </resultMap>
+
+    <sql id="selectCodeSequenceNewVo">
+        select id, company_id, current_value, increment, code_no, code_date, line_no, factory_no from t_code_sequence_new
+    </sql>
+
+    <select id="selectCodeSequenceNewList" parameterType="CodeSequenceNew" resultMap="CodeSequenceNewResult">
+        <include refid="selectCodeSequenceNewVo"/>
+        <where>  
+            <if test="companyId != null  and companyId != ''"> and company_id = #{companyId}</if>
+            <if test="currentValue != null "> and current_value = #{currentValue}</if>
+            <if test="increment != null "> and increment = #{increment}</if>
+            <if test="codeNo != null  and codeNo != ''"> and code_no = #{codeNo}</if>
+            <if test="codeDate != null "> and code_date = #{codeDate}</if>
+            <if test="lineNo != null  and lineNo != ''"> and line_no = #{lineNo}</if>
+            <if test="factoryNo != null  and factoryNo != ''"> and factory_no = #{factoryNo}</if>
+        </where>
+    </select>
+    
+    <select id="selectCodeSequenceNewById" parameterType="Long" resultMap="CodeSequenceNewResult">
+        <include refid="selectCodeSequenceNewVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCodeSequenceNew" parameterType="CodeSequenceNew" useGeneratedKeys="true" keyProperty="id">
+        insert into t_code_sequence_new
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyId != null and companyId != ''">company_id,</if>
+            <if test="currentValue != null">current_value,</if>
+            <if test="increment != null">increment,</if>
+            <if test="codeNo != null">code_no,</if>
+            <if test="codeDate != null">code_date,</if>
+            <if test="lineNo != null">line_no,</if>
+            <if test="factoryNo != null">factory_no,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyId != null and companyId != ''">#{companyId},</if>
+            <if test="currentValue != null">#{currentValue},</if>
+            <if test="increment != null">#{increment},</if>
+            <if test="codeNo != null">#{codeNo},</if>
+            <if test="codeDate != null">#{codeDate},</if>
+            <if test="lineNo != null">#{lineNo},</if>
+            <if test="factoryNo != null">#{factoryNo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCodeSequenceNew" parameterType="CodeSequenceNew">
+        update t_code_sequence_new
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyId != null and companyId != ''">company_id = #{companyId},</if>
+            <if test="currentValue != null">current_value = #{currentValue},</if>
+            <if test="increment != null">increment = #{increment},</if>
+            <if test="codeNo != null">code_no = #{codeNo},</if>
+            <if test="codeDate != null">code_date = #{codeDate},</if>
+            <if test="lineNo != null">line_no = #{lineNo},</if>
+            <if test="factoryNo != null">factory_no = #{factoryNo},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCodeSequenceNewById" parameterType="Long">
+        delete from t_code_sequence_new where id = #{id}
+    </delete>
+
+    <delete id="deleteCodeSequenceNewByIds" parameterType="String">
+        delete from t_code_sequence_new where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
