@@ -1,6 +1,7 @@
 package com.ztl.gym.code.service;
 
 
+import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeRule;
 import com.ztl.gym.code.domain.CodeSingle;
 
@@ -97,4 +98,11 @@ public interface ICodeSingleService {
      * @return
      */
     String createCodeSingleByRule(Long companyId, CodeRule codeRule);
+
+    /**
+     * 批量新增Code表数据
+     * @param listCode
+     * @return
+     */
+    int insertCodeAll(List<Code> listCode);
 }

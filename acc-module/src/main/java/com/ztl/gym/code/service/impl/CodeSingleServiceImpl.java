@@ -313,4 +313,14 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
 
     }
 
+    /**
+     * 批量新增Code表数据
+     * @param listCode
+     * @return
+     */
+    @Override
+    public int insertCodeAll(List<Code> listCode) {
+        return codeMapper.insertCodeAll(listCode);
+    }
+
 }

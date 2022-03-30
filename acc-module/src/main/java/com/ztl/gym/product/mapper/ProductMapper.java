@@ -1,6 +1,8 @@
 package com.ztl.gym.product.mapper;
 
 import com.ztl.gym.product.domain.Product;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Map;
@@ -86,4 +88,10 @@ public interface ProductMapper
      */
     public int selectProductNum(Map<String, Object> map);
 
+    /**
+     * 获取企业下全部产品附加属性
+     * @param companyId
+     * @return
+     */
+    List<Map<String, Object>> getAttributeAll(Long companyId);
 }

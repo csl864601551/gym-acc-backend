@@ -7,6 +7,7 @@ import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.product.domain.Attr;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IAttrService;
 import com.ztl.gym.product.service.IProductService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 产品Controller
@@ -157,5 +159,15 @@ public class ProductController extends BaseController
     public AjaxResult removeTrue(@PathVariable Long[] ids)
     {
         return toAjax(tProductService.deleteTProductTrueByIds(ids));
+    }
+
+    /**
+     * 查询所有的规格属性列表
+     */
+    @GetMapping("/getProductAttr")
+    public AjaxResult getProductAttr()
+    {
+        List<Map<String,Object>> attributeList = tProductService.getProductAttr();
+        return AjaxResult.success(attributeList);
     }
 }

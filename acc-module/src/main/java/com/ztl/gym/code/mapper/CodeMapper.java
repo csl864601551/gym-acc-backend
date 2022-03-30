@@ -197,4 +197,6 @@ public interface CodeMapper {
     void unBindCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long codeAttrId);
 
     void deletePCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long attrId);
+
+    int insertCodeAll(@Param("listCode") List<Code> listCode);
 }

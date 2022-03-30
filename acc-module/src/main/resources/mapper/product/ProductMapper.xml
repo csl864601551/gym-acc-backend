@@ -172,6 +172,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where product_id = #{id}
     </select>
 
+    <select id="getAttributeAll" resultMap="map">
+        select id, company_id, product_id, attr_name_cn, attr_name_en, attr_value, sort, create_user, create_time, update_user, update_time
+        from t_product_attr
+        where company_id = #{companyId}
+    </select>
+
     <insert id="insertTProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="id">
         insert into t_product
         <trim prefix="(" suffix=")" suffixOverrides=",">
