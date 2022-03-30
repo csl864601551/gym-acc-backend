@@ -87,4 +87,10 @@ public interface IProductService
      * @return 结果
      */
     public int selectProductNum(Map<String, Object> map);
+
+    /**
+     * 获取所有产品附加属性
+     * @return
+     */
+    public List<Map<String, Object>> getProductAttr();
 }

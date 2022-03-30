@@ -257,4 +257,15 @@ public class ProductServiceImpl implements IProductService
         Product product=productMapper.selectTProductById(id);
         return product;
     }
+
+    /**
+     * 获取全部类型
+     * @return
+     */
+    public List<Map<String,Object>> getProductAttr()
+    {
+        Long companyId=SecurityUtils.getLoginUserCompany().getDeptId();
+        List<Map<String,Object>> attrAll=productMapper.getAttributeAll(companyId);
+        return attrAll;
+    }
 }

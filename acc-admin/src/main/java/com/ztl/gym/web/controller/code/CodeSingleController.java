@@ -1,9 +1,6 @@
 package com.ztl.gym.web.controller.code;
 
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeAttr;
-import com.ztl.gym.code.domain.CodeRule;
-import com.ztl.gym.code.domain.CodeSingle;
+import com.ztl.gym.code.domain.*;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeSingleService;
@@ -36,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,6 +199,47 @@ public class CodeSingleController extends BaseController {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         return AjaxResult.success(codeSingleService.createCodeSingleByRule(companyId, codeRule));
 
+    }
+
+    /**
+     * 同步单码数据
+     * @param lsCode
+     * @return
+     */
+    @PostMapping("/insertCode")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult insertCode(@RequestBody Map<String, Object> lsCode) {
+        List<Map<String, Object>> listObj = (List<Map<String, Object>>) lsCode.get("codeData");
+        //设置类型
+        List<Code> listCode = new ArrayList<>();
+        for(Object obj : listObj) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            Code code = new Code();
+            code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
+            code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+//            code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
+//            code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
+//            code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
+//            code.setStatus(Integer.valueOf(ob.get("status").toString()));
+            code.setCode(ob.get("code").toString());
+//            code.setCodeAcc(ob.get("codeAcc").toString());
+            code.setCodeType(ob.get("codeType").toString());
+//            code.setpCode(ob.get("pCode").toString());
+//            code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
+            listCode.add(code);
+        }
+        if (listCode.size() > 0) {
+            //新增Code数据
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode);
+            if(listCode.size() == retInsertCodeCount) {
+                return AjaxResult.success("标识数据同步成功");
+            } else {
+                return AjaxResult.success("标识数据部分同步成功");
+            }
+        } else {
+            throw new CustomException("暂无需要同步的单码数据！");
+        }
     }
 
     /**
