@@ -60,7 +60,7 @@
 
     <select id="selectScanRecordMixList" parameterType="ScanRecord" resultMap="ScanRecordResult">
         select a.id, a.company_id, a.code, a.longitude, a.latitude, a.terminal, a.ip, a.address, a.province, a.city, a.area, a.create_user, a.create_time, a.update_user, a.update_time,a.product_id,a.product_name, b.mix_type from t_scan_record a
-        LEFT JOIN t_mix_record b ON a.code = b.code
+        LEFT JOIN (select mix_type,code from t_mix_record GROUP BY code) b ON a.code = b.code
         <where>
             1=1 and a.longitude IS NOT NULL
             AND a.product_id IS NOT NULL
@@ -730,7 +730,7 @@
         FROM
         t_scan_record a
         LEFT JOIN t_product b ON a.product_id = b.id
-        LEFT JOIN t_mix_record c ON a.code = c.code
+        LEFT JOIN (select mix_type,code from t_mix_record GROUP BY code) c ON a.code = c.code
         WHERE
         a.longitude IS NOT NULL
         AND a.product_id IS NOT NULL
