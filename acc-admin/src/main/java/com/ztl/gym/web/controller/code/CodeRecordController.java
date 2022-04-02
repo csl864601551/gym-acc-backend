@@ -209,6 +209,24 @@ public class CodeRecordController extends BaseController {
         return AjaxResult.success(fuzhiVo);
     }
 
+    /**
+     * 查询所有批次批次
+     *
+     * @return
+     */
+    @GetMapping("/listBatchAll")
+    public AjaxResult listBatch() {
+        ProductBatch productBatch = new ProductBatch();
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            productBatch.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        List<ProductBatch> productBatchList = productBatchService.selectProductBatchList(productBatch);
+        FuzhiVo fuzhiVo = new FuzhiVo();
+        fuzhiVo.setProductBatchs(productBatchList);
+        return AjaxResult.success(fuzhiVo);
+    }
+
 
 //    /**
 //     * 新增生码记录
