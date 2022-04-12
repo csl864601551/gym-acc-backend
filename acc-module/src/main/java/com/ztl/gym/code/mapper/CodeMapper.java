@@ -1,10 +1,13 @@
 package com.ztl.gym.code.mapper;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.vo.CRMAttrList;
+import com.ztl.gym.code.domain.vo.CRMInfoVo;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -199,4 +202,9 @@ public interface CodeMapper {
     void deletePCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long attrId);
 
     int insertCodeAll(@Param("listCode") List<Code> listCode);
+
+    List<CRMInfoVo> getCRMInfo(@Param("companyId") Long companyId, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
+
+    List<CRMAttrList> getCRMAttributeList(Long id);
+
 }

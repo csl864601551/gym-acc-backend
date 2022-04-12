@@ -3,8 +3,10 @@ package com.ztl.gym.code.service;
 
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.CodeRule;
+import com.ztl.gym.code.domain.vo.CRMInfoVo;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -167,4 +169,6 @@ public interface ICodeService {
      * @param codeRule
      */
     void createCodeSingleByRule(Long companyId, CodeRule codeRule);
+
+    List<CRMInfoVo> getCRMInfo(Date beginTime, Date endTime);
 }
