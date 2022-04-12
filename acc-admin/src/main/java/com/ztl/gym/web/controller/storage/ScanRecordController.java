@@ -59,6 +59,12 @@ public class ScanRecordController extends BaseController {
             scanRecord.setCreateUser(null);
             scanRecord.setType("2");
         }
+        if(scanRecord.getParams().size() !=0) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("beginCreateTime", scanRecord.getParams().get("beginCreateTime") + " 00:00:00.0");
+            map.put("endCreateTime", scanRecord.getParams().get("endCreateTime") + " 23:59:59.999");
+            scanRecord.setParams(map);
+        }
         startPage();
         List<ScanRecord> list = scanRecordService.selectScanRecordMixList(scanRecord);
         return getDataTable(list);

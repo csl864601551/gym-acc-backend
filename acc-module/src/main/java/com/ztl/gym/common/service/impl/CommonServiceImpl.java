@@ -15,6 +15,7 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.print.domain.PrintData;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.service.IStorageBackService;
@@ -310,7 +311,7 @@ public class CommonServiceImpl implements CommonService {
     public List<String> selectCodeByStorageForPage(long companyId, int storageType, long storageRecordId) {
         List<String> codeStrs = codeService.selectCodeByStorage(companyId, storageType, storageRecordId);
         return codeStrs;
-        
+
     }
 
     /**
@@ -348,5 +349,10 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public void insertPrintData(Map<String, Object> mapTemp) {
         commonMapper.insertPrintData(mapTemp);
+    }
+
+    @Override
+    public int insertPrintAll(List<PrintData> listPrint) {
+        return commonMapper.insertPrintAll(listPrint);
     }
 }

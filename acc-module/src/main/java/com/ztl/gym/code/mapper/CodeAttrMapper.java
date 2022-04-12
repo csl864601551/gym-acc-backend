@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ztl.gym.code.domain.CodeAttr;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -78,4 +79,11 @@ public interface CodeAttrMapper {
     int updateCodeIndex(Map<String, Object> params);
 
     int updateCodeAttrBatch(List<CodeAttr> attrList);
+
+    /**
+     * 批量新增CodeAttr表数据
+     * @param listCodeAttr
+     * @return
+     */
+    int insertCodeAttrAll(@Param("listCodeAttr") List<CodeAttr> listCodeAttr);
 }

@@ -358,4 +358,16 @@
     <delete id="deleteInCodeFlowByInId" parameterType="Map">
         delete from t_in_code_flow_${companyId} where company_id=#{companyId} and storage_record_id=#{inId}
     </delete>
+
+    <insert id="insertStorageInAll">
+        insert into t_storage_in(id,company_id,tenant_id,status,in_type,in_no,extra_no,product_id,batch_no,in_num,act_in_num,storage_from,
+                                 storage_to,from_storage_id,to_storage_id,remark,create_user,create_time,in_time,update_user,update_time)
+        values
+        <foreach collection="listStorageIn" item="storageIn" separator=",">
+            ( #{storageIn.id},#{storageIn.companyId},#{storageIn.tenantId},#{storageIn.status},#{storageIn.inType},#{storageIn.inNo},#{storageIn.extraNo},
+            #{storageIn.productId},#{storageIn.batchNo},#{storageIn.inNum},>#{storageIn.actInNum},#{storageIn.storageFrom},#{storageIn.storageTo},
+            #{storageIn.fromStorageId},#{storageIn.toStorageId},#{storageIn.remark},#{storageIn.createUser},#{storageIn.createTime},#{storageIn.inTime},
+            #{storageIn.updateUser},#{storageIn.updateTime} )
+        </foreach>
+    </insert>
 </mapper>

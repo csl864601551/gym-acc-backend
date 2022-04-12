@@ -1,6 +1,7 @@
 package com.ztl.gym.code.mapper;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.domain.CodeAttr;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -198,5 +199,5 @@ public interface CodeMapper {
 
     void deletePCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long attrId);
 
-    int insertCodeAll(@Param("listCode") List<Code> listCode);
+    int insertCodeAll(@Param("listCode") List<Code> listCode, @Param("companyId") Long companyId);
 }

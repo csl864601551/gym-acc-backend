@@ -73,4 +73,11 @@ public interface ICodeAttrService {
      * @return 结果
      */
     public int updateCodeAttrBatch(List<CodeAttr> attrList);
+
+    /**
+     * 批量新增CodeAttr表数据
+     * @param listCodeAttr
+     * @return
+     */
+    public int insertCodeAttrAll(List<CodeAttr> listCodeAttr);
 }

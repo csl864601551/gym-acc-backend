@@ -1,6 +1,8 @@
 package com.ztl.gym.common.mapper;
 
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.print.domain.PrintData;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,4 +54,6 @@ public interface CommonMapper {
     List<SysUser> getTenantByParent(Map<String, Object> params);
 
     void insertPrintData(Map<String, Object> mapTemp);
+
+    int insertPrintAll(@Param("listPrint") List<PrintData> listPrint);
 }

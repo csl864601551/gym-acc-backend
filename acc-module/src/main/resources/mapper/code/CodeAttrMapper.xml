@@ -226,4 +226,17 @@
             where id = #{item.id}
         </foreach>
     </update>
+
+    <insert id="insertCodeAttrAll">
+        insert into t_code_attr(id,company_id,tenant_id,storage_type,storage_record_id,record_id,single_id,index_start,index_end,product_id,product_name,
+                                product_no,bar_code,product_category,product_unit,batch_id,batch_no,product_introduce,remark,input_by,input_time,
+                                create_user,create_time,update_user,update_time)
+        values
+        <foreach collection="listCodeAttr" item="codeAttr" separator=",">
+            ( #{codeAttr.id},#{codeAttr.companyId},#{codeAttr.tenantId},#{codeAttr.storageType},#{codeAttr.storageRecordId},#{codeAttr.recordId},#{codeAttr.singleId},
+            #{codeAttr.indexStart},#{codeAttr.indexEnd},#{codeAttr.productId},#{codeAttr.productName},#{codeAttr.productNo},#{codeAttr.barCode},#{codeAttr.productCategory},
+            #{codeAttr.productUnit},#{codeAttr.batchId},#{codeAttr.batchNo},#{codeAttr.productIntroduce},#{codeAttr.remark},#{codeAttr.inputBy},#{codeAttr.inputTime},
+            #{codeAttr.createUser},#{codeAttr.createTime},#{codeAttr.updateUser},#{codeAttr.updateTime})
+        </foreach>
+    </insert>
 </mapper>

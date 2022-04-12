@@ -114,4 +114,11 @@ public interface IStorageInService {
     long insertStorageInForBack(StorageBack storageBack);
 
     void unBindStorageInByInId(Long companyId, Long inId);
+
+    /**
+     * 批量新增入库数据
+     * @param listStorageIn
+     * @return
+     */
+    int insertStorageInAll(List<StorageIn> listStorageIn);
 }

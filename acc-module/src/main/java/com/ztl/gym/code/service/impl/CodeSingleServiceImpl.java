@@ -1,9 +1,6 @@
 package com.ztl.gym.code.service.impl;
 
-import com.ztl.gym.code.domain.Code;
-import com.ztl.gym.code.domain.CodeRule;
-import com.ztl.gym.code.domain.CodeSequenceNew;
-import com.ztl.gym.code.domain.CodeSingle;
+import com.ztl.gym.code.domain.*;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
 import com.ztl.gym.code.service.ICodeAttrService;
@@ -319,8 +316,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @return
      */
     @Override
-    public int insertCodeAll(List<Code> listCode) {
-        return codeMapper.insertCodeAll(listCode);
+    public int insertCodeAll(List<Code> listCode, Long companyId) {
+        return codeMapper.insertCodeAll(listCode,companyId);
     }
-
 }

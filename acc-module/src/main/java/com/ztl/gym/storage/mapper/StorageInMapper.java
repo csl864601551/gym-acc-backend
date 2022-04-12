@@ -97,4 +97,11 @@ public interface StorageInMapper
     Long selectInIdByCode(Map<String, Object> map);
 
     void deleteInCodeFlowByInId(Map<String, Object> map);
+
+    /**
+     * 批量新增入库数据
+     * @param listStorageIn
+     * @return
+     */
+    int insertStorageInAll(@Param("listStorageIn") List<StorageIn> listStorageIn);
 }

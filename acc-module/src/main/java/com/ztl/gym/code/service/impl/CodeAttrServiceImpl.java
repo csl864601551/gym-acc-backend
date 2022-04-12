@@ -115,4 +115,14 @@ public class CodeAttrServiceImpl implements ICodeAttrService
     public int updateCodeAttrBatch(List<CodeAttr> attrList) {
         return codeAttrMapper.updateCodeAttrBatch(attrList);
     }
+
+    /**
+     * 批量新增CodeAttr表数据
+     * @param listCodeAttr
+     * @return
+     */
+    @Override
+    public int insertCodeAttrAll(List<CodeAttr> listCodeAttr) {
+        return codeAttrMapper.insertCodeAttrAll(listCodeAttr);
+    }
 }

@@ -72,4 +72,13 @@
         VALUES (#{companyId},#{boxCode}, #{codeIndex}, #{productLine}, #{boxNum}, #{printStatus}, #{productName}, #{productModel}, #{batchName}, #{produceDate}, #{codeCount}, #{grossWeight}, #{netWeight}, #{orderNo}, #{barCode});
     </insert>
 
+    <insert id="insertPrintAll">
+        INSERT INTO t_print_data( company_id,box_code, code_index, product_line, box_num, print_status,
+                                  product_name, product_model, batch_name, produce_date, code_count, gross_weight, net_weight, order_no, bar_code)
+        VALUES
+        <foreach collection="listPrint" item="print" separator=",">
+            (#{print.companyId},#{print.boxCode}, #{print.codeIndex}, #{print.productLine}, #{print.boxNum}, #{print.printStatus},
+             #{print.productName}, #{print.productModel}, #{print.batchName}, #{print.produceDate}, #{print.codeCount}, #{print.grossWeight}, #{print.netWeight}, #{print.orderNo}, #{print.barCode})
+        </foreach>
+    </insert>
 </mapper>

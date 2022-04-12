@@ -23,6 +23,9 @@ import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
+import com.ztl.gym.print.domain.PrintData;
+import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.service.IStorageInService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +56,8 @@ public class CodeSingleController extends BaseController {
     private ICodeService codeService;
     @Autowired
     private ICodeAttrService codeAttrService;
+    @Autowired
+    private IStorageInService storageInService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -210,6 +218,7 @@ public class CodeSingleController extends BaseController {
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult insertCode(@RequestBody Map<String, Object> lsCode) {
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         List<Map<String, Object>> listObj = (List<Map<String, Object>>) lsCode.get("codeData");
         //设置类型
         List<Code> listCode = new ArrayList<>();
@@ -231,7 +240,7 @@ public class CodeSingleController extends BaseController {
         }
         if (listCode.size() > 0) {
             //新增Code数据
-            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode);
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
             if(listCode.size() == retInsertCodeCount) {
                 return AjaxResult.success("标识数据同步成功");
             } else {
@@ -239,6 +248,117 @@ public class CodeSingleController extends BaseController {
             }
         } else {
             throw new CustomException("暂无需要同步的单码数据！");
+        }
+    }
+
+
+    @PostMapping("/insertAllData")
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult insertAllData(@RequestBody Map<String, Object> data) throws ParseException {
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        List<Map<String, Object>> listCodeObj = (List<Map<String, Object>>) data.get("codeData");
+        List<Map<String, Object>> listCodeAttrData = (List<Map<String, Object>>) data.get("codeAttrData");
+        List<Map<String, Object>> listStorageInData = (List<Map<String, Object>>) data.get("storageInData");
+        List<Map<String, Object>> listPrintData = (List<Map<String, Object>>) data.get("printData");
+        //设置类型
+        List<Code> listCode = new ArrayList<>();
+        for(Object obj : listCodeObj) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            Code code = new Code();
+            code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
+            code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            code.setCode(ob.get("code").toString());
+            code.setCodeType(ob.get("codeType").toString());
+            if(ob.get("storageType") !=null) {
+                code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
+            }
+            if(ob.get("storageRecordId") !=null) {
+                code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
+            }
+            if(ob.get("pCode") !=null) {
+                code.setpCode(ob.get("pCode").toString());
+            }
+            if(ob.get("pCode") !=null) {
+                code.setpCode(ob.get("pCode").toString());
+            }
+            if(ob.get("codeAttrId") !=null) {
+                code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
+            }
+            listCode.add(code);
+        }
+        List<CodeAttr> listCodeAttr = new ArrayList<>();
+        for(Object obj : listCodeAttrData) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            CodeAttr codeAttr = new CodeAttr();
+            codeAttr.setId(Long.valueOf(ob.get("id").toString()));
+            codeAttr.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            codeAttr.setProductId(Long.valueOf(ob.get("productId").toString()));
+            codeAttr.setProductNo(ob.get("productNo").toString());
+            codeAttr.setProductName(ob.get("productName").toString());
+            codeAttr.setBatchId(Long.valueOf(ob.get("batchId").toString()));
+            codeAttr.setBatchNo(ob.get("batchNo").toString());
+            listCodeAttr.add(codeAttr);
+        }
+        List<StorageIn> listStorageIn = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        for(Object obj : listStorageInData) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            StorageIn storageIn = new StorageIn();
+            storageIn.setId(Long.valueOf(ob.get("id").toString()));
+            storageIn.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            storageIn.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
+            storageIn.setStatus(Integer.valueOf(ob.get("status").toString()));
+            storageIn.setInType(Integer.valueOf(ob.get("inType").toString()));
+            storageIn.setInNo(ob.get("inNo").toString());
+            storageIn.setProductId(Long.valueOf(ob.get("productId").toString()));
+            storageIn.setInNum(Long.valueOf(ob.get("inNum").toString()));
+            storageIn.setActInNum(Long.valueOf(ob.get("actInNum").toString()));
+            storageIn.setStorageTo(Long.valueOf(ob.get("storageTo").toString()));
+            storageIn.setToStorageId(Long.valueOf(ob.get("toStorageId").toString()));
+            storageIn.setCreateUser(Long.valueOf(ob.get("createUser").toString()));
+            storageIn.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("createTime").toString()));
+            storageIn.setUpdateUser(Long.valueOf(ob.get("updateUser").toString()));
+            storageIn.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("updateTime").toString()));
+            storageIn.setInTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("inTime").toString()));
+            listStorageIn.add(storageIn);
+        }
+        List<PrintData> listPrint = new ArrayList<>();
+        for(Object obj : listPrintData) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            PrintData printData = new PrintData();
+            printData.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            printData.setBoxCode(ob.get("boxCode").toString());
+            printData.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
+            printData.setPrintStatus(Integer.valueOf(ob.get("printStatus").toString()));
+            printData.setProductLine(ob.get("productLine").toString());
+            printData.setBoxNum(ob.get("productLine").toString());
+            printData.setProductName(ob.get("productName").toString());
+            printData.setProductModel(ob.get("productModel").toString());
+            printData.setBatchName(ob.get("batchName").toString());
+            printData.setProduceDate(ob.get("produceDate").toString());
+            printData.setCodeCount(ob.get("codeCount").toString());
+            printData.setGrossWeight(ob.get("grossWeight").toString());
+            printData.setNetWeight(ob.get("netWeight").toString());
+            printData.setOrderNo(ob.get("orderNo").toString());
+            printData.setBarCode(ob.get("barCode").toString());
+            listPrint.add(printData);
+        }
+        //判断是否有数据
+        if (listCode.size() > 0 && listCodeAttr.size() > 0 && listStorageIn.size() > 0 && listPrint.size() > 0) {
+            //新增Code数据
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
+            int retInsertCodeAttrCount = codeAttrService.insertCodeAttrAll(listCodeAttr);
+            int retInsertStorageInCount = storageInService.insertStorageInAll(listStorageIn);
+            int retInsertPrintCount = commonService.insertPrintAll(listPrint);
+            if(listCode.size() == retInsertCodeCount && listCodeAttr.size() == retInsertCodeAttrCount &&
+               listCodeAttrData.size() == retInsertStorageInCount && listPrint.size() == retInsertPrintCount) {
+                return AjaxResult.success("生产数据同步成功");
+            } else {
+                return AjaxResult.success("生产数据部分同步成功");
+            }
+        } else {
+            throw new CustomException("暂无需要同步的生产数据！");
         }
     }
 

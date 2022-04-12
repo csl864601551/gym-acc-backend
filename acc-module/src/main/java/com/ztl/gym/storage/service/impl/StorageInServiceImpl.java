@@ -337,4 +337,14 @@ public class StorageInServiceImpl implements IStorageInService {
         storageInMapper.deleteStorageInById(inId);
     }
 
+    /**
+     * 批量新增入库数据
+     * @param listStorageIn
+     * @return
+     */
+    @Override
+    public int insertStorageInAll(List<StorageIn> listStorageIn) {
+        return storageInMapper.insertStorageInAll(listStorageIn);
+    }
+
 }

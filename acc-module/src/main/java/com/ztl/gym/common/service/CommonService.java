@@ -2,6 +2,7 @@ package com.ztl.gym.common.service;
 
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.print.domain.PrintData;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -94,4 +95,6 @@ CommonService {
     void downloadTXT(String fileName, String content, HttpServletResponse response);
 
     void insertPrintData(Map<String, Object> mapTemp);
+
+    int insertPrintAll(List<PrintData> listPrint);
 }
