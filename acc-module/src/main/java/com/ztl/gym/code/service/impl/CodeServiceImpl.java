@@ -1,6 +1,8 @@
 package com.ztl.gym.code.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.ztl.gym.code.domain.*;
+import com.ztl.gym.code.domain.vo.CRMInfoVo;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.mapper.CodeRecordMapper;
 import com.ztl.gym.code.mapper.CodeSingleMapper;
@@ -13,6 +15,7 @@ import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.product.domain.ProductStockFlow;
 import com.ztl.gym.product.service.IProductStockFlowService;
 import com.ztl.gym.storage.domain.vo.FlowVo;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 码 Service业务层处理
@@ -576,6 +580,43 @@ public class CodeServiceImpl implements ICodeService {
 
         int res = codeMapper.insertCodeForBatch(codeList);
 
+    }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<CRMInfoVo> getCRMInfo(String preFixUrl,Date beginTime, Date endTime) {
+        long companyId=SecurityUtils.getLoginUserTopCompanyId();
+        List<CRMInfoVo> crmInfo = codeMapper.getCRMInfo(preFixUrl,companyId,beginTime,endTime);
+
+
+        //2022-04-11效率问题弃用
+//        List<String> codeStrs = crmInfo.stream().map(CRMInfoVo::getCode).collect(Collectors.toList());
+//        Map<String,Object> codeParam = new HashMap<>();
+//        codeParam.put("companyId",companyId);
+//        codeParam.put("codes",codeStrs);
+//        List<Code> lists= selectCodes(codeParam);
+//        List<CRMInfoVo> commonList = crmInfo.stream()
+//             .map((uA) -> {
+//                     return lists.stream()
+//                             .filter((uB) -> {
+//                                     return StringUtils.equals(uB.getCode(), uA.getCode());
+//                                 })
+//                             .map((uB) -> {
+//                                 uA.setProductName(uB.getCodeAttr().getProduct().getProductName());
+//                                 uA.setBarCode(uB.getCodeAttr().getProduct().getBarCode());
+//                                 uA.setProductNo(uB.getCodeAttr().getProduct().getProductNo());
+//                                 uA.setCode(uB.getCode());
+//                                 uA.setAttributeList(uB.getCodeAttr().getProduct().getAttributeList());
+//                                 return uA;
+//                             })
+//                             .collect(Collectors.toList());
+//                 }) // 结果类型 Steam<List<Hero>>
+//             .flatMap(List::stream) // 结果类型 Steam<Hero>
+//             .collect(Collectors.toList()); // 结果类型 List<Hero>
+//        System.out.println(JSONUtil.toJsonStr(commonList));
+
+
+        return crmInfo;
     }
 
 }
