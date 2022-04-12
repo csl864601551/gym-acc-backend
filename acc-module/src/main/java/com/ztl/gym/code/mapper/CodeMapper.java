@@ -203,7 +203,7 @@ public interface CodeMapper {
 
     int insertCodeAll(@Param("listCode") List<Code> listCode);
 
-    List<CRMInfoVo> getCRMInfo(@Param("companyId") Long companyId, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
+    List<CRMInfoVo> getCRMInfo(@Param("preFixUrl") String preFixUrl,@Param("companyId") Long companyId, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
 
     List<CRMAttrList> getCRMAttributeList(Long id);
 

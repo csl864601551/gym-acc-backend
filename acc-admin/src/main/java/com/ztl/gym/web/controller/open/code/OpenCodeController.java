@@ -12,6 +12,7 @@ import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -27,6 +28,8 @@ public class OpenCodeController {
     @Autowired
     private CommonService commonService;
 
+    @Value("${ruoyi.preFixUrl}")
+    private String preFixUrl;
     /**
      * 获取所有码
      *
@@ -89,7 +92,7 @@ public class OpenCodeController {
         } catch (Exception e) {
             throw new CustomException("请输入正确时间范围！", HttpStatus.ERROR);
         }
-        List<CRMInfoVo> crmInfo = codeService.getCRMInfo(beginTime,endTime);
+        List<CRMInfoVo> crmInfo = codeService.getCRMInfo(preFixUrl,beginTime,endTime);
         if (crmInfo.size() > 0) {
             return AjaxResult.success(crmInfo);
         } else {

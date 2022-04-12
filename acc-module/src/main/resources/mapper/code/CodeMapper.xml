@@ -321,24 +321,18 @@
     </select>
     <select id="getCRMInfo" resultMap="CRMResult">
         SELECT
-        ocf.create_time as out_time, min(icf.create_time) as in_time,ocf.code as code,so.storage_to as dept_no,
+        ocf.create_time as out_time, min(icf.create_time) as in_time,CONCAT(#{preFixUrl},ocf.code) as code,so.storage_to as dept_no,
                sd.dept_name,p.product_no,p.product_name,p.bar_code,so.product_id
         FROM
-        `t_out_code_flow_102` AS ocf
-        left join t_code_102 c on c.`code`=ocf.code
-        LEFT JOIN t_in_code_flow_102 icf ON icf.code = ocf.code
+        `t_out_code_flow_${companyId}` AS ocf
+        left join t_code_${companyId} c on c.`code`=ocf.code
+        LEFT JOIN t_in_code_flow_${companyId} icf ON icf.code = ocf.code
         left join t_storage_out so on ocf.storage_record_id=so.id
         left join sys_dept sd on sd.dept_id=so.storage_to
         left join t_product p on p.id=so.product_id
         <where>
             <if test="beginTime != null ">and ocf.create_time &gt;= #{beginTime}</if>
             <if test="endTime != null ">and ocf.create_time &lt;= #{endTime}</if>
-<!--            <if test="beginTime != null and beginTime != ''">&lt;!&ndash; 开始时间检索 &ndash;&gt;-->
-<!--                AND date_format(ocf.create_time,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')-->
-<!--            </if>-->
-<!--            <if test="endTime != null and endTime != ''">&lt;!&ndash; 结束时间检索 &ndash;&gt;-->
-<!--                AND date_format(ocf.create_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')-->
-<!--            </if>-->
         </where>
         group by ocf.code
     </select>

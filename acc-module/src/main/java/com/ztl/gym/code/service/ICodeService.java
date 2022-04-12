@@ -170,5 +170,5 @@ public interface ICodeService {
      */
     void createCodeSingleByRule(Long companyId, CodeRule codeRule);
 
-    List<CRMInfoVo> getCRMInfo(Date beginTime, Date endTime);
+    List<CRMInfoVo> getCRMInfo(String preFixUrl,Date beginTime, Date endTime);
 }
