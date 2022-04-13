@@ -24,7 +24,9 @@ import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.print.domain.PrintData;
+import com.ztl.gym.storage.domain.InCodeFlow;
 import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.service.IStorageInService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,6 +263,7 @@ public class CodeSingleController extends BaseController {
         List<Map<String, Object>> listCodeAttrData = (List<Map<String, Object>>) data.get("codeAttrData");
         List<Map<String, Object>> listStorageInData = (List<Map<String, Object>>) data.get("storageInData");
         List<Map<String, Object>> listPrintData = (List<Map<String, Object>>) data.get("printData");
+        List<Map<String, Object>> listInCodeFlow = (List<Map<String, Object>>) data.get("inCodeFlowData");
         //设置类型
         List<Code> listCode = new ArrayList<>();
         for(Object obj : listCodeObj) {
@@ -270,14 +273,14 @@ public class CodeSingleController extends BaseController {
             code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
             code.setCode(ob.get("code").toString());
             code.setCodeType(ob.get("codeType").toString());
+            code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
+            code.setStatus(Integer.valueOf(ob.get("status").toString()));
+            code.setSingleId(Long.valueOf(ob.get("singleId").toString()));
             if(ob.get("storageType") !=null) {
                 code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
             }
             if(ob.get("storageRecordId") !=null) {
                 code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
-            }
-            if(ob.get("pCode") !=null) {
-                code.setpCode(ob.get("pCode").toString());
             }
             if(ob.get("pCode") !=null) {
                 code.setpCode(ob.get("pCode").toString());
@@ -344,15 +347,27 @@ public class CodeSingleController extends BaseController {
             printData.setBarCode(ob.get("barCode").toString());
             listPrint.add(printData);
         }
+        List<InCodeFlow> listFlow = new ArrayList<>();
+        for(Object obj : listInCodeFlow) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            InCodeFlow flow = new InCodeFlow();
+            flow.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            flow.setCode(ob.get("code").toString());
+            flow.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
+            flow.setCreateUser(Long.valueOf(ob.get("createUser").toString()));
+            flow.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("createTime").toString()));
+            listFlow.add(flow);
+        }
         //判断是否有数据
-        if (listCode.size() > 0 && listCodeAttr.size() > 0 && listStorageIn.size() > 0 && listPrint.size() > 0) {
+        if (listCode.size() > 0 && listCodeAttr.size() > 0 && listStorageIn.size() > 0 && listPrint.size() > 0 && listFlow.size() > 0) {
             //新增Code数据
             int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
             int retInsertCodeAttrCount = codeAttrService.insertCodeAttrAll(listCodeAttr);
             int retInsertStorageInCount = storageInService.insertStorageInAll(listStorageIn);
             int retInsertPrintCount = commonService.insertPrintAll(listPrint);
+            int retInsertInCodeFlowCount = storageInService.insertInCodeFlowAll(listFlow,companyId);
             if(listCode.size() == retInsertCodeCount && listCodeAttr.size() == retInsertCodeAttrCount &&
-               listCodeAttrData.size() == retInsertStorageInCount && listPrint.size() == retInsertPrintCount) {
+               listCodeAttrData.size() == retInsertStorageInCount && listPrint.size() == retInsertPrintCount && listFlow.size() == retInsertInCodeFlowCount) {
                 return AjaxResult.success("生产数据同步成功");
             } else {
                 return AjaxResult.success("生产数据部分同步成功");

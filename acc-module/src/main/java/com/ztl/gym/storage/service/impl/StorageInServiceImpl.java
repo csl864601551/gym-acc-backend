@@ -9,6 +9,7 @@ import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.service.IProductStockService;
+import com.ztl.gym.storage.domain.InCodeFlow;
 import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.StorageTransfer;
@@ -345,6 +346,15 @@ public class StorageInServiceImpl implements IStorageInService {
     @Override
     public int insertStorageInAll(List<StorageIn> listStorageIn) {
         return storageInMapper.insertStorageInAll(listStorageIn);
+    }
+    /**
+     * 批量新增流转数据
+     * @param listFlowVo,companyId
+     * @return
+     */
+    @Override
+    public int insertInCodeFlowAll(List<InCodeFlow> listFlowVo, Long companyId) {
+        return storageInMapper.insertInCodeFlowAll(listFlowVo,companyId);
     }
 
 }

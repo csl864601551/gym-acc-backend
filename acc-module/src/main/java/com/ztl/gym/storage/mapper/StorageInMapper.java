@@ -3,6 +3,7 @@ package com.ztl.gym.storage.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.storage.domain.InCodeFlow;
 import com.ztl.gym.storage.domain.StorageIn;
 import com.ztl.gym.storage.domain.StorageOut;
 import org.apache.ibatis.annotations.Param;
@@ -104,4 +105,12 @@ public interface StorageInMapper
      * @return
      */
     int insertStorageInAll(@Param("listStorageIn") List<StorageIn> listStorageIn);
+
+    /**
+     * 批量新增流转数据
+     * @param listFlowVo
+     * @param companyId
+     * @return
+     */
+    int insertInCodeFlowAll(@Param("listFlowVo") List<InCodeFlow> listFlowVo, @Param("companyId") Long companyId);
 }

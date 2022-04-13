@@ -3,8 +3,10 @@ package com.ztl.gym.storage.service;
 import java.util.List;
 import java.util.Map;
 
+import com.ztl.gym.storage.domain.InCodeFlow;
 import com.ztl.gym.storage.domain.StorageBack;
 import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.domain.vo.StorageVo;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -121,4 +123,11 @@ public interface IStorageInService {
      * @return
      */
     int insertStorageInAll(List<StorageIn> listStorageIn);
+
+    /**
+     * 流转记录数据
+     * @param listFlowVo
+     * @return
+     */
+    int insertInCodeFlowAll(List<InCodeFlow> listFlowVo,Long companyId);
 }

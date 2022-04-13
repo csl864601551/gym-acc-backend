@@ -370,4 +370,12 @@
             #{storageIn.updateUser},#{storageIn.updateTime} )
         </foreach>
     </insert>
+
+    <insert id="insertInCodeFlowAll">
+        insert into t_in_code_flow_${companyId}(company_id,code,storage_record_id,create_user,create_time)
+        values
+        <foreach collection="listFlowVo" item="flow" separator=",">
+            ( #{flow.companyId},#{flow.code},#{flow.storageRecordId},#{flow.createUser},#{flow.createTime} )
+        </foreach>
+    </insert>
 </mapper>
