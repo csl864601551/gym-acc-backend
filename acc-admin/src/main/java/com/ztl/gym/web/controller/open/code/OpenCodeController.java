@@ -71,7 +71,7 @@ public class OpenCodeController {
     }
 
     /**
-     * 扫码解绑
+     * 对接CRM开放接口
      *
      * @return
      */

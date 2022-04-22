@@ -100,6 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/login", "/captchaImage").anonymous()
                 .antMatchers("/open/system/login").anonymous()
                 .antMatchers("/open/system/pdaUpdate").anonymous()
+                .antMatchers("/open/code/getCRMInfo").anonymous()
                 .antMatchers("/order/**").anonymous() //fixme
                 .antMatchers(
                         HttpMethod.GET,

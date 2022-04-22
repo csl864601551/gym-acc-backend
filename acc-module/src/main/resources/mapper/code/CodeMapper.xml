@@ -316,7 +316,7 @@
         <include refid="selectCodeVo"/>
         <where>
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
-            <if test="codeAcc != null  and codes != ''">and code_acc = #{codeAcc}</if>
+            <if test="codeAcc != null  and codeAcc != ''">and code_acc = #{codeAcc}</if>
         </where>
     </select>
     <select id="getCRMInfo" resultMap="CRMResult">
