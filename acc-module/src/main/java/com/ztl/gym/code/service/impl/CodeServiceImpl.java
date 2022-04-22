@@ -585,7 +585,7 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     public List<CRMInfoVo> getCRMInfo(String preFixUrl,Date beginTime, Date endTime) {
-        long companyId=SecurityUtils.getLoginUserTopCompanyId();
+        long companyId=CodeRuleUtils.getCompanyIdByCode(preFixUrl);
         List<CRMInfoVo> crmInfo = codeMapper.getCRMInfo(preFixUrl,companyId,beginTime,endTime);
 
 
