@@ -344,10 +344,10 @@
     </select>
 
     <insert id="insertCodeAll">
-        insert into t_code_${companyId}(code_index, company_id, tenant_id, storage_type, storage_record_id, status, code, code_acc, code_type, p_code, code_attr_id)
+        insert into t_code_${companyId}(code_index, company_id, tenant_id, storage_type, storage_record_id, status, code, code_acc, code_type, p_code, code_attr_id, single_id)
         values
         <foreach collection="listCode" item="code" separator=",">
-            ( #{code.codeIndex},  #{code.companyId},  #{code.tenantId}, #{code.storageType}, #{code.storageRecordId}, #{code.status}, #{code.code}, #{code.codeAcc}, #{code.codeType}, #{code.pCode}, #{code.codeAttrId})
+            ( #{code.codeIndex},  #{code.companyId},  #{code.tenantId}, #{code.storageType}, #{code.storageRecordId}, #{code.status}, #{code.code}, #{code.codeAcc}, #{code.codeType}, #{code.pCode}, #{code.codeAttrId}, #{code.singleId})
         </foreach>
     </insert>
 </mapper>

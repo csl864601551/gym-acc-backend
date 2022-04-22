@@ -316,7 +316,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @return
      */
     @Override
-    public int insertCodeAll(List<Code> listCode, Long companyId) {
+    public int insertCodeAll(List<Map<String, Object>> listCode, Long companyId) {
         return codeMapper.insertCodeAll(listCode,companyId);
     }
 }

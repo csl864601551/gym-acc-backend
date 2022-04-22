@@ -204,7 +204,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			when d.STATUS = 1 then '异常' else '' end as status
 		FROM
 		sys_dept d
-		WHERE d.parent_id > 0 AND d.del_flag = '0'
+		WHERE d.del_flag = '0'
 		<if test="parentId != null and parentId != 0">
 			AND parent_id = #{parentId}
 		</if>

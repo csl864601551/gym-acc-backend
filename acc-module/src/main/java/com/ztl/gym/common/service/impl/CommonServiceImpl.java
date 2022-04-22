@@ -352,7 +352,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public int insertPrintAll(List<PrintData> listPrint) {
+    public int insertPrintAll(List<Map<String, Object>> listPrint) {
         return commonMapper.insertPrintAll(listPrint);
     }
 }

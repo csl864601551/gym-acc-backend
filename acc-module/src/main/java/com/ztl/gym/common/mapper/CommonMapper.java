@@ -55,5 +55,5 @@ public interface CommonMapper {
 
     void insertPrintData(Map<String, Object> mapTemp);
 
-    int insertPrintAll(@Param("listPrint") List<PrintData> listPrint);
+    int insertPrintAll(@Param("listPrint") List<Map<String, Object>> listPrint);
 }
