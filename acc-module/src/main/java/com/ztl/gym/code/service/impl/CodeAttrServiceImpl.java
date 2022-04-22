@@ -1,6 +1,8 @@
 package com.ztl.gym.code.service.impl;
 
 import java.util.List;
+import java.util.Map;
+
 import com.ztl.gym.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,7 +124,7 @@ public class CodeAttrServiceImpl implements ICodeAttrService
      * @return
      */
     @Override
-    public int insertCodeAttrAll(List<CodeAttr> listCodeAttr) {
+    public int insertCodeAttrAll(List<Map<String, Object>> listCodeAttr) {
         return codeAttrMapper.insertCodeAttrAll(listCodeAttr);
     }
 }

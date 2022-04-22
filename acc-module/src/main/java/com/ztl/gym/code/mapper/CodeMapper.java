@@ -202,7 +202,7 @@ public interface CodeMapper {
 
     void deletePCodeByAttrId(@Param("companyId") Long companyId, @Param("codeAttrId") Long attrId);
 
-    int insertCodeAll(@Param("listCode") List<Code> listCode, @Param("companyId") Long companyId);
+    int insertCodeAll(@Param("listCode") List<Map<String, Object>> listCode, @Param("companyId") Long companyId);
 
     List<CRMInfoVo> getCRMInfo(@Param("preFixUrl") String preFixUrl,@Param("companyId") Long companyId, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
 

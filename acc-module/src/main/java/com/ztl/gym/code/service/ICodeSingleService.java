@@ -105,5 +105,5 @@ public interface ICodeSingleService {
      * @param listCode,companyId
      * @return
      */
-    int insertCodeAll(List<Code> listCode, Long companyId);
+    int insertCodeAll(List<Map<String, Object>> listCode, Long companyId);
 }

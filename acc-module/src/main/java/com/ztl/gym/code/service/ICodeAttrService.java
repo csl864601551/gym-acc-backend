@@ -1,6 +1,7 @@
 package com.ztl.gym.code.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ztl.gym.code.domain.CodeAttr;
 
@@ -79,5 +80,5 @@ public interface ICodeAttrService {
      * @param listCodeAttr
      * @return
      */
-    public int insertCodeAttrAll(List<CodeAttr> listCodeAttr);
+    public int insertCodeAttrAll(List<Map<String, Object>> listCodeAttr);
 }

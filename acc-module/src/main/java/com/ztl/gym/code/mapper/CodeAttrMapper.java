@@ -85,5 +85,5 @@ public interface CodeAttrMapper {
      * @param listCodeAttr
      * @return
      */
-    int insertCodeAttrAll(@Param("listCodeAttr") List<CodeAttr> listCodeAttr);
+    int insertCodeAttrAll(@Param("listCodeAttr") List<Map<String, Object>> listCodeAttr);
 }

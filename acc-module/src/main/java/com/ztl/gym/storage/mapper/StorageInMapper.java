@@ -104,7 +104,7 @@ public interface StorageInMapper
      * @param listStorageIn
      * @return
      */
-    int insertStorageInAll(@Param("listStorageIn") List<StorageIn> listStorageIn);
+    int insertStorageInAll(@Param("listStorageIn") List<Map<String, Object>> listStorageIn);
 
     /**
      * 批量新增流转数据
@@ -112,5 +112,5 @@ public interface StorageInMapper
      * @param companyId
      * @return
      */
-    int insertInCodeFlowAll(@Param("listFlowVo") List<InCodeFlow> listFlowVo, @Param("companyId") Long companyId);
+    int insertInCodeFlowAll(@Param("listFlowVo") List<Map<String, Object>> listFlowVo, @Param("companyId") Long companyId);
 }
