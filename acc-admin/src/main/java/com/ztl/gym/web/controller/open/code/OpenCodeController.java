@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/open/code")
@@ -39,6 +37,8 @@ public class OpenCodeController {
     public AjaxResult getCodes(@RequestBody Map<String, Object> map) {
         map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
         List<Code> codeList = codeService.selectCodeListByCodeOrIndex(map);
+        List<Map<String,Object>> res = new ArrayList<>();
+        Map<String,Object> temp=new HashMap<>();
         if (codeList.size() > 0) {
             String code = codeList.get(0).getCode();
             if (!commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), Integer.valueOf(map.get("storageType").toString()), code)) {
@@ -52,8 +52,25 @@ public class OpenCodeController {
                     typeName = "单码";
                 }
                 codes.setCodeTypeName(typeName);
+                temp=new HashMap<>();
+                temp.put("codeIndex",codes.getCodeIndex());
+                temp.put("companyId",codes.getCompanyId());
+                temp.put("code",codes.getCode());
+                temp.put("codeType",codes.getCodeType());
+                temp.put("pCode",codes.getpCode());
+                temp.put("codeTypeName",typeName);
+                if (codes.getCodeAttr()!=null){
+                    temp.put("productId",codes.getCodeAttr().getProductId());
+                    temp.put("productName",codes.getCodeAttr().getProductName());
+                    temp.put("productNo",codes.getCodeAttr().getProductNo());
+                }else{
+                    temp.put("productId","0");
+                    temp.put("productName","");
+                    temp.put("productNo","");
+                }
+                res.add(temp);
             }
-            return AjaxResult.success(codeList);
+            return AjaxResult.success(res);
         } else {
             throw new CustomException("未查询到码数据！", HttpStatus.ERROR);
         }
