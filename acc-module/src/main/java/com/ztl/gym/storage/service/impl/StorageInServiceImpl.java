@@ -344,7 +344,7 @@ public class StorageInServiceImpl implements IStorageInService {
      * @return
      */
     @Override
-    public int insertStorageInAll(List<Map<String, Object>> listStorageIn) {
+    public int insertStorageInAll(List<StorageIn> listStorageIn) {
         return storageInMapper.insertStorageInAll(listStorageIn);
     }
     /**
@@ -353,7 +353,7 @@ public class StorageInServiceImpl implements IStorageInService {
      * @return
      */
     @Override
-    public int insertInCodeFlowAll(List<Map<String, Object>> listFlowVo, Long companyId) {
+    public int insertInCodeFlowAll(List<InCodeFlow> listFlowVo, Long companyId) {
         return storageInMapper.insertInCodeFlowAll(listFlowVo,companyId);
     }
 

@@ -96,5 +96,5 @@ CommonService {
 
     void insertPrintData(Map<String, Object> mapTemp);
 
-    int insertPrintAll(List<Map<String, Object>> listPrint);
+    int insertPrintAll(List<PrintData> listPrint);
 }

@@ -80,5 +80,5 @@ public interface ICodeAttrService {
      * @param listCodeAttr
      * @return
      */
-    public int insertCodeAttrAll(List<Map<String, Object>> listCodeAttr);
+    public int insertCodeAttrAll(List<CodeAttr> listCodeAttr);
 }

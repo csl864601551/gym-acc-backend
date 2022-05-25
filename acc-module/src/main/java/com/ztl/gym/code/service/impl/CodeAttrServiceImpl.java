@@ -124,7 +124,7 @@ public class CodeAttrServiceImpl implements ICodeAttrService
      * @return
      */
     @Override
-    public int insertCodeAttrAll(List<Map<String, Object>> listCodeAttr) {
+    public int insertCodeAttrAll(List<CodeAttr> listCodeAttr) {
         return codeAttrMapper.insertCodeAttrAll(listCodeAttr);
     }
 }

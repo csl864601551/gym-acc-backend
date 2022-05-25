@@ -122,12 +122,12 @@ public interface IStorageInService {
      * @param listStorageIn
      * @return
      */
-    int insertStorageInAll(List<Map<String, Object>> listStorageIn);
+    int insertStorageInAll(List<StorageIn> listStorageIn);
 
     /**
      * 流转记录数据
      * @param listFlowVo
      * @return
      */
-    int insertInCodeFlowAll(List<Map<String, Object>> listFlowVo,Long companyId);
+    int insertInCodeFlowAll(List<InCodeFlow> listFlowVo,Long companyId);
 }

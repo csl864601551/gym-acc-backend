@@ -28,10 +28,7 @@ import javax.annotation.Resource;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -316,7 +313,28 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
      * @return
      */
     @Override
-    public int insertCodeAll(List<Map<String, Object>> listCode, Long companyId) {
+    public int insertCodeAll(List<Code> listCode, Long companyId) {
         return codeMapper.insertCodeAll(listCode,companyId);
+    }
+
+    @Override
+    public int insertCodeSequenceNew(Map<String, Object> stringObjectMap) {
+        Integer retNum = 0;
+        CodeSequenceNew codeSequenceNew = new CodeSequenceNew();
+        codeSequenceNew.setCompanyId(SecurityUtils.getLoginUserCompany().getDeptId());
+        codeSequenceNew.setCodeNo(stringObjectMap.get("codeNo").toString());
+        codeSequenceNew.setCodeDate(stringObjectMap.get("codeDate").toString());
+        codeSequenceNew.setLineNo(stringObjectMap.get("lineNo").toString());
+        codeSequenceNew.setFactoryNo(stringObjectMap.get("factoryNo").toString());
+        List<CodeSequenceNew> list = codeSequenceNewService.selectCodeSequenceNewList(codeSequenceNew);
+        codeSequenceNew.setCurrentValue(Long.parseLong(stringObjectMap.get("currentValue").toString()) +1);
+        if (list.size() > 0) {
+            codeSequenceNew.setId(list.get(0).getId());
+            retNum = codeSequenceNewService.updateCodeSequenceNew(codeSequenceNew);
+        } else {
+            codeSequenceNew.setIncrement(1L);
+            retNum = codeSequenceNewService.insertCodeSequenceNew(codeSequenceNew);
+        }
+        return retNum;
     }
 }
