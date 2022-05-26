@@ -6,10 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
@@ -43,23 +45,22 @@ public class ScanRecordController extends BaseController {
     private IProductService tProductService;
 
 
-
     /**
      * 查询扫码记录列表
      */
     @GetMapping("/list")
     public TableDataInfo list(ScanRecord scanRecord) {
-        Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-        if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+        Long company_id = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!company_id.equals(AccConstants.ADMIN_DEPT_ID)) {
             scanRecord.setCompanyId(company_id);
         }
-        if(scanRecord.getCreateUser()==2){
+        if (scanRecord.getCreateUser() == 2) {
             scanRecord.setType("1");
-        }else{
+        } else {
             scanRecord.setCreateUser(null);
             scanRecord.setType("2");
         }
-        if(scanRecord.getParams().size() !=0) {
+        if (scanRecord.getParams().size() != 0) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("beginCreateTime", scanRecord.getParams().get("beginCreateTime") + " 00:00:00.0");
             map.put("endCreateTime", scanRecord.getParams().get("endCreateTime") + " 23:59:59.999");
@@ -96,10 +97,10 @@ public class ScanRecordController extends BaseController {
     @Log(title = "扫码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ScanRecord scanRecord) {
-        if(scanRecord.getProductId()!=null){
-            if(scanRecord.getProductId()>0){
+        if (scanRecord.getProductId() != null) {
+            if (scanRecord.getProductId() > 0) {
                 Product product = tProductService.selectTProductByIdOne(scanRecord.getProductId());
-                if(product!=null){
+                if (product != null) {
                     scanRecord.setProductName(product.getProductName());
                 }
             }
@@ -130,7 +131,13 @@ public class ScanRecordController extends BaseController {
      */
     @GetMapping(value = "/getScanRecordByCode")
     public AjaxResult getScanRecordByCode(@RequestParam("code") String code) {
-        return AjaxResult.success(scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(code.trim()), code.trim()));
+        Long companyId = 0L;
+        try {
+            companyId = CodeRuleUtils.getCompanyIdByCode(code.trim());
+        } catch (Exception e) {
+            throw new CustomException("码格式错误！", HttpStatus.ERROR);
+        }
+        return AjaxResult.success(scanRecordService.getScanRecordByCode(companyId, code.trim()));
     }
 
 
@@ -319,63 +326,62 @@ public class ScanRecordController extends BaseController {
 //    }
 
 
-
     @GetMapping("/getScanRecordXx")
     public AjaxResult getScanRecordXx(ScanRecord scanRecord) {
         logger.info("the method getInfoByKey enter, param is {}", scanRecord);
         try {
             List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
             Map<String, Object> map = new HashMap<String, Object>();
-            Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+            Long company_id = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (!company_id.equals(AccConstants.ADMIN_DEPT_ID)) {
                 scanRecord.setCompanyId(company_id);
             }
-            if(scanRecord.getCreateUser()==2){
+            if (scanRecord.getCreateUser() == 2) {
                 scanRecord.setType("1");
-            }else{
+            } else {
                 scanRecord.setCreateUser(null);
                 scanRecord.setType("2");
             }
             //查询热力图数据
             List<Map<String, Object>> list = scanRecordService.getScanRecordXx(scanRecord);
-            if(list.size()>0){
-                for(int i=0;i<list.size();i++){
+            if (list.size() > 0) {
+                for (int i = 0; i < list.size(); i++) {
                     Map<String, Object> mapinfo = list.get(i);
                     map = new HashMap<String, Object>();
-                    map.put("id",mapinfo.get("id"));
-                    map.put("name",mapinfo.get("product_name"));
+                    map.put("id", mapinfo.get("id"));
+                    map.put("name", mapinfo.get("product_name"));
                     //弹框的数据
                     JSONArray descList = new JSONArray();
                     JSONObject descObject = new JSONObject();
-                    descObject.put("name","标识信息");
-                    descObject.put("value",mapinfo.get("code"));
+                    descObject.put("name", "标识信息");
+                    descObject.put("value", mapinfo.get("code"));
                     descList.add(descObject);
                     descObject = new JSONObject();
-                    descObject.put("name","用户昵称");
-                    descObject.put("value",mapinfo.get("terminal"));
+                    descObject.put("name", "用户昵称");
+                    descObject.put("value", mapinfo.get("terminal"));
                     descList.add(descObject);
                     descObject = new JSONObject();
-                    descObject.put("name","扫码时间");
-                    descObject.put("value",mapinfo.get("create_time").toString());
+                    descObject.put("name", "扫码时间");
+                    descObject.put("value", mapinfo.get("create_time").toString());
                     descList.add(descObject);
                     descObject = new JSONObject();
-                    descObject.put("name","是否窜货");
-                    if(mapinfo.get("mix_type").toString()!=null&&mapinfo.get("mix_type").toString().equals("0")){
-                        descObject.put("value","未窜货");
-                    }else if(mapinfo.get("mix_type").toString()!=null&&mapinfo.get("mix_type").toString().equals("1")){
-                        descObject.put("value","窜货");
+                    descObject.put("name", "是否窜货");
+                    if (mapinfo.get("mix_type").toString() != null && mapinfo.get("mix_type").toString().equals("0")) {
+                        descObject.put("value", "未窜货");
+                    } else if (mapinfo.get("mix_type").toString() != null && mapinfo.get("mix_type").toString().equals("1")) {
+                        descObject.put("value", "窜货");
                     }
                     descList.add(descObject);
                     map.put("desc", JSON.toJSONString(descList));
-                    if(mapinfo.get("photo")!=null){
+                    if (mapinfo.get("photo") != null) {
                         String str[] = mapinfo.get("photo").toString().split(",");
                         List<String> list1 = Arrays.asList(str);
-                        map.put("img",list1.get(0));
-                    }else{
-                        map.put("img",AccConstants.DEFAULT_IMAGE);
+                        map.put("img", list1.get(0));
+                    } else {
+                        map.put("img", AccConstants.DEFAULT_IMAGE);
                     }
-                    map.put("lon",mapinfo.get("longitude"));
-                    map.put("lat",mapinfo.get("latitude"));
+                    map.put("lon", mapinfo.get("longitude"));
+                    map.put("lat", mapinfo.get("latitude"));
                     lists.add(map);
                 }
             }
@@ -392,20 +398,18 @@ public class ScanRecordController extends BaseController {
     }
 
 
-
-
     @GetMapping("/updateScanRecordPrint")
     public AjaxResult updateScanRecordPrint(ScanRecord scanRecord) {
         logger.info("the method getInfoByKey enter, param is {}", scanRecord);
         try {
             //查询热力图数据
             List<Map<String, Object>> list = scanRecordService.getScanRecordXx(scanRecord);
-            if(list.size()>0){
-                for(int i=0;i<list.size();i++){
+            if (list.size() > 0) {
+                for (int i = 0; i < list.size(); i++) {
                     Map<String, Object> mapinfo = list.get(i);
-                    if(mapinfo.get("code")!=null){
-                        Map<String,Object> smxxMap =  scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(mapinfo.get("code").toString().trim()), mapinfo.get("code").toString().trim());
-                        if(smxxMap!=null){
+                    if (mapinfo.get("code") != null) {
+                        Map<String, Object> smxxMap = scanRecordService.getScanRecordByCode(CodeRuleUtils.getCompanyIdByCode(mapinfo.get("code").toString().trim()), mapinfo.get("code").toString().trim());
+                        if (smxxMap != null) {
                             ScanRecord scanRecordUpdate = new ScanRecord();
                             scanRecordUpdate.setCode(mapinfo.get("code").toString());
                             scanRecordUpdate.setProductId(Long.valueOf(smxxMap.get("productId").toString()));

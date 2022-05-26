@@ -527,14 +527,14 @@ public class CodeServiceImpl implements ICodeService {
             code.setCompanyId(companyId);
             Code codeEntity = selectCode(code);//查询码产品基本信息
 
-            if(codeEntity.getStorageRecordId()!=null){
+            if (codeEntity.getStorageRecordId() != null) {
                 //解除库存(t_product_stock、t_product_stock_flow)
                 Long inId = codeEntity.getStorageRecordId(); //查询入库表ID
                 productStockFlowService.unBindProductStockFlowByInId(companyId, inId);
                 //解除物流明细、解除出入库明细(t_in_code_flow、t_storage_in)
                 storageInService.unBindStorageInByInId(companyId, inId);
             }
-            if(codeEntity.getCodeAttrId()!=null){
+            if (codeEntity.getCodeAttrId() != null) {
                 Long attrId = codeEntity.getCodeAttrId();//属性ID
                 //解除码属性(t_code_attr)
                 codeAttrService.deleteCodeAttrById(attrId);
@@ -542,7 +542,7 @@ public class CodeServiceImpl implements ICodeService {
                 unBindCodeByAttrId(companyId, attrId);
             }
             return 1;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException("请输入正确的码！");
         }
     }
@@ -553,6 +553,24 @@ public class CodeServiceImpl implements ICodeService {
         codeMapper.deletePCodeByAttrId(companyId, attrId);
         codeMapper.unBindCodeByAttrId(companyId, attrId);
     }
+
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public void deletePCodeBycode(String codeVal, Long companyId) {
+        Code code = new Code();
+        code.setCode(codeVal);
+        code.setCompanyId(companyId);
+        Code temp = codeMapper.selectCode(code);
+        //判定有单箱关系解除
+        if (temp.getpCode() != null) {
+            if (temp.getCodeAttrId() == null) {
+                throw new CustomException("请先对码进行赋值操作！");
+            }
+//            codeMapper.deletePCodeByAttrId(companyId, temp.getCodeAttrId());
+            codeMapper.unBindCodeByPCode(companyId, temp.getpCode());
+        }
+    }
+
 
     @Override
     public void createCodeSingleByRule(Long companyId, CodeRule codeRule) {
@@ -576,17 +594,15 @@ public class CodeServiceImpl implements ICodeService {
         commonService.updateVal(companyId, codeSingle.getIndexEnd());
 
 
-
-
         int res = codeMapper.insertCodeForBatch(codeList);
 
     }
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public List<CRMInfoVo> getCRMInfo(String preFixUrl,Date beginTime, Date endTime) {
-        long companyId=102;//CodeRuleUtils.getCompanyIdByCode(code);暂时免密登录默认查询大艺数据
-        List<CRMInfoVo> crmInfo = codeMapper.getCRMInfo(preFixUrl,companyId,beginTime,endTime);
+    public List<CRMInfoVo> getCRMInfo(String preFixUrl, Date beginTime, Date endTime) {
+        long companyId = 102;//CodeRuleUtils.getCompanyIdByCode(code);暂时免密登录默认查询大艺数据
+        List<CRMInfoVo> crmInfo = codeMapper.getCRMInfo(preFixUrl, companyId, beginTime, endTime);
 
 
         //2022-04-11效率问题弃用

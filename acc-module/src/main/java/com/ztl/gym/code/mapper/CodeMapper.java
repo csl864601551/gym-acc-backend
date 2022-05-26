@@ -208,4 +208,5 @@ public interface CodeMapper {
 
     List<CRMAttrList> getCRMAttributeList(Long id);
 
+    void unBindCodeByPCode(@Param("companyId") Long companyId,@Param("pCode") String pCode);
 }

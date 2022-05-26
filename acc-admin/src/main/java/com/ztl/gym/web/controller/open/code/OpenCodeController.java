@@ -28,6 +28,7 @@ public class OpenCodeController {
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
+
     /**
      * 获取所有码
      *
@@ -35,10 +36,24 @@ public class OpenCodeController {
      */
     @PostMapping("getCodes")
     public AjaxResult getCodes(@RequestBody Map<String, Object> map) {
-        map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        Long companyId=Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        map.put("companyId", companyId);
+        //2022-05-26新增需求，扫码单码直接解绑箱码
+        if (map.get("code") == null) {
+            throw new CustomException("未获取到码信息！", HttpStatus.ERROR);
+        } else {
+            String code = map.get("code").toString();
+            String codeType = CodeRuleUtils.getCodeType(code);
+            //判定单码执行解绑箱码操作
+            if (AccConstants.CODE_TYPE_SINGLE.equals(codeType)) {
+                codeService.deletePCodeBycode(code,companyId);
+            }
+        }
+
+
         List<Code> codeList = codeService.selectCodeListByCodeOrIndex(map);
-        List<Map<String,Object>> res = new ArrayList<>();
-        Map<String,Object> temp=new HashMap<>();
+        List<Map<String, Object>> res = new ArrayList<>();
+        Map<String, Object> temp = new HashMap<>();
         if (codeList.size() > 0) {
             String code = codeList.get(0).getCode();
             if (!commonService.judgeStorageIsIllegalByValue(Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()), Integer.valueOf(map.get("storageType").toString()), code)) {
@@ -52,21 +67,21 @@ public class OpenCodeController {
                     typeName = "单码";
                 }
                 codes.setCodeTypeName(typeName);
-                temp=new HashMap<>();
-                temp.put("codeIndex",codes.getCodeIndex());
-                temp.put("companyId",codes.getCompanyId());
-                temp.put("code",codes.getCode());
-                temp.put("codeType",codes.getCodeType());
-                temp.put("pCode",codes.getpCode());
-                temp.put("codeTypeName",typeName);
-                if (codes.getCodeAttr()!=null){
-                    temp.put("productId",codes.getCodeAttr().getProductId());
-                    temp.put("productName",codes.getCodeAttr().getProductName());
-                    temp.put("productNo",codes.getCodeAttr().getProductNo());
-                }else{
-                    temp.put("productId","0");
-                    temp.put("productName","");
-                    temp.put("productNo","");
+                temp = new HashMap<>();
+                temp.put("codeIndex", codes.getCodeIndex());
+                temp.put("companyId", codes.getCompanyId());
+                temp.put("code", codes.getCode());
+                temp.put("codeType", codes.getCodeType());
+                temp.put("pCode", codes.getpCode());
+                temp.put("codeTypeName", typeName);
+                if (codes.getCodeAttr() != null) {
+                    temp.put("productId", codes.getCodeAttr().getProductId());
+                    temp.put("productName", codes.getCodeAttr().getProductName());
+                    temp.put("productNo", codes.getCodeAttr().getProductNo());
+                } else {
+                    temp.put("productId", "0");
+                    temp.put("productName", "");
+                    temp.put("productNo", "");
                 }
                 res.add(temp);
             }
@@ -94,22 +109,22 @@ public class OpenCodeController {
      */
     @GetMapping("getCRMInfo")
     public AjaxResult getCRMInfo(@RequestBody Map<String, Object> map) {
-        Date beginTime=null;
-        Date endTime =null;
+        Date beginTime = null;
+        Date endTime = null;
         try {
             beginTime = DateUtils.parseDate(map.get("beginTime").toString());
             endTime = DateUtils.parseDate(map.get("endTime").toString());
-            if(map.get("dayFlag")==null){
-                String str = DateUtils.getDatePoor(endTime,beginTime);
-                Integer dayNum=Integer.parseInt(str.substring(0,str.lastIndexOf("天")));
-                if(dayNum>32){
+            if (map.get("dayFlag") == null) {
+                String str = DateUtils.getDatePoor(endTime, beginTime);
+                Integer dayNum = Integer.parseInt(str.substring(0, str.lastIndexOf("天")));
+                if (dayNum > 32) {
                     throw new CustomException("时间范围限制31天，请输入重新输入！", HttpStatus.ERROR);
                 }
             }
         } catch (Exception e) {
             throw new CustomException("请输入正确时间范围！", HttpStatus.ERROR);
         }
-        List<CRMInfoVo> crmInfo = codeService.getCRMInfo(preFixUrl,beginTime,endTime);
+        List<CRMInfoVo> crmInfo = codeService.getCRMInfo(preFixUrl, beginTime, endTime);
         if (crmInfo.size() > 0) {
             return AjaxResult.success(crmInfo);
         } else {

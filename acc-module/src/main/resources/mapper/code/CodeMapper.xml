@@ -304,6 +304,10 @@
         update t_code_${companyId} set code_attr_id=null,tenant_id=null,storage_type = null, storage_record_id = null,p_code=null where code_attr_id=#{codeAttrId}
     </update>
 
+    <update id="unBindCodeByPCode">
+        update t_code_${companyId} set p_code=null where p_code=#{pCode}
+    </update>
+
     <insert id="insertAccCodeForBatch">
         insert into t_code_acc(  company_id,  code_acc, record_id, create_time)
         values

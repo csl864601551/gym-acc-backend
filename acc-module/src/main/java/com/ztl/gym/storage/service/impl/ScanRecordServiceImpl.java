@@ -19,6 +19,7 @@ import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.storage.domain.ScanRecord;
 import com.ztl.gym.storage.mapper.ScanRecordMapper;
 import com.ztl.gym.storage.service.IScanRecordService;
+import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,8 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     private ICodeAttrService codeAttrService;
     @Autowired
     private CodeMapper codeMapper;
+    @Autowired
+    private ISysDeptService sysDeptService;
 
 
     /**
@@ -211,6 +214,12 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         if(codeEntity==null){
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
+        String tenantName="";
+        if(codeEntity.getTenantId()==null){
+            tenantName=sysDeptService.selectDeptById(codeEntity.getCompanyId()).getDeptName();
+        }else{
+            tenantName=sysDeptService.selectDeptById(codeEntity.getTenantId()).getDeptName();
+        }
         List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
         List<Map<String,Object>> flowList=scanRecordMapper.selectFlowList(companyId,codeVal);//查询物流记录
 
@@ -226,6 +235,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         returnMap.put("codeEntity",codeEntity);
         returnMap.put("scanList",scanList);
         returnMap.put("flowList",flowList);
+        returnMap.put("tenantName",tenantName);
         /** 基本信息*/
         if(flowList.size()>0){
             returnMap.put("baseStatus","已"+flowList.get(0).get("title_name"));

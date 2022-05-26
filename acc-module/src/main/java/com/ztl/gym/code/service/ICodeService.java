@@ -171,4 +171,6 @@ public interface ICodeService {
     void createCodeSingleByRule(Long companyId, CodeRule codeRule);
 
     List<CRMInfoVo> getCRMInfo(String preFixUrl,Date beginTime, Date endTime);
+
+    void deletePCodeBycode(String code,Long companyId);
 }
