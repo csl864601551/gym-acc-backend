@@ -222,27 +222,27 @@ public class CodeSingleController extends BaseController {
     public AjaxResult insertCode(@RequestBody Map<String, Object> lsCode) {
         Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
         List<Map<String, Object>> listObj = (List<Map<String, Object>>) lsCode.get("codeData");
-//        //设置类型
-//        List<Code> listCode = new ArrayList<>();
-//        for(Object obj : listObj) {
-//            Map<String, Object> ob = (Map<String, Object>) obj;
-//            Code code = new Code();
-//            code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
-//            code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
-////            code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
-////            code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
-////            code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
-////            code.setStatus(Integer.valueOf(ob.get("status").toString()));
-//            code.setCode(ob.get("code").toString());
-////            code.setCodeAcc(ob.get("codeAcc").toString());
-//            code.setCodeType(ob.get("codeType").toString());
-////            code.setpCode(ob.get("pCode").toString());
-////            code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
-//            listCode.add(code);
-//        }
+        //设置类型
+        List<Code> listCode = new ArrayList<>();
+        for(Object obj : listObj) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            Code code = new Code();
+            code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
+            code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+//            code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
+//            code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
+//            code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
+//            code.setStatus(Integer.valueOf(ob.get("status").toString()));
+            code.setCode(ob.get("code").toString());
+//            code.setCodeAcc(ob.get("codeAcc").toString());
+            code.setCodeType(ob.get("codeType").toString());
+//            code.setpCode(ob.get("pCode").toString());
+//            code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
+            listCode.add(code);
+        }
         if (listObj.size() > 0) {
             //新增Code数据
-            int retInsertCodeCount = codeSingleService.insertCodeAll(listObj,companyId);
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
             if(listObj.size() == retInsertCodeCount) {
                 return AjaxResult.success("标识数据同步成功");
             } else {
@@ -264,114 +264,117 @@ public class CodeSingleController extends BaseController {
         List<Map<String, Object>> listStorageInData = (List<Map<String, Object>>) data.get("storageInData");
         List<Map<String, Object>> listPrintData = (List<Map<String, Object>>) data.get("printData");
         List<Map<String, Object>> listInCodeFlow = (List<Map<String, Object>>) data.get("inCodeFlowData");
-//        //设置类型
-//        List<Code> listCode = new ArrayList<>();
-//        for(Object obj : listCodeObj) {
-//            Map<String, Object> ob = (Map<String, Object>) obj;
-//            Code code = new Code();
-//            code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
-//            code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
-//            code.setCode(ob.get("code").toString());
-//            code.setCodeType(ob.get("codeType").toString());
-//            if(ob.get("tenantId") !=null) {
-//                code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
-//            }
-//            if(ob.get("status") !=null) {
-//                code.setStatus(Integer.valueOf(ob.get("status").toString()));
-//            }
-//            if(ob.get("singleId") !=null) {
-//                code.setSingleId(Long.valueOf(ob.get("singleId").toString()));
-//            }
-//            if(ob.get("storageType") !=null) {
-//                code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
-//            }
-//            if(ob.get("storageRecordId") !=null) {
-//                code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
-//            }
-//            if(ob.get("pCode") !=null) {
-//                code.setpCode(ob.get("pCode").toString());
-//            }
-//            if(ob.get("codeAttrId") !=null) {
-//                code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
-//            }
-//            listCode.add(code);
-//        }
-//        List<CodeAttr> listCodeAttr = new ArrayList<>();
-//        for(Object obj : listCodeAttrData) {
-//            Map<String, Object> ob = (Map<String, Object>) obj;
-//            CodeAttr codeAttr = new CodeAttr();
-//            codeAttr.setId(Long.valueOf(ob.get("id").toString()));
-//            codeAttr.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
-//            codeAttr.setProductId(Long.valueOf(ob.get("productId").toString()));
-//            codeAttr.setProductNo(ob.get("productNo").toString());
-//            codeAttr.setProductName(ob.get("productName").toString());
-//            codeAttr.setBatchId(Long.valueOf(ob.get("batchId").toString()));
-//            codeAttr.setBatchNo(ob.get("batchNo").toString());
-//            listCodeAttr.add(codeAttr);
-//        }
-//        List<StorageIn> listStorageIn = new ArrayList<>();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//        for(Object obj : listStorageInData) {
-//            Map<String, Object> ob = (Map<String, Object>) obj;
-//            StorageIn storageIn = new StorageIn();
-//            storageIn.setId(Long.valueOf(ob.get("id").toString()));
-//            storageIn.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
-//            storageIn.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
-//            storageIn.setStatus(Integer.valueOf(ob.get("status").toString()));
-//            storageIn.setInType(Integer.valueOf(ob.get("inType").toString()));
-//            storageIn.setInNo(ob.get("inNo").toString());
-//            storageIn.setProductId(Long.valueOf(ob.get("productId").toString()));
-//            storageIn.setInNum(Long.valueOf(ob.get("inNum").toString()));
-//            storageIn.setActInNum(Long.valueOf(ob.get("actInNum").toString()));
-//            storageIn.setStorageTo(Long.valueOf(ob.get("storageTo").toString()));
-//            storageIn.setToStorageId(Long.valueOf(ob.get("toStorageId").toString()));
-//            storageIn.setCreateUser(Long.valueOf(ob.get("createUser").toString()));
-//            storageIn.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("createTime").toString()));
-//            storageIn.setUpdateUser(Long.valueOf(ob.get("updateUser").toString()));
-//            storageIn.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("updateTime").toString()));
-//            storageIn.setInTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("inTime").toString()));
-//            listStorageIn.add(storageIn);
-//        }
-//        List<PrintData> listPrint = new ArrayList<>();
-//        for(Object obj : listPrintData) {
-//            Map<String, Object> ob = (Map<String, Object>) obj;
-//            PrintData printData = new PrintData();
-//            printData.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
-//            printData.setBoxCode(ob.get("boxCode").toString());
-//            printData.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
-//            printData.setPrintStatus(Integer.valueOf(ob.get("printStatus").toString()));
-//            printData.setProductLine(ob.get("productLine").toString());
-//            printData.setBoxNum(ob.get("productLine").toString());
-//            printData.setProductName(ob.get("productName").toString());
-//            printData.setProductModel(ob.get("productModel").toString());
-//            printData.setBatchName(ob.get("batchName").toString());
-//            printData.setProduceDate(ob.get("produceDate").toString());
-//            printData.setCodeCount(ob.get("codeCount").toString());
-//            printData.setGrossWeight(ob.get("grossWeight").toString());
-//            printData.setNetWeight(ob.get("netWeight").toString());
-//            printData.setOrderNo(ob.get("orderNo").toString());
-//            printData.setBarCode(ob.get("barCode").toString());
-//            listPrint.add(printData);
-//        }
-//        List<InCodeFlow> listFlow = new ArrayList<>();
-//        for(Object obj : listInCodeFlow) {
-//            Map<String, Object> ob = (Map<String, Object>) obj;
-//            InCodeFlow flow = new InCodeFlow();
-//            flow.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
-//            flow.setCode(ob.get("code").toString());
-//            flow.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
-//            flow.setCreateUser(Long.valueOf(ob.get("createUser").toString()));
-//            flow.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("createTime").toString()));
-//            listFlow.add(flow);
-//        }
+        Map<String, Object> codeSequenceNew = (Map<String, Object>) data.get("codeSequenceNew");
+        //设置类型
+        List<Code> listCode = new ArrayList<>();
+        for(Object obj : listCodeObj) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            Code code = new Code();
+            code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
+            code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            code.setCode(ob.get("code").toString());
+            code.setCodeType(ob.get("codeType").toString());
+            if(ob.get("tenantId") !=null) {
+                code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
+            }
+            if(ob.get("status") !=null) {
+                code.setStatus(Integer.valueOf(ob.get("status").toString()));
+            }
+            if(ob.get("singleId") !=null) {
+                code.setSingleId(Long.valueOf(ob.get("singleId").toString()));
+            }
+            if(ob.get("storageType") !=null) {
+                code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
+            }
+            if(ob.get("storageRecordId") !=null) {
+                code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
+            }
+            if(ob.get("pCode") !=null) {
+                code.setpCode(ob.get("pCode").toString());
+            }
+            if(ob.get("codeAttrId") !=null) {
+                code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
+            }
+            listCode.add(code);
+        }
+        List<CodeAttr> listCodeAttr = new ArrayList<>();
+        for(Object obj : listCodeAttrData) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            CodeAttr codeAttr = new CodeAttr();
+            codeAttr.setId(Long.valueOf(ob.get("id").toString()));
+            codeAttr.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            codeAttr.setProductId(Long.valueOf(ob.get("productId").toString()));
+            codeAttr.setProductNo(ob.get("productNo").toString());
+            codeAttr.setProductName(ob.get("productName").toString());
+            codeAttr.setBatchId(Long.valueOf(ob.get("batchId").toString()));
+            codeAttr.setBatchNo(ob.get("batchNo").toString());
+            listCodeAttr.add(codeAttr);
+        }
+        List<StorageIn> listStorageIn = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        for(Object obj : listStorageInData) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            StorageIn storageIn = new StorageIn();
+            storageIn.setId(Long.valueOf(ob.get("id").toString()));
+            storageIn.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            storageIn.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
+            storageIn.setStatus(Integer.valueOf(ob.get("status").toString()));
+            storageIn.setInType(Integer.valueOf(ob.get("inType").toString()));
+            storageIn.setInNo(ob.get("inNo").toString());
+            storageIn.setProductId(Long.valueOf(ob.get("productId").toString()));
+            storageIn.setInNum(Long.valueOf(ob.get("inNum").toString()));
+            storageIn.setActInNum(Long.valueOf(ob.get("actInNum").toString()));
+            storageIn.setStorageTo(Long.valueOf(ob.get("storageTo").toString()));
+            storageIn.setToStorageId(Long.valueOf(ob.get("toStorageId").toString()));
+            storageIn.setCreateUser(Long.valueOf(ob.get("createUser").toString()));
+            storageIn.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("createTime").toString()));
+            storageIn.setUpdateUser(Long.valueOf(ob.get("updateUser").toString()));
+            storageIn.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("updateTime").toString()));
+            storageIn.setInTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("inTime").toString()));
+            listStorageIn.add(storageIn);
+        }
+        List<PrintData> listPrint = new ArrayList<>();
+        for(Object obj : listPrintData) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            PrintData printData = new PrintData();
+            printData.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            printData.setBoxCode(ob.get("boxCode").toString());
+            printData.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
+            printData.setPrintStatus(Integer.valueOf(ob.get("printStatus").toString()));
+            printData.setProductLine(ob.get("productLine").toString());
+            printData.setBoxNum(ob.get("productLine").toString());
+            printData.setProductName(ob.get("productName").toString());
+            printData.setProductModel(ob.get("productModel").toString());
+            printData.setBatchName(ob.get("batchName").toString());
+            printData.setProduceDate(ob.get("produceDate").toString());
+            printData.setCodeCount(ob.get("codeCount").toString());
+            printData.setGrossWeight(ob.get("grossWeight").toString());
+            printData.setNetWeight(ob.get("netWeight").toString());
+            printData.setOrderNo(ob.get("orderNo").toString());
+            printData.setBarCode(ob.get("barCode").toString());
+            listPrint.add(printData);
+        }
+        List<InCodeFlow> listFlow = new ArrayList<>();
+        for(Object obj : listInCodeFlow) {
+            Map<String, Object> ob = (Map<String, Object>) obj;
+            InCodeFlow flow = new InCodeFlow();
+            flow.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
+            flow.setCode(ob.get("code").toString());
+            flow.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
+            flow.setCreateUser(Long.valueOf(ob.get("createUser").toString()));
+            flow.setCreateTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(ob.get("createTime").toString()));
+            listFlow.add(flow);
+        }
         //判断是否有数据
-        if (listCodeObj.size() > 0 && listCodeAttrData.size() > 0 && listStorageInData.size() > 0 && listPrintData.size() > 0 && listInCodeFlow.size() > 0) {
+        if (listCode.size() > 0 && listCodeAttr.size() > 0 && listStorageIn.size() > 0 && listPrint.size() > 0 && listFlow.size() > 0 && codeSequenceNew.size() > 0) {
+            //新增索引数据
+            int retInsertCodeSequenceNew = codeSingleService.insertCodeSequenceNew(codeSequenceNew);
             //新增Code数据
-            int retInsertCodeCount = codeSingleService.insertCodeAll(listCodeObj,companyId);
-            int retInsertCodeAttrCount = codeAttrService.insertCodeAttrAll(listCodeAttrData);
-            int retInsertStorageInCount = storageInService.insertStorageInAll(listStorageInData);
-            int retInsertPrintCount = commonService.insertPrintAll(listPrintData);
-            int retInsertInCodeFlowCount = storageInService.insertInCodeFlowAll(listInCodeFlow,companyId);
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
+            int retInsertCodeAttrCount = codeAttrService.insertCodeAttrAll(listCodeAttr);
+            int retInsertStorageInCount = storageInService.insertStorageInAll(listStorageIn);
+            int retInsertPrintCount = commonService.insertPrintAll(listPrint);
+            int retInsertInCodeFlowCount = storageInService.insertInCodeFlowAll(listFlow,companyId);
             if(listCodeObj.size() == retInsertCodeCount && listCodeAttrData.size() == retInsertCodeAttrCount &&
                     listStorageInData.size() == retInsertStorageInCount && listPrintData.size() == retInsertPrintCount && listInCodeFlow.size() == retInsertInCodeFlowCount) {
                 return AjaxResult.success("生产数据同步成功");
