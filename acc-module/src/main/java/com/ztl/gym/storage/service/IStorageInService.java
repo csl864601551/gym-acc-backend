@@ -130,4 +130,6 @@ public interface IStorageInService {
      * @return
      */
     int insertInCodeFlowAll(List<InCodeFlow> listFlowVo,Long companyId);
+
+    int updateProductIdByIds(long productId, List<Long> storageRecordIds);
 }

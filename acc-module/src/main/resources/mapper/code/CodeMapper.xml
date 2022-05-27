@@ -346,6 +346,14 @@
         from t_product_attr
         where product_id = #{id}
     </select>
+    <select id="selectStorageRecordIdsByAttrIds" resultType="java.lang.Long">
+        select storage_record_id from t_code_${companyId}
+        where  storage_record_id is not null and
+        code_attr_id in
+        <foreach item="codeAttrId" collection="idList" open="(" separator="," close=")">
+            #{codeAttrId}
+        </foreach>
+    </select>
 
     <insert id="insertCodeAll">
         insert into t_code_${companyId}(code_index, company_id, tenant_id, storage_type, storage_record_id, status, code, code_acc, code_type, p_code, code_attr_id, single_id)

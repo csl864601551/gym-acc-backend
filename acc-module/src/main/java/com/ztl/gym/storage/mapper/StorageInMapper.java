@@ -113,4 +113,6 @@ public interface StorageInMapper
      * @return
      */
     int insertInCodeFlowAll(@Param("listFlowVo") List<InCodeFlow> listFlowVo, @Param("companyId") Long companyId);
+
+    int updateProductIdByIds(Map<String, Object> params);
 }

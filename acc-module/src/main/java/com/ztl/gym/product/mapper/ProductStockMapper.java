@@ -69,4 +69,6 @@ public interface ProductStockMapper {
      * @return
      */
     ProductStock selectProductStockByParam(Map<String, Object> params);
+
+    int updateProductIdByIds(Map<String, Object> params);
 }

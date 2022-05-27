@@ -635,4 +635,11 @@ public class CodeServiceImpl implements ICodeService {
         return crmInfo;
     }
 
+    @Override
+    public List<Long> selectStorageRecordIdsByAttrIds(Long companyId, List idList) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("idList", idList);
+        return codeMapper.selectStorageRecordIdsByAttrIds(params);
+    }
 }

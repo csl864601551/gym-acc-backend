@@ -357,4 +357,12 @@ public class StorageInServiceImpl implements IStorageInService {
         return storageInMapper.insertInCodeFlowAll(listFlowVo,companyId);
     }
 
+    @Override
+    public int updateProductIdByIds(long productId, List<Long> storageRecordIds) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("idList", storageRecordIds);
+        params.put("productId", productId);
+        return storageInMapper.updateProductIdByIds(params);
+    }
+
 }

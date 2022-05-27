@@ -173,4 +173,6 @@ public interface ICodeService {
     List<CRMInfoVo> getCRMInfo(String preFixUrl,Date beginTime, Date endTime);
 
     void deletePCodeBycode(String code,Long companyId);
+
+    List<Long> selectStorageRecordIdsByAttrIds(Long companyId, List idList);
 }

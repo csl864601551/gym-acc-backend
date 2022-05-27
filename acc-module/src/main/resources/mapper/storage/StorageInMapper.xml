@@ -345,6 +345,14 @@
         where id = #{id}
     </update>
 
+    <update id="updateProductIdByIds" parameterType="Map">
+        update t_storage_in set product_id = #{productId}
+        where id in
+        <foreach item="id" collection="idList" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
     <delete id="deleteStorageInById">
         delete  from t_storage_in where id = #{id}
     </delete>

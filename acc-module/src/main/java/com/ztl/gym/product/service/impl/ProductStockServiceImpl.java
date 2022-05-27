@@ -197,4 +197,12 @@ public class ProductStockServiceImpl implements IProductStockService {
     public int deleteProductStockById(Long id) {
         return productStockMapper.deleteProductStockById(id);
     }
+
+    @Override
+    public int updateProductIdByRecordIds(long productId, List<Long> storageRecordIds) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("idList", storageRecordIds);
+        params.put("productId", productId);
+        return productStockMapper.updateProductIdByIds(params);
+    }
 }

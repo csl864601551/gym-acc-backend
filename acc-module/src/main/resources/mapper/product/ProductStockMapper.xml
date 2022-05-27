@@ -119,6 +119,14 @@
         </trim>
         where id = #{id}
     </update>
+    <update id="updateProductIdByIds">
+        update t_product_stock set product_id = #{productId}
+        where id in(select distinct stock_id from t_product_stock_flow where storage_record_id in
+        <foreach item="id" collection="idList" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </update>
 
     <delete id="deleteProductStockById" parameterType="Long">
         delete from t_product_stock where id = #{id}

@@ -71,4 +71,6 @@ public interface IProductStockService {
      * @return 结果
      */
     public int deleteProductStockById(Long id);
+
+    int updateProductIdByRecordIds(long productId, List<Long> storageRecordIds);
 }
