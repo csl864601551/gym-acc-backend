@@ -116,7 +116,7 @@ public class ProductStockServiceImpl implements IProductStockService {
                     stockInfo.setInNum(flowNum);
                     stockInfo.setRemainNum(flowNum);
                 } else {
-                    throw new CustomException("库存第一次变更对应流转类型异常：不是入库类型（出库与入库产品不一致提示）", HttpStatus.ERROR);
+                    //throw new CustomException("库存第一次变更对应流转类型异常：不是入库类型（出库与入库产品不一致提示）", HttpStatus.ERROR);
                 }
                 stockInfo.setUpdateTime(new Date());
                 res = productStockMapper.insertProductStock(stockInfo);
