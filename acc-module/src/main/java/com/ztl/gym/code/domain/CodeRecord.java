@@ -63,6 +63,7 @@ public class CodeRecord extends BaseEntity
     @Excel(name = "生码类型", sort = 5)
     private String typeName;
     @Excel(name = "关联产品", sort = 7)
+    private String productNo;
     private String productName;
     private String barCode;
     @Excel(name = "关联批次", sort = 8)
@@ -188,6 +189,14 @@ public class CodeRecord extends BaseEntity
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public String getProductNo() {
+        return productNo;
+    }
+
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
     }
 
     public String getProductName() {

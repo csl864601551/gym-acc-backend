@@ -22,6 +22,7 @@
         <result property="updateUser" column="update_user"/>
         <result property="updateTime" column="update_time"/>
         <result property="creatorName" column="nick_name"/>
+        <result property="productNo" column="product_no"/>
         <result property="productName" column="product_name"/>
         <result property="batchNo" column="batch_no"/>
         <result property="barCode" column="bar_code"/>
@@ -49,6 +50,7 @@
         r.update_user,
         r.update_time,
         u.nick_name,
+        p.product_no,
         p.product_name,
         b.batch_no,
         p.bar_code
