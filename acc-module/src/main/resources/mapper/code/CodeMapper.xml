@@ -55,6 +55,8 @@
         <result property="inTime" column="in_time"/>
         <result property="outTime" column="out_time"/>
         <result property="code" column="code"/>
+        <result property="codeType" column="code_type"/>
+        <result property="pCode" column="p_code"/>
         <association property="attributeList" column="product_id"
                      select="com.ztl.gym.code.mapper.CodeMapper.getCRMAttributeList">
         </association>
@@ -325,7 +327,8 @@
     </select>
     <select id="getCRMInfo" resultMap="CRMResult">
         SELECT
-        ocf.create_time as out_time, min(icf.create_time) as in_time,CONCAT(#{preFixUrl},ocf.code) as code,so.storage_to as dept_no,
+        ocf.create_time as out_time, min(icf.create_time) as in_time,CONCAT(#{preFixUrl},ocf.code) as code,c.code_type,
+        case when c.p_code is null then "" else  CONCAT(#{preFixUrl},c.p_code)  end as p_code,so.storage_to as dept_no,
                sd.dept_name,p.product_no,p.product_name,p.bar_code,so.product_id
         FROM
         `t_out_code_flow_${companyId}` AS ocf

@@ -13,6 +13,8 @@ public class CRMInfoVo {
     private String deptName;
     private String deptNo;
     private String code;
+    private String codeType;
+    private String pCode;
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date inTime;
@@ -94,5 +96,19 @@ public class CRMInfoVo {
         this.attributeList = attributeList;
     }
 
+    public String getCodeType() {
+        return codeType;
+    }
 
+    public void setCodeType(String codeType) {
+        this.codeType = codeType;
+    }
+
+    public String getpCode() {
+        return pCode;
+    }
+
+    public void setpCode(String pCode) {
+        this.pCode = pCode;
+    }
 }
