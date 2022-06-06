@@ -490,7 +490,9 @@ public class CodeSingleController extends BaseController {
         codeStr = codeStr.trim();
         if (!codeStr.equals("")) {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-
+            if(CodeRuleUtils.getCodeType(codeStr).equals(AccConstants.CODE_TYPE_BOX)){
+                throw new CustomException("请扫描单码数据！", HttpStatus.ERROR);
+            }
             Code temp = new Code();
             temp.setCode(codeStr);
             temp.setCompanyId(companyId);
