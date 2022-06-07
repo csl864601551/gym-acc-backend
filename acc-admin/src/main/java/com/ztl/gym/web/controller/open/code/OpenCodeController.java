@@ -107,7 +107,7 @@ public class OpenCodeController {
      * @return
      */
     @PostMapping("unBindCodesByPCodes")
-    public AjaxResult unBindCodesByPCodes(@RequestBody Map<String, Object> map) {
+    public AjaxResult unBindCodesByPCodes(@RequestBody Map<String, List<String>> map) {
         return AjaxResult.success(codeService.unBindCodesByPCodes(map));
     }
 

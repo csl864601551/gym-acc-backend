@@ -176,5 +176,5 @@ public interface ICodeService {
 
     List<Long> selectStorageRecordIdsByAttrIds(Long companyId, List idList);
 
-    int unBindCodesByPCodes(Map<String, Object> map);
+    int unBindCodesByPCodes(Map<String, List<String>> map);
 }

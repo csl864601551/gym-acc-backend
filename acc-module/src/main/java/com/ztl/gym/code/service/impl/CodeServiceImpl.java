@@ -549,10 +549,10 @@ public class CodeServiceImpl implements ICodeService {
     @Override
     @DataSource(DataSourceType.SHARDING)
     @Transactional(rollbackFor = Exception.class)
-    public int unBindCodesByPCodes(Map<String, Object> parmMap) {
+    public int unBindCodesByPCodes(Map<String, List<String>> parmMap) {
         try {
             Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
-            List<String> list = Arrays.asList(parmMap.get("codes").toString());
+            List<String> list = parmMap.get("codes");
             Code code = new Code();
             for (int i = 0; i < list.size(); i++) {
                 code = new Code();

@@ -78,6 +78,7 @@
         <where>
             <if test="code != null  and code != ''">and code = #{code}</if>
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="pCode != null  and pCode != ''">and p_code = #{pCode}</if>
         </where>
         limit 1
     </select>
