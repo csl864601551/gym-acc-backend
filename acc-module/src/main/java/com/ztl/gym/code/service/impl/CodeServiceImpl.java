@@ -546,6 +546,40 @@ public class CodeServiceImpl implements ICodeService {
             throw new CustomException("请输入正确的码！");
         }
     }
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    @Transactional(rollbackFor = Exception.class)
+    public int unBindCodesByPCodes(Map<String, Object> parmMap) {
+        try {
+            Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+            List<String> list = Arrays.asList(parmMap.get("codes").toString());
+            Code code = new Code();
+            for (int i = 0; i < list.size(); i++) {
+                code = new Code();
+                code.setpCode(list.get(i));
+                code.setCompanyId(companyId);
+                Code codeEntity = selectCode(code);//查询码产品基本信息
+                if (codeEntity.getStorageRecordId() != null) {
+                    //解除库存(t_product_stock、t_product_stock_flow)
+                    Long inId = codeEntity.getStorageRecordId(); //查询入库表ID
+                    productStockFlowService.unBindProductStockFlowByInId(companyId, inId);
+                    //解除物流明细、解除出入库明细(t_in_code_flow、t_storage_in)
+                    storageInService.unBindStorageInByInId(companyId, inId);
+                }
+                if (codeEntity.getCodeAttrId() != null) {
+                    Long attrId = codeEntity.getCodeAttrId();//属性ID
+                    //解除码属性(t_code_attr)
+                    codeAttrService.deleteCodeAttrById(attrId);
+                    //解除绑定关系(t_code)
+                    unBindCodeByAttrId(companyId, attrId);
+                }
+            }
+            return 1;
+        } catch (Exception e) {
+            throw new CustomException("请输入正确的码！");
+        }
+    }
+
 
     @Override
     @DataSource(DataSourceType.SHARDING)
