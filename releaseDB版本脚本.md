@@ -256,3 +256,7 @@ CREATE TABLE `t_security_code_template`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+#### Beta V2.2.1 2022/06/08
+ALTER TABLE `acs_prod`.`sys_dept`
+ADD COLUMN `dept_no` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '编号' AFTER `ancestors`;

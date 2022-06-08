@@ -12,6 +12,9 @@ public class SysDeptVo {
     @Excel(name = "父级名称")
     private String parentName;
 
+    /** 部门编号 */
+    @Excel(name = "编号")
+    private String deptNo;
     /** 部门名称 */
     @Excel(name = "名称")
     private String deptName;
@@ -98,5 +101,13 @@ public class SysDeptVo {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDeptNo() {
+        return deptNo;
+    }
+
+    public void setDeptNo(String deptNo) {
+        this.deptNo = deptNo;
     }
 }
