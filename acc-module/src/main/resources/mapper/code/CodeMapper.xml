@@ -78,6 +78,7 @@
         <where>
             <if test="code != null  and code != ''">and code = #{code}</if>
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="pCode != null  and pCode != ''">and p_code = #{pCode}</if>
         </where>
         limit 1
     </select>
@@ -328,7 +329,7 @@
     <select id="getCRMInfo" resultMap="CRMResult">
         SELECT
         ocf.create_time as out_time, min(icf.create_time) as in_time,CONCAT(#{preFixUrl},ocf.code) as code,c.code_type,
-        case when c.p_code is null then "" else  CONCAT(#{preFixUrl},c.p_code)  end as p_code,so.storage_to as dept_no,
+        case when c.p_code is null then "" else  CONCAT(#{preFixUrl},c.p_code)  end as p_code,sd.dept_no,
                sd.dept_name,p.product_no,p.product_name,p.bar_code,so.product_id
         FROM
         `t_out_code_flow_${companyId}` AS ocf

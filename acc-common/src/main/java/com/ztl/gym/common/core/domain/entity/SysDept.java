@@ -31,6 +31,9 @@ public class SysDept extends BaseEntity
     /** 祖级列表 */
     private String ancestors;
 
+    /** 经销商编号 */
+    private String deptNo;
+
     /** 部门名称 */
     private String deptName;
 
@@ -190,6 +193,14 @@ public class SysDept extends BaseEntity
 
     public void setDeptType(int deptType) {
         this.deptType = deptType;
+    }
+
+    public String getDeptNo() {
+        return deptNo;
+    }
+
+    public void setDeptNo(String deptNo) {
+        this.deptNo = deptNo;
     }
 
     @Override

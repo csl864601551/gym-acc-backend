@@ -101,6 +101,15 @@ public class OpenCodeController {
     public AjaxResult unBindCodes(@RequestBody Map<String, Object> map) {
         return AjaxResult.success(codeService.unBindCodes(map));
     }
+    /**
+     * 接口解绑
+     *
+     * @return
+     */
+    @PostMapping("unBindCodesByPCodes")
+    public AjaxResult unBindCodesByPCodes(@RequestBody Map<String, List<String>> map) {
+        return AjaxResult.success(codeService.unBindCodesByPCodes(map));
+    }
 
     /**
      * 对接CRM开放接口

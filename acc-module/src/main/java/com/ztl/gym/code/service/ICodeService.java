@@ -175,4 +175,6 @@ public interface ICodeService {
     void deletePCodeBycode(String code,Long companyId);
 
     List<Long> selectStorageRecordIdsByAttrIds(Long companyId, List idList);
+
+    int unBindCodesByPCodes(Map<String, List<String>> map);
 }
