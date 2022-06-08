@@ -569,6 +569,8 @@ public class CodeServiceImpl implements ICodeService {
                             //解除物流明细、解除出入库明细(t_in_code_flow、t_storage_in)
                             storageInService.unBindStorageInByInId(companyId, inId);
                         }
+                    }catch (Exception e){}
+                    try {
                         if (codeEntity.getCodeAttrId() != null) {
                             Long attrId = codeEntity.getCodeAttrId();//属性ID
                             //解除码属性(t_code_attr)
