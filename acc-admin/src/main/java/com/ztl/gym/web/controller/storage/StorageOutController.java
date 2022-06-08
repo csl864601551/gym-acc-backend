@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,27 @@ public class StorageOutController extends BaseController
     public AjaxResult add(@RequestBody StorageOut storageOut)
     {
         //storageOut.setExtraNo("DB10220210707101654");
+        storageOutService.insertStorageOut(storageOut);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("data", storageOut.getId());
+        return ajax;
+    }
+
+    /**
+     * 新增出库（客户端）
+     */
+    @PostMapping("/tenantOut")
+    public AjaxResult tenantOut(@RequestBody Map<String, Object> map) {
+        List<String> codes = new ArrayList<>();
+        codes.add(map.get("codes").toString());
+
+        StorageOut storageOut = new StorageOut();
+        storageOut.setOutNo(map.get("outNo").toString());
+        storageOut.setProductId(Long.valueOf(map.get("productId").toString()));
+        storageOut.setStorageTo(Long.valueOf(map.get("storageTo").toString()));
+        storageOut.setFromStorageId(Long.valueOf(map.get("fromStorageId").toString()));
+        storageOut.setThirdPartyFlag(map.get("thirdPartyFlag").toString());
+        storageOut.setCodes(codes);
         storageOutService.insertStorageOut(storageOut);
         AjaxResult ajax = AjaxResult.success();
         ajax.put("data", storageOut.getId());
