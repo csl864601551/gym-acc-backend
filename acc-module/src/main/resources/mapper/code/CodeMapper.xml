@@ -310,6 +310,11 @@
     <update id="unBindCodeByPCode">
         update t_code_${companyId} set p_code=null where p_code=#{pCode}
     </update>
+    <insert id="insertUnBindLog">
+    insert into t_unbind_log(  code,  p_code, create_time, create_user)
+    values
+        (  #{code},  #{pCode},  #{createTime}, #{createUser})
+</insert>
 
     <insert id="insertAccCodeForBatch">
         insert into t_code_acc(  company_id,  code_acc, record_id, create_time)

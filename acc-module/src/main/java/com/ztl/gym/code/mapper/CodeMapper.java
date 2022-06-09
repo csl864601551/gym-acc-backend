@@ -211,4 +211,6 @@ public interface CodeMapper {
     void unBindCodeByPCode(@Param("companyId") Long companyId,@Param("pCode") String pCode);
 
     List<Long> selectStorageRecordIdsByAttrIds(Map<String, Object> params);
+
+    void insertUnBindLog(@Param("code") String codeVal,@Param("pCode")  String pCode,@Param("createTime")  Date date,@Param("createUser")  String username);
 }

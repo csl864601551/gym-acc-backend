@@ -527,6 +527,9 @@ public class CodeServiceImpl implements ICodeService {
             code.setCompanyId(companyId);
             Code codeEntity = selectCode(code);//查询码产品基本信息
 
+            //插入解绑日志
+            codeMapper.insertUnBindLog(codeVal,codeEntity.getpCode(),new Date(),SecurityUtils.getUsername());
+
             if (codeEntity.getStorageRecordId() != null) {
                 //解除库存(t_product_stock、t_product_stock_flow)
                 Long inId = codeEntity.getStorageRecordId(); //查询入库表ID
@@ -610,6 +613,9 @@ public class CodeServiceImpl implements ICodeService {
             }
 //            codeMapper.deletePCodeByAttrId(companyId, temp.getCodeAttrId());
             codeMapper.unBindCodeByPCode(companyId, temp.getpCode());
+
+            //插入解绑日志
+            codeMapper.insertUnBindLog(codeVal,temp.getpCode(),new Date(),SecurityUtils.getUsername());
         }
     }
 
