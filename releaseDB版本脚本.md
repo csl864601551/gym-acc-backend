@@ -260,3 +260,12 @@ CREATE TABLE `t_security_code_template`  (
 #### Beta V2.2.1 2022/06/08
 ALTER TABLE `acs_prod`.`sys_dept`
 ADD COLUMN `dept_no` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '编号' AFTER `ancestors`;
+
+
+#### Beta V2.2.1 2022/06/08
+CREATE TABLE `t_unbind_log` (
+`code` varchar(255) DEFAULT NULL,
+`p_code` varchar(255) DEFAULT NULL,
+`create_time` datetime DEFAULT NULL,
+`create_user` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
