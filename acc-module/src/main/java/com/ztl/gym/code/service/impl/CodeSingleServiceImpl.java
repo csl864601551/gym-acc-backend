@@ -301,7 +301,7 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
         code.setSingleId(codeRule.getCodeSingleId());
 
         int res = codeMapper.insertCode(code);
-        log.error("产线生码成功", res);
+        log.info("产线生码成功", res);
 
         return code.getCode();
 
