@@ -28,16 +28,4 @@ public interface IdisMapper {
      */
     void updateStatusForSyncedCode(List<String> codeList);
 
-    /**
-     * 记录请求日志
-     * @param record 单次请求记录
-     */
-    void insertRecord(IdisRecord record);
-
-    /**
-     * 批量记录请求日志
-     * @param recordList 多次请求记录
-     */
-    void batchInsertRecord(List<IdisRecord> recordList);
-
 }

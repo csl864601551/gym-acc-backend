@@ -134,6 +134,11 @@ public class IdisServiceImpl implements IIdisService {
             IdisRespBody respBody = JSONUtil.parse(resp.body()).toBean(IdisRespBody.class);
             if (!respBody.isSuccess()) {
                 log.error("请求idis创建标识接口失败, 错误信息: {}", respBody.getMsg());
+                if("Handle already exists".equals(respBody.getMsg())){
+                    List<String> list=new ArrayList<>();
+                    list.add(code);
+                    idisMapper.updateStatusForSyncedCode(list);
+                }
             }
             return CompletableFuture.completedFuture(
                     record.respCode(respBody.getResponseCode()).respMsg(respBody.getMsg()).build());
