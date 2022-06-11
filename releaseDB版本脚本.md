@@ -269,3 +269,32 @@ CREATE TABLE `t_unbind_log` (
 `create_time` datetime DEFAULT NULL,
 `create_user` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `t_erp` (
+`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+`company_id` int(20) DEFAULT NULL COMMENT '公司ID',
+`erp_out_no` varchar(100) DEFAULT NULL COMMENT '出库单据号',
+`dept_id` int(20) DEFAULT NULL COMMENT '经销商主键',
+`dept_no` varchar(255) DEFAULT NULL COMMENT '经销商编号',
+`dept_name` varchar(255) DEFAULT NULL COMMENT '经销商名称',
+`out_time` datetime DEFAULT NULL COMMENT '出库日期',
+`storage_name` varchar(255) DEFAULT NULL COMMENT '仓库名称',
+`status` int(11) DEFAULT '0' COMMENT '状态（0，单据未完成，1，单据已完成）',
+`create_user` varchar(255) DEFAULT NULL COMMENT '创建人',
+`create_time` datetime DEFAULT NULL COMMENT '创建时间',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='对接ERP主表';
+
+CREATE TABLE `t_erp_detail` (
+`id` int(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+`erp_id` int(20) DEFAULT NULL COMMENT 'erp主键',
+`product_no` varchar(100) DEFAULT NULL COMMENT '产品型号',
+`product_id` int(20) DEFAULT NULL COMMENT '产品ID',
+`product_name` varchar(200) DEFAULT NULL COMMENT '产品名称',
+`bar_code` varchar(100) DEFAULT NULL COMMENT '条码号',
+`out_num` int(11) DEFAULT NULL COMMENT '出库数量',
+`act_num` int(11) DEFAULT '0' COMMENT '实际出库数量',
+`status` int(11) DEFAULT NULL COMMENT '状态（0，未完成，1已完成）',
+`storage_name` varchar(255) DEFAULT NULL COMMENT '仓库名称',
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='对接ERP明细表';

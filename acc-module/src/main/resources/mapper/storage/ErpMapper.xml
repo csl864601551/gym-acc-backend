@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.storage.mapper.ErpMapper">
+    
+    <resultMap type="Erp" id="ErpResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="erpOutNo"    column="erp_out_no"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptNo"    column="dept_no"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="outTime"    column="out_time"    />
+        <result property="storageName"    column="storage_name"    />
+        <result property="status"    column="status"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <association property="outProductList" column="id"
+                     select="com.ztl.gym.storage.mapper.ErpDetailMapper.selectErpDetailByErpId">
+        </association>
+    </resultMap>
+
+    <sql id="selectErpVo">
+        select id,company_id, erp_out_no, dept_id, dept_no, dept_name, out_time,storage_name, status, create_user, create_time from t_erp
+    </sql>
+
+    <select id="selectErpList" parameterType="Erp" resultMap="ErpResult">
+        <include refid="selectErpVo"/>
+        <where>
+            <if test="companyId != null "> and company_id = #{companyId}</if>
+            <if test="erpOutNo != null "> and erp_out_no = #{erpOutNo}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="deptNo != null  and deptNo != ''"> and dept_no = #{deptNo}</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="outTime != null "> and out_time = #{outTime}</if>
+            <if test="storageName != null "> and storage_name = #{storageName}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+            <if test="beginTime != null "><!-- 开始时间检索 -->
+                AND out_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null "><!-- 结束时间检索 -->
+                AND out_time &lt;= DATE_ADD(#{endTime},INTERVAL 1 DAY)
+            </if>
+        </where>
+        order by out_time desc
+    </select>
+    
+    <select id="selectErpById" parameterType="Long" resultMap="ErpResult">
+        <include refid="selectErpVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertErp" parameterType="Erp"  useGeneratedKeys="true" keyProperty="id">
+        insert into t_erp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="companyId != null">company_id,</if>
+            <if test="erpOutNo != null">erp_out_no,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="deptNo != null">dept_no,</if>
+            <if test="deptName != null">dept_name,</if>
+            <if test="outTime != null">out_time,</if>
+            <if test="storageName != null">storage_name,</if>
+            <if test="status != null">status,</if>
+            <if test="createUser != null">create_user,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="companyId != null">#{companyId},</if>
+            <if test="erpOutNo != null">#{erpOutNo},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="deptNo != null">#{deptNo},</if>
+            <if test="deptName != null">#{deptName},</if>
+            <if test="outTime != null">#{outTime},</if>
+            <if test="storageName != null">#{storageName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createUser != null">#{createUser},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErp" parameterType="Erp">
+        update t_erp
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="erpOutNo != null">erp_out_no = #{erpOutNo},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="deptNo != null">dept_no = #{deptNo},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+            <if test="outTime != null">out_time = #{outTime},</if>
+            <if test="storageName != null">storage_name = #{storageName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpById" parameterType="Long">
+        delete from t_erp where id = #{id}
+    </delete>
+
+    <delete id="deleteErpByIds" parameterType="String">
+        delete from t_erp where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -3,16 +3,30 @@ package com.ztl.gym.web.controller.open.code;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.vo.CRMInfoVo;
 import com.ztl.gym.code.service.ICodeService;
+import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.service.IProductService;
+import com.ztl.gym.storage.domain.Erp;
+import com.ztl.gym.storage.domain.ErpDetail;
+import com.ztl.gym.storage.domain.StorageOut;
+import com.ztl.gym.storage.service.IErpDetailService;
+import com.ztl.gym.storage.service.IErpService;
+import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -25,6 +39,14 @@ public class OpenCodeController {
     private ICodeService codeService;
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private ISysDeptService sysDeptService;
+    @Autowired
+    private IProductService productService;
+    @Autowired
+    private IErpService erpService;
+    @Autowired
+    private IErpDetailService erpDetailService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -36,7 +58,7 @@ public class OpenCodeController {
      */
     @PostMapping("getCodes")
     public AjaxResult getCodes(@RequestBody Map<String, Object> map) {
-        Long companyId=Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
         map.put("companyId", companyId);
         //2022-05-26新增需求，扫码单码直接解绑箱码
         if (map.get("code") == null) {
@@ -46,7 +68,7 @@ public class OpenCodeController {
             String codeType = CodeRuleUtils.getCodeType(code);
             //判定单码执行解绑箱码操作
             if (AccConstants.CODE_TYPE_SINGLE.equals(codeType)) {
-                codeService.deletePCodeBycode(code,companyId);
+                codeService.deletePCodeBycode(code, companyId);
             }
         }
 
@@ -97,15 +119,18 @@ public class OpenCodeController {
      *
      * @return
      */
+    @Log(title = "扫码解绑", businessType = BusinessType.INSERT)
     @PostMapping("unBindCodes")
     public AjaxResult unBindCodes(@RequestBody Map<String, Object> map) {
         return AjaxResult.success(codeService.unBindCodes(map));
     }
+
     /**
      * 接口解绑
      *
      * @return
      */
+    @Log(title = "接口解绑", businessType = BusinessType.INSERT)
     @PostMapping("unBindCodesByPCodes")
     public AjaxResult unBindCodesByPCodes(@RequestBody Map<String, List<String>> map) {
         return AjaxResult.success(codeService.unBindCodesByPCodes(map));
@@ -142,13 +167,97 @@ public class OpenCodeController {
     }
 
     /**
+     * 对接CRM开放接口
+     *
+     * @return
+     */
+    @Log(title = "ERP对接", businessType = BusinessType.INSERT)
+    @Transactional
+    @PostMapping("getERPInfo")
+    public AjaxResult getERPInfo(@RequestBody Erp erp) {
+        //初始化数据
+        if (erp.getErpOutNo() == null || erp.getErpOutNo() == "") {
+            throw new CustomException("发货单据编号不能为空！", HttpStatus.ERROR);
+        }
+        if (erp.getDeptNo() == null || erp.getDeptNo() == "") {
+            throw new CustomException("客户编号不能为空！", HttpStatus.ERROR);
+        }
+        if (erp.getDeptName() == null || erp.getDeptName() == "") {
+            throw new CustomException("经销商名称不能为空！", HttpStatus.ERROR);
+        }
+        if (erp.getOutTime() == null) {
+            throw new CustomException("发货日期不能为空！", HttpStatus.ERROR);
+        }
+        if (erp.getOutProductList() == null || erp.getOutProductList().size() == 0) {
+            throw new CustomException("发货单产品明细不能为空！", HttpStatus.ERROR);
+        }
+        List<ErpDetail> outProductList = erp.getOutProductList();
+        String deptNo = erp.getDeptNo();// 添加经销商编号
+        String deptName = erp.getDeptName();
+
+        Erp temp = new Erp();
+        temp.setErpOutNo(erp.getErpOutNo());
+        List<Erp> erpList = erpService.selectErpList(temp);
+        if (erpList.size() > 0) {
+            throw new CustomException("该发货单据编号已同步！", HttpStatus.ERROR);
+        }
+
+        SysDept sysDept = SecurityUtils.getLoginUserCompany();
+        //step 判定经销商存在
+        SysDept sysTenant = new SysDept();
+        sysTenant.setParentId(sysDept.getDeptId());
+        sysTenant.setDeptName(deptName);
+        List<SysDept> sysDeptList = sysDeptService.selectDeptList(sysTenant);
+        if (sysDeptList.size() > 0) {
+            sysTenant = sysDeptList.get(0);
+        } else {
+            sysTenant.setDeptNo(deptNo);
+            sysTenant.setOrderNum("1");
+            sysTenant.setDeptType(2);
+            sysTenant.setParentId(sysDept.getDeptId());
+            sysDeptService.insertDept(sysTenant);
+        }
+
+        try {
+            erp.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+            erp.setDeptId(sysTenant.getDeptId());
+            erp.setStatus(0L);
+            erpService.insertErp(erp);
+        } catch (Exception e) {
+            throw new CustomException("接收数据格式错误！", HttpStatus.ERROR);
+        }
+
+        // step 判断产品存在
+        if (outProductList.size() > 0) {
+            for (int i = 0; i < outProductList.size(); i++) {
+                //处理产品
+                Product productTemp = new Product();
+                productTemp.setProductNo(outProductList.get(i).getProductNo());
+                productTemp.setProductName(outProductList.get(i).getProductName());
+                List<Product> listProduct = productService.selectTProductList(productTemp);
+                if (listProduct.size() > 0) {
+                    outProductList.get(i).setProductId(listProduct.get(0).getId());
+                } else {
+                    outProductList.get(i).setProductId(0L);
+                }
+                outProductList.get(i).setErpId(erp.getId());
+                outProductList.get(i).setActNum(0L);
+                outProductList.get(i).setStatus(0L);
+                erpDetailService.insertErpDetail(outProductList.get(i));
+            }
+        }
+
+        return AjaxResult.success("请求成功", "同步数据成功");
+    }
+
+    /**
      * 获取所有码
      *
      * @return 获取所有码
      */
     @PostMapping("getQualityCodes")
     public AjaxResult getQualityCodes(@RequestBody Map<String, Object> map) {
-        Long companyId=Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
+        Long companyId = Long.valueOf(SecurityUtils.getLoginUserTopCompanyId());
         map.put("companyId", companyId);
         //2022-05-26新增需求，扫码单码直接解绑箱码
         if (map.get("code") == null) {
