@@ -192,6 +192,27 @@ public class CodeRecordController extends BaseController {
     }
 
     /**
+     * 查询所有产品
+     *
+     * @return
+     */
+    @GetMapping("/listProductByProductNo")
+    public AjaxResult listProductByProductNo(@RequestBody Map<String, Object> map) {
+        Product product = new Product();
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
+            product.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
+        }
+        if (map.get("productNo") != "" && !"请选择".contains(map.get("productNo").toString())) {
+            product.setProductName(map.get("productNo").toString());
+        }
+        List<Product> productList = productService.selectTProductList(product);
+        FuzhiVo fuzhiVo = new FuzhiVo();
+        fuzhiVo.setProducts(productList);
+        return AjaxResult.success(fuzhiVo);
+    }
+
+    /**
      * 根据产品查询批次
      *
      * @param productId

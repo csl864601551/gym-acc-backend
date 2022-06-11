@@ -177,4 +177,11 @@ public interface ICodeService {
     List<Long> selectStorageRecordIdsByAttrIds(Long companyId, List idList);
 
     int unBindCodesByPCodes(Map<String, List<String>> map);
+
+    /**
+     * 查询包含输入段的单码
+     * @param temp
+     * @return
+     */
+    Code selectContainCode(Code temp);
 }

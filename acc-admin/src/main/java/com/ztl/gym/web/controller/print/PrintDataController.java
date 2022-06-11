@@ -74,13 +74,13 @@ public class PrintDataController {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
 
             Code temp = new Code();
-            temp.setCode(map.get("productCode").toString());
+            temp.setCode("%" + map.get("productCode").toString());
             temp.setCompanyId(companyId);
-            Code codeResult=codeService.selectCode(temp);//查询单码数据
+            Code codeResult=codeService.selectContainCode(temp);//查询单码数据
 
             if(codeResult != null) {
                 if(codeResult.getCode() == null) {
-                    return AjaxResult.error("扫描单码未装箱");
+                    return AjaxResult.error("单码未装箱或有误");
                 }
                 Map<String, Object> params = new HashMap<>();
                 params.put("boxCode", codeResult.getpCode());
@@ -89,7 +89,35 @@ public class PrintDataController {
                 PrintData printData = printDataService.getPrintBoxData(params);
                 return AjaxResult.success(printData);
             } else {
-                return AjaxResult.error("扫描单码不存在");
+                return AjaxResult.error("单码不存在或有误");
+            }
+        } catch (Exception err) {
+            return AjaxResult.error(err.toString());
+        }
+    }
+
+    /**
+     * 补打单码
+     * @param map
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @PostMapping("/printProductCode")
+    @DataSource(DataSourceType.SHARDING)
+    public AjaxResult printProductCode(@RequestBody Map<String,Object> map) {
+        try {
+            //获取箱码信息
+            Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+
+            Code temp = new Code();
+            temp.setCode("%" + map.get("productCode").toString());
+            temp.setCompanyId(companyId);
+            Code codeResult=codeService.selectContainCode(temp);//查询单码数据
+
+            if(codeResult != null) {
+                return AjaxResult.success(codeResult.getCode());
+            } else {
+                return AjaxResult.error("单码不存在或有误");
             }
         } catch (Exception err) {
             return AjaxResult.error(err.toString());

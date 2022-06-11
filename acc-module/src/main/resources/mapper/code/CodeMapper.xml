@@ -83,6 +83,16 @@
         limit 1
     </select>
 
+    <select id="selectContainCode" parameterType="Code" resultMap="CodeResult">
+        <include refid="selectCodeVo"/>
+        <where>
+            <if test="code != null  and code != ''">and code like #{code}</if>
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="pCode != null  and pCode != ''">and p_code = #{pCode}</if>
+        </where>
+        limit 1
+    </select>
+
     <select id="selectCodes" parameterType="Map" resultMap="CodeResult">
         <include refid="selectCodeVo"/>
         <where>

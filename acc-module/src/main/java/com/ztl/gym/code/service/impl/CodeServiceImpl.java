@@ -591,6 +591,11 @@ public class CodeServiceImpl implements ICodeService {
         }
     }
 
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public Code selectContainCode(Code code) {
+        return codeMapper.selectContainCode(code);
+    }
 
     @Override
     @DataSource(DataSourceType.SHARDING)
