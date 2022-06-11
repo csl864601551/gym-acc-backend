@@ -74,8 +74,8 @@ public class OpenSystemController {
         Set<String> permissions = permissionService.getMenuPermission(user);
         AjaxResult ajax = AjaxResult.success();
         Map<String,Object> map=new HashMap<>();
-        //map.put("user", user);
-        //map.put("roles", roles);
+//        map.put("user", user);
+        map.put("roles", roles);
         //map.put("permissions", permissions);
         if(user.getDept().getParentId()==100){
             map.put("roleName", "企业端");

@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 出库Service业务层处理
@@ -104,12 +105,17 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
         storageOut.setCreateTime(new Date());
 
+        //接收到的码去重
+        if (storageOut.getCodes().size() > 0) {
+            storageOut.setCodes(storageOut.getCodes().stream().distinct().collect(Collectors.toList()));
+        }
+
         if (storageOut.getThirdPartyFlag() != null) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
-            long count=0;
+            long count = 0;
             for (int i = 0; i < storageOut.getCodes().size(); i++) {
-                count+=codeService.getCodeCount(storageOut.getCodes().get(i));
+                count += codeService.getCodeCount(storageOut.getCodes().get(i));
             }
             storageOut.setActOutNum(count);
             storageOut.setOutNum(count);
@@ -313,7 +319,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
     }
 
     @Override
-    public List<Map<String,Object>> selectDayCount(Map<String, Object> map) {
+    public List<Map<String, Object>> selectDayCount(Map<String, Object> map) {
         return storageOutMapper.selectDayCount(map);
     }
 
