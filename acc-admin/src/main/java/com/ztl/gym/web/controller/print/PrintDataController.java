@@ -74,9 +74,9 @@ public class PrintDataController {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
 
             Code temp = new Code();
-            temp.setCode("%" + map.get("productCode").toString());
+            temp.setCode(map.get("productCode").toString());
             temp.setCompanyId(companyId);
-            Code codeResult=codeService.selectContainCode(temp);//查询单码数据
+            Code codeResult=codeService.selectCode(temp);//查询单码数据
 
             if(codeResult != null) {
                 if(codeResult.getCode() == null) {
