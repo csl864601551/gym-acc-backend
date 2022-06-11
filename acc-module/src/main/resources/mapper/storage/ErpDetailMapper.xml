@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztl.gym.storage.mapper.ErpDetailMapper">
+    
+    <resultMap type="ErpDetail" id="ErpDetailResult">
+        <result property="id"    column="id"    />
+        <result property="erpId"    column="erp_id"    />
+        <result property="productNo"    column="product_no"    />
+        <result property="productId"    column="product_id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="barCode"    column="bar_code"    />
+        <result property="outNum"    column="out_num"    />
+        <result property="actNum"    column="act_num"    />
+        <result property="storageName"    column="storage_name"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectErpDetailVo">
+        select id, erp_id, product_no, product_id, product_name, bar_code, out_num, act_num,storage_name, status from t_erp_detail
+    </sql>
+
+    <select id="selectErpDetailList" parameterType="ErpDetail" resultMap="ErpDetailResult">
+        <include refid="selectErpDetailVo"/>
+        <where>
+            <if test="erpId != null "> and erp_id = #{erpId}</if>
+            <if test="productNo != null "> and product_no = #{productNo}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="barCode != null  and barCode != ''"> and bar_code = #{barCode}</if>
+            <if test="outNum != null "> and out_num = #{outNum}</if>
+            <if test="actNum != null "> and act_num = #{actNum}</if>
+            <if test="storageName != null "> and storage_name = #{storageName}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectErpDetailById" parameterType="Long" resultMap="ErpDetailResult">
+        <include refid="selectErpDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectErpDetailByErpId" parameterType="Long" resultMap="ErpDetailResult">
+        <include refid="selectErpDetailVo"/>
+        where erp_id = #{erpId}
+    </select>
+        
+    <insert id="insertErpDetail" parameterType="ErpDetail">
+        insert into t_erp_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="erpId != null">erp_id,</if>
+            <if test="productNo != null">product_no,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null">product_name,</if>
+            <if test="barCode != null">bar_code,</if>
+            <if test="outNum != null">out_num,</if>
+            <if test="actNum != null">act_num,</if>
+            <if test="storageName != null">storage_name,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="erpId != null">#{erpId},</if>
+            <if test="productNo != null">#{productNo},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null">#{productName},</if>
+            <if test="barCode != null">#{barCode},</if>
+            <if test="outNum != null">#{outNum},</if>
+            <if test="actNum != null">#{actNum},</if>
+            <if test="storageName != null">#{storageName},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateErpDetail" parameterType="ErpDetail">
+        update t_erp_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="erpId != null">erp_id = #{erpId},</if>
+            <if test="productNo != null">product_no = #{productNo},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="productName != null">product_name = #{productName},</if>
+            <if test="barCode != null">bar_code = #{barCode},</if>
+            <if test="outNum != null">out_num = #{outNum},</if>
+            <if test="actNum != null">act_num = #{actNum},</if>
+            <if test="storageName != null">storage_name = #{storageName},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteErpDetailById" parameterType="Long">
+        delete from t_erp_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteErpDetailByIds" parameterType="String">
+        delete from t_erp_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
