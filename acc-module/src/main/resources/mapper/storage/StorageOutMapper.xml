@@ -166,7 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
     <update id="updateOutStatusByCode" parameterType="Map">
-        update t_storage_out set act_out_num=out_num,status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_NORMAL}
+        update t_storage_out set act_out_num =act_out_num+ #{outNum}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
         <if test="outTime != null">,out_time = #{outTime}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
