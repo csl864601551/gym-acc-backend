@@ -86,4 +86,6 @@ public interface CodeAttrMapper {
      * @return
      */
     int insertCodeAttrAll(@Param("listCodeAttr") List<CodeAttr> listCodeAttr);
+
+    Long getMaxAttrId();
 }

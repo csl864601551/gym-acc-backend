@@ -184,4 +184,8 @@ public interface ICodeService {
      * @return
      */
     Code selectContainCode(Code temp);
+
+    List<Code> selectCodeListByIndex(Map<String, Object> map);
+
+    int updateStatusByIndex(Long companyId, Long codeAttrId, Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
 }

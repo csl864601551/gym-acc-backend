@@ -215,4 +215,6 @@ public interface CodeMapper {
     void insertUnBindLog(@Param("code") String codeVal,@Param("pCode")  String pCode,@Param("createTime")  Date date,@Param("createUser")  String username);
 
     Code selectContainCode(Code code);
+
+    int updateStatusByIndex(Map<String, Object> param);
 }

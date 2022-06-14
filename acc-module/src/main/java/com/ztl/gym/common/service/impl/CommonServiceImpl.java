@@ -1,6 +1,7 @@
 package com.ztl.gym.common.service.impl;
 
 import com.ztl.gym.code.domain.Code;
+import com.ztl.gym.code.mapper.CodeAttrMapper;
 import com.ztl.gym.code.mapper.CodeMapper;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
@@ -8,6 +9,7 @@ import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.domain.GeneratorBean;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.mapper.CommonMapper;
@@ -23,6 +25,11 @@ import com.ztl.gym.storage.service.IStorageInService;
 import com.ztl.gym.storage.service.IStorageOutService;
 import com.ztl.gym.storage.service.IStorageTransferService;
 import com.ztl.gym.system.service.ISysDeptService;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +39,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommonServiceImpl implements CommonService {
@@ -55,6 +59,14 @@ public class CommonServiceImpl implements CommonService {
     private IStorageTransferService storageTransferService;
     @Autowired
     private IStorageBackService storageBackService;
+    @Autowired
+    private SqlSessionTemplate sqlSessionTemplate;
+    @Autowired
+    private CodeAttrMapper codeAttrMapper;
+    /**
+     * 定义日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger(CommonServiceImpl.class);
 
     @Override
     public synchronized long selectCurrentVal(long companyId) {
@@ -354,5 +366,110 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public int insertPrintAll(List<PrintData> listPrint) {
         return commonMapper.insertPrintAll(listPrint);
+    }
+    @Override
+    public Long updateGeneratorVal(long companyId, long num, int type) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("companyId", companyId);
+        params.put("type", type);
+        GeneratorBean generatorBean = commonMapper.selectIdGenerator(params);
+        //获取当前最大码属性id值
+        Long attrId = codeAttrMapper.getMaxAttrId();
+        int result = 0;
+
+        //如果id号段生成记录为空新建
+        if (Objects.isNull(generatorBean)) {
+            result = insertGeneratorMaxId(companyId, attrId + num, type);
+        }else{
+            Long maxId = generatorBean.getMaxId() + num;
+            result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
+        }
+        //轮训次数，超过5次给客户返回生码中
+        int count = 0;
+        while (result == 0) {
+
+            if (count > 5) {
+                logger.error("更新id号段生成记录表多次失败！");
+                throw new CustomException("生码等待中，请稍后重试！");
+            }
+            try {
+                Thread.sleep(5000);
+                logger.info("++++++++++睡眠5s+++++++++++");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            logger.info("++++++++++等待中+++++++++++");
+            Map<String, Object> param = new HashMap<>(2);
+            param.put("companyId", companyId);
+            param.put("type", type);
+            generatorBean = commonMapper.selectIdGenerator(param);
+            //获取当前最大码属性id值
+            attrId = codeAttrMapper.getMaxAttrId();
+            Long maxId = attrId + num;
+            result = updateGeneratorMaxId(companyId, maxId, type, generatorBean.getVersion());
+            count = count + 1;
+        }
+        return attrId;
+    }
+
+    /**
+     * 跟新maxId值
+     * @param companyId
+     * @param maxId
+     * @param type
+     * @param version
+     * @return
+     */
+    private int updateGeneratorMaxId(long companyId, long maxId, int type, int version) {
+        //关闭session的自动提交
+        SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.REUSE, false);
+        //利用反射生成mapper对象
+        CommonMapper excelMapper = session.getMapper(CommonMapper.class);
+        int count = 0;
+        try {
+            Map<String, Object> param = new HashMap<>(4);
+            param.put("companyId", companyId);
+            param.put("type", type);
+            param.put("maxId", maxId);
+            param.put("version", version);
+            count = excelMapper.updateGeneratorVal(param);
+            session.commit();
+        } catch (Exception e) {
+            //没有提交的数据可以回滚
+            session.rollback();
+        } finally {
+            session.close();
+        }
+        return count;
+    }
+
+    /**
+     * 插入t_id_generator记录
+     * @param companyId
+     * @param maxId
+     * @param type
+     * @return
+     */
+    private int insertGeneratorMaxId(long companyId, long maxId, int type) {
+        //关闭session的自动提交
+        SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.SIMPLE, false);
+        //利用反射生成mapper对象
+        CommonMapper excelMapper = session.getMapper(CommonMapper.class);
+        int count = 0;
+        try {
+            Map<String, Object> param = new HashMap<>(4);
+            param.put("companyId", companyId);
+            param.put("type", type);
+            param.put("maxId", maxId);
+            param.put("version", 0);
+            count = excelMapper.insertGenerator(param);
+            session.commit();
+        } catch (Exception e) {
+            //没有提交的数据可以回滚
+            session.rollback();
+        } finally {
+            session.close();
+        }
+        return count;
     }
 }

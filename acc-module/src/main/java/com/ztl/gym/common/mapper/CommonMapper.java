@@ -1,6 +1,7 @@
 package com.ztl.gym.common.mapper;
 
 import com.ztl.gym.common.core.domain.entity.SysUser;
+import com.ztl.gym.common.domain.GeneratorBean;
 import com.ztl.gym.print.domain.PrintData;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -56,4 +57,25 @@ public interface CommonMapper {
     void insertPrintData(Map<String, Object> mapTemp);
 
     int insertPrintAll(@Param("listPrint") List<PrintData> listPrint);
+
+    /**
+     * 更新分布式id自增数
+     *
+     * @param params
+     */
+    int updateGeneratorVal(Map<String, Object> params);
+
+    /**
+     * 新增分布式id
+     *
+     * @param params
+     */
+    int insertGenerator(Map<String, Object> params);
+
+    /**
+     * 查询分布式id
+     *
+     * @param params
+     */
+    GeneratorBean selectIdGenerator(Map<String, Object> params);
 }
