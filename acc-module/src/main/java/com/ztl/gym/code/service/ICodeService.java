@@ -120,6 +120,13 @@ public interface ICodeService {
     long getCodeCount(String code);
 
     /**
+     * 查询码数量
+     * @param codes
+     * @return
+     */
+    long getCodesCount(List<String> codes);
+
+    /**
      * 根据生码记录id查询码集合
      *
      * @param recordId

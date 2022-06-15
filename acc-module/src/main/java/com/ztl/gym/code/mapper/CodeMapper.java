@@ -217,4 +217,6 @@ public interface CodeMapper {
     Code selectContainCode(Code code);
 
     int updateStatusByIndex(Map<String, Object> param);
+
+    List<Code> selectCodeListByCodes(Map<String, Object> map);
 }

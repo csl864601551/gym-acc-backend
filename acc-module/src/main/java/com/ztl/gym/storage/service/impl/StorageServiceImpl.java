@@ -288,7 +288,9 @@ public class StorageServiceImpl implements IStorageService {
                 }
             }
         }
-        storageVo.setNum(codeService.getCodeCount(codeVal));
+        List<String> list=new ArrayList<>();
+        list.add(codeVal);
+        storageVo.setNum(codeService.getCodesCount(list));
         return storageVo;
     }
 

@@ -110,11 +110,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
         if (storageOut.getThirdPartyFlag() != null) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
-            long count = 0;
-            for (int i = 0; i < storageOut.getCodes().size(); i++) {
-                count += codeService.getCodeCount(storageOut.getCodes().get(i));
-            }
-            storageOut.setActOutNum(count);
+            long count = codeService.getCodesCount(storageOut.getCodes());
+            storageOut.setActOutNum(0L);
             storageOut.setOutNum(count);
             for (int i = 0; i < storageOut.getCodes().size(); i++) {
                 Map<String, Object> map = new HashMap<>();
@@ -197,7 +194,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int updateOutStatusByCode(Map<String, Object> map) {
-        List codes =new ArrayList();
+        List<String> codes =new ArrayList();
         List tempList =new ArrayList();
         try {
             tempList = (List) map.get("codes");
@@ -218,7 +215,8 @@ public class StorageOutServiceImpl implements IStorageOutService {
                 updRes = storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
             }
         }
-        map.put("outNum", codes.size());
+        long count = codeService.getCodesCount(codes);
+        map.put("outNum", count);
         map.put("updateTime", DateUtils.getNowDate());
         map.put("outTime", DateUtils.getNowDate());
         map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());

@@ -408,6 +408,16 @@ public class CodeServiceImpl implements ICodeService {
         }
         return 1;
     }
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public long getCodesCount(List<String> codes) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("codes", codes);
+        map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
+        List<Code> codeList = codeMapper.selectCodeListByCodes(map);
+        return codeList.size();
+    }
+
 
     /**
      * 根据生码记录id查询码集合
