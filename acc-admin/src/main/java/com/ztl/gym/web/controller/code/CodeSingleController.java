@@ -2,6 +2,7 @@ package com.ztl.gym.web.controller.code;
 
 import com.ztl.gym.code.domain.*;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
+import com.ztl.gym.code.domain.vo.FuzhiToOutVo;
 import com.ztl.gym.code.domain.vo.FuzhiVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeSingleService;
@@ -485,7 +486,7 @@ public class CodeSingleController extends BaseController {
     @PostMapping("/fuzhi")
     @Transactional
     @DataSource(DataSourceType.SHARDING)
-    public AjaxResult fuzhi(@RequestBody FuzhiVo fuzhiVo) {
+    public AjaxResult fuzhi(@RequestBody FuzhiToOutVo fuzhiVo) {
         int res = 0;
         List<String> list1 = new ArrayList<String>();//批量码
         Product product = productService.selectTProductById(fuzhiVo.getProductId());

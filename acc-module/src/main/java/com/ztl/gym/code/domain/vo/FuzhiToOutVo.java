@@ -8,8 +8,12 @@ import java.util.List;
 /**
  * 赋值vo
  */
-public class FuzhiVo {
+public class FuzhiToOutVo {
+    private long storageTo;
+    private long indexStart;
+    private long indexEnd;
     private long recordId;
+    private List<String> codes;
     private long productId;
     private long batchId;
     private String remark;
@@ -62,5 +66,37 @@ public class FuzhiVo {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public long getIndexStart() {
+        return indexStart;
+    }
+
+    public void setIndexStart(long indexStart) {
+        this.indexStart = indexStart;
+    }
+
+    public long getIndexEnd() {
+        return indexEnd;
+    }
+
+    public void setIndexEnd(long indexEnd) {
+        this.indexEnd = indexEnd;
+    }
+
+    public List<String> getCodes() {
+        return codes;
+    }
+
+    public void setCodes(List<String> codes) {
+        this.codes = codes;
+    }
+
+    public long getStorageTo() {
+        return storageTo;
+    }
+
+    public void setStorageTo(long storageTo) {
+        this.storageTo = storageTo;
     }
 }
