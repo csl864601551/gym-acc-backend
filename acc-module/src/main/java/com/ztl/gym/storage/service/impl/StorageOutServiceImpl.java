@@ -12,6 +12,7 @@ import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.Storage;
 import com.ztl.gym.storage.domain.StorageOut;
+import com.ztl.gym.storage.domain.StorageOutExport;
 import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.mapper.StorageOutMapper;
@@ -73,6 +74,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
      */
     @Override
     public List<StorageOut> selectStorageOutList(StorageOut storageOut) {
+        //查询
         return storageOutMapper.selectStorageOutList(storageOut);
     }
 
@@ -360,5 +362,15 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Override
     public List<Map<String, Object>> selectCountByWeek(Map<String, Object> map) {
         return storageOutMapper.selectCountByWeek(map);
+    }
+
+    /**
+     * 导出出库信息
+     * @param storageOut
+     * @return
+     */
+    @Override
+    public List<StorageOutExport> selectStorageOutExport(StorageOut storageOut) {
+        return storageOutMapper.selectStorageOutExport(storageOut);
     }
 }

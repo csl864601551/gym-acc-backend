@@ -7,6 +7,7 @@ import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.storage.domain.StorageOut;
+import com.ztl.gym.storage.domain.StorageOutExport;
 import com.ztl.gym.storage.service.IStorageOutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,8 +50,8 @@ public class StorageOutController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(StorageOut storageOut)
     {
-        List<StorageOut> list = storageOutService.selectStorageOutList(storageOut);
-        ExcelUtil<StorageOut> util = new ExcelUtil<StorageOut>(StorageOut.class);
+        List<StorageOutExport> list = storageOutService.selectStorageOutExport(storageOut);
+        ExcelUtil<StorageOutExport> util = new ExcelUtil<StorageOutExport>(StorageOutExport.class);
         return util.exportExcel(list, "out");
     }
 
