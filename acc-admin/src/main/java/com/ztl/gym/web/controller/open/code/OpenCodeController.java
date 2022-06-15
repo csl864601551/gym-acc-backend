@@ -343,4 +343,13 @@ public class OpenCodeController {
 
     }
 
+    /**
+     * 查询码得单品数量
+     *
+     * @return
+     */
+    @GetMapping("/getCodesCount")
+    public AjaxResult getCodesCount(@RequestBody List<String> codes) {
+        return AjaxResult.success(codeService.getCodesCount(codes));
+    }
 }

@@ -286,6 +286,22 @@
         order by code_index
     </select>
 
+    <select id="selectCodeListByCodes" parameterType="Map" resultMap="CodeResultNoAttr">
+        select code_index,company_id,status,code,code_acc,code_type,p_code,code_attr_id from t_code_${companyId}
+        <where> code_type='single'
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="codes != null  and codes != ''">and( code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>)
+                or p_code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>
+                ))
+            </if>
+        </where>
+    </select>
 
     <select id="selectCodeListByRecord" resultMap="CodeResultNoAttr">
         <include refid="selectCodeVo"/>
