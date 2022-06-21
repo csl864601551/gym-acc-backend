@@ -12,6 +12,7 @@ import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.Storage;
 import com.ztl.gym.storage.domain.StorageOut;
+import com.ztl.gym.storage.domain.StorageOutExport;
 import com.ztl.gym.storage.domain.StorageTransfer;
 import com.ztl.gym.storage.mapper.StorageInMapper;
 import com.ztl.gym.storage.mapper.StorageOutMapper;
@@ -24,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +74,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
      */
     @Override
     public List<StorageOut> selectStorageOutList(StorageOut storageOut) {
+        //查询
         return storageOutMapper.selectStorageOutList(storageOut);
     }
 
@@ -106,18 +105,15 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setCreateTime(new Date());
 
         //接收到的码去重
-        if (storageOut.getCodes().size() > 0) {
+        if (storageOut.getCodes() != null && storageOut.getCodes().size() > 0) {
             storageOut.setCodes(storageOut.getCodes().stream().distinct().collect(Collectors.toList()));
         }
 
         if (storageOut.getThirdPartyFlag() != null) {
             storageOut.setUpdateTime(DateUtils.getNowDate());
             storageOut.setOutTime(DateUtils.getNowDate());
-            long count = 0;
-            for (int i = 0; i < storageOut.getCodes().size(); i++) {
-                count += codeService.getCodeCount(storageOut.getCodes().get(i));
-            }
-            storageOut.setActOutNum(count);
+            long count = codeService.getCodesCount(storageOut.getCodes());
+            storageOut.setActOutNum(0L);
             storageOut.setOutNum(count);
             for (int i = 0; i < storageOut.getCodes().size(); i++) {
                 Map<String, Object> map = new HashMap<>();
@@ -200,20 +196,34 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @DataSource(DataSourceType.SHARDING)
     public int updateOutStatusByCode(Map<String, Object> map) {
-        map.put("updateTime", DateUtils.getNowDate());
-        map.put("outTime", DateUtils.getNowDate());
-        map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
-        storageOutMapper.updateOutStatusByCode(map);//更新出库数量
+        List<String> codes =new ArrayList();
+        List tempList =new ArrayList();
+        try {
+            tempList = (List) map.get("codes");
+        }catch (Exception e){
+            throw new CustomException("未接收到码信息,请退出页面重试！", HttpStatus.ERROR);
+        }
+        //接收到的码去重
+        if (tempList != null && tempList.size() > 0) {
+            codes= (List) tempList.stream().distinct().collect(Collectors.toList());
+        }
+
         int updRes = 0;
         if (map.get("outsFlag") == null) {
             updRes = storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         } else {
-            List list = (List) map.get("codes");
-            for (int i = 0; i < list.size(); i++) {
-                map.put("code", list.get(i));
+            for (int i = 0; i < codes.size(); i++) {
+                map.put("code", codes.get(i));
                 updRes = storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
             }
         }
+        long count = codeService.getCodesCount(codes);
+        map.put("outNum", count);
+        map.put("updateTime", DateUtils.getNowDate());
+        map.put("outTime", DateUtils.getNowDate());
+        map.put("updateUser", SecurityUtils.getLoginUser().getUser().getUserId());
+        storageOutMapper.updateOutStatusByCode(map);
+
         //产品库存更新
         if (updRes > 0) {
             storageService.updateProductStock(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()));
@@ -221,6 +231,12 @@ public class StorageOutServiceImpl implements IStorageOutService {
 
         //查询出库单需要的相关信息
         StorageOut storageOut = storageOutMapper.selectStorageOutById(Long.valueOf(map.get("id").toString()));
+        if(storageOut.getActOutNum()>=storageOut.getOutNum()){
+            StorageOut storageOutTemp=new StorageOut();
+            storageOutTemp.setId(storageOut.getId());
+            storageOutTemp.setStatus(StorageOut.STATUS_NORMAL);
+            storageOutMapper.updateStorageOut(storageOutTemp);
+        }
         //判断是否调拨,执行更新调拨单
         String extraNo = storageOut.getExtraNo();
         if (extraNo != null) {//判断非空
@@ -344,5 +360,15 @@ public class StorageOutServiceImpl implements IStorageOutService {
     @Override
     public List<Map<String, Object>> selectCountByWeek(Map<String, Object> map) {
         return storageOutMapper.selectCountByWeek(map);
+    }
+
+    /**
+     * 导出出库信息
+     * @param storageOut
+     * @return
+     */
+    @Override
+    public List<StorageOutExport> selectStorageOutExport(StorageOut storageOut) {
+        return storageOutMapper.selectStorageOutExport(storageOut);
     }
 }

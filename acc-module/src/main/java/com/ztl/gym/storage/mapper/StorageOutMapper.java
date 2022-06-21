@@ -1,6 +1,7 @@
 package com.ztl.gym.storage.mapper;
 
 import com.ztl.gym.storage.domain.StorageOut;
+import com.ztl.gym.storage.domain.StorageOutExport;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -94,4 +95,11 @@ public interface StorageOutMapper {
     int selectCountByDept(Map<String, Object> map);
 
     List<Map<String, Object>> selectCountByWeek(Map<String, Object> map);
+
+    /**
+     * 导出出库信息
+     * @param storageOut
+     * @return
+     */
+    List<StorageOutExport> selectStorageOutExport(StorageOut storageOut);
 }

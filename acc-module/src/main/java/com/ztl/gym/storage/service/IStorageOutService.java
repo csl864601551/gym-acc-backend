@@ -1,6 +1,7 @@
 package com.ztl.gym.storage.service;
 
 import com.ztl.gym.storage.domain.StorageOut;
+import com.ztl.gym.storage.domain.StorageOutExport;
 
 import java.util.List;
 import java.util.Map;
@@ -104,4 +105,11 @@ public interface IStorageOutService {
      * @return 结果
      */
     List<Map<String, Object>> selectCountByWeek(Map<String, Object> map);
+
+    /**
+     * 导出出库信息
+     * @param storageOut
+     * @return
+     */
+    List<StorageOutExport> selectStorageOutExport(StorageOut storageOut);
 }

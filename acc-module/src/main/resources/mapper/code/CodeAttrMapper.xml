@@ -239,4 +239,8 @@
             #{codeAttr.createUser},#{codeAttr.createTime},#{codeAttr.updateUser},#{codeAttr.updateTime})
         </foreach>
     </insert>
+
+    <select id="getMaxAttrId" resultType="Long">
+        select max(id) from t_code_attr
+    </select>
 </mapper>

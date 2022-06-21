@@ -2,6 +2,8 @@ package com.ztl.gym.web.controller.code;
 
 import com.ztl.gym.code.domain.*;
 import com.ztl.gym.code.domain.vo.CodeRecordDetailVo;
+import com.ztl.gym.code.domain.vo.FuzhiToOutVo;
+import com.ztl.gym.code.domain.vo.FuzhiVo;
 import com.ztl.gym.code.service.ICodeAttrService;
 import com.ztl.gym.code.service.ICodeSingleService;
 import com.ztl.gym.code.service.ICodeService;
@@ -17,17 +19,24 @@ import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.CommonService;
-import com.ztl.gym.common.utils.CodeRuleUtils;
-import com.ztl.gym.common.utils.DateUtils;
-import com.ztl.gym.common.utils.SecurityUtils;
-import com.ztl.gym.common.utils.StringUtils;
+import com.ztl.gym.common.utils.*;
 import com.ztl.gym.common.utils.file.FileUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.print.domain.PrintData;
+import com.ztl.gym.product.domain.Product;
+import com.ztl.gym.product.domain.ProductBatch;
+import com.ztl.gym.product.domain.ProductCategory;
+import com.ztl.gym.product.service.IProductBatchService;
+import com.ztl.gym.product.service.IProductCategoryService;
+import com.ztl.gym.product.service.IProductService;
 import com.ztl.gym.storage.domain.InCodeFlow;
+import com.ztl.gym.storage.domain.Storage;
 import com.ztl.gym.storage.domain.StorageIn;
+import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.domain.vo.FlowVo;
 import com.ztl.gym.storage.service.IStorageInService;
+import com.ztl.gym.storage.service.IStorageOutService;
+import com.ztl.gym.storage.service.IStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +47,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code/single")
@@ -59,7 +65,17 @@ public class CodeSingleController extends BaseController {
     @Autowired
     private ICodeAttrService codeAttrService;
     @Autowired
+    private IProductService productService;
+    @Autowired
+    private IProductBatchService productBatchService;
+    @Autowired
+    private IProductCategoryService productCategoryService;
+    @Autowired
+    private IStorageService storageService;
+    @Autowired
     private IStorageInService storageInService;
+    @Autowired
+    private IStorageOutService storageOutService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -213,6 +229,7 @@ public class CodeSingleController extends BaseController {
 
     /**
      * 同步单码数据
+     *
      * @param lsCode
      * @return
      */
@@ -224,7 +241,7 @@ public class CodeSingleController extends BaseController {
         List<Map<String, Object>> listObj = (List<Map<String, Object>>) lsCode.get("codeData");
         //设置类型
         List<Code> listCode = new ArrayList<>();
-        for(Object obj : listObj) {
+        for (Object obj : listObj) {
             Map<String, Object> ob = (Map<String, Object>) obj;
             Code code = new Code();
             code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
@@ -242,8 +259,8 @@ public class CodeSingleController extends BaseController {
         }
         if (listObj.size() > 0) {
             //新增Code数据
-            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
-            if(listObj.size() == retInsertCodeCount) {
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode, companyId);
+            if (listObj.size() == retInsertCodeCount) {
                 return AjaxResult.success("标识数据同步成功");
             } else {
                 return AjaxResult.success("标识数据部分同步成功");
@@ -267,38 +284,38 @@ public class CodeSingleController extends BaseController {
         Map<String, Object> codeSequenceNew = (Map<String, Object>) data.get("codeSequenceNew");
         //设置类型
         List<Code> listCode = new ArrayList<>();
-        for(Object obj : listCodeObj) {
+        for (Object obj : listCodeObj) {
             Map<String, Object> ob = (Map<String, Object>) obj;
             Code code = new Code();
             code.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
             code.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
             code.setCode(ob.get("code").toString());
             code.setCodeType(ob.get("codeType").toString());
-            if(ob.get("tenantId") !=null) {
+            if (ob.get("tenantId") != null) {
                 code.setTenantId(Long.valueOf(ob.get("tenantId").toString()));
             }
-            if(ob.get("status") !=null) {
+            if (ob.get("status") != null) {
                 code.setStatus(Integer.valueOf(ob.get("status").toString()));
             }
-            if(ob.get("singleId") !=null) {
+            if (ob.get("singleId") != null) {
                 code.setSingleId(Long.valueOf(ob.get("singleId").toString()));
             }
-            if(ob.get("storageType") !=null) {
+            if (ob.get("storageType") != null) {
                 code.setStorageType(Integer.valueOf(ob.get("storageType").toString()));
             }
-            if(ob.get("storageRecordId") !=null) {
+            if (ob.get("storageRecordId") != null) {
                 code.setStorageRecordId(Long.valueOf(ob.get("storageRecordId").toString()));
             }
-            if(ob.get("pCode") !=null) {
+            if (ob.get("pCode") != null) {
                 code.setpCode(ob.get("pCode").toString());
             }
-            if(ob.get("codeAttrId") !=null) {
+            if (ob.get("codeAttrId") != null) {
                 code.setCodeAttrId(Long.valueOf(ob.get("codeAttrId").toString()));
             }
             listCode.add(code);
         }
         List<CodeAttr> listCodeAttr = new ArrayList<>();
-        for(Object obj : listCodeAttrData) {
+        for (Object obj : listCodeAttrData) {
             Map<String, Object> ob = (Map<String, Object>) obj;
             CodeAttr codeAttr = new CodeAttr();
             codeAttr.setId(Long.valueOf(ob.get("id").toString()));
@@ -312,7 +329,7 @@ public class CodeSingleController extends BaseController {
         }
         List<StorageIn> listStorageIn = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        for(Object obj : listStorageInData) {
+        for (Object obj : listStorageInData) {
             Map<String, Object> ob = (Map<String, Object>) obj;
             StorageIn storageIn = new StorageIn();
             storageIn.setId(Long.valueOf(ob.get("id").toString()));
@@ -334,7 +351,7 @@ public class CodeSingleController extends BaseController {
             listStorageIn.add(storageIn);
         }
         List<PrintData> listPrint = new ArrayList<>();
-        for(Object obj : listPrintData) {
+        for (Object obj : listPrintData) {
             Map<String, Object> ob = (Map<String, Object>) obj;
             PrintData printData = new PrintData();
             printData.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
@@ -355,7 +372,7 @@ public class CodeSingleController extends BaseController {
             listPrint.add(printData);
         }
         List<InCodeFlow> listFlow = new ArrayList<>();
-        for(Object obj : listInCodeFlow) {
+        for (Object obj : listInCodeFlow) {
             Map<String, Object> ob = (Map<String, Object>) obj;
             InCodeFlow flow = new InCodeFlow();
             flow.setCompanyId(Long.valueOf(ob.get("companyId").toString()));
@@ -370,12 +387,12 @@ public class CodeSingleController extends BaseController {
             //新增索引数据
             int retInsertCodeSequenceNew = codeSingleService.insertCodeSequenceNew(codeSequenceNew);
             //新增Code数据
-            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode,companyId);
+            int retInsertCodeCount = codeSingleService.insertCodeAll(listCode, companyId);
             int retInsertCodeAttrCount = codeAttrService.insertCodeAttrAll(listCodeAttr);
             int retInsertStorageInCount = storageInService.insertStorageInAll(listStorageIn);
             int retInsertPrintCount = commonService.insertPrintAll(listPrint);
-            int retInsertInCodeFlowCount = storageInService.insertInCodeFlowAll(listFlow,companyId);
-            if(listCodeObj.size() == retInsertCodeCount && listCodeAttrData.size() == retInsertCodeAttrCount &&
+            int retInsertInCodeFlowCount = storageInService.insertInCodeFlowAll(listFlow, companyId);
+            if (listCodeObj.size() == retInsertCodeCount && listCodeAttrData.size() == retInsertCodeAttrCount &&
                     listStorageInData.size() == retInsertStorageInCount && listPrintData.size() == retInsertPrintCount && listInCodeFlow.size() == retInsertInCodeFlowCount) {
                 return AjaxResult.success("生产数据同步成功");
             } else {
@@ -460,6 +477,133 @@ public class CodeSingleController extends BaseController {
         return ajax;
     }
 
+    /**
+     * 生码赋值,按单赋值、分段赋值
+     *
+     * @return
+     */
+    @Log(title = "生码记录", businessType = BusinessType.OTHER)
+    @PostMapping("/fuzhi")
+    @Transactional
+    @DataSource(DataSourceType.SHARDING)
+    public AjaxResult fuzhi(@RequestBody FuzhiToOutVo fuzhiVo) {
+        int res = 0;
+        List<String> list1 = new ArrayList<String>();//批量码
+        Product product = productService.selectTProductById(fuzhiVo.getProductId());
+        ProductBatch productBatch = productBatchService.selectProductBatchById(fuzhiVo.getBatchId());
+        ProductCategory category1 = productCategoryService.selectProductCategoryById(product.getCategoryOne());
+
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        Long companyId = SecurityUtils.getLoginUserTopCompanyId();
+        String productCategory = category1.getCategoryName();
+        java.util.Date inputTime = new Date();
+
+        CodeAttr codeAttr = new CodeAttr();
+        codeAttr = new CodeAttr();
+        codeAttr.setCompanyId(companyId);
+        codeAttr.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
+
+        Long recordId = fuzhiVo.getRecordId();
+        Long indexStart = fuzhiVo.getIndexStart();
+        Long indexEnd = fuzhiVo.getIndexEnd();
+        // 处理分段赋值逻辑
+        if (recordId == 0) {
+            //判断流水号区间是否已赋值
+            //step1判断是否存在于两个生码记录
+            Map<String, Object> map = new HashMap<>();
+            map.put("companyId", companyId);
+            map.put("indexBegin", indexStart);
+            map.put("indexEnd", indexEnd);
+            List<Code> list = codeService.selectCodeListByIndex(map);
+            if (list.size() > 0) {
+
+                if (list.get(list.size() - 1).getCodeIndex() < indexEnd) {
+                    throw new CustomException("不允许跨生码区间赋值，请缩小赋值范围！", HttpStatus.ERROR);
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    list1.add(list.get(i).getCode());
+                    if (list.get(i).getCodeAttr().getProductId() != null) {
+                        throw new CustomException("流水区间存在已赋值产品码，请重新输入流水区间！", HttpStatus.ERROR);
+                    }
+                }
+                recordId = list.get(0).getCodeAttr().getRecordId();//正确赋值recordId
+            } else {
+                throw new CustomException("未查询到相关码数据，请检查流水号区间是否正确！", HttpStatus.ERROR);
+            }
+        }
+        codeAttr.setRecordId(recordId);
+        codeAttr.setIndexStart(indexStart);
+        codeAttr.setIndexEnd(indexEnd);
+
+        codeAttr.setProductId(fuzhiVo.getProductId());
+        codeAttr.setProductName(product.getProductName());
+        codeAttr.setProductNo(product.getProductNo());
+        codeAttr.setBarCode(product.getBarCode());
+        codeAttr.setProductCategory(productCategory);
+        codeAttr.setProductUnit(product.getUnit());
+        codeAttr.setProductIntroduce(product.getProductIntroduce());
+        codeAttr.setBatchId(fuzhiVo.getBatchId());
+        codeAttr.setBatchNo(productBatch.getBatchNo());
+        codeAttr.setRemark(fuzhiVo.getRemark());
+        codeAttr.setInputBy(userId);
+        codeAttr.setCreateUser(userId);
+        codeAttr.setInputTime(inputTime);
+        codeAttr.setUpdateTime(inputTime);
+        //获取属性id
+        Long attrId = commonService.updateGeneratorVal(codeAttr.getCompanyId(), 1, 1);
+        codeAttr.setId(attrId + 1);
+        //插入编码属性表
+        Long codeAttrId = codeAttrService.insertCodeAttr(codeAttr);
+
+        //更新对应码的状态
+        res = codeService.updateStatusByIndex(companyId, codeAttrId, recordId, indexStart, indexEnd, AccConstants.CODE_STATUS_FINISH);
+
+        // step 判断仓库是否存在，设置默认仓库（提前处理仓库问题）
+        //处理无仓库问题
+        Storage temp = new Storage();
+        temp.setCompanyId(companyId);
+        temp.setTenantId(companyId);
+        long storageId;
+        List<Storage> list = storageService.selectStorageList(temp);
+        if (list.size() > 0) {
+            storageId = list.get(0).getId();
+        } else {
+            Storage storage = new Storage();
+            storage.setStorageName("默认仓库");
+            storage.setStorageNo("1");
+            storage.setCompanyId(companyId);
+            storage.setTenantId(companyId);
+            storageService.insertStorage(storage);
+            storageId = storage.getId();
+        }
+
+        //入库
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("inNo", commonService.getStorageNo(1));
+        map.put("productId", fuzhiVo.getProductId());
+        map.put("batchNo", productBatch.getBatchNo());
+        map.put("toStorageId", storageId);
+        map.put("remark", "");
+        map.put("thirdPartyFlag", "1");
+        map.put("codes", list1);
+        int show = storageInService.insertStorageIn(map);
+
+        //出库
+        StorageOut storageOut = new StorageOut();
+        storageOut.setOutNo(commonService.getStorageNo(2));
+        storageOut.setProductId(productBatch.getProductId());
+        storageOut.setBatchNo(productBatch.getBatchNo());
+        storageOut.setStorageTo(fuzhiVo.getStorageTo());
+        storageOut.setFromStorageId(storageId);
+        storageOut.setThirdPartyFlag("1");
+        storageOut.setOutTime(DateUtils.getNowDate());
+        storageOut.setCodes(list1);//码数据
+        storageOutService.insertStorageOut(storageOut);
+
+        return AjaxResult.success("导入入库成功");
+
+    }
 
     /**
      * 查询该企业是否有状态为创建中的生码记录【用于前端生码记录页面自动刷新】
@@ -490,7 +634,7 @@ public class CodeSingleController extends BaseController {
         codeStr = codeStr.trim();
         if (!codeStr.equals("")) {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-            if(CodeRuleUtils.getCodeType(codeStr).equals(AccConstants.CODE_TYPE_BOX)){
+            if (CodeRuleUtils.getCodeType(codeStr).equals(AccConstants.CODE_TYPE_BOX)) {
                 throw new CustomException("请扫描单码数据！", HttpStatus.ERROR);
             }
             Code temp = new Code();

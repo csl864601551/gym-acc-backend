@@ -20,9 +20,12 @@ import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IProductService;
 import com.ztl.gym.storage.domain.Erp;
 import com.ztl.gym.storage.domain.ErpDetail;
+import com.ztl.gym.storage.domain.Storage;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.service.IErpDetailService;
 import com.ztl.gym.storage.service.IErpService;
+import com.ztl.gym.storage.service.IStorageOutService;
+import com.ztl.gym.storage.service.IStorageService;
 import com.ztl.gym.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +50,10 @@ public class OpenCodeController {
     private IErpService erpService;
     @Autowired
     private IErpDetailService erpDetailService;
+    @Autowired
+    private IStorageService storageService;
+    @Autowired
+    private IStorageOutService storageOutService;
 
     @Value("${ruoyi.preFixUrl}")
     private String preFixUrl;
@@ -203,9 +210,10 @@ public class OpenCodeController {
         }
 
         SysDept sysDept = SecurityUtils.getLoginUserCompany();
+        Long companyId=SecurityUtils.getLoginUserTopCompanyId();
         //step 判定经销商存在
         SysDept sysTenant = new SysDept();
-        sysTenant.setParentId(sysDept.getDeptId());
+        sysTenant.setParentId(companyId);
         sysTenant.setDeptName(deptName);
         List<SysDept> sysDeptList = sysDeptService.selectDeptList(sysTenant);
         if (sysDeptList.size() > 0) {
@@ -217,14 +225,34 @@ public class OpenCodeController {
             sysTenant.setParentId(sysDept.getDeptId());
             sysDeptService.insertDept(sysTenant);
         }
+        Long tenantId=sysTenant.getDeptId();
 
         try {
-            erp.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-            erp.setDeptId(sysTenant.getDeptId());
+            erp.setCompanyId(companyId);
+            erp.setDeptId(tenantId);
             erp.setStatus(0L);
             erpService.insertErp(erp);
         } catch (Exception e) {
             throw new CustomException("接收数据格式错误！", HttpStatus.ERROR);
+        }
+
+        // step 判断仓库是否存在，设置默认仓库（提前处理仓库问题）
+        //处理无仓库问题
+        Storage tempStorage = new Storage();
+        tempStorage.setCompanyId(companyId);
+        tempStorage.setTenantId(companyId);
+        long storageId;
+        List<Storage> list = storageService.selectStorageList(tempStorage);
+        if (list.size() > 0) {
+            storageId = list.get(0).getId();
+        } else {
+            Storage storage = new Storage();
+            storage.setStorageName("默认仓库");
+            storage.setStorageNo("1");
+            storage.setCompanyId(companyId);
+            storage.setTenantId(companyId);
+            storageService.insertStorage(storage);
+            storageId = storage.getId();
         }
 
         // step 判断产品存在
@@ -238,14 +266,29 @@ public class OpenCodeController {
                 if (listProduct.size() > 0) {
                     outProductList.get(i).setProductId(listProduct.get(0).getId());
                 } else {
-                    outProductList.get(i).setProductId(0L);
+                    throw new CustomException("不存在'"+outProductList.get(i).getProductNo()+"："+outProductList.get(i).getProductName()+"'该产品信息,请联系维护该产品信息！", HttpStatus.ERROR);
                 }
                 outProductList.get(i).setErpId(erp.getId());
                 outProductList.get(i).setActNum(0L);
                 outProductList.get(i).setStatus(0L);
                 erpDetailService.insertErpDetail(outProductList.get(i));
+
+
+                //插入待出库单
+                //出库
+                StorageOut storageOut = new StorageOut();
+                storageOut.setOutNo(commonService.getStorageNo(2));
+                storageOut.setProductId(listProduct.get(0).getId());
+                storageOut.setBatchNo(erp.getErpOutNo());
+                storageOut.setStorageTo(sysTenant.getDeptId());
+                storageOut.setOutNum(outProductList.get(i).getOutNum());
+                storageOut.setFromStorageId(storageId);
+                storageOut.setOutTime(DateUtils.getNowDate());
+                storageOutService.insertStorageOut(storageOut);
             }
         }
+
+
 
         return AjaxResult.success("请求成功", "同步数据成功");
     }
@@ -300,4 +343,13 @@ public class OpenCodeController {
 
     }
 
+    /**
+     * 查询码得单品数量
+     *
+     * @return
+     */
+    @GetMapping("/getCodesCount")
+    public AjaxResult getCodesCount(@RequestBody List<String> codes) {
+        return AjaxResult.success(codeService.getCodesCount(codes));
+    }
 }

@@ -277,7 +277,7 @@
     </select>
 
     <select id="selectCodeListByCodeOrIndex" parameterType="Map" resultMap="CodeResult">
-        select code_index,company_id,status,code,code_acc,code_type,p_code,code_attr_id from t_code
+        select code_index,company_id,status,code,code_acc,code_type,p_code,code_attr_id from t_code_${companyId}
         <where>
             <if test="companyId != null ">and company_id = #{companyId}</if>
             <if test="code != null  and code != ''">and( code = #{code} or p_code=#{code})</if>
@@ -287,6 +287,22 @@
         order by code_index
     </select>
 
+    <select id="selectCodeListByCodes" parameterType="Map" resultMap="CodeResultNoAttr">
+        select code_index,company_id,status,code,code_acc,code_type,p_code,code_attr_id from t_code_${companyId}
+        <where> code_type='single'
+            <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
+            <if test="codes != null  and codes != ''">and( code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>)
+                or p_code in (
+                <foreach collection="codes" item="code" separator=",">
+                    #{code}
+                </foreach>
+                ))
+            </if>
+        </where>
+    </select>
 
     <select id="selectCodeListByRecord" resultMap="CodeResultNoAttr">
         <include refid="selectCodeVo"/>
@@ -321,6 +337,18 @@
     <update id="unBindCodeByPCode">
         update t_code_${companyId} set p_code=null where p_code=#{pCode}
     </update>
+
+    <update id="updateStatusByIndex" parameterType="Map">
+        update t_code_${companyId}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null">status = #{status},</if>
+            <if test="codeAttrId != null">code_attr_id = #{codeAttrId},</if>
+            <if test="singleId != null">single_id = #{singleId},</if>
+        </trim>
+        where company_id=#{companyId} and (code_index  &gt;= #{indexStart} and code_index &lt;= #{indexEnd})
+
+    </update>
+
     <insert id="insertUnBindLog">
     insert into t_unbind_log(  code,  p_code, create_time, create_user)
     values

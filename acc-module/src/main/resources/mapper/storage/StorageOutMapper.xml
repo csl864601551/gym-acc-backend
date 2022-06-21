@@ -166,7 +166,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
     <update id="updateOutStatusByCode" parameterType="Map">
-        update t_storage_out set act_out_num=out_num,status=${@com.ztl.gym.storage.domain.StorageOut@STATUS_NORMAL}
+        update t_storage_out set act_out_num =act_out_num+ #{outNum}
         <if test="updateUser != null">,update_user = #{updateUser}</if>
         <if test="outTime != null">,out_time = #{outTime}</if>
         <if test="updateTime != null">,update_time = #{updateTime}</if>
@@ -391,5 +391,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             GROUP BY
             mycreatedate order by mycreatedate asc
         </if>
+    </select>
+
+    <select id="selectStorageOutExport" parameterType="StorageOut" resultType="StorageOutExport">
+        select b.dept_name deptName, c.product_no productNo,
+               c.product_name productName, sum(a.out_num) outNum,
+               sum(a.act_out_num) actOutNum, DATE_FORMAT(a.out_time,'%Y-%m-%d') outTime
+        from t_storage_out a
+        inner join sys_dept b on a.storage_to = b.dept_id
+        inner join t_product c on a.product_id = c.id
+        where 1=1
+            <if test="status != null "> and a.status = #{status} </if>
+            <if test="outNo != null  and outNo != ''"> and a.out_no = #{outNo} </if>
+            <if test="outTime != null "> and a.out_time = #{outTime} </if>
+        group by a.storage_to, a.product_id, outTime
+        order by outTime desc
     </select>
 </mapper>

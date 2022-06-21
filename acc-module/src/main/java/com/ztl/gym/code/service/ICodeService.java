@@ -120,6 +120,13 @@ public interface ICodeService {
     long getCodeCount(String code);
 
     /**
+     * 查询码数量
+     * @param codes
+     * @return
+     */
+    long getCodesCount(List<String> codes);
+
+    /**
      * 根据生码记录id查询码集合
      *
      * @param recordId
@@ -184,4 +191,8 @@ public interface ICodeService {
      * @return
      */
     Code selectContainCode(Code temp);
+
+    List<Code> selectCodeListByIndex(Map<String, Object> map);
+
+    int updateStatusByIndex(Long companyId, Long codeAttrId, Long singleId, Long indexStart, Long indexEnd, int codeStatusFinish);
 }

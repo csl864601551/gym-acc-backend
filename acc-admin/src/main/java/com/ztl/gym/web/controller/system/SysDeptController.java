@@ -141,7 +141,7 @@ public class SysDeptController extends BaseController {
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysDept dept) {
         if (UserConstants.NOT_UNIQUE.equals(deptService.checkDeptNameUnique(dept))) {
-            return AjaxResult.error("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
+            return AjaxResult.error("新增'" + dept.getDeptName() + "'失败，名称已存在");
         }
         dept.setCreateBy(SecurityUtils.getUsername());
 

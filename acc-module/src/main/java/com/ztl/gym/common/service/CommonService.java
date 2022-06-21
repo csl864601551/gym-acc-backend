@@ -97,4 +97,12 @@ CommonService {
     void insertPrintData(Map<String, Object> mapTemp);
 
     int insertPrintAll(List<PrintData> listPrint);
+
+    /**
+     * 更新业务序列号
+     * @param companyId
+     * @param type
+     * @return
+     */
+    Long updateGeneratorVal(long companyId, long num, int type);
 }

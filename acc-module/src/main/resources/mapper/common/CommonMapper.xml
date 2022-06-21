@@ -81,4 +81,25 @@
              #{print.productName}, #{print.productModel}, #{print.batchName}, #{print.produceDate}, #{print.codeCount}, #{print.grossWeight}, #{print.netWeight}, #{print.orderNo}, #{print.barCode})
         </foreach>
     </insert>
+
+    <resultMap type="GeneratorBean" id="GeneratorResult">
+        <id property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="maxId" column="max_id"/>
+        <result property="type" column="type"/>
+        <result property="step" column="step"/>
+        <result property="version" column="version"/>
+    </resultMap>
+
+    <insert id="insertGenerator" parameterType="Map">
+        INSERT INTO t_id_generator(company_id, max_id, type, step, version) VALUES (#{companyId}, #{maxId}, #{type}, #{step},0);
+    </insert>
+
+    <update id="updateGeneratorVal" parameterType="Map">
+        UPDATE t_id_generator set max_id = #{maxId}, version = version + 1 where company_id = #{companyId} and version = #{version} and type = #{type}
+    </update>
+
+    <select id="selectIdGenerator" parameterType="Map" resultMap="GeneratorResult">
+        select * from t_id_generator where company_id = #{companyId} and type = #{type}
+    </select>
 </mapper>
