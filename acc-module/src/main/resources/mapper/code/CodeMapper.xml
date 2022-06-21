@@ -396,8 +396,8 @@
         `t_back_code_flow_${companyId}` AS ocf
         left join t_code_${companyId} c on c.`code`=ocf.code
         LEFT JOIN t_in_code_flow_${companyId} icf ON icf.code = ocf.code
-        left join t_storage_out so on ocf.storage_record_id=so.id
-        left join sys_dept sd on sd.dept_id=so.storage_to
+        left join t_storage_back so on ocf.storage_record_id=so.id
+        left join sys_dept sd on sd.dept_id=so.storage_from
         left join t_product p on p.id=so.product_id
         <where>
             <if test="beginTime != null ">and ocf.create_time &gt;= #{beginTime}</if>
