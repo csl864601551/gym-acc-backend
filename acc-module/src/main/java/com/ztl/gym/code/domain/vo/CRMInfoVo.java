@@ -7,6 +7,7 @@ import java.util.List;
 
 public class CRMInfoVo {
 
+    private String storageType;
     private String productName;
     private String barCode;
     private String productNo;
@@ -23,6 +24,14 @@ public class CRMInfoVo {
     private Date outTime;
 
     private List<CRMAttrList> attributeList;
+
+    public String getStorageType() {
+        return storageType;
+    }
+
+    public void setStorageType(String storageType) {
+        this.storageType = storageType;
+    }
 
     public String getProductName() {
         return productName;
