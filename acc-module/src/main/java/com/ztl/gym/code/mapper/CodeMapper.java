@@ -206,6 +206,8 @@ public interface CodeMapper {
 
     List<CRMInfoVo> getCRMInfo(@Param("preFixUrl") String preFixUrl,@Param("companyId") Long companyId, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime);
 
+    List<CRMInfoVo> getCRMInfoByProductIds(@Param("preFixUrl") String preFixUrl,@Param("companyId") Long companyId, @Param("beginTime") Date beginTime, @Param("endTime") Date endTime, @Param("productIds") List<String> productIds);
+
     List<CRMAttrList> getCRMAttributeList(Long id);
 
     void unBindCodeByPCode(@Param("companyId") Long companyId,@Param("pCode") String pCode);

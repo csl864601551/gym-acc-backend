@@ -405,6 +405,30 @@
         </where>
         group by ocf.code,ocf.create_time
     </select>
+    <select id="getCRMInfoByProductIds" resultMap="CRMResult">
+        SELECT 2 as storage_type,
+        ocf.create_time as out_time, min(icf.create_time) as in_time,CONCAT(#{preFixUrl},ocf.code) as code,c.code_type,
+        case when c.p_code is null then "" else  CONCAT(#{preFixUrl},c.p_code)  end as p_code,sd.dept_no,
+        sd.dept_name,p.product_no,p.product_name,p.bar_code,so.product_id
+        FROM
+        `t_out_code_flow_${companyId}` AS ocf
+        left join t_code_${companyId} c on c.`code`=ocf.code
+        LEFT JOIN t_in_code_flow_${companyId} icf ON icf.code = ocf.code
+        left join t_storage_out so on ocf.storage_record_id=so.id
+        left join sys_dept sd on sd.dept_id=so.storage_to
+        left join t_product p on p.id=so.product_id
+        <where>
+            <if test="beginTime != null ">and ocf.create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null ">and ocf.create_time &lt;= #{endTime}</if>
+            <if test="productIds != null ">
+                and p.id in
+                <foreach item="productId" collection="productIds" open="(" separator="," close=")">
+                    #{productId}
+                </foreach>
+            </if>
+        </where>
+        group by ocf.code,ocf.create_time
+    </select>
 
     <select id="getCRMAttributeList" resultMap="crmAttrList">
         select id, company_id, product_id, attr_name_cn, attr_name_en, attr_value, sort, create_user, create_time, update_user, update_time

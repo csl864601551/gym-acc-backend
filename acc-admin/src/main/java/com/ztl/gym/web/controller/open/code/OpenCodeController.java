@@ -1,5 +1,6 @@
 package com.ztl.gym.web.controller.open.code;
 
+import com.alibaba.fastjson.JSONArray;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.domain.vo.CRMInfoVo;
 import com.ztl.gym.code.service.ICodeService;
@@ -172,6 +173,38 @@ public class OpenCodeController {
             throw new CustomException("该时间段无相关数据！", HttpStatus.ERROR);
         }
     }
+    /**
+     * 对接CRM开放接口
+     *
+     * @return
+     */
+    @GetMapping("getCRMInfoByProductIds")
+    public AjaxResult getCRMInfoByProductIds(@RequestBody Map<String, Object> map) {
+        Date beginTime = null;
+        Date endTime = null;
+        List<String> productIds=new ArrayList<>();
+        try {
+            beginTime = DateUtils.parseDate(map.get("beginTime").toString());
+            endTime = DateUtils.parseDate(map.get("endTime").toString());
+            productIds= JSONArray.parseObject(JSONArray.toJSONString(map.get("productIds")),List.class) ;
+            if (map.get("dayFlag") == null) {
+                String str = DateUtils.getDatePoor(endTime, beginTime);
+                Integer dayNum = Integer.parseInt(str.substring(0, str.lastIndexOf("天")));
+                if (dayNum > 32) {
+                    throw new CustomException("时间范围限制31天，请输入重新输入！", HttpStatus.ERROR);
+                }
+            }
+        } catch (Exception e) {
+            throw new CustomException("请输入正确时间范围！", HttpStatus.ERROR);
+        }
+        List<CRMInfoVo> crmInfo = codeService.getCRMInfoByProductIds(preFixUrl, beginTime, endTime,productIds);
+        if (crmInfo.size() > 0) {
+            return AjaxResult.success(crmInfo);
+        } else {
+            throw new CustomException("该时间段无相关数据！", HttpStatus.ERROR);
+        }
+    }
+
 
     /**
      * 对接CRM开放接口

@@ -697,7 +697,13 @@ public class CodeServiceImpl implements ICodeService {
 
         return crmInfo;
     }
-
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<CRMInfoVo> getCRMInfoByProductIds(String preFixUrl, Date beginTime, Date endTime,List<String> productIds) {
+        long companyId = 102;//CodeRuleUtils.getCompanyIdByCode(code);暂时免密登录默认查询大艺数据
+        List<CRMInfoVo> crmInfo = codeMapper.getCRMInfoByProductIds(preFixUrl, companyId, beginTime, endTime,productIds);
+        return crmInfo;
+    }
     @Override
     public List<Long> selectStorageRecordIdsByAttrIds(Long companyId, List idList) {
         Map<String, Object> params = new HashMap<>();
