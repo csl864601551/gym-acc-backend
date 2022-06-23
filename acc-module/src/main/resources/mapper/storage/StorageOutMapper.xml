@@ -74,6 +74,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fromStorageId != null "> and so.from_storage_id = #{fromStorageId}</if>
             <if test="toStorageId != null "> and so.to_storage_id = #{toStorageId}</if>
             <if test="outTime != null "> and so.out_time = #{outTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(so.out_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(so.out_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
             <if test="beginTime != null ">and so.create_time &gt;= #{beginTime}</if>
             <if test="endTime != null ">and so.create_time &lt;= #{endTime}</if>
         </where>
@@ -403,7 +409,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where 1=1
             <if test="status != null "> and a.status = #{status} </if>
             <if test="outNo != null  and outNo != ''"> and a.out_no = #{outNo} </if>
-            <if test="outTime != null "> and a.out_time = #{outTime} </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(a.out_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(a.out_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
         group by a.storage_to, a.product_id, outTime
         order by outTime desc
     </select>
