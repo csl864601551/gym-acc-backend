@@ -399,23 +399,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     </select>
 
-    <select id="selectStorageOutExport" parameterType="StorageOut" resultType="StorageOutExport">
-        select b.dept_name deptName, c.product_no productNo,
-               c.product_name productName, sum(a.out_num) outNum,
-               sum(a.act_out_num) actOutNum, DATE_FORMAT(a.out_time,'%Y-%m-%d') outTime
-        from t_storage_out a
-        inner join sys_dept b on a.storage_to = b.dept_id
-        inner join t_product c on a.product_id = c.id
+    <resultMap type="StorageOutExport" id="CRMResult">
+        <result property="storageType" column="storage_type"/>
+        <result property="productName" column="product_name"/>
+        <result property="barCode" column="bar_code"/>
+        <result property="productNo" column="product_no"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="deptNo" column="dept_no"/>
+        <result property="inTime" column="in_time"/>
+        <result property="outTime" column="out_time"/>
+        <result property="code" column="code"/>
+        <result property="codeType" column="code_type"/>
+        <result property="pCode" column="p_code"/>
+    </resultMap>
+    <select id="selectStorageOutExport" parameterType="StorageOut" resultMap="CRMResult">
+        SELECT
+        ocf.create_time as out_time, min(icf.create_time) as in_time,ocf.code,c.code_type,
+        case when c.p_code is null then "" else c.p_code  end as p_code,sd.dept_no,
+        sd.dept_name,p.product_no,p.product_name,p.bar_code,so.product_id
+        FROM
+        `t_out_code_flow_${companyId}` AS ocf
+        left join t_code_${companyId} c on c.`code`=ocf.code
+        LEFT JOIN t_in_code_flow_${companyId} icf ON icf.code = ocf.code
+        left join t_storage_out so on ocf.storage_record_id=so.id
+        left join sys_dept sd on sd.dept_id=so.storage_to
+        left join t_code_attr ca on ca.id=c.code_attr_id
+        left join t_product p on p.id=ca.product_id
         where 1=1
-            <if test="status != null "> and a.status = #{status} </if>
-            <if test="outNo != null  and outNo != ''"> and a.out_no = #{outNo} </if>
+            <if test="status != null "> and so.status = #{status} </if>
+            <if test="outNo != null  and outNo != ''"> and so.out_no = #{outNo} </if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                AND date_format(a.out_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+                AND date_format(so.out_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                AND date_format(a.out_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+                AND date_format(so.out_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
-        group by a.storage_to, a.product_id, outTime
-        order by outTime desc
+        group by ocf.code,ocf.create_time
+        order by ocf.create_time,c.p_code desc
     </select>
 </mapper>

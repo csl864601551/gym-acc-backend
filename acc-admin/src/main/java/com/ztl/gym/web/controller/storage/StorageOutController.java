@@ -5,6 +5,8 @@ import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.StringUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.storage.domain.StorageOut;
 import com.ztl.gym.storage.domain.StorageOutExport;
@@ -45,11 +47,12 @@ public class StorageOutController extends BaseController
     /**
      * 导出出库列表
      */
-    @PreAuthorize("@ss.hasPermi('storage:out:export')")
+//    @PreAuthorize("@ss.hasPermi('storage:out:export')")
     @Log(title = "出库", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(StorageOut storageOut)
     {
+        storageOut.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         List<StorageOutExport> list = storageOutService.selectStorageOutExport(storageOut);
         ExcelUtil<StorageOutExport> util = new ExcelUtil<StorageOutExport>(StorageOutExport.class);
         return util.exportExcel(list, "out");
