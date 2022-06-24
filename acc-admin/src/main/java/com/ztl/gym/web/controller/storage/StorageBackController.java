@@ -116,17 +116,21 @@ public class StorageBackController extends BaseController {
             }catch (Exception e){
                 storageBack.setCodeIndex("0");
             }
-            storageBack.setBackNum(storageIn.getActInNum());
-            storageBack.setActBackNum(storageIn.getActInNum());
+            Map<String, Object> map = new HashMap<>();
+            map.put("companyId", codeRes.getCompanyId());
+            map.put("code", codeRes.getCode());
+            List<Code> list =codeService.selectCodeListByIndex(map);
+            storageBack.setBackNum(Long.valueOf(list.size()-1));
+            storageBack.setActBackNum(Long.valueOf(list.size()-1));
         } else {
             storageBack.setCodeIndex(String.valueOf(codeRes.getCodeIndex()));
             storageBack.setBackNum(1L);
             storageBack.setActBackNum(1L);
         }
         storageBack.setFromStorageId(storageIn.getToStorageId());
-        storageBack.setProductId(storageIn.getProductId());
-        storageBack.setProductNo(storageIn.getProductNo());
-        storageBack.setProductName(storageIn.getProductName());
+        storageBack.setProductId(codeRes.getCodeAttr().getProductId());
+        storageBack.setProductNo(codeRes.getCodeAttr().getProductNo());
+        storageBack.setProductName(codeRes.getCodeAttr().getProductName());
         storageBack.setBatchNo(storageIn.getBatchNo());
 
         List<ProductBackVo> productList = new ArrayList<>();

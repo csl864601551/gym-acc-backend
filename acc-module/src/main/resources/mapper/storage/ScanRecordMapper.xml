@@ -184,7 +184,9 @@
         left join sys_dept sd2 on sd2.dept_id=si.storage_to
         LEFT JOIN sys_user suc ON suc.user_id = cf.create_user
         left join t_storage s on s.id=si.to_storage_id
-        left join t_product p on p.id=si.product_id
+        left join t_code_${companyId} c on c.`code`=cf.code
+        left join t_code_attr ca on ca.id=c.code_attr_id
+        left join t_product p on p.id=ca.product_id
         where cf.company_id = #{companyId} and cf.code=#{code}
 
         union all
@@ -199,7 +201,9 @@
         left join sys_dept sd on sd.dept_id=so.storage_from
         left join sys_dept sd2 on sd2.dept_id=so.storage_to
         LEFT JOIN sys_user suc ON suc.user_id = cf.create_user
-        left join t_product p on p.id=so.product_id
+        left join t_code_${companyId} c on c.`code`=cf.code
+        left join t_code_attr ca on ca.id=c.code_attr_id
+        left join t_product p on p.id=ca.product_id
         where cf.company_id = #{companyId} and cf.code=#{code}
 
         union all
@@ -214,7 +218,9 @@
         left join sys_dept sd on sd.dept_id=so.storage_from
         left join sys_dept sd2 on sd2.dept_id=so.storage_to
         LEFT JOIN sys_user suc ON suc.user_id = cf.create_user
-        left join t_product p on p.id=so.product_id
+        left join t_code_${companyId} c on c.`code`=cf.code
+        left join t_code_attr ca on ca.id=c.code_attr_id
+        left join t_product p on p.id=ca.product_id
         where cf.company_id = #{companyId} and cf.code=#{code}
 
         union all
@@ -229,7 +235,9 @@
         left join sys_dept sd on sd.dept_id=so.storage_from
         left join sys_dept sd2 on sd2.dept_id=so.storage_to
         LEFT JOIN sys_user suc ON suc.user_id = cf.create_user
-        left join t_product p on p.id=so.product_id
+        left join t_code_${companyId} c on c.`code`=cf.code
+        left join t_code_attr ca on ca.id=c.code_attr_id
+        left join t_product p on p.id=ca.product_id
         where cf.company_id = #{companyId} and cf.code=#{code}
         order by create_time desc
     </select>
