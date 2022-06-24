@@ -14,6 +14,8 @@ import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.CodeRuleUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.ServletUtils;
+import com.ztl.gym.common.utils.ip.IpUtils;
 import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.product.domain.Product;
 import com.ztl.gym.product.service.IProductService;
@@ -97,6 +99,7 @@ public class ScanRecordController extends BaseController {
     @Log(title = "扫码记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ScanRecord scanRecord) {
+        scanRecord.setIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         if (scanRecord.getProductId() != null) {
             if (scanRecord.getProductId() > 0) {
                 Product product = tProductService.selectTProductByIdOne(scanRecord.getProductId());
