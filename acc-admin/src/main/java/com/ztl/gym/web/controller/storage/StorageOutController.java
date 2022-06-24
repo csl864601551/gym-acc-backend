@@ -47,8 +47,7 @@ public class StorageOutController extends BaseController
     /**
      * 导出出库列表
      */
-//    @PreAuthorize("@ss.hasPermi('storage:out:export')")
-    @Log(title = "出库", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('storage:out:export')")
     @GetMapping("/export")
     public AjaxResult export(StorageOut storageOut)
     {
