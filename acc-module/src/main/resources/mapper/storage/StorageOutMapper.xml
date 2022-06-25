@@ -416,7 +416,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
         ocf.create_time as out_time, min(icf.create_time) as in_time,ocf.code,c.code_type,
         case when c.p_code is null then "" else c.p_code  end as p_code,sd.dept_no,
-        sd.dept_name,p.product_no,p.product_name,p.bar_code,so.product_id
+        sd.dept_name,p.product_no,p.product_name,p.bar_code,ca.product_id
         FROM
         `t_out_code_flow_${companyId}` AS ocf
         left join t_code_${companyId} c on c.`code`=ocf.code
