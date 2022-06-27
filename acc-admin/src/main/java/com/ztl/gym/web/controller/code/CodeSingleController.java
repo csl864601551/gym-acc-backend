@@ -647,6 +647,9 @@ public class CodeSingleController extends BaseController {
             if (code.getpCode() != null) {
                 throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！", HttpStatus.ERROR);
             }
+            if (code.getTenantId() != null && code.getCompanyId() != code.getTenantId()) {
+                throw new CustomException(code.getCode() + "该码已被出库，请检查后重试！", HttpStatus.ERROR);
+            }
             ajax.put("data", code);
             return ajax;
         } else {
@@ -697,6 +700,9 @@ public class CodeSingleController extends BaseController {
                 }
                 if (code.getpCode() != null) {
                     throw new CustomException(code.getCode() + "该码已被扫描，请检查后重试！");
+                }
+                if (code.getTenantId() != null && code.getCompanyId() != code.getTenantId()) {
+                    throw new CustomException(code.getCode() + "该码已被出库，请检查后重试！", HttpStatus.ERROR);
                 }
                 codeService.updatePCodeByCode(companyId, pCode, list.get(i));
             }//更新单码
