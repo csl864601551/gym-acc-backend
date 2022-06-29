@@ -67,6 +67,12 @@ public class StorageOutExport extends BaseEntity {
     private String codeType;
 
     /**
+     * 操作人
+     */
+    @Excel(name = "操作人")
+    private String nickName;
+
+    /**
      * 出库时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -174,5 +180,13 @@ public class StorageOutExport extends BaseEntity {
 
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

@@ -411,12 +411,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="code" column="code"/>
         <result property="codeType" column="code_type"/>
         <result property="pCode" column="p_code"/>
+        <result property="nickName" column="nick_name"/>
     </resultMap>
     <select id="selectStorageOutExport" parameterType="StorageOut" resultMap="CRMResult">
         SELECT
         ocf.create_time as out_time, min(icf.create_time) as in_time,ocf.code,c.code_type,
         case when c.p_code is null then "" else c.p_code  end as p_code,sd.dept_no,
-        sd.dept_name,p.product_no,p.product_name,p.bar_code,ca.product_id
+        sd.dept_name,p.product_no,p.product_name,p.bar_code,ca.product_id,suc.nick_name
         FROM
         `t_out_code_flow_${companyId}` AS ocf
         left join t_code_${companyId} c on c.`code`=ocf.code
@@ -425,6 +426,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept sd on sd.dept_id=so.storage_to
         left join t_code_attr ca on ca.id=c.code_attr_id
         left join t_product p on p.id=ca.product_id
+        LEFT JOIN sys_user suc ON suc.user_id = so.create_user
         where 1=1
             <if test="status != null "> and so.status = #{status} </if>
             <if test="outNo != null  and outNo != ''"> and so.out_no = #{outNo} </if>
