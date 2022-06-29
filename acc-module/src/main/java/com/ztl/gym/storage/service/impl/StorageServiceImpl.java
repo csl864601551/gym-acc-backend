@@ -258,8 +258,8 @@ public class StorageServiceImpl implements IStorageService {
                 //判断是否码是否绑定了产品
                 if (codeEntity.getCodeAttr().getProductId() != null) {
                     storageVo.setProductId(codeEntity.getCodeAttr().getProductId());//产品ID
-                    storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//产品编号
-                    storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//产品名称
+                    storageVo.setProductNo(codeEntity.getCodeAttr().getProductNo());//规格型号
+                    storageVo.setProductName(codeEntity.getCodeAttr().getProduct().getProductName());//物料名称
                     storageVo.setBatchId(codeEntity.getCodeAttr().getBatchId());//产品批次ID
                     storageVo.setBatchNo(codeEntity.getCodeAttr().getBatchNo());//产品批次
                 }

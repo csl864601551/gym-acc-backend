@@ -40,7 +40,7 @@ public class StorageVo {
      */
     private String productNo;
     /**
-     * 产品名称
+     * 物料名称
      */
     private String productName;
     /**

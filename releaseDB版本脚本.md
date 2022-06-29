@@ -74,7 +74,7 @@ ALTER TABLE `t_product` ADD `photo` varchar(5000) CHARACTER SET utf8 COLLATE utf
 
 
 ALTER TABLE `t_scan_record` ADD `product_id` bigint(20) NULL DEFAULT NULL COMMENT '产品id';
-ALTER TABLE `t_scan_record` ADD `product_name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '产品名称'
+ALTER TABLE `t_scan_record` ADD `product_name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '物料名称'
 
 
 ALTER TABLE `sys_dept` ADD `provinces` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '省市区';
@@ -290,7 +290,7 @@ CREATE TABLE `t_erp_detail` (
 `erp_id` int(20) DEFAULT NULL COMMENT 'erp主键',
 `product_no` varchar(100) DEFAULT NULL COMMENT '产品型号',
 `product_id` int(20) DEFAULT NULL COMMENT '产品ID',
-`product_name` varchar(200) DEFAULT NULL COMMENT '产品名称',
+`product_name` varchar(200) DEFAULT NULL COMMENT '物料名称',
 `bar_code` varchar(100) DEFAULT NULL COMMENT '条码号',
 `out_num` int(11) DEFAULT NULL COMMENT '出库数量',
 `act_num` int(11) DEFAULT '0' COMMENT '实际出库数量',

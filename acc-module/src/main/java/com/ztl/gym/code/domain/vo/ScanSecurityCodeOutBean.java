@@ -45,7 +45,7 @@ public class ScanSecurityCodeOutBean{
     private String code;
 
     /**
-     * 产品名称
+     * 物料名称
      */
     private String product;
 

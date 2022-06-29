@@ -25,7 +25,7 @@ public class CodeRecordDetailVo {
      */
     private String productName;
     /**
-     * 产品条码
+     * 物料编码
      */
     private String barCode;
     /**

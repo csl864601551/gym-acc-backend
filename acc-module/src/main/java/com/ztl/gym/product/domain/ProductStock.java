@@ -79,11 +79,11 @@ public class ProductStock extends BaseEntity {
 
     /*---------------------------- 冗余字段 -----------------------------*/
     /**
-     * 产品编号
+     * 规格型号
      */
     private String productNo;
     /**
-     * 产品名称
+     * 物料名称
      */
     private String productName;
     /**

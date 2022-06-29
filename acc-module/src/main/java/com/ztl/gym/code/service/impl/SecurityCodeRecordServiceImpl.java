@@ -243,7 +243,7 @@ public class SecurityCodeRecordServiceImpl implements ISecurityCodeRecordService
     }
 
     /**
-     * 如果防伪码存在在t_code_acc表，表示单独生码与产品没有关联。且SecurityCodeRecord记录无需产品id,产品名称和标识码
+     * 如果防伪码存在在t_code_acc表，表示单独生码与产品没有关联。且SecurityCodeRecord记录无需产品id,物料名称和标识码
      *
      * @param securityCodeRecord
      * @param codeAccRecord

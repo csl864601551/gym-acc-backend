@@ -85,7 +85,7 @@ public class ProductController extends BaseController
             productQuery.setProductNo(product.getProductNo());
             List<Product> list = tProductService.selectTProductList1(productQuery);
             if(list.size()>0){
-                return error("该产品编号和产品名称已存在！！！");
+                return error("该规格型号和物料名称已存在！！！");
             }
         }
         return toAjax(tProductService.insertTProduct(product));

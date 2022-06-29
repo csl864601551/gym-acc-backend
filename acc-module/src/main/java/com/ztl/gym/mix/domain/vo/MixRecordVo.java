@@ -8,12 +8,12 @@ public class MixRecordVo {
     @Excel(name = "批次编号")
     private String batchNo;
 
-    /** 产品编号 */
-    @Excel(name = "产品编号")
+    /** 规格型号 */
+    @Excel(name = "规格型号")
     private String productNo;
 
-    /** 产品名称 */
-    @Excel(name = "产品名称")
+    /** 物料名称 */
+    @Excel(name = "物料名称")
     private String productName;
 
     /** 码/流水号 */

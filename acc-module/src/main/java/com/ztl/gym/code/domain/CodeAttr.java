@@ -78,20 +78,20 @@ public class CodeAttr extends BaseEntity {
     private Long productId;
 
     /**
-     * 关联产品名称
+     * 关联物料名称
      */
     private String productName;
 
     /**
-     * 关联产品编号
+     * 关联规格型号
      */
-    @Excel(name = "关联产品编号")
+    @Excel(name = "关联规格型号")
     private String productNo;
 
     /**
-     * 关联产品条码
+     * 关联物料编码
      */
-    @Excel(name = "关联产品条码")
+    @Excel(name = "关联物料编码")
     private String barCode;
 
     /**

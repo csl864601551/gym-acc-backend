@@ -103,12 +103,12 @@ public class ScanRecord extends BaseEntity {
     private Long productId;
 
     /**
-     * 产品名称
+     * 物料名称
      */
     private String productName;
 
     /**
-     * 产品名称
+     * 物料名称
      */
     private String type;
 

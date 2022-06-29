@@ -16,16 +16,16 @@ public class ErpDetail
     /** erp主键 */
     private Long erpId;
 
-    /** 产品型号 */
+    /** 规格型号 */
     private String productNo;
 
     /** 产品ID */
     private Long productId;
 
-    /** 产品名称 */
+    /** 物料名称 */
     private String productName;
 
-    /** 条码号 */
+    /** 物料编码 */
     private String barCode;
 
     /** 出库数量 */

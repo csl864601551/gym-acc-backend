@@ -81,12 +81,12 @@ public class MixRecord extends BaseEntity
     @Excel(name = "窜货类型")
     private String mixTypeName;
 
-    /** 产品名称 */
-    @Excel(name = "产品名称")
+    /** 物料名称 */
+    @Excel(name = "物料名称")
     private String productName;
 
-    /** 产品编号 */
-    @Excel(name = "产品编号")
+    /** 规格型号 */
+    @Excel(name = "规格型号")
     private String productNo;
 
     /** 批次编号 */

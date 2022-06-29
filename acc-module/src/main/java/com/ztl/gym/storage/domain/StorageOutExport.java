@@ -21,15 +21,15 @@ public class StorageOutExport extends BaseEntity {
     private String deptName;
 
     /**
-     * 产品型号
+     * 规格型号
      */
-    @Excel(name = "产品型号")
+    @Excel(name = "规格型号")
     private String productNo;
 
     /**
-     * 产品名称
+     * 物料名称
      */
-    @Excel(name = "产品名称")
+    @Excel(name = "物料名称")
     private String productName;
 
     /**

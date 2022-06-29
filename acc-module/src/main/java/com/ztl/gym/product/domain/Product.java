@@ -31,9 +31,9 @@ public class Product extends BaseEntity {
     private Long companyId;
 
     /**
-     * 产品编号
+     * 规格型号
      */
-    @Excel(name = "产品编号")
+    @Excel(name = "规格型号")
     private String productNo;
 
     /**
@@ -43,15 +43,15 @@ public class Product extends BaseEntity {
     private Long status;
 
     /**
-     * 产品名称
+     * 物料名称
      */
-    @Excel(name = "产品名称")
+    @Excel(name = "物料名称")
     private String productName;
 
     /**
-     * 产品条码
+     * 物料编码
      */
-    @Excel(name = "产品条码")
+    @Excel(name = "物料编码")
     private String barCode;
 
     /**
