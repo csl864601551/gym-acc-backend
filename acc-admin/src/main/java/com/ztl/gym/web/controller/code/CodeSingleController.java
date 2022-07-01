@@ -482,7 +482,7 @@ public class CodeSingleController extends BaseController {
      *
      * @return
      */
-    @Log(title = "生码记录", businessType = BusinessType.OTHER)
+    @Log(title = "生码赋值", businessType = BusinessType.INSERT)
     @PostMapping("/fuzhi")
     @Transactional
     @DataSource(DataSourceType.SHARDING)
