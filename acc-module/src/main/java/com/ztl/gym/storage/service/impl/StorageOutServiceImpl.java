@@ -284,6 +284,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         outMap.put("tenantId", storageOut.getStorageTo());
         outMap.put("actInNum", storageOut.getOutNum());
         outMap.put("toStorageId", storageId);
+        outMap.put("codes", codes);
         outMap.put("id", inMap.get("id"));
         storageInService.updateTenantIn(outMap);//需要处理tenant_id问题，仓库问题和addflow问题
         return 1;

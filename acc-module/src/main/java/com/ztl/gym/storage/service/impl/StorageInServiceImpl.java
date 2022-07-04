@@ -235,24 +235,36 @@ public class StorageInServiceImpl implements IStorageInService {
         }catch (Exception e){
             throw new CustomException("未查询到相关单号,请检查入库单来源");
         }
-        List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
-        boolean flag=true;
+
         int updRes=0;
-        for (int i = 0; i < codes.size(); i++) {
-            if(codes.get(i).startsWith("20")){
-                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
-                flag=false;
-            }
-        }
-        if(flag){
+        try{
+            List<String> codes=(List)map.get("codes");
             for (int i = 0; i < codes.size(); i++) {
-                updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                map.put("code", codes.get(i));
+                updRes = storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
+            }
+        }catch (Exception e){
+            /** 0701,拆单出库导致不能用 **/
+            List<String> codes = codeService.selectCodeByStorage(companyId, AccConstants.STORAGE_TYPE_OUT, storageRecordId);
+            boolean flag=true;
+            for (int i = 0; i < codes.size(); i++) {
+                if(codes.get(i).startsWith("20")){
+                    updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                    flag=false;
+                }
+            }
+            if(flag){
+                for (int i = 0; i < codes.size(); i++) {
+                    updRes=storageService.addCodeFlow(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()), codes.get(i));//插入码流转明细，转移到PDA执行
+                }
             }
         }
+
         //产品库存更新
         if (updRes > 0) {
             storageService.updateProductStock(AccConstants.STORAGE_TYPE_IN, Long.valueOf(map.get("id").toString()));
         }
+
         //判断是否调拨,执行更新调拨单
         if (extraNo.substring(0, 2).equals("DB")) {
             StorageTransfer storageTransfer = storageTransferService.selectStorageTransferByNo(extraNo);
