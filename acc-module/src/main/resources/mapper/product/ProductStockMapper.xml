@@ -19,6 +19,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="productNo" column="product_no"/>
         <result property="productName" column="product_name"/>
+        <result property="barCode" column="bar_code"/>
         <result property="storageNo" column="storage_no"/>
         <result property="storageName" column="storage_name"/>
     </resultMap>
@@ -38,6 +39,7 @@
         s.update_time,
         p.product_name,
         p.product_no,
+        p.bar_code,
         t.storage_no,
         t.storage_name
         from t_product_stock s
