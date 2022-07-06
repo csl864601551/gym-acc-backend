@@ -14,6 +14,33 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class ProductStock extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
+    /*---------------------------- 冗余字段 -----------------------------*/
+    /**
+     * 规格型号
+     */
+    @Excel(name = "规格型号")
+    private String productNo;
+    /**
+     * 物料名称
+     */
+    @Excel(name = "物料名称")
+    private String productName;
+    /**
+     * 物料编码
+     */
+    @Excel(name = "物料编码")
+    private String barCode;
+    /**
+     * 仓库编号
+     */
+    private String storageNo;
+    /**
+     * 仓库名称
+     */
+    @Excel(name = "仓库名称")
+    private String storageName;
+
+    /*---------------------------- 冗余字段 -----------------------------*/
     /**
      * 主键ID
      */
@@ -22,7 +49,6 @@ public class ProductStock extends BaseEntity {
     /**
      * 企业ID
      */
-    @Excel(name = "企业ID")
     private Long companyId;
 
     /**
@@ -38,13 +64,11 @@ public class ProductStock extends BaseEntity {
     /**
      * 仓库id
      */
-    @Excel(name = "仓库id")
     private Long storageId;
 
     /**
      * 产品id
      */
-    @Excel(name = "产品id")
     private Long productId;
 
     /**
@@ -77,23 +101,6 @@ public class ProductStock extends BaseEntity {
     @Excel(name = "剩余数量")
     private int remainNum;
 
-    /*---------------------------- 冗余字段 -----------------------------*/
-    /**
-     * 规格型号
-     */
-    private String productNo;
-    /**
-     * 物料名称
-     */
-    private String productName;
-    /**
-     * 仓库编号
-     */
-    private String storageNo;
-    /**
-     * 仓库名称
-     */
-    private String storageName;
 
     public void setId(Long id) {
         this.id = id;
@@ -213,6 +220,14 @@ public class ProductStock extends BaseEntity {
 
     public void setStockLevel(int stockLevel) {
         this.stockLevel = stockLevel;
+    }
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
     }
 
     @Override

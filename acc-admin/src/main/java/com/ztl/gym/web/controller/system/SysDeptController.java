@@ -335,4 +335,32 @@ public class SysDeptController extends BaseController {
             log.error("下载文件失败", e);
         }
     }
+    /**
+     * 导出经销商记录
+     */
+    @Log(title = "经销商记录", businessType = BusinessType.EXPORT)
+    @GetMapping("/downloadStock")
+    public void downloadStock( Long tenantId, HttpServletResponse response)
+    {
+        ProductStock productStock = new ProductStock();
+        productStock.setTenantId(tenantId);
+        List<ProductStock> list = productStockService.selectProductStockList(productStock);
+        ExcelUtil<ProductStock> util = new ExcelUtil<ProductStock>(ProductStock.class);
+        String fileName = util.exportExcel(list, "-"+ DateUtils.getDate()+"库存信息").get("msg").toString();
+
+        try {
+            if (!FileUtils.checkAllowDownload(fileName)) {
+                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
+            String filePath = RuoYiConfig.getDownloadPath() + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, realFileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+            FileUtils.deleteFile(filePath);
+        } catch (Exception e) {
+            log.error("下载文件失败", e);
+        }
+    }
 }

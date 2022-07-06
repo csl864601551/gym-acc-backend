@@ -593,7 +593,7 @@ public class CodeSingleController extends BaseController {
         //出库
         StorageOut storageOut = new StorageOut();
         storageOut.setOutNo(commonService.getStorageNo(2));
-        storageOut.setProductId(productBatch.getProductId());
+        storageOut.setProductId(fuzhiVo.getProductId());
         storageOut.setBatchNo(productBatch.getBatchNo());
         storageOut.setStorageTo(fuzhiVo.getStorageTo());
         storageOut.setFromStorageId(storageId);
