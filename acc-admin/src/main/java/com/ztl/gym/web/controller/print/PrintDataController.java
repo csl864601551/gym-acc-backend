@@ -4,17 +4,21 @@ import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.ICodeService;
 import com.ztl.gym.common.annotation.DataSource;
 import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.enums.DataSourceType;
 import com.ztl.gym.common.service.CommonService;
 import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.common.utils.poi.ExcelUtil;
 import com.ztl.gym.print.domain.PrintData;
 import com.ztl.gym.print.service.PrintDataService;
 import com.ztl.gym.web.controller.code.CodeRecordController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +28,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/boxCode/print")
-public class PrintDataController {
+public class PrintDataController extends BaseController {
     @Autowired
     public PrintDataService printDataService;
 
@@ -32,6 +36,31 @@ public class PrintDataController {
     private ICodeService codeService;
 
     private static final Logger log = LoggerFactory.getLogger(PrintDataController.class);
+
+    /**
+     * 查询产量统计列表
+     */
+    @PreAuthorize("@ss.hasPermi('boxCode:print:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(PrintData printData)
+    {
+        startPage();
+        List<PrintData> list = printDataService.selectPrintDataList(printData);
+        return getDataTable(list);
+    }
+
+    /**
+     * 导出产量统计列表
+     */
+    @PreAuthorize("@ss.hasPermi('boxCode:print:export')")
+    @Log(title = "产量统计", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(PrintData printData)
+    {
+        List<PrintData> list = printDataService.selectPrintDataExport(printData);
+        ExcelUtil<PrintData> util = new ExcelUtil<PrintData>(PrintData.class);
+        return util.exportExcel(list, "print");
+    }
 
     /**
      * 获取打印数据

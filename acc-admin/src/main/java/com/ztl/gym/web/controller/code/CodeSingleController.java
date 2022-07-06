@@ -359,16 +359,17 @@ public class CodeSingleController extends BaseController {
             printData.setCodeIndex(Long.valueOf(ob.get("codeIndex").toString()));
             printData.setPrintStatus(Integer.valueOf(ob.get("printStatus").toString()));
             printData.setProductLine(ob.get("productLine").toString());
-            printData.setBoxNum(ob.get("productLine").toString());
+            printData.setBoxNum(Long.valueOf(ob.get("boxNum").toString()));
             printData.setProductName(ob.get("productName").toString());
             printData.setProductModel(ob.get("productModel").toString());
             printData.setBatchName(ob.get("batchName").toString());
             printData.setProduceDate(ob.get("produceDate").toString());
-            printData.setCodeCount(ob.get("codeCount").toString());
+            printData.setCodeCount(Long.valueOf(ob.get("codeCount").toString()));
             printData.setGrossWeight(ob.get("grossWeight").toString());
             printData.setNetWeight(ob.get("netWeight").toString());
             printData.setOrderNo(ob.get("orderNo").toString());
             printData.setBarCode(ob.get("barCode").toString());
+            printData.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(ob.get("createTime").toString()));
             listPrint.add(printData);
         }
         List<InCodeFlow> listFlow = new ArrayList<>();
@@ -735,6 +736,7 @@ public class CodeSingleController extends BaseController {
             mapTemp.put("netWeight", map.get("netWeight"));
             mapTemp.put("orderNo", map.get("orderNo"));
             mapTemp.put("barCode", map.get("barCode"));
+            mapTemp.put("createTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             commonService.insertPrintData(mapTemp);//插入打印数据
 
             ajax.put("data", pCode);

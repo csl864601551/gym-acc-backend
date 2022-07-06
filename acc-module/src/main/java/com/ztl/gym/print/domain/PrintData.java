@@ -1,38 +1,45 @@
 package com.ztl.gym.print.domain;
 
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ztl.gym.common.annotation.Excel;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class PrintData extends BaseEntity {
+import java.util.Date;
 
-    /** 主键ID */
+/**
+ * 产量统计对象 t_print_data
+ *
+ * @author ruoyi
+ * @date 2022-06-28
+ */
+public class PrintData extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** 主键 */
     private Long id;
 
-    /** 企业ID */
-    @Excel(name = "企业ID")
+    /** 企业Id */
     private Long companyId;
 
     /** 箱码 */
-    @Excel(name = "箱码")
     private String boxCode;
 
-    /** 箱号 */
-    @Excel(name = "箱号")
-    private String boxNum;
-
     /** 流水号 */
-    @Excel(name = "流水号")
     private Long codeIndex;
 
-    /** 打印状态 */
-    @Excel(name = "打印状态（0：未打印，1：已打印）")
-    private int printStatus;
+    /** 打印状态（0：未打印，1：已打印） */
+    private Integer printStatus;
 
     /** 产线 */
     @Excel(name = "产线")
     private String productLine;
+
+    /** 箱数量 */
+    private Long boxNum;
 
     /** 产品 */
     @Excel(name = "产品")
@@ -43,171 +50,226 @@ public class PrintData extends BaseEntity {
     private String productModel;
 
     /** 批次 */
-    @Excel(name = "批次")
     private String batchName;
 
     /** 生产日期 */
-    @Excel(name = "生产日期")
     private String produceDate;
 
     /** 装箱数 */
-    @Excel(name = "装箱数")
-    private String codeCount;
+    private Long codeCount;
 
     /** 毛重 */
-    @Excel(name = "毛重")
     private String grossWeight;
 
     /** 净重 */
-    @Excel(name = "净重")
     private String netWeight;
 
     /** 定货号 */
-    @Excel(name = "定货号")
     private String orderNo;
 
     /** 条形码 */
-    @Excel(name = "条形码")
     private String barCode;
 
-    public Long getId() {
-        return id;
+    /** 产量 */
+    @Excel(name = "产量")
+    private Long produceCount;
+
+    /** 实际生产日期 */
+    @Excel(name = "生产日期")
+    private String produceFactDate;
+
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginTime;
+    @TableField(exist = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endTime;
+
+    public Date getBeginTime() {
+        return beginTime;
     }
 
-    public void setId(Long id) {
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public Long getCompanyId() {
-        return companyId;
+    public Long getId()
+    {
+        return id;
     }
-
-    public void setCompanyId(Long companyId) {
+    public void setCompanyId(Long companyId)
+    {
         this.companyId = companyId;
     }
 
-    public String getBoxCode() {
-        return boxCode;
+    public Long getCompanyId()
+    {
+        return companyId;
     }
-
-    public void setBoxCode(String boxCode) {
+    public void setBoxCode(String boxCode)
+    {
         this.boxCode = boxCode;
     }
 
-    public String getBoxNum() {
-        return boxNum;
+    public String getBoxCode()
+    {
+        return boxCode;
     }
-
-    public void setBoxNum(String boxNum) {
-        this.boxNum = boxNum;
-    }
-
-    public Long getCodeIndex() {
-        return codeIndex;
-    }
-
-    public void setCodeIndex(Long codeIndex) {
+    public void setCodeIndex(Long codeIndex)
+    {
         this.codeIndex = codeIndex;
     }
 
-    public int getPrintStatus() {
-        return printStatus;
+    public Long getCodeIndex()
+    {
+        return codeIndex;
     }
-
-    public void setPrintStatus(int printStatus) {
+    public void setPrintStatus(Integer printStatus)
+    {
         this.printStatus = printStatus;
     }
 
-    public String getProductLine() {
-        return productLine;
+    public Integer getPrintStatus()
+    {
+        return printStatus;
     }
-
-    public void setProductLine(String productLine) {
+    public void setProductLine(String productLine)
+    {
         this.productLine = productLine;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getProductLine()
+    {
+        return productLine;
+    }
+    public void setBoxNum(Long boxNum)
+    {
+        this.boxNum = boxNum;
     }
 
-    public void setProductName(String productName) {
+    public Long getBoxNum()
+    {
+        return boxNum;
+    }
+    public void setProductName(String productName)
+    {
         this.productName = productName;
     }
 
-    public String getProductModel() {
-        return productModel;
+    public String getProductName()
+    {
+        return productName;
     }
-
-    public void setProductModel(String productModel) {
+    public void setProductModel(String productModel)
+    {
         this.productModel = productModel;
     }
 
-    public String getBatchName() {
-        return batchName;
+    public String getProductModel()
+    {
+        return productModel;
     }
-
-    public void setBatchName(String batchName) {
+    public void setBatchName(String batchName)
+    {
         this.batchName = batchName;
     }
 
-    public String getProduceDate() {
-        return produceDate;
+    public String getBatchName()
+    {
+        return batchName;
     }
-
-    public void setProduceDate(String produceDate) {
+    public void setProduceDate(String produceDate)
+    {
         this.produceDate = produceDate;
     }
 
-    public String getCodeCount() {
-        return codeCount;
+    public String getProduceDate()
+    {
+        return produceDate;
     }
-
-    public void setCodeCount(String codeCount) {
+    public void setCodeCount(Long codeCount)
+    {
         this.codeCount = codeCount;
     }
 
-    public String getGrossWeight() {
-        return grossWeight;
+    public Long getCodeCount()
+    {
+        return codeCount;
     }
-
-    public void setGrossWeight(String grossWeight) {
+    public void setGrossWeight(String grossWeight)
+    {
         this.grossWeight = grossWeight;
     }
 
-    public String getNetWeight() {
-        return netWeight;
+    public String getGrossWeight()
+    {
+        return grossWeight;
     }
-
-    public void setNetWeight(String netWeight) {
+    public void setNetWeight(String netWeight)
+    {
         this.netWeight = netWeight;
     }
 
-    public String getOrderNo() {
-        return orderNo;
+    public String getNetWeight()
+    {
+        return netWeight;
     }
-
-    public void setOrderNo(String orderNo) {
+    public void setOrderNo(String orderNo)
+    {
         this.orderNo = orderNo;
     }
 
-    public String getBarCode() {
-        return barCode;
+    public String getOrderNo()
+    {
+        return orderNo;
+    }
+    public void setBarCode(String barCode)
+    {
+        this.barCode = barCode;
     }
 
-    public void setBarCode(String barCode) {
-        this.barCode = barCode;
+    public String getBarCode()
+    {
+        return barCode;
+    }
+    public Long getProduceCount() {
+        return produceCount;
+    }
+
+    public void setProduceCount(Long produceCount) {
+        this.produceCount = produceCount;
+    }
+    public String getProduceFactDate() {
+        return produceFactDate;
+    }
+
+    public void setProduceFactDate(String produceFactDate) {
+        this.produceFactDate = produceFactDate;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId())
                 .append("companyId", getCompanyId())
                 .append("boxCode", getBoxCode())
-                .append("boxNum", getBoxNum())
                 .append("codeIndex", getCodeIndex())
                 .append("printStatus", getPrintStatus())
                 .append("productLine", getProductLine())
+                .append("boxNum", getBoxNum())
                 .append("productName", getProductName())
                 .append("productModel", getProductModel())
                 .append("batchName", getBatchName())
@@ -217,6 +279,7 @@ public class PrintData extends BaseEntity {
                 .append("netWeight", getNetWeight())
                 .append("orderNo", getOrderNo())
                 .append("barCode", getBarCode())
+                .append("createTime", getCreateTime())
                 .toString();
     }
 }

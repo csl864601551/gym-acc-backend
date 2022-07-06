@@ -4,6 +4,66 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztl.gym.print.mapper.PrintDataMapper">
 
+    <resultMap type="PrintData" id="PrintDataResult">
+        <result property="id"    column="id"    />
+        <result property="companyId"    column="company_id"    />
+        <result property="boxCode"    column="box_code"    />
+        <result property="codeIndex"    column="code_index"    />
+        <result property="printStatus"    column="print_status"    />
+        <result property="productLine"    column="product_line"    />
+        <result property="boxNum"    column="box_num"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productModel"    column="product_model"    />
+        <result property="batchName"    column="batch_name"    />
+        <result property="produceDate"    column="produce_date"    />
+        <result property="codeCount"    column="code_count"    />
+        <result property="grossWeight"    column="gross_weight"    />
+        <result property="netWeight"    column="net_weight"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="barCode"    column="bar_code"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectPrintDataVo">
+        select id, company_id, box_code, code_index, print_status, product_line, box_num, product_name, product_model, batch_name, produce_date, code_count, gross_weight, net_weight, order_no, bar_code, create_time from t_print_data
+    </sql>
+
+    <select id="selectPrintDataList" parameterType="PrintData" resultMap="PrintDataResult">
+        <include refid="selectPrintDataVo"/>
+        <where>
+            create_time is not null
+            <if test="productLine != null  and productLine != ''"> and product_line = #{productLine}</if>
+            <if test="productModel != null  and productModel != ''"> and product_model like concat('%', #{productModel}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="beginTime != null ">and create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null ">and create_time &lt;= #{endTime}</if>
+        </where>
+    </select>
+
+    <select id="selectPrintDataExport" resultType="com.ztl.gym.print.domain.PrintData">
+        select product_line productLine, product_model productModel, product_name productName, count(1) produceCount, DATE_FORMAT(create_time, '%Y-%m-%d') produceFactDate
+        from t_print_data
+        <where>
+            create_time is not null
+            <if test="productLine != null  and productLine != ''"> and product_line = #{productLine}</if>
+            <if test="productModel != null  and productModel != ''"> and product_model like concat('%', #{productModel}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="beginTime != null ">and create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null ">and create_time &lt;= #{endTime}</if>
+        </where>
+        group by product_model,product_name, DATE_FORMAT(create_time, '%Y-%m-%d')
+    </select>
+
     <select id="selectPrintData" resultType="com.ztl.gym.print.domain.PrintData">
         select id, box_code boxCode, box_num boxNum, code_index codeIndex, product_name productName, product_model productModel, batch_name batchName from t_print_data where print_status = 0 and product_line = #{line}
     </select>

@@ -21,6 +21,11 @@ public class PrintDataServiceImpl implements PrintDataService {
     private PrintDataMapper printDataMapper;
 
     @Override
+    public List<PrintData> selectPrintDataList(PrintData printData) {
+        return printDataMapper.selectPrintDataList(printData);
+    }
+
+    @Override
     public List<PrintData> getData(String line) {
         return printDataMapper.selectPrintData(line);
     }
@@ -33,5 +38,10 @@ public class PrintDataServiceImpl implements PrintDataService {
     @Override
     public PrintData getPrintBoxData(Map<String, Object> params) {
         return printDataMapper.getPrintBoxData(params);
+    }
+
+    @Override
+    public List<PrintData> selectPrintDataExport(PrintData printData) {
+        return printDataMapper.selectPrintDataExport(printData);
     }
 }
