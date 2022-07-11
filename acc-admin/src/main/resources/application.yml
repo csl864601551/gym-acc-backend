@@ -3,7 +3,7 @@ ruoyi:
   # 名称
   name: RuoYi
   # 版本
-  version: 2.1.0
+  version: 2.2.2
   # 版权年份
   copyrightYear: 2022
   # 实例演示开关
@@ -112,7 +112,7 @@ token:
     # 令牌密钥
     secret: abcdefghijklmnopqrstuvwxyz
     # 令牌有效期（默认30分钟）
-    expireTime: 300
+    expireTime: 3000
 
 # MyBatis配置
 mybatis:
@@ -162,7 +162,7 @@ wx:
 
 # IDIS企业节点配置
 idis:
-  host: 10.70.60.160
+  host: 122.112.152.40 #10.70.60.160
   port: 8090
   user: syncjob
   pwd: ztt#123456
