@@ -126,6 +126,7 @@ public interface ICodeService {
      */
     long getCodesCount(List<String> codes);
 
+    List<Code> selectCodeListByCodes(Map<String, Object> map);
     /**
      * 根据生码记录id查询码集合
      *
@@ -143,6 +144,8 @@ public interface ICodeService {
     void updateCodeStorageByPCode(Code codeTemp);
 
     int updateCodeStorageByCode(Code codeRes);
+
+    int updateCodeStorageByCodes(Map<String, Object> codeParam);
 
     int createCodeSingle(Long companyId, Long codeSingleId, Long codeTotalNum, Long userId);
 

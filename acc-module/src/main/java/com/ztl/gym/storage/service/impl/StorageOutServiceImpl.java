@@ -115,13 +115,6 @@ public class StorageOutServiceImpl implements IStorageOutService {
             long count = codeService.getCodesCount(storageOut.getCodes());
             storageOut.setActOutNum(0L);
             storageOut.setOutNum(count);
-            for (int i = 0; i < storageOut.getCodes().size(); i++) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("code", storageOut.getCodes().get(i).toString());
-                map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
-                Long inId = storageInMapper.selectInIdByCode(map); //查询入库表ID
-                storageInMapper.updateInStatusById(inId);//更新入库表状态
-            }
         } else {
             storageInMapper.updateInStatusByOut(storageOut);//更新入库表状态
         }
@@ -134,9 +127,6 @@ public class StorageOutServiceImpl implements IStorageOutService {
             map.put("outsFlag", "1");
             updateOutStatusByCode(map);//PDA端使用
         }
-//        long storageRecordId=storageInMapper.selectInIdByExtraNo(storageOut.getExtraNo());//最新入库单号
-//        List<String> codes=codeService.selectCodeByStorage( storageOut.getCompanyId(),AccConstants.STORAGE_TYPE_IN,storageRecordId);
-//        storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, storageOut.getId(), codes.get(0));//插入物流码，原先在PDA执行
 
         return res;
     }
@@ -212,10 +202,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         if (map.get("outsFlag") == null) {
             updRes = storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
         } else {
-            for (int i = 0; i < codes.size(); i++) {
-                map.put("code", codes.get(i));
-                updRes = storageService.addCodeFlow(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()), map.get("code").toString());//插入物流码，转移到PC执行
-            }
+            updRes = storageService.addCodeFlows(AccConstants.STORAGE_TYPE_OUT, Long.valueOf(map.get("id").toString()),codes);
         }
         long count = codeService.getCodesCount(codes);
         map.put("outNum", count);
@@ -260,7 +247,7 @@ public class StorageOutServiceImpl implements IStorageOutService {
         inMap.put("inNum", storageOut.getOutNum());
         inMap.put("storageFrom", commonService.getTenantId());
         inMap.put("storageTo", storageOut.getStorageTo());
-        inMap.put("code", map.get("code").toString());//新增插入物流码所需要的码信息
+        inMap.put("code", map.get("code")==null?"":map.get("code").toString());//新增插入物流码所需要的码信息
         storageInService.insertStorageIn(inMap);//插入入库
 
         //更新入库动作相关信息

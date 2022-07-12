@@ -412,12 +412,18 @@ public class CodeServiceImpl implements ICodeService {
     @DataSource(DataSourceType.SHARDING)
     public long getCodesCount(List<String> codes) {
         Map<String, Object> map = new HashMap<>();
+        map.put("codeType", "single");
         map.put("codes", codes);
         map.put("companyId", Long.valueOf(SecurityUtils.getLoginUserTopCompanyId()));
         List<Code> codeList = codeMapper.selectCodeListByCodes(map);
         return codeList.size();
     }
-
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public List<Code> selectCodeListByCodes(Map<String,Object> map){
+        List<Code> codeList = codeMapper.selectCodeListByCodes(map);
+        return codeList;
+    }
 
     /**
      * 根据生码记录id查询码集合
@@ -498,6 +504,11 @@ public class CodeServiceImpl implements ICodeService {
     @DataSource(DataSourceType.SHARDING)
     public int updateCodeStorageByCode(Code codeRes) {
         return codeMapper.updateCodeStorageByCode(codeRes);
+    }
+    @Override
+    @DataSource(DataSourceType.SHARDING)
+    public int updateCodeStorageByCodes(Map<String, Object> codeParam) {
+        return codeMapper.updateCodeStorageByCodes(codeParam);
     }
 
     @Override
