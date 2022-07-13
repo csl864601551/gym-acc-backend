@@ -208,11 +208,16 @@
             <if test="storageType != null">storage_type = #{storageType},</if>
             <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
         </trim>
-        where company_id=#{companyId} and
-        <if test="codes != null  and codes != ''"> code in (
+        where company_id=#{companyId}
+        <if test="codes != null  and codes != ''"> and ( code in (
             <foreach collection="codes" item="code" separator=",">
                 #{code}
             </foreach>)
+            or p_code in (
+            <foreach collection="codes" item="code" separator=",">
+                #{code}
+            </foreach>
+            ))
         </if>
     </update>
 
