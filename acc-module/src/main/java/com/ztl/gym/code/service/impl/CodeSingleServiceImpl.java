@@ -291,7 +291,8 @@ public class CodeSingleServiceImpl implements ICodeSingleService {
             codeSequenceNew.setCurrentValue(1L);
             codeSequenceNewService.insertCodeSequenceNew(codeSequenceNew);
         }
-        String codeVal = codeSequenceNew.getCodeNo() + codeSequenceNew.getCodeDate() + codeSequenceNew.getLineNo() + String.format("%04d", codeSequenceNew.getCurrentValue()) + codeSequenceNew.getFactoryNo();
+        //String codeVal = codeSequenceNew.getCodeNo() + codeSequenceNew.getCodeDate() + codeSequenceNew.getLineNo() + String.format("%04d", codeSequenceNew.getCurrentValue()) + codeSequenceNew.getFactoryNo();
+        String codeVal = codeSequenceNew.getCodeDate() + codeSequenceNew.getLineNo() + String.format("%04d", codeSequenceNew.getCurrentValue()) + codeSequenceNew.getFactoryNo();
         Code code = new Code();
         code.setCodeIndex(Long.valueOf(CommonUtil.snowflake()));
         code.setpCode(null);
