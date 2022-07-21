@@ -26,9 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 仓库Service业务层处理
@@ -391,6 +389,43 @@ public class StorageServiceImpl implements IStorageService {
         return updRes;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int addCodeFlows(int storageType, long storageRecordId, List<String> codes) {
+
+        //查询码
+        Map<String,Object> codeParam = new HashMap<>();
+        Long companyId = CodeRuleUtils.getCompanyIdByCode(codes.get(0));
+        codeParam.put("companyId",companyId);
+        codeParam.put("codes",codes);
+        List<Code> lists= codeService.selectCodeListByCodes(codeParam);
+
+        //批量插入码明细
+        List<FlowVo> insertList = new ArrayList<>();
+        for (Code code : lists) {
+            insertList.add(buildFlowParam(code.getCompanyId(), code.getCode(), storageType, storageRecordId));
+        }
+
+        int insertRes = codeService.insertCodeFlowForBatchSingle(companyId, storageType, insertList);
+
+        //更新码属性最新物流节点
+        int updRes = 0;
+        if (insertRes > 0) {
+
+            //更新码属性中的最新流转节点信息2
+            //入库或退货入库时需更新码所属企业/经销商
+            if (storageType == AccConstants.STORAGE_TYPE_IN) {
+                StorageIn storageIn = storageInService.selectStorageInById(storageRecordId);
+                codeParam.put("tenantId",storageIn.getTenantId());
+            }
+            codeParam.put("companyId",companyId);
+            codeParam.put("storageType",storageType);
+            codeParam.put("storageRecordId",storageRecordId);
+            updRes = codeService.updateCodeStorageByCodes(codeParam);
+
+        }
+        return updRes;
+    }
     /**
      * 更新产品库存信息
      *

@@ -201,6 +201,26 @@
         where company_id=#{companyId} and code = #{code}
     </update>
 
+    <update id="updateCodeStorageByCodes" parameterType="Map">
+        update t_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="storageType != null">storage_type = #{storageType},</if>
+            <if test="storageRecordId != null">storage_record_id = #{storageRecordId},</if>
+        </trim>
+        where company_id=#{companyId}
+        <if test="codes != null  and codes != ''"> and ( code in (
+            <foreach collection="codes" item="code" separator=",">
+                #{code}
+            </foreach>)
+            or p_code in (
+            <foreach collection="codes" item="code" separator=",">
+                #{code}
+            </foreach>
+            ))
+        </if>
+    </update>
+
     <delete id="deleteCodeById" parameterType="Long">
         delete from t_code where code_index = #{codeIndex}
     </delete>
@@ -284,12 +304,13 @@
             <if test="indexBegin != null  and indexBegin != ''">and code_index &gt;= #{indexBegin}</if>
             <if test="indexEnd != null  and indexEnd != ''">and code_index &lt;= #{indexEnd}</if>
         </where>
-        order by code_index
+        order by code_type,code_index
     </select>
 
     <select id="selectCodeListByCodes" parameterType="Map" resultMap="CodeResultNoAttr">
         select code_index,company_id,status,code,code_acc,code_type,p_code,code_attr_id from t_code_${companyId}
-        <where> code_type='single'
+        <where>
+            <if test="codeType != null  and codeType != ''">and code_type=#{codeType}</if>
             <if test="companyId != null  and companyId != ''">and company_id = #{companyId}</if>
             <if test="codes != null  and codes != ''">and( code in (
                 <foreach collection="codes" item="code" separator=",">
@@ -302,6 +323,7 @@
                 ))
             </if>
         </where>
+        order by code_type,code_index
     </select>
 
     <select id="selectCodeListByRecord" resultMap="CodeResultNoAttr">
