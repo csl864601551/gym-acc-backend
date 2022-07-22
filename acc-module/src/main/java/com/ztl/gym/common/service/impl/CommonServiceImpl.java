@@ -1,5 +1,6 @@
 package com.ztl.gym.common.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.mapper.CodeAttrMapper;
 import com.ztl.gym.code.mapper.CodeMapper;
@@ -150,13 +151,13 @@ public class CommonServiceImpl implements CommonService {
     public String getStorageNo(int storageType) {
         String no = null;
         if (storageType == AccConstants.STORAGE_TYPE_IN) {
-            no = "RK" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+            no = "RK" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow()+ RandomUtil.randomString(2);
         } else if (storageType == AccConstants.STORAGE_TYPE_OUT) {
-            no = "CH" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+            no = "CH" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow()+ RandomUtil.randomString(2);
         } else if (storageType == AccConstants.STORAGE_TYPE_TRANSFER) {
-            no = "DB" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+            no = "DB" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow()+ RandomUtil.randomString(2);
         } else if (storageType == AccConstants.STORAGE_TYPE_BACK) {
-            no = "TH" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow();
+            no = "TH" + SecurityUtils.getLoginUser().getUser().getDeptId() + DateUtils.dateTimeNow()+ RandomUtil.randomString(2);
         }
         return no;
     }
