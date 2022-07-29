@@ -174,7 +174,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
-        if(codeEntity.getCodeAttr()!=null){
+        if (codeEntity != null && codeEntity.getCodeAttr() != null) {
             returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
             returnMap.put("productId",codeEntity.getCodeAttr().getProductId());
             returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
