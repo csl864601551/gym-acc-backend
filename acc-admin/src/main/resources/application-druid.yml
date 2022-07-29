@@ -12,9 +12,9 @@ spring:
 #                password: TChina1234
             # 正式南通数据源
             master:
-                url: jdbc:mysql://10.10.7.20:3306/acs_prod?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: root
-                password: JSdayi@2021
+                url: jdbc:mysql://10.70.150.11:3306/asun-acs?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: asunAcs
+                password: Acs+12345
 
             # 从库数据源
             slave:

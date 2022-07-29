@@ -91,19 +91,19 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      */
     @Override
     public int insertScanRecord(ScanRecord scanRecord) {
-        if(StrUtil.isNotEmpty(scanRecord.getFromType())){
-            if(scanRecord.getFromType().equals("0")){
-                Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-                if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+        if (StrUtil.isNotEmpty(scanRecord.getFromType())) {
+            if (scanRecord.getFromType().equals("0")) {
+                Long company_id = SecurityUtils.getLoginUserCompany().getDeptId();
+                if (!company_id.equals(AccConstants.ADMIN_DEPT_ID)) {
                     scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
                 }
                 scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
-            }else{
+            } else {
                 scanRecord.setCreateUser(AccConstants.WEIXIN_ADMIN_ID);
             }
-        }else{
-            Long company_id= SecurityUtils.getLoginUserCompany().getDeptId();
-            if(!company_id.equals(AccConstants.ADMIN_DEPT_ID)){
+        } else {
+            Long company_id = SecurityUtils.getLoginUserCompany().getDeptId();
+            if (!company_id.equals(AccConstants.ADMIN_DEPT_ID)) {
                 scanRecord.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
             }
             scanRecord.setCreateUser(SecurityUtils.getLoginUser().getUser().getUserId());
@@ -123,7 +123,6 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         scanRecord.setUpdateTime(DateUtils.getNowDate());
         return scanRecordMapper.updateScanRecord(scanRecord);
     }
-
 
 
     /**
@@ -159,115 +158,118 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     public int deleteScanRecordById(Long id) {
         return scanRecordMapper.deleteScanRecordById(id);
     }
+
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public Map<String, Object> getScanMapByCode(Long companyId,String codeVal) {
+    public Map<String, Object> getScanMapByCode(Long companyId, String codeVal) {
         Map<String, Object> returnMap = new HashMap<>();//返回数据
         Code code = new Code();//码产品信息
-        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        ScanRecord scanRecord = new ScanRecord();//扫码记录
         code.setCode(codeVal);
         scanRecord.setCode(codeVal);
         if (companyId > 0) {
             code.setCompanyId(companyId);
             scanRecord.setCompanyId(companyId);
-        }else{
+        } else {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         Code codeEntity = codeService.selectCode(code);//查询码产品你基本信息
-        if(codeEntity.getCodeAttr()!=null){
-            returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
-            returnMap.put("productId",codeEntity.getCodeAttr().getProductId());
-            returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
-            returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
-            if(codeEntity.getCodeAttr().getProduct()==null){
-                returnMap.put("photoShow","");
-            }else{
+        if (codeEntity != null && codeEntity.getCodeAttr() != null) {
+            returnMap.put("batchNo", codeEntity.getCodeAttr().getBatchNo());
+            returnMap.put("productId", codeEntity.getCodeAttr().getProductId());
+            returnMap.put("productName", codeEntity.getCodeAttr().getProductName());
+            returnMap.put("codeAttrId", codeEntity.getCodeAttr().getId());
+            if (codeEntity.getCodeAttr().getProduct() == null) {
+                returnMap.put("photoShow", "");
+            } else {
                 String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
                 if (StringUtils.isNotBlank(photo)) {
                     returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
                 } else {
-                    returnMap.put("photoShow","");
+                    returnMap.put("photoShow", "");
                 }
             }
 
-        }else{
+        } else {
             //throw new CustomException("该码处于初始状态，尚未赋值！",HttpStatus.ERROR);
-            returnMap.put("photoShow","");
+            returnMap.put("photoShow", "");
         }
         return returnMap;
     }
+
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public Map<String, Object> getScanRecordByCode(Long companyId,String codeVal) {
+    public Map<String, Object> getScanRecordByCode(Long companyId, String codeVal) {
         Map<String, Object> returnMap = new HashMap<>();//返回数据
         Code code = new Code();//码产品信息
-        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        ScanRecord scanRecord = new ScanRecord();//扫码记录
         code.setCode(codeVal);
         scanRecord.setCode(codeVal);
         if (companyId > 0) {
             code.setCompanyId(companyId);
             scanRecord.setCompanyId(companyId);
-        }else{
+        } else {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
         Code codeEntity = codeService.selectCode(code);//查询码产品基本信息
-        if(codeEntity==null){
+        if (codeEntity == null) {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
-        String tenantName="";
-        if(codeEntity.getTenantId()==null){
-            tenantName=sysDeptService.selectDeptById(codeEntity.getCompanyId()).getDeptName();
-        }else{
-            tenantName=sysDeptService.selectDeptById(codeEntity.getTenantId()).getDeptName();
+        String tenantName = "";
+        if (codeEntity.getTenantId() == null) {
+            tenantName = sysDeptService.selectDeptById(codeEntity.getCompanyId()).getDeptName();
+        } else {
+            tenantName = sysDeptService.selectDeptById(codeEntity.getTenantId()).getDeptName();
         }
-        List<ScanRecord> scanList=scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
-        List<Map<String,Object>> flowList=scanRecordMapper.selectFlowList(companyId,codeVal);//查询物流记录
+        List<ScanRecord> scanList = scanRecordMapper.selectScanRecordList(scanRecord);//查询扫码记录
+        List<Map<String, Object>> flowList = scanRecordMapper.selectFlowList(companyId, codeVal);//查询物流记录
 
         Map<String, Object> map = new HashMap<>();//返回数据
-        map.put("companyId",companyId);
-        map.put("code",codeVal);
-        List<Code> codes = codeService.selectCodeListByCodeOrIndex(map);;//查询码信息
-        if(codes==null){
+        map.put("companyId", companyId);
+        map.put("code", codeVal);
+        List<Code> codes = codeService.selectCodeListByCodeOrIndex(map);
+        ;//查询码信息
+        if (codes == null) {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
 
-        returnMap.put("codes",codes);
-        returnMap.put("codeEntity",codeEntity);
-        returnMap.put("scanList",scanList);
-        returnMap.put("flowList",flowList);
-        returnMap.put("tenantName",tenantName);
+        returnMap.put("codes", codes);
+        returnMap.put("codeEntity", codeEntity);
+        returnMap.put("scanList", scanList);
+        returnMap.put("flowList", flowList);
+        returnMap.put("tenantName", tenantName);
         /** 基本信息*/
-        if(flowList.size()>0){
-            returnMap.put("baseStatus","已"+flowList.get(0).get("title_name"));
-        }else{
-            returnMap.put("baseStatus","未入库");
+        if (flowList.size() > 0) {
+            returnMap.put("baseStatus", "已" + flowList.get(0).get("title_name"));
+        } else {
+            returnMap.put("baseStatus", "未入库");
         }
-        if(codeEntity.getCodeType().equals("single")){
-            returnMap.put("baseBoxType","小标");
-            returnMap.put("baseBox","单码");
-        }else{
-            returnMap.put("baseBoxType","大标");
-            returnMap.put("baseBox","箱码");
+        if (codeEntity.getCodeType().equals("single")) {
+            returnMap.put("baseBoxType", "小标");
+            returnMap.put("baseBox", "单码");
+        } else {
+            returnMap.put("baseBoxType", "大标");
+            returnMap.put("baseBox", "箱码");
         }
-        if(codeEntity.getCodeAttr()!=null){
-            returnMap.put("batchNo",codeEntity.getCodeAttr().getBatchNo());
-            returnMap.put("productId",codeEntity.getCodeAttr().getProductId());
-            returnMap.put("productName",codeEntity.getCodeAttr().getProductName());
-            returnMap.put("codeAttrId",codeEntity.getCodeAttr().getId());
-            if(codeEntity.getCodeAttr().getProduct()==null){
-                returnMap.put("photoShow","");
-            }else{
+        if (codeEntity.getCodeAttr() != null) {
+            returnMap.put("batchNo", codeEntity.getCodeAttr().getBatchNo());
+            returnMap.put("productId", codeEntity.getCodeAttr().getProductId());
+            returnMap.put("productName", codeEntity.getCodeAttr().getProductName());
+            returnMap.put("codeAttrId", codeEntity.getCodeAttr().getId());
+            if (codeEntity.getCodeAttr().getProduct() == null) {
+                returnMap.put("photoShow", "");
+            } else {
                 String photo = codeEntity.getCodeAttr().getProduct().getPhoto();
                 if (StringUtils.isNotBlank(photo)) {
                     returnMap.put("photoShow", photo.split(",")[0]);//扫码排名显示第一张
                 } else {
-                    returnMap.put("photoShow","");
+                    returnMap.put("photoShow", "");
                 }
             }
 
-        }else{
+        } else {
             //throw new CustomException("该码处于初始状态，尚未赋值！",HttpStatus.ERROR);
-            returnMap.put("photoShow","");
+            returnMap.put("photoShow", "");
         }
 
 
@@ -280,17 +282,17 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     public CompanyArea getIsMixInfo(CompanyArea area) {
         CompanyArea temp = new CompanyArea();
 
-        if(area.getCode()==null){
-            throw new CustomException("未查询到相关销售区域",HttpStatus.ERROR);
-        }else{
+        if (area.getCode() == null) {
+            throw new CustomException("未查询到相关销售区域", HttpStatus.ERROR);
+        } else {
             //根据码属性ID获取对应的companyID和tenantID
             //CodeAttr codeAttr=codeAttrService.selectCodeAttrById(area.getCodeAttrId());//V1.0.5之前
-            Code codeTemp=new Code();
+            Code codeTemp = new Code();
             codeTemp.setCompanyId(CodeRuleUtils.getCompanyIdByCode(area.getCode()));
             codeTemp.setCode(area.getCode());
-            Code code=codeService.selectCode(codeTemp);
-            if(code==null){
-                throw new CustomException("未查询到相关销售区域",HttpStatus.ERROR);
+            Code code = codeService.selectCode(codeTemp);
+            if (code == null) {
+                throw new CustomException("未查询到相关销售区域", HttpStatus.ERROR);
             }
             temp.setCompanyId(code.getCompanyId());
             temp.setTenantId(code.getTenantId());
@@ -298,17 +300,17 @@ public class ScanRecordServiceImpl implements IScanRecordService {
         List<CompanyArea> list = companyAreaService.selectCompanyAreaListV2(temp);
         if (area.getProvince() == null) {
             temp.setIsMix(2);
-        } else{
+        } else {
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).getProvince().equals("全部")) {//第一步判断销售地区是否未所有省；是则返回false,未窜货
                     temp.setIsMix(0);
                     break;
                 } else if (list.get(i).getProvince().equals(area.getProvince())) {//否则判断是否有包含的省；有则往下判断
-                    if (list.get(i).getCity().equals("全部")||list.get(i).getArea().equals("市辖区")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
+                    if (list.get(i).getCity().equals("全部") || list.get(i).getArea().equals("市辖区")) {//第二步判断销售地区是否未所有市；是则返回false,未窜货
                         temp.setIsMix(0);
                         break;
                     } else if (list.get(i).getCity().equals(area.getCity())) {//否则判断是否有包含的市；有则往下判断
-                        if (list.get(i).getArea().equals("全部")||list.get(i).getArea().equals("市辖区")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
+                        if (list.get(i).getArea().equals("全部") || list.get(i).getArea().equals("市辖区")) {//第三步判断销售地区是否未所有区；是则返回false,未窜货
                             temp.setIsMix(0);
                             break;
                         } else if (list.get(i).getArea().equals(area.getArea())) {//否则判断是否有包含的区；有则返回false,未窜货
@@ -326,11 +328,11 @@ public class ScanRecordServiceImpl implements IScanRecordService {
                 }
             }
         }
-        String salesArea="";
+        String salesArea = "";
         for (int j = 0; j < list.size(); j++) {
-            salesArea+=list.get(j).getProvince().concat(" ")
-                    .concat(list.get(j).getCity()==null?"":list.get(j).getCity()).concat(" ")
-                    .concat(list.get(j).getArea()==null?"":list.get(j).getArea()).concat("\n");
+            salesArea += list.get(j).getProvince().concat(" ")
+                    .concat(list.get(j).getCity() == null ? "" : list.get(j).getCity()).concat(" ")
+                    .concat(list.get(j).getArea() == null ? "" : list.get(j).getArea()).concat("\n");
         }
         temp.setSalesArea(salesArea);
         return temp;
@@ -343,11 +345,9 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      * @return 扫码记录集合
      */
     @Override
-    public List<Map<String,Object>> getScanRecordXx(ScanRecord scanRecord) {
+    public List<Map<String, Object>> getScanRecordXx(ScanRecord scanRecord) {
         return scanRecordMapper.getScanRecordXx(scanRecord);
     }
-
-
 
 
     /**
@@ -357,7 +357,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      * @return 扫码记录集合
      */
     @Override
-    public List<ScanRecord> selectRLTList(Map<String,Object> map) {
+    public List<ScanRecord> selectRLTList(Map<String, Object> map) {
         return scanRecordMapper.selectRLTList(map);
     }
 
@@ -371,7 +371,6 @@ public class ScanRecordServiceImpl implements IScanRecordService {
     public int selectScanRecordNum(Map<String, Object> map) {
         return scanRecordMapper.selectScanRecordNum(map);
     }
-
 
 
     /**
@@ -392,7 +391,7 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      * @return 结果
      */
     @Override
-    public List<Map<String,Object>> selectCountByTime(Map<String, Object> map) {
+    public List<Map<String, Object>> selectCountByTime(Map<String, Object> map) {
         return scanRecordMapper.selectCountByTime(map);
     }
 
@@ -404,12 +403,9 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      * @return 结果
      */
     @Override
-    public List<Map<String,Object>> selectCountByDate(Map<String, Object> map) {
+    public List<Map<String, Object>> selectCountByDate(Map<String, Object> map) {
         return scanRecordMapper.selectCountByDate(map);
     }
-
-
-
 
 
     /**
@@ -419,10 +415,9 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      * @return 结果
      */
     @Override
-    public List<Map<String,Object>> selectSecueityRecordByDate(Map<String, Object> map) {
+    public List<Map<String, Object>> selectSecueityRecordByDate(Map<String, Object> map) {
         return scanRecordMapper.selectSecueityRecordByDate(map);
     }
-
 
 
     /**
@@ -432,26 +427,26 @@ public class ScanRecordServiceImpl implements IScanRecordService {
      * @return 结果
      */
     @Override
-    public List<Map<String,Object>> selectSmTop10(Map<String, Object> map) {
+    public List<Map<String, Object>> selectSmTop10(Map<String, Object> map) {
         return scanRecordMapper.selectSmTop10(map);
     }
 
 
     @Override
     @DataSource(DataSourceType.SHARDING)
-    public List<Map<String,Object>> getFlowListByCode(Long companyId,String codeVal) {
+    public List<Map<String, Object>> getFlowListByCode(Long companyId, String codeVal) {
         Map<String, Object> returnMap = new HashMap<>();//返回数据
         Code code = new Code();//码产品信息
-        ScanRecord scanRecord=new ScanRecord();//扫码记录
+        ScanRecord scanRecord = new ScanRecord();//扫码记录
         code.setCode(codeVal);
         scanRecord.setCode(codeVal);
         if (companyId > 0) {
             code.setCompanyId(companyId);
             scanRecord.setCompanyId(companyId);
-        }else{
+        } else {
             throw new CustomException("码格式错误！", HttpStatus.ERROR);
         }
-        List<Map<String,Object>> flowList=scanRecordMapper.selectFlowListAsc(companyId,codeVal);//查询物流记录
+        List<Map<String, Object>> flowList = scanRecordMapper.selectFlowListAsc(companyId, codeVal);//查询物流记录
         return flowList;
     }
 

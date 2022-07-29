@@ -17,22 +17,22 @@ ruoyi:
   #测试项目 码下载前缀地址
   #preFixUrl: https://acc.asun.cloud/c?c=
   #正式项目 码下载前缀地址
-  preFixUrl: https://acs.jsdayi.cn/c?c=
+  preFixUrl: https://fc.asun.cloud/c?c=
   #南京项目 码下载前缀地址
   #preFixUrl: http://122.112.243.253/c?c=
 
 # OBS配置
 obs:
   endPoint: obs.cn-east-2.myhuaweicloud.com
-  ak: 78VT6EOY6UZBOEGKXO15
-  sk: J376lR3rLcCDS9cgXxmjuWdQI0g9XyAZ1zyMnryi
-  bucketName: data-ir
+  ak: KFZVCZNTUUNWX9ZU7QKX
+  sk: XnPq0E64aYc2DUob6Ms9WSqcNOQ57TcP9JTpuhJX
+  bucketName: ztl-admin-gongyema-com
 
 
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: 9001
   servlet:
     # 应用的访问路径
     context-path: /
@@ -86,9 +86,9 @@ spring:
     #password: Ztt12345
 
     #南通数据源15
-    host: 10.10.7.21
-    database: 15
-    password: JSdayi@2021
+    host: 10.70.150.14
+    database: 9
+    password: Ztt12345
 
 
 
