@@ -1,11 +1,11 @@
 package com.ztl.gym.web.controller.open.system;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysMenu;
 import com.ztl.gym.common.core.domain.entity.SysUser;
-import com.ztl.gym.common.core.domain.model.LoginBody;
-import com.ztl.gym.common.core.domain.model.LoginUser;
+import com.ztl.gym.common.core.domain.model.*;
 import com.ztl.gym.common.domain.AndroidVersion;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.IAndroidVersionService;
@@ -13,10 +13,22 @@ import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.framework.web.service.SysLoginService;
 import com.ztl.gym.framework.web.service.SysPermissionService;
 import com.ztl.gym.framework.web.service.TokenService;
+import com.ztl.gym.system.service.ISysDeptService;
+import com.ztl.gym.system.service.ISysDictDataService;
 import com.ztl.gym.system.service.ISysMenuService;
+import com.ztl.gym.system.service.ISysUserService;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -36,6 +48,24 @@ public class OpenSystemController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private OkHttpClient okHttpClient;
+
+    @Autowired
+    private ISysDeptService sysDeptService;
+
+    @Autowired
+    private ISysUserService sysUserService;
+
+    @Autowired
+    private ISysDictDataService sysDictDataService;
+
+    @Value("${ruoyi.website}")
+    private String website;
+
+    @Value("${ruoyi.websiteLogin}")
+    private String websiteLogin;
     /**
      * 登录方法
      *
@@ -141,6 +171,113 @@ public class OpenSystemController {
 
         }catch (Exception e){
             throw new CustomException("登录超时，请检查网络连接！", HttpStatus.ERROR);
+        }
+    }
+
+    /**
+     * 第一步
+     * 回调工业码登录
+     */
+    @GetMapping("/backAuth")
+    public void backLogin(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String redirectUrl = website + "/sy/openApi/v1/oauth/authorize?client_id=" + sysDictDataService.selectDictValue("gym_dic", "clientId");
+            System.out.println(redirectUrl);
+            response.sendRedirect(redirectUrl);
+        } catch (Exception e) {
+            throw new CustomException("用户名密码错误！", HttpStatus.ERROR);
+        }
+    }
+
+    /**
+     * 第二步
+     * 工业码回调处理
+     *
+     * @param code 登录信息
+     * @return 结果
+     */
+    @GetMapping("/authInfoLogin")
+    public void codeBackDeal(String code, HttpServletRequest request, HttpServletResponse response) {
+        UserInfo userInfo = new UserInfo();
+        try {
+            String urlAccessToken = website + "/sy/openApi/v1/oauth/access_token";
+
+            AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
+            ;
+            accessTokenRequest.setClientId(sysDictDataService.selectDictValue("gym_dic", "clientId"));
+            accessTokenRequest.setClientSecret(sysDictDataService.selectDictValue("gym_dic", "clientSecret"));
+            accessTokenRequest.setCode(code);
+
+            if (!(StringUtils.isNotEmpty(urlAccessToken) && urlAccessToken.startsWith("http"))) {
+                throw new CustomException("不存在或链接格式错误");
+            }
+
+            MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+            Request.Builder builderAccessToken = new Request.Builder();
+            builderAccessToken.url(urlAccessToken);
+
+            System.out.println(urlAccessToken);
+            System.out.println(accessTokenRequest);
+            Request requestAccessToken = builderAccessToken.post(okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(accessTokenRequest))).build();
+            System.out.println(requestAccessToken);
+            Response responseAccessToken = okHttpClient.newCall(requestAccessToken).execute();
+            System.out.println(responseAccessToken);
+            String resAccessTokenBody = responseAccessToken.body().string();
+            System.out.println(resAccessTokenBody);
+            Map<String, Object> map = (Map) JSONObject.parseObject(resAccessTokenBody);
+            System.out.println(map);
+            if (map.get("code").toString() == "500") {
+                throw new CustomException(map.get("message").toString());
+            }
+            AccessTokenResponse accessTokenResponse = JSONObject.parseObject(map.get("data").toString(), AccessTokenResponse.class);
+
+            System.out.println(map);
+
+            //token 换userinfo获取用户信息
+            String urlUser = website + "/sy/openApi/v1/oauth/user?access_token=" + accessTokenResponse.getAccessToken();
+            System.out.println(urlUser);
+            Request.Builder builderAccessUser = new Request.Builder();
+            builderAccessUser.url(urlUser);
+            Request requestAccessUser = builderAccessUser.get().build();
+            Response responseAccessUser = okHttpClient.newCall(requestAccessUser).execute();
+            String resAccessUserBody = responseAccessUser.body().string();
+            Map<String, Object> mapUser = (Map) JSONObject.parseObject(resAccessUserBody);
+
+            userInfo = JSONObject.parseObject(mapUser.get("data").toString(), UserInfo.class);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new CustomException("无法获取链接: " + e.getMessage());
+        }
+
+        try {
+            // 生成token
+            String token = loginService.dealLoginToken(userInfo, request);
+            response.sendRedirect(websiteLogin+"/fc/login?token=" + token);
+        } catch (Exception e) {
+            throw new CustomException("登录用户失败！", HttpStatus.ERROR);
+        }
+    }
+
+    /**
+     * 第二步
+     * 工业码回调处理
+     *
+     * @return 结果
+     */
+    @GetMapping("/authAdminLogin")
+    public void codeBackDeal(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            UserInfo userInfo = new UserInfo();
+            userInfo.setTenantId("100");
+            userInfo.setUserName("");
+            userInfo.setAccount("admin");
+            // 生成token
+            String token = loginService.dealLoginToken(userInfo, request);
+            response.sendRedirect(websiteLogin+"/fc/login?token=" + token);
+        } catch (Exception e) {
+            throw new CustomException("登录用户失败！", HttpStatus.ERROR);
         }
     }
 }

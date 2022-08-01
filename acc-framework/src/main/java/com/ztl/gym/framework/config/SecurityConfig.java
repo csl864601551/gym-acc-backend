@@ -102,6 +102,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/open/system/pdaUpdate").anonymous()
                 .antMatchers("/open/code/getCRMInfo").anonymous()
                 .antMatchers("/open/code/getCRMInfoByProductIds").anonymous()
+                .antMatchers("/oauth2/render").anonymous()
+                .antMatchers("/oauth2/callback").anonymous()
                 .antMatchers("/order/**").anonymous() //fixme
                 .antMatchers(
                         HttpMethod.GET,
