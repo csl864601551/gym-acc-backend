@@ -128,6 +128,10 @@ FROM
         delete from t_company_area where id = #{id}
     </delete>
 
+    <delete id="deleteCompanyAreaByTenantId" parameterType="Long">
+        delete from t_company_area where tenant_id = #{tenantId}
+    </delete>
+
     <delete id="deleteCompanyAreaByIds" parameterType="String">
         delete from t_company_area where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">

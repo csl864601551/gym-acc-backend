@@ -1,21 +1,22 @@
-package com.ztl.gym.common.core.domain.entity;
+package com.ztl.gym.system.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
+import com.ztl.gym.area.domain.CompanyArea;
 import com.ztl.gym.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 部门表 sys_dept
  *
  * @author ruoyi
  */
-public class SysDept extends BaseEntity
+public class SysDeptERP extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -59,7 +60,10 @@ public class SysDept extends BaseEntity
     private String parentName;
 
     /** 子部门 */
-    private List<SysDept> children = new ArrayList<SysDept>();
+    private List<SysDeptERP> children = new ArrayList<SysDeptERP>();
+
+
+    private List<CompanyArea> companyArea = new ArrayList<CompanyArea>();
 
     public Long getDeptId()
     {
@@ -176,12 +180,12 @@ public class SysDept extends BaseEntity
         this.parentName = parentName;
     }
 
-    public List<SysDept> getChildren()
+    public List<SysDeptERP> getChildren()
     {
         return children;
     }
 
-    public void setChildren(List<SysDept> children)
+    public void setChildren(List<SysDeptERP> children)
     {
         this.children = children;
     }
@@ -200,6 +204,14 @@ public class SysDept extends BaseEntity
 
     public void setDeptNo(String deptNo) {
         this.deptNo = deptNo;
+    }
+
+    public List<CompanyArea> getCompanyArea() {
+        return companyArea;
+    }
+
+    public void setCompanyArea(List<CompanyArea> companyArea) {
+        this.companyArea = companyArea;
     }
 
     @Override

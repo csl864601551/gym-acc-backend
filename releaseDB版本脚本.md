@@ -298,3 +298,12 @@ CREATE TABLE `t_erp_detail` (
 `storage_name` varchar(255) DEFAULT NULL COMMENT '仓库名称',
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='对接ERP明细表';
+
+
+
+#### Beta V2.2.3 2022/08/01
+
+ALTER TABLE `acs_prod`.`t_product`
+CHANGE COLUMN `printNo` `print_no` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '打印型号' AFTER `bar_code`,
+CHANGE COLUMN `boxCount` `box_count` int(10) NULL DEFAULT NULL COMMENT '包装规格' AFTER `print_no`,
+CHANGE COLUMN `productSeries` `product_series` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产品系列' AFTER `box_count`;

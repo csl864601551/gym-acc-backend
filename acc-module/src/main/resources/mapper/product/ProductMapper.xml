@@ -11,6 +11,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"    column="status"    />
         <result property="productName"    column="product_name"    />
         <result property="barCode"    column="bar_code"    />
+        <result property="printNo"    column="print_no"    />
+        <result property="boxCount"    column="box_count"    />
+        <result property="productSeries"    column="product_series"    />
         <result property="categoryOne"    column="category_one"    />
         <result property="categoryTwo"    column="category_two"    />
         <result property="categoryName"    column="category_name"    />
@@ -48,6 +51,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"    column="status"    />
         <result property="productName"    column="product_name"    />
         <result property="barCode"    column="bar_code"    />
+        <result property="printNo"    column="print_no"    />
+        <result property="boxCount"    column="box_count"    />
+        <result property="productSeries"    column="product_series"    />
         <result property="categoryOne"    column="category_one"    />
         <result property="categoryTwo"    column="category_two"    />
         <result property="categoryName"    column="category_name"    />
@@ -80,7 +86,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTProductVo">
-        select p.id, p.company_id, p.product_no, p.status, p.product_name, p.bar_code, p.category_one, p.category_two,pc.category_name,
+        select p.id, p.company_id, p.product_no, p.status, p.product_name, p.bar_code, p.print_no, p.box_count, p.product_series,
+               p.category_one, p.category_two,pc.category_name,
         p.sale_price, p.market_price, p.product_introduce, p.product_detail_pc, p.product_detail_mobile, p.storage_id,
         p.stock, p.stock_limit, p.unit, p.sort, p.sales_num, p.create_user, p.create_time, p.update_user, p.update_time,u.nick_name createUserName
         ,p.photo
@@ -99,6 +106,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status == null "> and p.status != 1</if>
             <if test="productName != null  and productName != ''"> and p.product_name like concat('%', #{productName}, '%')</if>
             <if test="barCode != null  and barCode != ''"> and p.bar_code = #{barCode}</if>
+            <if test="printNo != null  and printNo != ''"> and p.print_no like concat('%', #{printNo}, '%')</if>
+            <if test="boxCount != null  and boxCount != ''"> and p.box_count = #{boxCount}</if>
+            <if test="productSeries != null  and productSeries != ''"> and p.product_series = #{productSeries}</if>
             <if test="categoryOne != null  and categoryOne != ''"> and p.category_one = #{categoryOne}</if>
             <if test="categoryTwo != null  and categoryTwo != ''"> and p.category_two = #{categoryTwo}</if>
             <if test="proaductCategory != null  and proaductCategory != ''"> and( category_two = #{proaductCategory} or category_one=#{proaductCategory})</if>
@@ -122,7 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
             <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
         </where>
-        order by sort
+        order by p.bar_code desc
     </select>
 
 
@@ -135,6 +145,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status == null "> and p.status != 1</if>
             <if test="productName != null  and productName != ''"> and p.product_name = #{productName}</if>
             <if test="barCode != null  and barCode != ''"> and p.bar_code = #{barCode}</if>
+            <if test="printNo != null  and printNo != ''"> and p.print_no like concat('%', #{printNo}, '%')</if>
+            <if test="boxCount != null  and boxCount != ''"> and p.box_count = #{boxCount}</if>
+            <if test="productSeries != null  and productSeries != ''"> and p.product_series = #{productSeries}</if>
             <if test="categoryOne != null  and categoryOne != ''"> and p.category_one = #{categoryOne}</if>
             <if test="categoryTwo != null  and categoryTwo != ''"> and p.category_two = #{categoryTwo}</if>
             <if test="proaductCategory != null  and proaductCategory != ''"> and( category_two = #{proaductCategory} or category_one=#{proaductCategory})</if>
@@ -158,7 +171,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="content1 != null  and content1 != ''"> and p.content1 = #{content1}</if>
             <if test="content2 != null  and content2 != ''"> and p.content2 = #{content2}</if>
         </where>
-        order by sort
+        order by p.bar_code desc
     </select>
 
     <select id="selectTProductById" parameterType="Long" resultMap="TProductResult">
@@ -186,6 +199,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="productName != null">product_name,</if>
             <if test="barCode != null">bar_code,</if>
+            <if test="printNo != null">print_no,</if>
+            <if test="boxCount != null">box_count,</if>
+            <if test="productSeries != null">product_series,</if>
             <if test="categoryOne != null">category_one,</if>
             <if test="categoryTwo != null">category_two,</if>
             <if test="salePrice != null">sale_price,</if>
@@ -217,6 +233,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="productName != null">#{productName},</if>
             <if test="barCode != null">#{barCode},</if>
+            <if test="printNo != null">#{printNo},</if>
+            <if test="boxCount != null">#{boxCount},</if>
+            <if test="productSeries != null">#{productSeries},</if>
             <if test="categoryOne != null">#{categoryOne},</if>
             <if test="categoryTwo != null">#{categoryTwo},</if>
             <if test="salePrice != null">#{salePrice},</if>
@@ -282,6 +301,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status = #{status},</if>
             <if test="productName != null">product_name = #{productName},</if>
             <if test="barCode != null">bar_code = #{barCode},</if>
+            <if test="printNo != null">print_no = #{printNo},</if>
+            <if test="boxCount != null">box_count = #{boxCount},</if>
+            <if test="productSeries != null">product_series = #{productSeries},</if>
             <if test="categoryOne != null">category_one = #{categoryOne},</if>
             <if test="categoryTwo != null">category_two = #{categoryTwo},</if>
             <if test="salePrice != null">sale_price = #{salePrice},</if>

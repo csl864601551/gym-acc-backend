@@ -65,6 +65,8 @@ public interface CompanyAreaMapper {
      */
     public int deleteCompanyAreaById(Long id);
 
+    public int deleteCompanyAreaByTenantId(Long tenantId);
+
     /**
      * 批量删除经销商销售区域
      *

@@ -58,15 +58,12 @@ public class CompanyAreaController extends BaseController {
         if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
             companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
         }
-        SysUser loginUser = SecurityUtils.getLoginUser().getUser();
-        List<SysRole> roles = loginUser.getRoles();
-        if(roles.size()>0){
-            for (SysRole sysRole : roles) {
-                if(sysRole.getRoleId()!=AccConstants.COMPANY_ROLE&&sysRole.getRoleId()!=AccConstants.ADMIN_ROLE){
-                    companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
-                }
-            }
+        Long deptId = SecurityUtils.getLoginUser().getUser().getDeptId();
+
+        if (!SecurityUtils.getLoginUserTopCompanyId().equals(deptId)) {
+            companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
         }
+
         startPage();
         List<CompanyArea> list = companyAreaService.selectCompanyAreaList(companyArea);
         return getDataTable(list);
@@ -80,13 +77,13 @@ public class CompanyAreaController extends BaseController {
     @GetMapping("/download")
     public void download(String tenantName, long companyId, HttpServletResponse response) {
         CompanyArea companyArea = new CompanyArea();
-        if(!tenantName.equals("null") && tenantName !="") {
+        if (!tenantName.equals("null") && tenantName != "") {
             companyArea.setTenantName(tenantName);
         }
         companyArea.setCompanyId(companyId);
         List<CompanyAreaVo> list = companyAreaService.selectCompanyAreaExport(companyArea);
         ExcelUtil<CompanyAreaVo> util = new ExcelUtil<CompanyAreaVo>(CompanyAreaVo.class);
-        String fileName = util.exportExcel(list, "-"+ DateUtils.getDate()+"销售区域").get("msg").toString();
+        String fileName = util.exportExcel(list, "-" + DateUtils.getDate() + "销售区域").get("msg").toString();
 
         try {
             if (!FileUtils.checkAllowDownload(fileName)) {
@@ -134,9 +131,9 @@ public class CompanyAreaController extends BaseController {
             Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
             if (!companyId.equals(AccConstants.ADMIN_DEPT_ID)) {
                 companyArea.setCompanyId(SecurityUtils.getLoginUserTopCompanyId());
-                if(companyArea.getTenantId()>0&&companyArea.getTenantId()!=null){
+                if (companyArea.getTenantId() > 0 && companyArea.getTenantId() != null) {
 
-                }else{
+                } else {
                     companyArea.setTenantId(SecurityUtils.getLoginUserCompany().getDeptId());
                 }
             }

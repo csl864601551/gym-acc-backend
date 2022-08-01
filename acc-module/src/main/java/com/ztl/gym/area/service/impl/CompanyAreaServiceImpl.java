@@ -116,6 +116,11 @@ public class CompanyAreaServiceImpl implements ICompanyAreaService
     {
         return companyAreaMapper.deleteCompanyAreaById(id);
     }
+    @Override
+    public int deleteCompanyAreaByTenantId(Long tenantId)
+    {
+        return companyAreaMapper.deleteCompanyAreaByTenantId(tenantId);
+    }
 
     /**
      * 导出经销商销售区域 信息

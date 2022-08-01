@@ -53,6 +53,21 @@ public class Product extends BaseEntity {
      */
     @Excel(name = "物料编码")
     private String barCode;
+    /**
+     * 打印型号
+     */
+    @Excel(name = "打印型号")
+    private String printNo;
+    /**
+     * 包装规格
+     */
+    @Excel(name = "包装规格")
+    private String boxCount;
+    /**
+     * 产品系列
+     */
+    @Excel(name = "产品系列")
+    private String productSeries;
 
     /**
      * 产品一级分类
@@ -473,6 +488,30 @@ public class Product extends BaseEntity {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getPrintNo() {
+        return printNo;
+    }
+
+    public void setPrintNo(String printNo) {
+        this.printNo = printNo;
+    }
+
+    public String getBoxCount() {
+        return boxCount;
+    }
+
+    public void setBoxCount(String boxCount) {
+        this.boxCount = boxCount;
+    }
+
+    public String getProductSeries() {
+        return productSeries;
+    }
+
+    public void setProductSeries(String productSeries) {
+        this.productSeries = productSeries;
     }
 
     @Override

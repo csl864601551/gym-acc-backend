@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			AND parent_id = #{parentId}
 		</if>
 		<if test="deptNo != null and deptNo != ''">
-			AND dept_no like concat('%', #{deptNo}, '%')
+			AND dept_no = #{deptNo}
 		</if>
 		<if test="deptName != null and deptName != ''">
 			AND dept_name like concat('%', #{deptName}, '%')
@@ -91,7 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where dept_name=#{deptName} and parent_id = #{parentId} limit 1
 	</select>
 
-    <insert id="insertDept" parameterType="SysDept">
+    <insert id="insertDept" parameterType="SysDept" useGeneratedKeys="true" keyProperty="deptId">
 		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="deptId">
 			SELECT LAST_INSERT_ID()
 		</selectKey>

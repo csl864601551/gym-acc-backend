@@ -73,6 +73,8 @@ public interface ICompanyAreaService
      */
     public int deleteCompanyAreaById(Long id);
 
+    public int deleteCompanyAreaByTenantId(Long tenantId);
+
     /**
      * 导出经销商销售区域 信息
      * @param companyArea

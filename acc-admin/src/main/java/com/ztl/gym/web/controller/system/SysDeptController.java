@@ -8,18 +8,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.ztl.gym.area.domain.CompanyArea;
+import com.ztl.gym.area.service.ICompanyAreaService;
 import com.ztl.gym.code.domain.Code;
 import com.ztl.gym.code.service.CodeTestService;
 import com.ztl.gym.common.annotation.Log;
 import com.ztl.gym.common.config.RuoYiConfig;
 import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.controller.BaseController;
 import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.vo.SysDeptVo;
 import com.ztl.gym.common.core.page.TableDataInfo;
 import com.ztl.gym.common.enums.BusinessType;
+import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.utils.DateUtils;
 import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.StringUtils;
@@ -31,6 +37,7 @@ import com.ztl.gym.mix.domain.vo.MixRecordVo;
 import com.ztl.gym.product.domain.ProductStock;
 import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.storage.domain.StorageBack;
+import com.ztl.gym.system.domain.SysDeptERP;
 import com.ztl.gym.system.service.ISysDeptService;
 import com.ztl.gym.web.controller.area.CompanyAreaController;
 import org.apache.commons.lang3.ArrayUtils;
@@ -74,6 +81,8 @@ public class SysDeptController extends BaseController {
 
     @Autowired
     private IProductStockService productStockService;
+    @Autowired
+    private ICompanyAreaService companyAreaService;
 
     /**
      * 获取部门列表
@@ -363,4 +372,68 @@ public class SysDeptController extends BaseController {
             log.error("下载文件失败", e);
         }
     }
+
+
+
+    /**
+     * 新增部门
+     */
+    @Log(title = "ERP同步经销商", businessType = BusinessType.INSERT)
+    @PostMapping("getERPDept")
+    public AjaxResult getERPDept(@Validated @RequestBody SysDeptERP dept) {
+        //初始化数据
+        if (StrUtil.isEmpty(dept.getDeptNo())) {
+            throw new CustomException("经销商编号不能为空！", HttpStatus.ERROR);
+        }
+        if (StrUtil.isEmpty(dept.getDeptName())) {
+            throw new CustomException("经销商名称不能为空！", HttpStatus.ERROR);
+        }
+
+
+        SysDept deptQuery=new SysDept();
+        deptQuery.setDeptNo(dept.getDeptNo());
+        List<SysDept> deptList=deptService.selectDeptList(deptQuery);
+
+        deptQuery.setDeptName(dept.getDeptName());
+        deptQuery.setParentId(SecurityUtils.getLoginUserTopCompanyId());
+        deptQuery.setDeptType(AccConstants.DEPT_TYPE_ZY);
+
+        if(deptList.size()==0){
+            deptQuery.setCreateBy(SecurityUtils.getUsername());
+            deptService.insertDept(deptQuery);
+
+        }else{
+            deptQuery.setDeptId(deptList.get(0).getDeptId());
+            deptQuery.setUpdateBy(SecurityUtils.getUsername());
+            deptService.updateDept(deptQuery);
+        }
+
+
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        //同步经销商销售区域
+        if(dept.getCompanyArea()!=null){
+            companyAreaService.deleteCompanyAreaByTenantId(deptQuery.getDeptId());
+            CompanyArea companyArea = new CompanyArea();
+            List<CompanyArea> areaList = dept.getCompanyArea();
+            for (int i = 0; i < areaList.size(); i++) {
+                companyArea = areaList.get(i);
+                companyArea.setCompanyId(companyId);
+                companyArea.setTenantId(deptQuery.getDeptId());
+                companyArea.setCreateUser(userId);
+                companyArea.setCreateTime(DateUtils.getNowDate());
+                companyArea.setUpdateUser(userId);
+                companyArea.setUpdateTime(DateUtils.getNowDate());
+                companyAreaService.insertCompanyArea(companyArea);
+            }
+        }
+
+
+
+
+
+        return AjaxResult.success("同步成功！");
+    }
+
+
 }

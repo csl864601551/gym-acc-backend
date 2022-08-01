@@ -30,7 +30,7 @@ import java.util.Map;
 public class ProductController extends BaseController
 {
     @Autowired
-    private IProductService tProductService;
+    private IProductService productService;
 
     @Autowired
     private IAttrService attrService;
@@ -44,7 +44,7 @@ public class ProductController extends BaseController
     {
         List<Product> lists = new ArrayList<Product>();
         startPage();
-        List<Product> list = tProductService.selectTProductList(product);
+        List<Product> list = productService.selectTProductList(product);
         return getDataTable(list);
     }
 
@@ -56,7 +56,7 @@ public class ProductController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(Product product)
     {
-        List<Product> list = tProductService.selectTProductList(product);
+        List<Product> list = productService.selectTProductList(product);
         ExcelUtil<Product> util = new ExcelUtil<Product>(Product.class);
         return util.exportExcel(list, "product");
     }
@@ -68,7 +68,7 @@ public class ProductController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(tProductService.selectTProductById(id));
+        return AjaxResult.success(productService.selectTProductById(id));
     }
 
     /**
@@ -81,14 +81,13 @@ public class ProductController extends BaseController
     {
         if(StrUtil.isNotEmpty(product.getProductName())&&StrUtil.isNotEmpty(product.getProductNo())){
             Product productQuery = new Product();
-            productQuery.setProductName(product.getProductName());
-            productQuery.setProductNo(product.getProductNo());
-            List<Product> list = tProductService.selectTProductList1(productQuery);
+            productQuery.setBarCode(product.getBarCode());
+            List<Product> list = productService.selectTProductList1(productQuery);
             if(list.size()>0){
-                return error("该规格型号和物料名称已存在！！！");
+                return error("该物料编码已存在！！！");
             }
         }
-        return toAjax(tProductService.insertTProduct(product));
+        return toAjax(productService.insertTProduct(product));
     }
 
     /**
@@ -99,44 +98,7 @@ public class ProductController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody Product product)
     {
-//        if(StrUtil.isNotEmpty(product.getUpdateType())){
-//
-//        }else{
-//            //判断属性列表的值是否对应
-//            boolean istrue = true;
-//            if(product.getAttributeList()!=null) {
-//                if (product.getAttributeList().size() > 0) {
-//                    for (int i = 0; i < product.getAttributeList().size(); i++) {
-//                        Map<String, Object> topmap = new HashMap<String, Object>();
-//                        topmap = product.getAttributeList().get(i);
-//                        String name = topmap.get("attrNameCn").toString();
-//                        String value = topmap.get("attrValue").toString();
-//                        Attr attrinfo = attrService.selectAttrByName(name);
-//                        if (attrinfo != null) {
-//                            if (attrinfo.getInputType() == 1) {
-//
-//                            } else if (attrinfo.getInputType() == 2) {
-//                                List<Map<String, Object>> attlist = attrService.getAttrValuesById(attrinfo.getId());
-//                                if (attlist.size() > 0) {
-//                                    for (int j = 0; j < attlist.size(); j++) {
-//                                        Map<String, Object> secendmap = new HashMap<String, Object>();
-//                                        secendmap = attlist.get(j);
-//                                        String twovalue = secendmap.get("value").toString();
-//                                        if (twovalue.equals(value)) {
-//                                            istrue = false;
-//                                        }
-//                                    }
-//                                    if (istrue) {
-//                                        return error("产品属性类型和值不一致！！！");
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-        return toAjax(tProductService.updateTProduct(product));
+        return toAjax(productService.updateTProduct(product));
     }
 
     /**
@@ -147,7 +109,7 @@ public class ProductController extends BaseController
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(tProductService.deleteTProductByIds(ids));
+        return toAjax(productService.deleteTProductByIds(ids));
     }
 
     /**
@@ -158,7 +120,7 @@ public class ProductController extends BaseController
     @DeleteMapping("/del/{ids}")
     public AjaxResult removeTrue(@PathVariable Long[] ids)
     {
-        return toAjax(tProductService.deleteTProductTrueByIds(ids));
+        return toAjax(productService.deleteTProductTrueByIds(ids));
     }
 
     /**
@@ -167,7 +129,7 @@ public class ProductController extends BaseController
     @GetMapping("/getProductAttr")
     public AjaxResult getProductAttr()
     {
-        List<Map<String,Object>> attributeList = tProductService.getProductAttr();
+        List<Map<String,Object>> attributeList = productService.getProductAttr();
         return AjaxResult.success(attributeList);
     }
 }
