@@ -91,7 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where dept_name=#{deptName} and parent_id = #{parentId} limit 1
 	</select>
 
-    <insert id="insertDept" parameterType="SysDept">
+    <insert id="insertDept" parameterType="SysDept" useGeneratedKeys="true" keyProperty="deptId">
 		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="deptId">
 			SELECT LAST_INSERT_ID()
 		</selectKey>

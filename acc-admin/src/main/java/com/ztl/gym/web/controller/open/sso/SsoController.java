@@ -1,10 +1,13 @@
 package com.ztl.gym.web.controller.open.sso;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ztl.gym.code.service.CodeTestService;
 import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.Constants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.core.domain.AjaxResult;
 import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.AccessTokenRequest;
@@ -21,6 +24,7 @@ import com.ztl.gym.framework.manager.factory.AsyncFactory;
 import com.ztl.gym.framework.web.service.SysLoginService;
 import com.ztl.gym.framework.web.service.SysPermissionService;
 import com.ztl.gym.framework.web.service.TokenService;
+import com.ztl.gym.product.service.IProductStockService;
 import com.ztl.gym.system.service.ISysDeptService;
 import com.ztl.gym.system.service.ISysUserService;
 import com.ztl.gym.web.controller.open.sso.model.TokenObj;
@@ -48,6 +52,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,8 +75,16 @@ public class SsoController {
 
     @Autowired
     private SysPermissionService permissionService;
+
     @Autowired
     private ISysUserService sysUserService;
+
+    @Autowired
+    private DruidDataSource dataSource;
+
+    @Autowired
+    private CodeTestService codeService;
+
     /**
      * 授权地址
      */
@@ -205,6 +220,79 @@ public class SsoController {
             sysDept.setCreateBy("admin");
             sysDept.setCreateTime(new Date());
             sysDeptService.insertDept(sysDept);
+                //判断新增dept是不是企业级别
+                if (sysDept.getParentId() == AccConstants.ADMIN_DEPT_ID) {
+                    long companyId = Long.valueOf(userInfo.getOrg_id());
+
+                    //判断该企业对应的分表是否创建
+                    int res = -1;
+                    //1.t_code
+                    if (!codeService.checkCompanyTableExist(companyId, "t_code_")) {
+                        String sql = "CREATE TABLE t_code_" + companyId + "(\n" +
+                                "    code_index BIGINT NOT NULL AUTO_INCREMENT  COMMENT '流水号' ,\n" +
+                                "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                                "    status INT    COMMENT '状态' ,\n" +
+                                "    code VARCHAR(64)    COMMENT '码' ,\n" +
+                                "    code_acc VARCHAR(64)    COMMENT '防窜码' ,\n" +
+                                "    code_type VARCHAR(64)    COMMENT '码类型（箱码or单码）' ,\n" +
+                                "    p_code VARCHAR(64)    COMMENT '所属箱码' ,\n" +
+                                "    code_attr_id BIGINT    COMMENT '码属性id' ,\n" +
+                                "    PRIMARY KEY (code_index)\n" +
+                                ") COMMENT = '码表 ';";
+                        res = createTableByCompany(sql);
+                    }
+
+                    //2.码流转明细表
+                    if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_in_code_flow_")) {
+                        String sql = "CREATE TABLE t_in_code_flow_" + companyId + "(\n" +
+                                "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                                "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                                "    code VARCHAR(64)    COMMENT '单码' ,\n" +
+                                "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                                "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                                "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                                "    PRIMARY KEY (id)\n" +
+                                ") COMMENT = '单码流转记录表 ';";
+                        res = createTableByCompany(sql);
+                    }
+                    if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_out_code_flow_")) {
+                        String sql = "CREATE TABLE t_out_code_flow_" + companyId + "(\n" +
+                                "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                                "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                                "    code VARCHAR(64)    COMMENT '单码' ,\n" +
+                                "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                                "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                                "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                                "    PRIMARY KEY (id)\n" +
+                                ") COMMENT = '单码流转记录表 ';";
+                        res = createTableByCompany(sql);
+                    }
+                    if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_transfer_code_flow_")) {
+                        String sql = "CREATE TABLE t_transfer_code_flow_" + companyId + "(\n" +
+                                "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                                "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                                "    code VARCHAR(64)    COMMENT '单码' ,\n" +
+                                "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                                "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                                "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                                "    PRIMARY KEY (id)\n" +
+                                ") COMMENT = '单码流转记录表 ';";
+                        res = createTableByCompany(sql);
+                    }
+                    if (res == 0 && !codeService.checkCompanyTableExist(companyId, "t_back_code_flow_")) {
+                        String sql = "CREATE TABLE t_back_code_flow_" + companyId + "(\n" +
+                                "    id BIGINT NOT NULL AUTO_INCREMENT  COMMENT '主键ID' ,\n" +
+                                "    company_id BIGINT    COMMENT '企业ID' ,\n" +
+                                "    code VARCHAR(64)    COMMENT '单码' ,\n" +
+                                "    storage_record_id BIGINT    COMMENT '流转记录id' ,\n" +
+                                "    create_user BIGINT    COMMENT '创建人' ,\n" +
+                                "    create_time DATETIME    COMMENT '创建时间' ,\n" +
+                                "    PRIMARY KEY (id)\n" +
+                                ") COMMENT = '单码流转记录表 ';";
+                        res = createTableByCompany(sql);
+                    }
+                }
+
         }
 
         SysUser sysUser = sysUserService.selectUserByUserName(userInfo.getSub());
@@ -271,5 +359,24 @@ public class SsoController {
         UserObj userObj = JSON.parseObject(retStr, UserObj.class);
         return userObj;
     }
-
+    /**
+     * 按企业创建分表
+     *
+     * @param sql 建表sql
+     * @return
+     */
+    private int createTableByCompany(String sql) {
+        int res = -1;
+        try {
+            Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement();
+            res = statement.executeUpdate(sql);
+            System.out.println(res);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            res = -2;
+        } finally {
+            return res;
+        }
+    }
 }
