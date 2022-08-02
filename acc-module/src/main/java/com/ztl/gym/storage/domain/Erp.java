@@ -37,6 +37,10 @@ public class Erp
     /** 仓库名称 */
     private String storageName;
 
+    /** 出库组织 */
+    private String postName;
+
+
     /** 出库日期 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date outTime;
@@ -181,5 +185,13 @@ public class Erp
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getPostName() {
+        return postName;
+    }
+
+    public void setPostName(String postName) {
+        this.postName = postName;
     }
 }

@@ -81,8 +81,6 @@ public class SysDeptController extends BaseController {
 
     @Autowired
     private IProductStockService productStockService;
-    @Autowired
-    private ICompanyAreaService companyAreaService;
 
     /**
      * 获取部门列表
@@ -372,68 +370,5 @@ public class SysDeptController extends BaseController {
             log.error("下载文件失败", e);
         }
     }
-
-
-
-    /**
-     * 新增部门
-     */
-    @Log(title = "ERP同步经销商", businessType = BusinessType.INSERT)
-    @PostMapping("getERPDept")
-    public AjaxResult getERPDept(@Validated @RequestBody SysDeptERP dept) {
-        //初始化数据
-        if (StrUtil.isEmpty(dept.getDeptNo())) {
-            throw new CustomException("经销商编号不能为空！", HttpStatus.ERROR);
-        }
-        if (StrUtil.isEmpty(dept.getDeptName())) {
-            throw new CustomException("经销商名称不能为空！", HttpStatus.ERROR);
-        }
-
-
-        SysDept deptQuery=new SysDept();
-        deptQuery.setDeptNo(dept.getDeptNo());
-        List<SysDept> deptList=deptService.selectDeptList(deptQuery);
-
-        deptQuery.setDeptName(dept.getDeptName());
-        deptQuery.setParentId(SecurityUtils.getLoginUserTopCompanyId());
-        deptQuery.setDeptType(AccConstants.DEPT_TYPE_ZY);
-
-        if(deptList.size()==0){
-            deptQuery.setCreateBy(SecurityUtils.getUsername());
-            deptService.insertDept(deptQuery);
-
-        }else{
-            deptQuery.setDeptId(deptList.get(0).getDeptId());
-            deptQuery.setUpdateBy(SecurityUtils.getUsername());
-            deptService.updateDept(deptQuery);
-        }
-
-
-        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
-        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
-        //同步经销商销售区域
-        if(dept.getCompanyArea()!=null){
-            companyAreaService.deleteCompanyAreaByTenantId(deptQuery.getDeptId());
-            CompanyArea companyArea = new CompanyArea();
-            List<CompanyArea> areaList = dept.getCompanyArea();
-            for (int i = 0; i < areaList.size(); i++) {
-                companyArea = areaList.get(i);
-                companyArea.setCompanyId(companyId);
-                companyArea.setTenantId(deptQuery.getDeptId());
-                companyArea.setCreateUser(userId);
-                companyArea.setCreateTime(DateUtils.getNowDate());
-                companyArea.setUpdateUser(userId);
-                companyArea.setUpdateTime(DateUtils.getNowDate());
-                companyAreaService.insertCompanyArea(companyArea);
-            }
-        }
-
-
-
-
-
-        return AjaxResult.success("同步成功！");
-    }
-
 
 }

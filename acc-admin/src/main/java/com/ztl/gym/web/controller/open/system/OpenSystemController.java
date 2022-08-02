@@ -1,20 +1,36 @@
 package com.ztl.gym.web.controller.open.system;
 
+import cn.hutool.core.util.StrUtil;
+import com.ztl.gym.area.domain.CompanyArea;
+import com.ztl.gym.area.service.ICompanyAreaService;
+import com.ztl.gym.code.service.CodeTestService;
+import com.ztl.gym.common.annotation.Log;
+import com.ztl.gym.common.constant.AccConstants;
 import com.ztl.gym.common.constant.HttpStatus;
 import com.ztl.gym.common.core.domain.AjaxResult;
+import com.ztl.gym.common.core.domain.entity.SysDept;
 import com.ztl.gym.common.core.domain.entity.SysMenu;
 import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.LoginBody;
 import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.domain.AndroidVersion;
+import com.ztl.gym.common.enums.BusinessType;
 import com.ztl.gym.common.exception.CustomException;
 import com.ztl.gym.common.service.IAndroidVersionService;
+import com.ztl.gym.common.utils.DateUtils;
+import com.ztl.gym.common.utils.SecurityUtils;
 import com.ztl.gym.common.utils.ServletUtils;
 import com.ztl.gym.framework.web.service.SysLoginService;
 import com.ztl.gym.framework.web.service.SysPermissionService;
 import com.ztl.gym.framework.web.service.TokenService;
+import com.ztl.gym.product.service.IProductStockService;
+import com.ztl.gym.system.domain.SysDeptERP;
+import com.ztl.gym.system.service.ISysDeptService;
 import com.ztl.gym.system.service.ISysMenuService;
+import com.ztl.gym.system.service.ISysPostService;
+import com.ztl.gym.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -36,6 +52,18 @@ public class OpenSystemController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private ISysDeptService deptService;
+
+    @Autowired
+    private ISysUserService userService;
+
+    @Autowired
+    private ISysPostService postService;
+
+    @Autowired
+    private ICompanyAreaService companyAreaService;
     /**
      * 登录方法
      *
@@ -76,6 +104,7 @@ public class OpenSystemController {
         Map<String,Object> map=new HashMap<>();
 //        map.put("user", user);
         map.put("roles", roles);
+        map.put("postIds", userService.selectUserPostGroup(user.getUserName()));
         //map.put("permissions", permissions);
         if(user.getDept().getParentId()==100){
             map.put("roleName", "企业端");
@@ -142,5 +171,66 @@ public class OpenSystemController {
         }catch (Exception e){
             throw new CustomException("登录超时，请检查网络连接！", HttpStatus.ERROR);
         }
+    }
+
+
+    /**
+     * 新增部门
+     */
+    @Log(title = "ERP同步经销商", businessType = BusinessType.INSERT)
+    @PostMapping("getERPDept")
+    public AjaxResult getERPDept(@Validated @RequestBody SysDeptERP dept) {
+        //初始化数据
+        if (StrUtil.isEmpty(dept.getDeptNo())) {
+            throw new CustomException("经销商编号不能为空！", HttpStatus.ERROR);
+        }
+        if (StrUtil.isEmpty(dept.getDeptName())) {
+            throw new CustomException("经销商名称不能为空！", HttpStatus.ERROR);
+        }
+
+
+        SysDept deptQuery=new SysDept();
+        deptQuery.setDeptNo(dept.getDeptNo());
+        List<SysDept> deptList=deptService.selectDeptList(deptQuery);
+
+        deptQuery.setDeptName(dept.getDeptName());
+        deptQuery.setParentId(SecurityUtils.getLoginUserTopCompanyId());
+        deptQuery.setDeptType(AccConstants.DEPT_TYPE_ZY);
+
+        if(deptList.size()==0){
+            deptQuery.setCreateBy(SecurityUtils.getUsername());
+            deptService.insertDept(deptQuery);
+
+        }else{
+            deptQuery.setDeptId(deptList.get(0).getDeptId());
+            deptQuery.setUpdateBy(SecurityUtils.getUsername());
+            deptService.updateDept(deptQuery);
+        }
+
+
+        Long userId = SecurityUtils.getLoginUser().getUser().getUserId();
+        Long companyId = SecurityUtils.getLoginUserCompany().getDeptId();
+        //同步经销商销售区域
+        if(dept.getCompanyArea()!=null){
+            companyAreaService.deleteCompanyAreaByTenantId(deptQuery.getDeptId());
+            CompanyArea companyArea = new CompanyArea();
+            List<CompanyArea> areaList = dept.getCompanyArea();
+            for (int i = 0; i < areaList.size(); i++) {
+                companyArea = areaList.get(i);
+                companyArea.setCompanyId(companyId);
+                companyArea.setTenantId(deptQuery.getDeptId());
+                companyArea.setCreateUser(userId);
+                companyArea.setCreateTime(DateUtils.getNowDate());
+                companyArea.setUpdateUser(userId);
+                companyArea.setUpdateTime(DateUtils.getNowDate());
+                companyAreaService.insertCompanyArea(companyArea);
+            }
+        }
+
+
+
+
+
+        return AjaxResult.success("同步成功！");
     }
 }

@@ -225,6 +225,9 @@ public class OpenCodeController {
         if (erp.getDeptName() == null || erp.getDeptName() == "") {
             throw new CustomException("经销商名称不能为空！", HttpStatus.ERROR);
         }
+        if (erp.getPostName() == null || erp.getPostName() == "") {
+            throw new CustomException("出库组织不能为空！", HttpStatus.ERROR);
+        }
         if (erp.getOutTime() == null) {
             throw new CustomException("发货日期不能为空！", HttpStatus.ERROR);
         }
@@ -317,6 +320,7 @@ public class OpenCodeController {
                 storageOut.setOutNum(outProductList.get(i).getOutNum());
                 storageOut.setFromStorageId(storageId);
                 storageOut.setOutTime(DateUtils.getNowDate());
+                storageOut.setRemark(erp.getPostName());
                 storageOutService.insertStorageOut(storageOut);
             }
         }
