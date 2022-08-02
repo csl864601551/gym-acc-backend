@@ -20,7 +20,7 @@ public class CodeShardingAlgorithm implements ComplexKeysShardingAlgorithm {
         // 获取真实表名
         for (Long companyId : conpanyIds) {
             for (String tableName : (Collection<String>) actualTableNames) {
-                if (tableName.endsWith(String.valueOf(companyId))) {
+                if (tableName.endsWith("_" + companyId)) {
                     tableNameList.add(tableName);
                 }
             }
