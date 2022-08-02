@@ -1,13 +1,30 @@
 package com.ztl.gym.web.controller.open.sso;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ztl.gym.common.constant.AccConstants;
+import com.ztl.gym.common.constant.Constants;
 import com.ztl.gym.common.constant.HttpStatus;
+import com.ztl.gym.common.core.domain.entity.SysDept;
+import com.ztl.gym.common.core.domain.entity.SysUser;
 import com.ztl.gym.common.core.domain.model.AccessTokenRequest;
 import com.ztl.gym.common.core.domain.model.AccessTokenResponse;
+import com.ztl.gym.common.core.domain.model.LoginUser;
 import com.ztl.gym.common.core.domain.model.UserInfo;
+import com.ztl.gym.common.core.redis.RedisCache;
 import com.ztl.gym.common.exception.CustomException;
+import com.ztl.gym.common.utils.MessageUtils;
+import com.ztl.gym.common.utils.OkHttpCli;
+import com.ztl.gym.common.utils.SecurityUtils;
+import com.ztl.gym.framework.manager.AsyncManager;
+import com.ztl.gym.framework.manager.factory.AsyncFactory;
 import com.ztl.gym.framework.web.service.SysLoginService;
+import com.ztl.gym.framework.web.service.SysPermissionService;
 import com.ztl.gym.framework.web.service.TokenService;
+import com.ztl.gym.system.service.ISysDeptService;
+import com.ztl.gym.system.service.ISysUserService;
+import com.ztl.gym.web.controller.open.sso.model.TokenObj;
+import com.ztl.gym.web.controller.open.sso.model.UserObj;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -15,16 +32,26 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @Slf4j
@@ -35,9 +62,14 @@ public class SsoController {
     private TokenService tokenService;
 
     @Autowired
-    private OkHttpClient okHttpClient;
+    private OkHttpCli okHttpCli;
     @Autowired
-    private SysLoginService loginService;
+    private ISysDeptService sysDeptService;
+
+    @Autowired
+    private SysPermissionService permissionService;
+    @Autowired
+    private ISysUserService sysUserService;
     /**
      * 授权地址
      */
@@ -66,7 +98,7 @@ public class SsoController {
     /**
      * 回调地址
      */
-    private final static String redirectUri = "https://fc.asun.cloud/index";
+    private final static String redirectUri = "https://fc.asun.cloud/prod-api/oauth2/callback";
 
     /**
      * 跳转到自动登录页面
@@ -120,62 +152,124 @@ public class SsoController {
      */
     @RequestMapping("/callback")
     public String oauth(HttpSession session, HttpServletRequest request, HttpServletResponse response, String code) {
-        UserInfo userInfo = new UserInfo();
+        //获取token
+        String token = null;
         try {
-
-            AccessTokenRequest accessTokenRequest = new AccessTokenRequest();
-
-            accessTokenRequest.setClientId(clientId);
-            accessTokenRequest.setClientSecret(clientSecret);
-            accessTokenRequest.setCode(code);
-
-            if (!(StringUtils.isNotEmpty(URL_GET_TOKEN) && URL_GET_TOKEN.startsWith("http"))) {
-                throw new CustomException("不存在或链接格式错误");
-            }
-
-            MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-            Request.Builder builderAccessToken = new Request.Builder();
-            builderAccessToken.url(URL_GET_TOKEN);
-
-            Request requestAccessToken = builderAccessToken.post(okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(accessTokenRequest))).build();
-
-            Response responseAccessToken = okHttpClient.newCall(requestAccessToken).execute();
-            String resAccessTokenBody = responseAccessToken.body().string();
-            Map<String, Object> map = (Map) JSONObject.parseObject(resAccessTokenBody);
-            if (map.get("code").toString() == "500") {
-                throw new CustomException(map.get("message").toString());
-            }
-            AccessTokenResponse accessTokenResponse = JSONObject.parseObject(map.get("data").toString(), AccessTokenResponse.class);
-
-
-            //token 换userinfo获取用户信息
-            String urlUser = URL_GET_USER + "?access_token=" + accessTokenResponse.getAccessToken();
-            System.out.println(urlUser);
-            Request.Builder builderAccessUser = new Request.Builder();
-            builderAccessUser.url(urlUser);
-            Request requestAccessUser = builderAccessUser.get().build();
-            Response responseAccessUser = okHttpClient.newCall(requestAccessUser).execute();
-            String resAccessUserBody = responseAccessUser.body().string();
-            Map<String, Object> mapUser = (Map) JSONObject.parseObject(resAccessUserBody);
-
-            userInfo = JSONObject.parseObject(mapUser.get("data").toString(), UserInfo.class);
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new CustomException("无法获取链接: " + e.getMessage());
-        }
-
-        try {
-            // 生成token
-            String token = loginService.dealLoginToken(userInfo, request);
-            response.sendRedirect("https://fc.asun.cloud/fc/login?token=" + token);
+            token = getToken(code);
         } catch (Exception e) {
-            throw new CustomException("登录用户失败！", HttpStatus.ERROR);
+            e.printStackTrace();
+        }
+        if (StringUtils.isNotBlank(token)) {
+            Cookie cookie = new Cookie("sso_token", token);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            try {
+                //获取登录用户信息/组织信息
+                UserObj userInfo = getUser(token);
+                //登录 【判断当前用户是否有账号，没有则注册】
+                try {
+//                    UserInfo userInfo = new UserInfo();
+                    // 生成token
+//                    String fcToken = loginService.dealLoginToken(userInfo, request);
+                    String fcToken = loginByUser(userInfo,request);
+                    response.sendRedirect("https://fc.asun.cloud/login?token=" + fcToken);
+                } catch (Exception e) {
+                    throw new CustomException("登录用户失败！", HttpStatus.ERROR);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
+    /**
+     * 登录   【没有账号则注册】
+     *
+     * @param userInfo
+     */
+    private String loginByUser(UserObj userInfo, HttpServletRequest request) {
 
+        //本地处理用户企业
+        Long tenantId = Long.valueOf(userInfo.getOrg_id());
+        String userName=userInfo.getNick_name();
+        SysDept sysDept = sysDeptService.selectDeptById(tenantId);
+        if (sysDept == null) {
+            sysDept=new SysDept();
+            sysDept.setDeptId(Long.valueOf(userInfo.getOrg_id()));
+            sysDept.setDeptType(2);
+            sysDept.setParentId(AccConstants.ADMIN_DEPT_ID);
+            sysDept.setDeptName(userInfo.getOrg_name());
+            sysDept.setOrderNum("2");
+            sysDept.setCreateBy("admin");
+            sysDept.setCreateTime(new Date());
+            sysDeptService.insertDept(sysDept);
+        }
+
+        SysUser sysUser = sysUserService.selectUserByUserName(userInfo.getSub());
+        if (sysUser == null) {
+            sysUser=new SysUser();
+            sysUser.setDeptId(Long.valueOf(userInfo.getOrg_id()));
+            sysUser.setUserName(userInfo.getSub());
+            sysUser.setNickName(userInfo.getNick_name());
+            sysUser.setPassword(SecurityUtils.encryptPassword("tbdg54321"));
+            sysUser.setCreateBy("admin");
+            sysUser.setCreateTime(new Date());
+            Long[] roleIds={101L};
+            sysUser.setRoleIds(roleIds);//添加角色权限
+            sysUserService.insertUser(sysUser);
+
+        }
+
+        //本地登录
+
+        // 权限集合
+        Set<String> permissions = permissionService.getMenuPermission(sysUser);
+        AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGIN_SUCCESS, "gymAuth|"+ MessageUtils.message("user.login.success")));
+        LoginUser loginUser = new LoginUser();
+        sysUser.setDept(sysDept);
+        loginUser.setUser(sysUser);
+        loginUser.setPermissions(permissions);
+        System.out.println("dealLoginToken:loginUser:------"+loginUser);
+        // 生成token
+        String token= tokenService.createToken(loginUser);
+
+        if (com.ztl.gym.common.utils.StringUtils.isNotNull(loginUser) )
+        {
+            tokenService.verifyToken(loginUser);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+
+        return token;
+
+    }
+
+    String getToken(String code) {
+        Map<String, String> params = new HashMap<>();
+        params.put("code", code);
+        params.put("client_id", clientId);
+        params.put("client_secret", clientSecret);
+        params.put("grant_type", grantType);
+        params.put("redirect_uri", redirectUri);
+        String retStr = okHttpCli.doPost(URL_GET_TOKEN, params);
+        if (StringUtils.isNotBlank(retStr)) {
+            TokenObj tokenObj = JSON.parseObject(retStr, TokenObj.class);
+            if (tokenObj != null) {
+                return tokenObj.getAccess_token();
+            }
+        }
+        return null;
+    }
+
+    UserObj getUser(String token) {
+        Map<String, String> params = new HashMap<>();
+        params.put("access_token", token);
+        String retStr = okHttpCli.doGet(URL_GET_USER, params);
+        UserObj userObj = JSON.parseObject(retStr, UserObj.class);
+        return userObj;
+    }
 
 }
