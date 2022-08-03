@@ -20,7 +20,7 @@ public class MyComplexShardingAlgorithm implements ComplexKeysShardingAlgorithm 
         // 获取真实表名
         for (Long orderId : orderIds) {
             for (String tableName : (Collection<String>) actualTableNames) {
-                if (tableName.endsWith(String.valueOf(orderId))) {
+                if (tableName.endsWith("_"+orderId)) {
                     tableNameList.add(tableName);
                 }
             }
