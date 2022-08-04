@@ -76,9 +76,9 @@ spring:
     port: 6379
 
     # 本地地址
-#    host: 127.0.0.1
-#    database: 0
-#    password:
+    host: 127.0.0.1
+    database: 0
+    password:
 
     #测试数据源15+南京10
     #host: 10.70.150.14
@@ -86,9 +86,9 @@ spring:
     #password: Ztt12345
 
     #南通数据源15
-    host: 10.10.7.21
-    database: 15
-    password: JSdayi@2021
+#    host: 10.10.7.21
+#    database: 15
+#    password: JSdayi@2021
 
 
 

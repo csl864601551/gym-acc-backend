@@ -107,11 +107,11 @@
     <update id="updateProductStock" parameterType="ProductStock">
         update t_product_stock
         <trim prefix="SET" suffixOverrides=",">
-            <if test="companyId != null">company_id = #{companyId},</if>
-            <if test="tenantId != null">tenant_id = #{tenantId},</if>
-            <if test="stockLevel != null">stock_level = #{stockLevel},</if>
-            <if test="storageId != null">storage_id = #{storageId},</if>
-            <if test="productId != null">product_id = #{productId},</if>
+<!--            <if test="companyId != null">company_id = #{companyId},</if>-->
+<!--            <if test="tenantId != null">tenant_id = #{tenantId},</if>-->
+<!--            <if test="stockLevel != null">stock_level = #{stockLevel},</if>-->
+<!--            <if test="storageId != null">storage_id = #{storageId},</if>-->
+<!--            <if test="productId != null">product_id = #{productId},</if>-->
             <if test="inNum != null">in_num = #{inNum},</if>
             <if test="outNum != null">out_num = #{outNum},</if>
             <if test="backNum != null">back_num = #{backNum},</if>
