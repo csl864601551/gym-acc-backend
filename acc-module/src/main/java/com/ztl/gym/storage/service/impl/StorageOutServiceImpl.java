@@ -142,6 +142,12 @@ public class StorageOutServiceImpl implements IStorageOutService {
         storageOut.setUpdateTime(DateUtils.getNowDate());
         return storageOutMapper.updateStorageOut(storageOut);
     }
+    @Override
+    public int updateStorageOutByErpCode(StorageOut storageOut) {
+        storageOut.setUpdateUser(SecurityUtils.getLoginUser().getUser().getUserId());
+        storageOut.setUpdateTime(DateUtils.getNowDate());
+        return storageOutMapper.updateStorageOutByErpCode(storageOut);
+    }
 
     /**
      * 批量删除出库

@@ -173,6 +173,7 @@ public class OpenCodeController {
             throw new CustomException("该时间段无相关数据！", HttpStatus.ERROR);
         }
     }
+
     /**
      * 对接CRM开放接口
      *
@@ -182,11 +183,11 @@ public class OpenCodeController {
     public AjaxResult getCRMInfoByProductIds(@RequestBody Map<String, Object> map) {
         Date beginTime = null;
         Date endTime = null;
-        List<String> productIds=new ArrayList<>();
+        List<String> productIds = new ArrayList<>();
         try {
             beginTime = DateUtils.parseDate(map.get("beginTime").toString());
             endTime = DateUtils.parseDate(map.get("endTime").toString());
-            productIds= JSONArray.parseObject(JSONArray.toJSONString(map.get("productIds")),List.class) ;
+            productIds = JSONArray.parseObject(JSONArray.toJSONString(map.get("productIds")), List.class);
             if (map.get("dayFlag") == null) {
                 String str = DateUtils.getDatePoor(endTime, beginTime);
                 Integer dayNum = Integer.parseInt(str.substring(0, str.lastIndexOf("天")));
@@ -197,7 +198,7 @@ public class OpenCodeController {
         } catch (Exception e) {
             throw new CustomException("请输入正确时间范围！", HttpStatus.ERROR);
         }
-        List<CRMInfoVo> crmInfo = codeService.getCRMInfoByProductIds(preFixUrl, beginTime, endTime,productIds);
+        List<CRMInfoVo> crmInfo = codeService.getCRMInfoByProductIds(preFixUrl, beginTime, endTime, productIds);
         if (crmInfo.size() > 0) {
             return AjaxResult.success(crmInfo);
         } else {
@@ -238,39 +239,26 @@ public class OpenCodeController {
         String deptNo = erp.getDeptNo();// 添加经销商编号
         String deptName = erp.getDeptName();
 
-        Erp temp = new Erp();
-        temp.setErpOutNo(erp.getErpOutNo());
-        List<Erp> erpList = erpService.selectErpList(temp);
-        if (erpList.size() > 0) {
-            throw new CustomException("该发货单据编号已同步！", HttpStatus.ERROR);
-        }
 
         SysDept sysDept = SecurityUtils.getLoginUserCompany();
-        Long companyId=SecurityUtils.getLoginUserTopCompanyId();
+        Long companyId = SecurityUtils.getLoginUserTopCompanyId();
         //step 判定经销商存在
         SysDept sysTenant = new SysDept();
         sysTenant.setParentId(companyId);
-        sysTenant.setDeptName(deptName);
+        sysTenant.setDeptNo(deptNo);
         List<SysDept> sysDeptList = sysDeptService.selectDeptList(sysTenant);
         if (sysDeptList.size() > 0) {
             sysTenant = sysDeptList.get(0);
         } else {
-            sysTenant.setDeptNo(deptNo);
-            sysTenant.setOrderNum("1");
-            sysTenant.setDeptType(2);
-            sysTenant.setParentId(sysDept.getDeptId());
-            sysDeptService.insertDept(sysTenant);
+            throw new CustomException("不存在'" + deptNo + "：" + deptName + "'该经销商信息,请联系维护该经销商信息！", HttpStatus.ERROR);
+//            sysTenant.setDeptNo(deptNo);
+//            sysTenant.setOrderNum("1");
+//            sysTenant.setDeptType(2);
+//            sysTenant.setParentId(sysDept.getDeptId());
+//            sysDeptService.insertDept(sysTenant);
         }
-        Long tenantId=sysTenant.getDeptId();
+        Long tenantId = sysTenant.getDeptId();
 
-        try {
-            erp.setCompanyId(companyId);
-            erp.setDeptId(tenantId);
-            erp.setStatus(0L);
-            erpService.insertErp(erp);
-        } catch (Exception e) {
-            throw new CustomException("接收数据格式错误！", HttpStatus.ERROR);
-        }
 
         // step 判断仓库是否存在，设置默认仓库（提前处理仓库问题）
         //处理无仓库问题
@@ -296,35 +284,67 @@ public class OpenCodeController {
             for (int i = 0; i < outProductList.size(); i++) {
                 //处理产品
                 Product productTemp = new Product();
-                productTemp.setProductNo(outProductList.get(i).getProductNo());
-                productTemp.setProductName(outProductList.get(i).getProductName());
+                productTemp.setBarCode(outProductList.get(i).getBarCode());
                 List<Product> listProduct = productService.selectTProductList(productTemp);
                 if (listProduct.size() > 0) {
                     outProductList.get(i).setProductId(listProduct.get(0).getId());
                 } else {
-                    throw new CustomException("不存在'"+outProductList.get(i).getProductNo()+"："+outProductList.get(i).getProductName()+"'该产品信息,请联系维护该产品信息！", HttpStatus.ERROR);
+                    throw new CustomException("不存在'" + outProductList.get(i).getBarCode() + "：" + outProductList.get(i).getProductName() + "'该产品信息,请联系维护该产品信息！", HttpStatus.ERROR);
+                }
+
+                Erp temp = new Erp();
+                temp.setErpOutNo(erp.getErpOutNo());
+                List<Erp> erpList = erpService.selectErpList(temp);
+                try {
+                    erp.setCompanyId(companyId);
+                    erp.setDeptId(tenantId);
+                    erp.setStatus(0L);
+                    erpService.insertErp(erp);
+                } catch (Exception e) {
+                    throw new CustomException("接收数据格式错误！", HttpStatus.ERROR);
                 }
                 outProductList.get(i).setErpId(erp.getId());
                 outProductList.get(i).setActNum(0L);
                 outProductList.get(i).setStatus(0L);
                 erpDetailService.insertErpDetail(outProductList.get(i));
 
+                if (erpList.size() > 0) {
+                    //throw new CustomException("该发货单据编号已同步！", HttpStatus.ERROR);
+                    //判断是否已出库
+                    StorageOut storageOutQuery = new StorageOut();
+                    storageOutQuery.setBatchNo(erp.getErpOutNo());
+                    List<StorageOut> storageOutList = storageOutService.selectStorageOutList(storageOutQuery);
+                    if (storageOutList.size() > 0 && storageOutList.get(0).getActOutNum() > 0) {
+                        throw new CustomException("该发货单据编号已出库，不允许修改！", HttpStatus.ERROR);
+                    }
+                    //插入待出库单
+                    //出库
+                    StorageOut storageOut = new StorageOut();
+                    storageOut.setProductId(listProduct.get(0).getId());
+                    storageOut.setBatchNo(erp.getErpOutNo());
+                    storageOut.setStorageTo(sysTenant.getDeptId());
+                    storageOut.setOutNum(outProductList.get(i).getOutNum());
+                    storageOut.setFromStorageId(storageId);
+                    storageOut.setOutTime(DateUtils.getNowDate());
+                    storageOut.setRemark(erp.getPostName());
+                    storageOutService.updateStorageOutByErpCode(storageOut);
+                } else {
+                    //插入待出库单
+                    //出库
+                    StorageOut storageOut = new StorageOut();
+                    storageOut.setOutNo(commonService.getStorageNo(2));
+                    storageOut.setProductId(listProduct.get(0).getId());
+                    storageOut.setBatchNo(erp.getErpOutNo());
+                    storageOut.setStorageTo(sysTenant.getDeptId());
+                    storageOut.setOutNum(outProductList.get(i).getOutNum());
+                    storageOut.setFromStorageId(storageId);
+                    storageOut.setOutTime(DateUtils.getNowDate());
+                    storageOut.setRemark(erp.getPostName());
+                    storageOutService.insertStorageOut(storageOut);
+                }
 
-                //插入待出库单
-                //出库
-                StorageOut storageOut = new StorageOut();
-                storageOut.setOutNo(commonService.getStorageNo(2));
-                storageOut.setProductId(listProduct.get(0).getId());
-                storageOut.setBatchNo(erp.getErpOutNo());
-                storageOut.setStorageTo(sysTenant.getDeptId());
-                storageOut.setOutNum(outProductList.get(i).getOutNum());
-                storageOut.setFromStorageId(storageId);
-                storageOut.setOutTime(DateUtils.getNowDate());
-                storageOut.setRemark(erp.getPostName());
-                storageOutService.insertStorageOut(storageOut);
             }
         }
-
 
 
         return AjaxResult.success("请求成功", "同步数据成功");

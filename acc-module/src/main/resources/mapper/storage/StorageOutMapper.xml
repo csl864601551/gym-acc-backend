@@ -171,6 +171,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+    <update id="updateStorageOutByErpCode" parameterType="Map">
+        update t_storage_out
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="outNum != null">out_num = #{outNum},</if>
+            <if test="fromStorageId != null">from_storage_id = #{fromStorageId},</if>
+            <if test="storageTo != null">storage_to = #{storageTo},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="outTime != null">out_time = #{outTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where batch_no = #{batchNo}
+    </update>
+
     <update id="updateOutStatusByCode" parameterType="Map">
         update t_storage_out set act_out_num =act_out_num+ #{outNum}
         <if test="updateUser != null">,update_user = #{updateUser}</if>

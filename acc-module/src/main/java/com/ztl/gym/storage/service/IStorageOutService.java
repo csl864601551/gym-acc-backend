@@ -112,4 +112,6 @@ public interface IStorageOutService {
      * @return
      */
     List<StorageOutExport> selectStorageOutExport(StorageOut storageOut);
+
+    int updateStorageOutByErpCode(StorageOut storageOut);
 }

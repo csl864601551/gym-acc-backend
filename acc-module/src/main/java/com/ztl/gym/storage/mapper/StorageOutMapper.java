@@ -102,4 +102,6 @@ public interface StorageOutMapper {
      * @return
      */
     List<StorageOutExport> selectStorageOutExport(StorageOut storageOut);
+
+    int updateStorageOutByErpCode(StorageOut storageOut);
 }
