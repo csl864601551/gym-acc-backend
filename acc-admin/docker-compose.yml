@@ -1,0 +1,6 @@
+version: "3"
+services:
+  acc:
+    build: ""
+    ports:
+    - "9020:9020"
